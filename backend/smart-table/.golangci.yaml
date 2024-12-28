@@ -1,0 +1,87 @@
+run:
+  tests: true
+  timeout: 5m
+linters:
+  disable-all: true
+  enable:
+    - asciicheck
+    - bodyclose
+    - copyloopvar
+    - dogsled
+    - dupl
+    - errorlint
+    - errcheck
+    - exhaustive
+    - funlen
+    - gochecknoinits
+    - goconst
+    - gocognit
+    - gocritic
+    - gocyclo
+    - godot
+    - godox
+    - gofmt
+    - goimports
+    - goprintffuncname
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - lll
+    - misspell
+    - nakedret
+    - nolintlint
+    - prealloc
+    - revive
+    - rowserrcheck
+    - staticcheck
+    - stylecheck
+    - testpackage
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - whitespace
+    - wsl
+linters-settings:
+  lll:
+    line-length: 140
+  funlen:
+    lines: 70
+    statements: 50
+  gocyclo:
+    min-complexity: 15
+  goimports:
+    local-prefixes: smart-table
+  gocritic:
+    enabled-tags:
+      - style
+      - experimental
+      - performance
+      - diagnostic
+      - opinionated
+  gosec:
+    severity: medium
+    confidence: medium
+  misspell:
+    locale: US
+  revive:
+    severity: warning
+    rules:
+      - name: exported
+      - name: var-naming
+      - name: package-comments
+      - name: indent-error-flow
+issues:
+  exclude-rules:
+    - path: "_test.go"
+      linters:
+        - funlen
+        - dupl
+        - gocognit
+        - gocritic
+        - nestif
+    - path: "_test.go"
+      linters:
+        - gocritic
+      text: "hugeParam: \\S+ is heavy \\(\\d+ bytes\\); consider passing it by pointer"
