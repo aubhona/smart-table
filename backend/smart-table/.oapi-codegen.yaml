@@ -1,0 +1,10 @@
+generate:
+  gin-server: true
+  client: true
+  models: true
+  strict-server: true
+  embedded-spec: true
+output-options:
+  nullable-type: true
+  name-normalizer: "ToCamelCaseWithInitialisms"
+  skip-prune: true

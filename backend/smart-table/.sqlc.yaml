@@ -1,0 +1,11 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    queries:
+      - "src/domains/orders/infra/pg/sql"
+    schema: "postgresql/smart-table"
+    gen:
+      go:
+        package: "db"
+        out: "src/domains/orders/infra/pg/codegen"
+        sql_package: "pgx/v5"
