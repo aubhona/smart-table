@@ -1,0 +1,59 @@
+components:
+    schemas:
+        PgItem:
+            type: object
+            additionalProperties: false
+            properties:
+                uuid:
+                    type: string
+                    format: uuid
+                order_uuid:
+                    type: string
+                    format: uuid
+                comment:
+                    type: string
+                status:
+                    type: string
+                resolution:
+                    type: string
+                name:
+                    type: string
+                description:
+                    type: string
+                picture_link:
+                    type: string
+                weight:
+                    type: integer
+                category:
+                    type: string
+                price:
+                    type: number
+                customer_uuid:
+                    type: string
+                    format: uuid
+                is_draft:
+                    type: boolean
+                dish_uuid:
+                    type: string
+                    format: uuid
+                created_at:
+                    type: string
+                    format: date-time
+                updated_at:
+                    type: string
+                    format: date-time
+            required:
+                - uuid
+                - order_uuid
+                - status
+                - name
+                - description
+                - picture_link
+                - weight
+                - category
+                - price
+                - customer_uuid
+                - is_draft
+                - dish_uuid
+                - created_at
+                - updated_at
