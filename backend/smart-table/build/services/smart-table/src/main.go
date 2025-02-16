@@ -1,12 +1,12 @@
 package main
 
 import (
+	views "github.com/es-debug/backend-academy-2024-go-template/src/views/mobile/v1/order"
 	"time"
 
 	"github.com/es-debug/backend-academy-2024-go-template/src/custom"
 	"github.com/es-debug/backend-academy-2024-go-template/src/domains/orders/di"
 	views_order "github.com/es-debug/backend-academy-2024-go-template/src/views/codegen/order"
-	views "github.com/es-debug/backend-academy-2024-go-template/src/views/mobile/v1/order/create"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -32,7 +32,7 @@ func main() {
 			c.Next()
 		})
 
-	strictHandler := views_order.NewStrictHandler(&views.MobileV1OrderCreateHandler{}, nil)
+	strictHandler := views_order.NewStrictHandler(&views.MobileV1OrderHandler{}, nil)
 	views_order.RegisterHandlers(router, strictHandler)
 
 	err = router.Run(deps.Config.App.Port)
