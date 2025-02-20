@@ -1,0 +1,20 @@
+components:
+    schemas:
+        ItemStatus:
+            type: string
+            enum:
+                - new
+                - accepted
+                - cooking
+                - cooked
+                - served
+                - paid
+                - cancelled_by_service
+                - cancelled_by_client
+
+        ItemResolution:
+            type: string
+            enum:
+                - paid
+                - cancelled_by_service
+                - cancelled_by_client

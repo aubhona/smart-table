@@ -12,7 +12,7 @@ SQLC_CONFIG := .sqlc.yaml
 # Paths
 API_SPECS := $(wildcard docs/api/*.yaml)
 OUTPUT_VIEWS := src/views/codegen
-OUTPUT_MODELS_INTERNAL := src/codegen/internal
+OUTPUT_MODELS_INTERNAL := src/codegen/intern
 OUTPUT_MODELS_DEFINITIONS := src/codegen/definitions
 DOCS_INTERNAL := docs/internal/*.yaml
 DOCS_DEFINITIONS := docs/definitions/*.yaml
