@@ -1,0 +1,25 @@
+import { State } from './types.js';
+/**
+ * Complete biometry manager state.
+ */
+export declare const state: import('@telegram-apps/signals').Signal<State | undefined>;
+/**
+ * True if the manager is currently authenticating.
+ */
+export declare const isAuthenticating: import('@telegram-apps/signals').Signal<boolean>;
+/**
+ * True if the manager is currently requesting access.
+ */
+export declare const isRequestingAccess: import('@telegram-apps/signals').Signal<boolean>;
+/**
+ * True if the component is currently mounted.
+ */
+export declare const isMounted: import('@telegram-apps/signals').Signal<boolean>;
+/**
+ * True if the component is currently mounting.
+ */
+export declare const isMounting: import('@telegram-apps/signals').Signal<boolean>;
+/**
+ * Error occurred while mounting the component.
+ */
+export declare const mountError: import('@telegram-apps/signals').Signal<Error | undefined>;
