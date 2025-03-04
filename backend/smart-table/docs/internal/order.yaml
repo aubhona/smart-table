@@ -1,0 +1,17 @@
+components:
+    schemas:
+        OrderStatus:
+            type: string
+            enum:
+                - new
+                - serving
+                - paid
+                - cancelled_by_service
+                - cancelled_by_client
+
+        OrderResolution:
+            type: string
+            enum:
+                - paid
+                - cancelled_by_service
+                - cancelled_by_client

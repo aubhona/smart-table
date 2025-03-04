@@ -1,0 +1,40 @@
+components:
+    schemas:
+        PgOrder:
+            type: object
+            additionalProperties: false
+            properties:
+                uuid:
+                    type: string
+                    format: uuid
+                room_code:
+                    type: string
+                table_id:
+                    type: string
+                host_user_uuid:
+                    type: string
+                    format: uuid
+                customers_uuid:
+                    type: array
+                    items:
+                        type: string
+                        format: uuid
+                status:
+                    type: string
+                resolution:
+                    type: string
+                created_at:
+                    type: string
+                    format: date-time
+                updated_at:
+                    type: string
+                    format: date-time
+            required:
+                - uuid
+                - room_code
+                - table_id
+                - customers_uuid
+                - host_user_uuid
+                - status
+                - created_at
+                - updated_at

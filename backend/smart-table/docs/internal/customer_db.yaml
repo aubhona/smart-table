@@ -1,0 +1,31 @@
+components:
+    schemas:
+        PgCustomer:
+            type: object
+            additionalProperties: false
+            properties:
+                uuid:
+                    type: string
+                    format: uuid
+                tg_id:
+                    type: string
+                tg_login:
+                    type: string
+                avatar_link:
+                    type: string
+                chat_id:
+                    type: string
+                created_at:
+                    type: string
+                    format: date-time
+                updated_at:
+                    type: string
+                    format: date-time
+            required:
+                - uuid
+                - tg_id
+                - tg_login
+                - avatar_link
+                - chat_id
+                - created_at
+                - updated_at
