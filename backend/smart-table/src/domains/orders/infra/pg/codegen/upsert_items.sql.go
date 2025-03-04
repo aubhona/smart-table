@@ -13,7 +13,7 @@ import (
 
 const upsertItems = `-- name: UpsertItems :many
 
-INSERT INTO "smart-table.items" (
+INSERT INTO smart_table_customer.items (
     uuid,
     order_uuid,
     comment,

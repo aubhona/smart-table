@@ -13,7 +13,7 @@ import (
 
 const upsertCustomer = `-- name: UpsertCustomer :one
 
-INSERT INTO "smart-table.customers" (
+INSERT INTO smart_table_customer.customers (
     uuid,
     tg_id,
     tg_login,
