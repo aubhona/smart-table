@@ -1,0 +1,199 @@
+openapi: 3.0.3
+info:
+    title: SmartTable Mobile API
+    version: 1.0.0
+    description: API для управления заказами.
+
+paths:
+    /v1/admin/user/sign-up:
+        post:
+            summary: Регистрация пользователя в админке
+            description: Регистрирует пользователя в админке
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/V1AdminUserSignUpRequest'
+            responses:
+                '200':
+                    description: Успешная регистрация и авторизация
+                    headers:
+                        Set-Cookie:
+                            description: JWT токен
+                            schema:
+                                type: string
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/V1AdminUserSignUpResponse'
+                '400':
+                    description: Неверные данные запроса
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '409':
+                    description: Ошибка регистрации, пользователь уже существует
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '500':
+                    description: Внутренняя ошибка сервера
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+    /v1/admin/user/sign-in:
+        post:
+            summary: Авторизация пользователя в админке
+            description: Авторизует пользователя в админке
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/V1AdminUserSignInRequest'
+            responses:
+                '200':
+                    description: Успешная авторизация
+                    headers:
+                        Set-Cookie:
+                            description: JWT токен
+                            schema:
+                                type: string
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/V1AdminUserSignInResponse'
+                '400':
+                    description: Неверные данные запроса
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '401':
+                    description: Ошибка авторизации, неверный логин или пароль
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '500':
+                    description: Внутренняя ошибка сервера
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+    securitySchemes:
+        CookieAuth:
+            type: apiKey
+            in: cookie
+            name: jwt
+            
+    schemas:
+        # /v1/admin/user/sign-up_POST
+        V1AdminUserSignUpRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                login:
+                    description: Логин пользователя, используемый для входа
+                    $ref: '#/components/schemas/Login'
+                tg_login:
+                    description: Логин пользователя в Telegram
+                    $ref: '#/components/schemas/Login'
+                first_name:
+                    type: string
+                    description: Имя пользователя на латинице
+                    minLength: 1
+                    maxLength: 50
+                    pattern: "^[A-Za-z\\-\\s]+$"
+                last_name:
+                    type: string
+                    description: Фамилия пользователя на латинице
+                    minLength: 1
+                    maxLength: 50
+                    pattern: "^[A-Za-z\\-\\s]+$"
+                password: 
+                    $ref: '#/components/schemas/Password'
+            required:
+                - login
+                - tg_login
+                - first_name
+                - last_name
+                - password
+
+        V1AdminUserSignUpResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                user_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор пользователя
+                    pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                jwt_token:
+                    type: string
+                    description: JWT токен пользователя
+            required:
+                - user_uuid
+                - jwt_token
+
+        # /v1/admin/user/sign-in_POST
+        V1AdminUserSignInRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                login:
+                    description: Логин пользователя, используемый для входа
+                    $ref: '#/components/schemas/Login'
+                password:
+                    $ref: '#/components/schemas/Password'
+            required:
+                - login
+                - password
+
+        V1AdminUserSignInResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                user_uuid:
+                    type: string
+                    description: Уникальный идентификатор пользователя
+                jwt_token:
+                    type: string
+                    description: JWT токен пользователя
+            required:
+                - user_uuid
+                - jwt_token
+
+        ErrorResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                code:
+                    type: string
+                    description: Код ошибки
+                message:
+                    type: string
+                    description: Описание ошибки
+            required:
+                - code
+                - message
+
+        Login:
+            type: string
+            description: Логин пользователя
+            pattern: "^[a-zA-Z][a-zA-Z0-9_]{4,31}$"
+            minLength: 4
+            maxLength: 31
+        
+        Password:
+            type: string
+            description: Пароль пользователя
+            minLength: 8
+            maxLength: 24
+            pattern: "^[A-Za-z0-9!@#\\$\\^%&*()_+=\\-]+$"

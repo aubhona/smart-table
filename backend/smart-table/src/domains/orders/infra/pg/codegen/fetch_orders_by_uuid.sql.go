@@ -22,7 +22,7 @@ FROM (
         (
             COALESCE((
                 SELECT jsonb_agg(to_jsonb(i))
-                FROM "smart-table.items" i
+                FROM smart_table_customer.items i
                 WHERE i.order_uuid = o.uuid
             ), '[]'::jsonb)
         )
@@ -31,12 +31,12 @@ FROM (
         (
             COALESCE((
                 SELECT jsonb_agg(to_jsonb(c))
-                FROM "smart-table.customers" c
+                FROM smart_table_customer.customers c
                 WHERE c.uuid = ANY(o.customers_uuid)
             ), '[]'::jsonb)
         )
     ) AS order_data
-    FROM "smart-table.orders" AS o
+    FROM smart_table_customer.orders AS o
     WHERE o.uuid = ANY($1::UUID[])
 ) AS orders
 `
