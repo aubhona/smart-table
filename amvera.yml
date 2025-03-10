@@ -4,9 +4,16 @@ meta:
     name: browser
     version: "18"
 build:
-  path: frontend/smart-table-customer/ 
+  path: .  
   additionalCommands: |
-    ls -la   # 🔍 Выведет файлы, чтобы убедиться, что package.json доступен
+    echo "Current directory:"
+    pwd
+    echo "Listing files:"
+    ls -la
+    cd frontend/smart-table-customer 
+    echo "Now inside frontend/smart-table-customer"
+    pwd
+    ls -la
     npm install
     npm run build
   artifacts:
@@ -16,5 +23,5 @@ nginxConfig:
     /:
       root: /app/build
       index: index.html
-      try_files: $uri $uri/ /index.html;
+      try_files: $uri /index.html;
       error_page 404 = /index.html;
