@@ -8,5 +8,9 @@ build:
   additionalCommands: npm install && npm run build
   artifacts:
     build/*: /
-run: 
-  command: npm start
+nginxConfig:
+  locations:
+    /:
+      root: /app/build
+      index: index.html
+      try_files: $uri /index.html;
