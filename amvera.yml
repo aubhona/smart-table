@@ -7,11 +7,10 @@ build:
   path: frontend/smart-table-customer/  
   additionalCommands: npm install && npm run build
   artifacts:
-    frontend/smart-table-customer/build/*: /
+    build/*: /app/build/
 nginxConfig:
   locations:
     /:
       root: /app/build
       index: index.html
       try_files: $uri $uri/ /index.html;
-  
