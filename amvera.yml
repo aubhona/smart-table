@@ -7,7 +7,7 @@ build:
   path: frontend/smart-table-customer/
   additionalCommands: npm install && npm run build
   artifacts:
-    build/*: /
+    frontend/smart-table-customer/build/*: /
 nginxConfig:
   locations:
     /:
