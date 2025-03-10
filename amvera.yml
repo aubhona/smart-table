@@ -4,8 +4,11 @@ meta:
     name: browser
     version: "18"
 build:
-  path: frontend/smart-table-customer/
-  additionalCommands: npm install && npm run build
+  path: frontend/smart-table-customer/ 
+  additionalCommands: |
+    ls -la   # 🔍 Выведет файлы, чтобы убедиться, что package.json доступен
+    npm install
+    npm run build
   artifacts:
     frontend/smart-table-customer/build/*: /
 nginxConfig:
@@ -14,3 +17,4 @@ nginxConfig:
       root: /app/build
       index: index.html
       try_files: $uri $uri/ /index.html;
+      error_page 404 = /index.html;
