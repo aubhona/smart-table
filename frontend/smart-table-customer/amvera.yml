@@ -4,6 +4,9 @@ meta:
     name: browser
     version: "18"
 build:
+  path: frontend/smart-table-customer/
+  build: build
+  root: /
   additionalCommands: null
   artifacts:
     build/*: /
