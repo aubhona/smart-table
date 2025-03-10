@@ -4,18 +4,8 @@ meta:
     name: browser
     version: "18"
 build:
-  path: .  
-  additionalCommands: |
-    echo "Current directory:"
-    pwd
-    echo "Listing files:"
-    ls -la
-    cd frontend/smart-table-customer 
-    echo "Now inside frontend/smart-table-customer"
-    pwd
-    ls -la
-    npm install
-    npm run build
+  path: frontend/smart-table-customer/  
+  additionalCommands: npm install && npm run build
   artifacts:
     frontend/smart-table-customer/build/*: /
 nginxConfig:
@@ -23,5 +13,5 @@ nginxConfig:
     /:
       root: /app/build
       index: index.html
-      try_files: $uri /index.html;
-      error_page 404 = /index.html;
+      try_files: $uri $uri/ /index.html;
+  
