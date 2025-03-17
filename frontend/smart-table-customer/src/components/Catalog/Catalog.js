@@ -20,6 +20,7 @@ const dishes = [
   { id: 7, category: "deserty", name: "Блины", price: 50, calories: 300 },
   { id: 8, category: "pervoe", name: "Борщок", price: 100, calories: 200 },
   { id: 9, category: "novinki", name: "Яблоко", price: 6, calories: 100 },
+  { id: 10, category: "holodnoe", name: "Сок", price: 6, calories: 100 },
 ];
 function Catalog() {
   const [cart, setCart] = useState({});
@@ -72,21 +73,20 @@ function Catalog() {
         </div>
       </div>
 
-      <div className="menu-grid">
-        {categories.map((cat) => (
+      {categories.map((cat) => (
           <div key={cat.id} id={cat.id} className="category-section">
             <h2 className="category-title">{cat.name}</h2>
-            <div className="category-section">
-              {dishes
-                .filter((dish) => dish.category === cat.id)
-                .map((dish) => (
-                  <div key={dish.id} className="menu-item">
-                    <div className="dish-img">Фотка жоского блюда</div>
-                    <div className="dish-info">
-                      <p className="dish-price"><strong>{dish.price} рублей</strong></p>
-                      <p className="dish-name">{dish.name}</p>
-                      <p className="dish-calories">{dish.calories} грамм</p>
-                    </div>
+                <div className="menu-grid">
+                  {dishes
+                    .filter((dish) => dish.category === cat.id)
+                    .map((dish) => (
+                      <div key={dish.id} className="menu-item">
+                        <div className="dish-img">Фотка жоского блюда</div>
+                        <div className="dish-info">
+                          <p className="dish-price"><strong>{dish.price} рублей</strong></p>
+                          <p className="dish-name">{dish.name}</p>
+                          <p className="dish-calories">{dish.calories} грамм</p>
+                      </div>
                     <div className="quantity-controls">
                       {cart[dish.id] ? (
                         <>
@@ -103,8 +103,8 @@ function Catalog() {
             </div>
           </div>
         ))}
-      </div>
-
+        <div className="scroll-padding"></div>
+        
       <div className="total-price">
         <p>Итого: <strong>{totalPrice} рублей</strong></p>
         <button className="checkout-button">Далее   </button>
