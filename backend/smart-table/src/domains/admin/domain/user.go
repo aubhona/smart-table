@@ -85,9 +85,9 @@ func RestoreUser(
 
 func (u *User) GetUUID() uuid.UUID      { return u.uuid }
 func (u *User) GetLogin() string        { return u.login }
-func (u *User) GettgID() string         { return u.tgID }
+func (u *User) GetTgID() string         { return u.tgID }
 func (u *User) GetTgLogin() string      { return u.tgLogin }
-func (u *User) GetchatID() string       { return u.chatID }
+func (u *User) GetChatID() string       { return u.chatID }
 func (u *User) GetFirstName() string    { return u.firstName }
 func (u *User) GetLastName() string     { return u.lastName }
 func (u *User) GetPasswordHash() string { return u.passwordHash }
