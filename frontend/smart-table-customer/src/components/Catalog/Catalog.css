@@ -1,10 +1,10 @@
 .catalog-container {
-    font-family: 'Courier New', Consolas, monospace;
-    color: #ede2d9;
-    text-align: center;
-    flex-direction: column;
-    height: 65vh;
-  }
+  font-family: 'Courier New', Consolas, monospace;
+  color: #ede2d9;
+  text-align: center;
+  flex-direction: column;
+  height: 65vh;
+}
 
 .top-buttons {
   position: fixed;
@@ -92,7 +92,7 @@
   text-align: left;
   border-bottom: 5px solid #eccea7;
   border-radius: 4% / 25%;
-  width: 90%;
+  width: 100%;
 }
 
 .category-section {
@@ -136,7 +136,7 @@
   border-radius: 8% / 7%;
   text-align: center;
 }
-  
+
 .dish-info p {
   margin: 3px 0;
   color: black;

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Catalog.css";
+import { useNavigate } from "react-router-dom";
 
 const categories = [
   { id: "novinki", name: "Новинки" },
@@ -23,6 +24,7 @@ const dishes = [
   { id: 10, category: "holodnoe", name: "Сок", price: 6, calories: 100 },
 ];
 function Catalog() {
+  const navigate = useNavigate();
   const [cart, setCart] = useState({});
 
   const updateQuantity = (id, change) => {
@@ -35,6 +37,10 @@ function Catalog() {
       }
       return { ...prev, [id]: newQuantity };
     });
+  };
+
+  const handleItemClick = (id) => {
+    navigate(`/catalog/item/${id}`); 
   };
 
   const totalPrice = Object.keys(cart).reduce(
@@ -80,22 +86,22 @@ function Catalog() {
                   {dishes
                     .filter((dish) => dish.category === cat.id)
                     .map((dish) => (
-                      <div key={dish.id} className="menu-item">
+                      <div key={dish.id} className="menu-item" onClick={() => handleItemClick(dish.id)}>
                         <div className="dish-img">Фотка жоского блюда</div>
                         <div className="dish-info">
-                          <p className="dish-price"><strong>{dish.price} рублей</strong></p>
+                          <p className="dish-price"><strong>{dish.price} ₽</strong></p>
                           <p className="dish-name">{dish.name}</p>
                           <p className="dish-calories">{dish.calories} грамм</p>
                       </div>
                     <div className="quantity-controls">
                       {cart[dish.id] ? (
                         <>
-                          <button onClick={() => updateQuantity(dish.id, -1)}>-</button>
+                          <button onClick={(e) => { e.stopPropagation(); updateQuantity(dish.id, -1); }}>-</button>
                           <span><strong>{cart[dish.id]}</strong></span>
-                          <button onClick={() => updateQuantity(dish.id, 1)}>+</button>
+                          <button onClick={(e) => { e.stopPropagation(); updateQuantity(dish.id, 1); }}>+</button>
                         </>
                       ) : (
-                        <button className="add-button" onClick={() => updateQuantity(dish.id, 1)}>+</button>
+                        <button className="add-button" onClick={(e) => { e.stopPropagation(); updateQuantity(dish.id, 1); }}>+</button>
                       )}
                     </div>
                   </div>
