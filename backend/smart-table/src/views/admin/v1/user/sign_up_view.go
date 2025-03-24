@@ -8,7 +8,7 @@ import (
 
 func (h *V1AdminUserHandler) PostV1AdminUserSignUp(
 	ctx context.Context,
-	request viewsAdminUser.PostV1AdminUserSignUpRequestObject,
-) (viewsAdminUser.PostV1AdminUserSignUpResponseObject, error) {
+	request viewsAdminUser.PostAdminV1UserSignUpRequestObject,
+) (viewsAdminUser.PostAdminV1UserSignUpResponseObject, error) {
 	return nil, nil
 }

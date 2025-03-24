@@ -5,7 +5,7 @@ info:
     description: API для управления заказами.
 
 paths:
-    /v1/admin/user/sign-up:
+    /admin/v1/user/sign-up:
         post:
             summary: Регистрация пользователя в админке
             description: Регистрирует пользователя в админке
@@ -45,7 +45,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
-    /v1/admin/user/sign-in:
+    /admin/v1/user/sign-in:
         post:
             summary: Авторизация пользователя в админке
             description: Авторизует пользователя в админке

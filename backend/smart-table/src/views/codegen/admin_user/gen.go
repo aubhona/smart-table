@@ -82,11 +82,11 @@ type V1AdminUserSignUpResponse struct {
 	UserUUID openapi_types.UUID `json:"user_uuid"`
 }
 
-// PostV1AdminUserSignInJSONRequestBody defines body for PostV1AdminUserSignIn for application/json ContentType.
-type PostV1AdminUserSignInJSONRequestBody = V1AdminUserSignInRequest
+// PostAdminV1UserSignInJSONRequestBody defines body for PostAdminV1UserSignIn for application/json ContentType.
+type PostAdminV1UserSignInJSONRequestBody = V1AdminUserSignInRequest
 
-// PostV1AdminUserSignUpJSONRequestBody defines body for PostV1AdminUserSignUp for application/json ContentType.
-type PostV1AdminUserSignUpJSONRequestBody = V1AdminUserSignUpRequest
+// PostAdminV1UserSignUpJSONRequestBody defines body for PostAdminV1UserSignUp for application/json ContentType.
+type PostAdminV1UserSignUpJSONRequestBody = V1AdminUserSignUpRequest
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -161,19 +161,19 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
-	// PostV1AdminUserSignInWithBody request with any body
-	PostV1AdminUserSignInWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// PostAdminV1UserSignInWithBody request with any body
+	PostAdminV1UserSignInWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	PostV1AdminUserSignIn(ctx context.Context, body PostV1AdminUserSignInJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	PostAdminV1UserSignIn(ctx context.Context, body PostAdminV1UserSignInJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// PostV1AdminUserSignUpWithBody request with any body
-	PostV1AdminUserSignUpWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// PostAdminV1UserSignUpWithBody request with any body
+	PostAdminV1UserSignUpWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	PostV1AdminUserSignUp(ctx context.Context, body PostV1AdminUserSignUpJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	PostAdminV1UserSignUp(ctx context.Context, body PostAdminV1UserSignUpJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-func (c *Client) PostV1AdminUserSignInWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostV1AdminUserSignInRequestWithBody(c.Server, contentType, body)
+func (c *Client) PostAdminV1UserSignInWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostAdminV1UserSignInRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -184,8 +184,8 @@ func (c *Client) PostV1AdminUserSignInWithBody(ctx context.Context, contentType 
 	return c.Client.Do(req)
 }
 
-func (c *Client) PostV1AdminUserSignIn(ctx context.Context, body PostV1AdminUserSignInJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostV1AdminUserSignInRequest(c.Server, body)
+func (c *Client) PostAdminV1UserSignIn(ctx context.Context, body PostAdminV1UserSignInJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostAdminV1UserSignInRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -196,8 +196,8 @@ func (c *Client) PostV1AdminUserSignIn(ctx context.Context, body PostV1AdminUser
 	return c.Client.Do(req)
 }
 
-func (c *Client) PostV1AdminUserSignUpWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostV1AdminUserSignUpRequestWithBody(c.Server, contentType, body)
+func (c *Client) PostAdminV1UserSignUpWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostAdminV1UserSignUpRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -208,8 +208,8 @@ func (c *Client) PostV1AdminUserSignUpWithBody(ctx context.Context, contentType 
 	return c.Client.Do(req)
 }
 
-func (c *Client) PostV1AdminUserSignUp(ctx context.Context, body PostV1AdminUserSignUpJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostV1AdminUserSignUpRequest(c.Server, body)
+func (c *Client) PostAdminV1UserSignUp(ctx context.Context, body PostAdminV1UserSignUpJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostAdminV1UserSignUpRequest(c.Server, body)
 	if err != nil {
 		return nil, err
 	}
@@ -220,19 +220,19 @@ func (c *Client) PostV1AdminUserSignUp(ctx context.Context, body PostV1AdminUser
 	return c.Client.Do(req)
 }
 
-// NewPostV1AdminUserSignInRequest calls the generic PostV1AdminUserSignIn builder with application/json body
-func NewPostV1AdminUserSignInRequest(server string, body PostV1AdminUserSignInJSONRequestBody) (*http.Request, error) {
+// NewPostAdminV1UserSignInRequest calls the generic PostAdminV1UserSignIn builder with application/json body
+func NewPostAdminV1UserSignInRequest(server string, body PostAdminV1UserSignInJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewPostV1AdminUserSignInRequestWithBody(server, "application/json", bodyReader)
+	return NewPostAdminV1UserSignInRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewPostV1AdminUserSignInRequestWithBody generates requests for PostV1AdminUserSignIn with any type of body
-func NewPostV1AdminUserSignInRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewPostAdminV1UserSignInRequestWithBody generates requests for PostAdminV1UserSignIn with any type of body
+func NewPostAdminV1UserSignInRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -240,7 +240,7 @@ func NewPostV1AdminUserSignInRequestWithBody(server string, contentType string, 
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/v1/admin/user/sign-in")
+	operationPath := fmt.Sprintf("/admin/v1/user/sign-in")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -260,19 +260,19 @@ func NewPostV1AdminUserSignInRequestWithBody(server string, contentType string, 
 	return req, nil
 }
 
-// NewPostV1AdminUserSignUpRequest calls the generic PostV1AdminUserSignUp builder with application/json body
-func NewPostV1AdminUserSignUpRequest(server string, body PostV1AdminUserSignUpJSONRequestBody) (*http.Request, error) {
+// NewPostAdminV1UserSignUpRequest calls the generic PostAdminV1UserSignUp builder with application/json body
+func NewPostAdminV1UserSignUpRequest(server string, body PostAdminV1UserSignUpJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewPostV1AdminUserSignUpRequestWithBody(server, "application/json", bodyReader)
+	return NewPostAdminV1UserSignUpRequestWithBody(server, "application/json", bodyReader)
 }
 
-// NewPostV1AdminUserSignUpRequestWithBody generates requests for PostV1AdminUserSignUp with any type of body
-func NewPostV1AdminUserSignUpRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+// NewPostAdminV1UserSignUpRequestWithBody generates requests for PostAdminV1UserSignUp with any type of body
+func NewPostAdminV1UserSignUpRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	serverURL, err := url.Parse(server)
@@ -280,7 +280,7 @@ func NewPostV1AdminUserSignUpRequestWithBody(server string, contentType string, 
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/v1/admin/user/sign-up")
+	operationPath := fmt.Sprintf("/admin/v1/user/sign-up")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -343,18 +343,18 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
-	// PostV1AdminUserSignInWithBodyWithResponse request with any body
-	PostV1AdminUserSignInWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostV1AdminUserSignInResponse, error)
+	// PostAdminV1UserSignInWithBodyWithResponse request with any body
+	PostAdminV1UserSignInWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostAdminV1UserSignInResponse, error)
 
-	PostV1AdminUserSignInWithResponse(ctx context.Context, body PostV1AdminUserSignInJSONRequestBody, reqEditors ...RequestEditorFn) (*PostV1AdminUserSignInResponse, error)
+	PostAdminV1UserSignInWithResponse(ctx context.Context, body PostAdminV1UserSignInJSONRequestBody, reqEditors ...RequestEditorFn) (*PostAdminV1UserSignInResponse, error)
 
-	// PostV1AdminUserSignUpWithBodyWithResponse request with any body
-	PostV1AdminUserSignUpWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostV1AdminUserSignUpResponse, error)
+	// PostAdminV1UserSignUpWithBodyWithResponse request with any body
+	PostAdminV1UserSignUpWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostAdminV1UserSignUpResponse, error)
 
-	PostV1AdminUserSignUpWithResponse(ctx context.Context, body PostV1AdminUserSignUpJSONRequestBody, reqEditors ...RequestEditorFn) (*PostV1AdminUserSignUpResponse, error)
+	PostAdminV1UserSignUpWithResponse(ctx context.Context, body PostAdminV1UserSignUpJSONRequestBody, reqEditors ...RequestEditorFn) (*PostAdminV1UserSignUpResponse, error)
 }
 
-type PostV1AdminUserSignInResponse struct {
+type PostAdminV1UserSignInResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *V1AdminUserSignInResponse
@@ -364,7 +364,7 @@ type PostV1AdminUserSignInResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r PostV1AdminUserSignInResponse) Status() string {
+func (r PostAdminV1UserSignInResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -372,14 +372,14 @@ func (r PostV1AdminUserSignInResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r PostV1AdminUserSignInResponse) StatusCode() int {
+func (r PostAdminV1UserSignInResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type PostV1AdminUserSignUpResponse struct {
+type PostAdminV1UserSignUpResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *V1AdminUserSignUpResponse
@@ -389,7 +389,7 @@ type PostV1AdminUserSignUpResponse struct {
 }
 
 // Status returns HTTPResponse.Status
-func (r PostV1AdminUserSignUpResponse) Status() string {
+func (r PostAdminV1UserSignUpResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -397,56 +397,56 @@ func (r PostV1AdminUserSignUpResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r PostV1AdminUserSignUpResponse) StatusCode() int {
+func (r PostAdminV1UserSignUpResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-// PostV1AdminUserSignInWithBodyWithResponse request with arbitrary body returning *PostV1AdminUserSignInResponse
-func (c *ClientWithResponses) PostV1AdminUserSignInWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostV1AdminUserSignInResponse, error) {
-	rsp, err := c.PostV1AdminUserSignInWithBody(ctx, contentType, body, reqEditors...)
+// PostAdminV1UserSignInWithBodyWithResponse request with arbitrary body returning *PostAdminV1UserSignInResponse
+func (c *ClientWithResponses) PostAdminV1UserSignInWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostAdminV1UserSignInResponse, error) {
+	rsp, err := c.PostAdminV1UserSignInWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParsePostV1AdminUserSignInResponse(rsp)
+	return ParsePostAdminV1UserSignInResponse(rsp)
 }
 
-func (c *ClientWithResponses) PostV1AdminUserSignInWithResponse(ctx context.Context, body PostV1AdminUserSignInJSONRequestBody, reqEditors ...RequestEditorFn) (*PostV1AdminUserSignInResponse, error) {
-	rsp, err := c.PostV1AdminUserSignIn(ctx, body, reqEditors...)
+func (c *ClientWithResponses) PostAdminV1UserSignInWithResponse(ctx context.Context, body PostAdminV1UserSignInJSONRequestBody, reqEditors ...RequestEditorFn) (*PostAdminV1UserSignInResponse, error) {
+	rsp, err := c.PostAdminV1UserSignIn(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParsePostV1AdminUserSignInResponse(rsp)
+	return ParsePostAdminV1UserSignInResponse(rsp)
 }
 
-// PostV1AdminUserSignUpWithBodyWithResponse request with arbitrary body returning *PostV1AdminUserSignUpResponse
-func (c *ClientWithResponses) PostV1AdminUserSignUpWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostV1AdminUserSignUpResponse, error) {
-	rsp, err := c.PostV1AdminUserSignUpWithBody(ctx, contentType, body, reqEditors...)
+// PostAdminV1UserSignUpWithBodyWithResponse request with arbitrary body returning *PostAdminV1UserSignUpResponse
+func (c *ClientWithResponses) PostAdminV1UserSignUpWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostAdminV1UserSignUpResponse, error) {
+	rsp, err := c.PostAdminV1UserSignUpWithBody(ctx, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParsePostV1AdminUserSignUpResponse(rsp)
+	return ParsePostAdminV1UserSignUpResponse(rsp)
 }
 
-func (c *ClientWithResponses) PostV1AdminUserSignUpWithResponse(ctx context.Context, body PostV1AdminUserSignUpJSONRequestBody, reqEditors ...RequestEditorFn) (*PostV1AdminUserSignUpResponse, error) {
-	rsp, err := c.PostV1AdminUserSignUp(ctx, body, reqEditors...)
+func (c *ClientWithResponses) PostAdminV1UserSignUpWithResponse(ctx context.Context, body PostAdminV1UserSignUpJSONRequestBody, reqEditors ...RequestEditorFn) (*PostAdminV1UserSignUpResponse, error) {
+	rsp, err := c.PostAdminV1UserSignUp(ctx, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParsePostV1AdminUserSignUpResponse(rsp)
+	return ParsePostAdminV1UserSignUpResponse(rsp)
 }
 
-// ParsePostV1AdminUserSignInResponse parses an HTTP response from a PostV1AdminUserSignInWithResponse call
-func ParsePostV1AdminUserSignInResponse(rsp *http.Response) (*PostV1AdminUserSignInResponse, error) {
+// ParsePostAdminV1UserSignInResponse parses an HTTP response from a PostAdminV1UserSignInWithResponse call
+func ParsePostAdminV1UserSignInResponse(rsp *http.Response) (*PostAdminV1UserSignInResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &PostV1AdminUserSignInResponse{
+	response := &PostAdminV1UserSignInResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -485,15 +485,15 @@ func ParsePostV1AdminUserSignInResponse(rsp *http.Response) (*PostV1AdminUserSig
 	return response, nil
 }
 
-// ParsePostV1AdminUserSignUpResponse parses an HTTP response from a PostV1AdminUserSignUpWithResponse call
-func ParsePostV1AdminUserSignUpResponse(rsp *http.Response) (*PostV1AdminUserSignUpResponse, error) {
+// ParsePostAdminV1UserSignUpResponse parses an HTTP response from a PostAdminV1UserSignUpWithResponse call
+func ParsePostAdminV1UserSignUpResponse(rsp *http.Response) (*PostAdminV1UserSignUpResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &PostV1AdminUserSignUpResponse{
+	response := &PostAdminV1UserSignUpResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -535,11 +535,11 @@ func ParsePostV1AdminUserSignUpResponse(rsp *http.Response) (*PostV1AdminUserSig
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 	// Авторизация пользователя в админке
-	// (POST /v1/admin/user/sign-in)
-	PostV1AdminUserSignIn(c *gin.Context)
+	// (POST /admin/v1/user/sign-in)
+	PostAdminV1UserSignIn(c *gin.Context)
 	// Регистрация пользователя в админке
-	// (POST /v1/admin/user/sign-up)
-	PostV1AdminUserSignUp(c *gin.Context)
+	// (POST /admin/v1/user/sign-up)
+	PostAdminV1UserSignUp(c *gin.Context)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -551,8 +551,8 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(c *gin.Context)
 
-// PostV1AdminUserSignIn operation middleware
-func (siw *ServerInterfaceWrapper) PostV1AdminUserSignIn(c *gin.Context) {
+// PostAdminV1UserSignIn operation middleware
+func (siw *ServerInterfaceWrapper) PostAdminV1UserSignIn(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -561,11 +561,11 @@ func (siw *ServerInterfaceWrapper) PostV1AdminUserSignIn(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PostV1AdminUserSignIn(c)
+	siw.Handler.PostAdminV1UserSignIn(c)
 }
 
-// PostV1AdminUserSignUp operation middleware
-func (siw *ServerInterfaceWrapper) PostV1AdminUserSignUp(c *gin.Context) {
+// PostAdminV1UserSignUp operation middleware
+func (siw *ServerInterfaceWrapper) PostAdminV1UserSignUp(c *gin.Context) {
 
 	for _, middleware := range siw.HandlerMiddlewares {
 		middleware(c)
@@ -574,7 +574,7 @@ func (siw *ServerInterfaceWrapper) PostV1AdminUserSignUp(c *gin.Context) {
 		}
 	}
 
-	siw.Handler.PostV1AdminUserSignUp(c)
+	siw.Handler.PostAdminV1UserSignUp(c)
 }
 
 // GinServerOptions provides options for the Gin server.
@@ -604,28 +604,28 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
-	router.POST(options.BaseURL+"/v1/admin/user/sign-in", wrapper.PostV1AdminUserSignIn)
-	router.POST(options.BaseURL+"/v1/admin/user/sign-up", wrapper.PostV1AdminUserSignUp)
+	router.POST(options.BaseURL+"/admin/v1/user/sign-in", wrapper.PostAdminV1UserSignIn)
+	router.POST(options.BaseURL+"/admin/v1/user/sign-up", wrapper.PostAdminV1UserSignUp)
 }
 
-type PostV1AdminUserSignInRequestObject struct {
-	Body *PostV1AdminUserSignInJSONRequestBody
+type PostAdminV1UserSignInRequestObject struct {
+	Body *PostAdminV1UserSignInJSONRequestBody
 }
 
-type PostV1AdminUserSignInResponseObject interface {
-	VisitPostV1AdminUserSignInResponse(w http.ResponseWriter) error
+type PostAdminV1UserSignInResponseObject interface {
+	VisitPostAdminV1UserSignInResponse(w http.ResponseWriter) error
 }
 
-type PostV1AdminUserSignIn200ResponseHeaders struct {
+type PostAdminV1UserSignIn200ResponseHeaders struct {
 	SetCookie string
 }
 
-type PostV1AdminUserSignIn200JSONResponse struct {
+type PostAdminV1UserSignIn200JSONResponse struct {
 	Body    V1AdminUserSignInResponse
-	Headers PostV1AdminUserSignIn200ResponseHeaders
+	Headers PostAdminV1UserSignIn200ResponseHeaders
 }
 
-func (response PostV1AdminUserSignIn200JSONResponse) VisitPostV1AdminUserSignInResponse(w http.ResponseWriter) error {
+func (response PostAdminV1UserSignIn200JSONResponse) VisitPostAdminV1UserSignInResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Set-Cookie", fmt.Sprint(response.Headers.SetCookie))
 	w.WriteHeader(200)
@@ -633,51 +633,51 @@ func (response PostV1AdminUserSignIn200JSONResponse) VisitPostV1AdminUserSignInR
 	return json.NewEncoder(w).Encode(response.Body)
 }
 
-type PostV1AdminUserSignIn400JSONResponse ErrorResponse
+type PostAdminV1UserSignIn400JSONResponse ErrorResponse
 
-func (response PostV1AdminUserSignIn400JSONResponse) VisitPostV1AdminUserSignInResponse(w http.ResponseWriter) error {
+func (response PostAdminV1UserSignIn400JSONResponse) VisitPostAdminV1UserSignInResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(400)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostV1AdminUserSignIn401JSONResponse ErrorResponse
+type PostAdminV1UserSignIn401JSONResponse ErrorResponse
 
-func (response PostV1AdminUserSignIn401JSONResponse) VisitPostV1AdminUserSignInResponse(w http.ResponseWriter) error {
+func (response PostAdminV1UserSignIn401JSONResponse) VisitPostAdminV1UserSignInResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(401)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostV1AdminUserSignIn500JSONResponse ErrorResponse
+type PostAdminV1UserSignIn500JSONResponse ErrorResponse
 
-func (response PostV1AdminUserSignIn500JSONResponse) VisitPostV1AdminUserSignInResponse(w http.ResponseWriter) error {
+func (response PostAdminV1UserSignIn500JSONResponse) VisitPostAdminV1UserSignInResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostV1AdminUserSignUpRequestObject struct {
-	Body *PostV1AdminUserSignUpJSONRequestBody
+type PostAdminV1UserSignUpRequestObject struct {
+	Body *PostAdminV1UserSignUpJSONRequestBody
 }
 
-type PostV1AdminUserSignUpResponseObject interface {
-	VisitPostV1AdminUserSignUpResponse(w http.ResponseWriter) error
+type PostAdminV1UserSignUpResponseObject interface {
+	VisitPostAdminV1UserSignUpResponse(w http.ResponseWriter) error
 }
 
-type PostV1AdminUserSignUp200ResponseHeaders struct {
+type PostAdminV1UserSignUp200ResponseHeaders struct {
 	SetCookie string
 }
 
-type PostV1AdminUserSignUp200JSONResponse struct {
+type PostAdminV1UserSignUp200JSONResponse struct {
 	Body    V1AdminUserSignUpResponse
-	Headers PostV1AdminUserSignUp200ResponseHeaders
+	Headers PostAdminV1UserSignUp200ResponseHeaders
 }
 
-func (response PostV1AdminUserSignUp200JSONResponse) VisitPostV1AdminUserSignUpResponse(w http.ResponseWriter) error {
+func (response PostAdminV1UserSignUp200JSONResponse) VisitPostAdminV1UserSignUpResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Set-Cookie", fmt.Sprint(response.Headers.SetCookie))
 	w.WriteHeader(200)
@@ -685,27 +685,27 @@ func (response PostV1AdminUserSignUp200JSONResponse) VisitPostV1AdminUserSignUpR
 	return json.NewEncoder(w).Encode(response.Body)
 }
 
-type PostV1AdminUserSignUp400JSONResponse ErrorResponse
+type PostAdminV1UserSignUp400JSONResponse ErrorResponse
 
-func (response PostV1AdminUserSignUp400JSONResponse) VisitPostV1AdminUserSignUpResponse(w http.ResponseWriter) error {
+func (response PostAdminV1UserSignUp400JSONResponse) VisitPostAdminV1UserSignUpResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(400)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostV1AdminUserSignUp409JSONResponse ErrorResponse
+type PostAdminV1UserSignUp409JSONResponse ErrorResponse
 
-func (response PostV1AdminUserSignUp409JSONResponse) VisitPostV1AdminUserSignUpResponse(w http.ResponseWriter) error {
+func (response PostAdminV1UserSignUp409JSONResponse) VisitPostAdminV1UserSignUpResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(409)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type PostV1AdminUserSignUp500JSONResponse ErrorResponse
+type PostAdminV1UserSignUp500JSONResponse ErrorResponse
 
-func (response PostV1AdminUserSignUp500JSONResponse) VisitPostV1AdminUserSignUpResponse(w http.ResponseWriter) error {
+func (response PostAdminV1UserSignUp500JSONResponse) VisitPostAdminV1UserSignUpResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
@@ -715,11 +715,11 @@ func (response PostV1AdminUserSignUp500JSONResponse) VisitPostV1AdminUserSignUpR
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 	// Авторизация пользователя в админке
-	// (POST /v1/admin/user/sign-in)
-	PostV1AdminUserSignIn(ctx context.Context, request PostV1AdminUserSignInRequestObject) (PostV1AdminUserSignInResponseObject, error)
+	// (POST /admin/v1/user/sign-in)
+	PostAdminV1UserSignIn(ctx context.Context, request PostAdminV1UserSignInRequestObject) (PostAdminV1UserSignInResponseObject, error)
 	// Регистрация пользователя в админке
-	// (POST /v1/admin/user/sign-up)
-	PostV1AdminUserSignUp(ctx context.Context, request PostV1AdminUserSignUpRequestObject) (PostV1AdminUserSignUpResponseObject, error)
+	// (POST /admin/v1/user/sign-up)
+	PostAdminV1UserSignUp(ctx context.Context, request PostAdminV1UserSignUpRequestObject) (PostAdminV1UserSignUpResponseObject, error)
 }
 
 type StrictHandlerFunc = strictgin.StrictGinHandlerFunc
@@ -734,11 +734,11 @@ type strictHandler struct {
 	middlewares []StrictMiddlewareFunc
 }
 
-// PostV1AdminUserSignIn operation middleware
-func (sh *strictHandler) PostV1AdminUserSignIn(ctx *gin.Context) {
-	var request PostV1AdminUserSignInRequestObject
+// PostAdminV1UserSignIn operation middleware
+func (sh *strictHandler) PostAdminV1UserSignIn(ctx *gin.Context) {
+	var request PostAdminV1UserSignInRequestObject
 
-	var body PostV1AdminUserSignInJSONRequestBody
+	var body PostAdminV1UserSignInJSONRequestBody
 	if err := ctx.ShouldBindJSON(&body); err != nil {
 		ctx.Status(http.StatusBadRequest)
 		ctx.Error(err)
@@ -747,10 +747,10 @@ func (sh *strictHandler) PostV1AdminUserSignIn(ctx *gin.Context) {
 	request.Body = &body
 
 	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.PostV1AdminUserSignIn(ctx, request.(PostV1AdminUserSignInRequestObject))
+		return sh.ssi.PostAdminV1UserSignIn(ctx, request.(PostAdminV1UserSignInRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PostV1AdminUserSignIn")
+		handler = middleware(handler, "PostAdminV1UserSignIn")
 	}
 
 	response, err := handler(ctx, request)
@@ -758,8 +758,8 @@ func (sh *strictHandler) PostV1AdminUserSignIn(ctx *gin.Context) {
 	if err != nil {
 		ctx.Error(err)
 		ctx.Status(http.StatusInternalServerError)
-	} else if validResponse, ok := response.(PostV1AdminUserSignInResponseObject); ok {
-		if err := validResponse.VisitPostV1AdminUserSignInResponse(ctx.Writer); err != nil {
+	} else if validResponse, ok := response.(PostAdminV1UserSignInResponseObject); ok {
+		if err := validResponse.VisitPostAdminV1UserSignInResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
 		}
 	} else if response != nil {
@@ -767,11 +767,11 @@ func (sh *strictHandler) PostV1AdminUserSignIn(ctx *gin.Context) {
 	}
 }
 
-// PostV1AdminUserSignUp operation middleware
-func (sh *strictHandler) PostV1AdminUserSignUp(ctx *gin.Context) {
-	var request PostV1AdminUserSignUpRequestObject
+// PostAdminV1UserSignUp operation middleware
+func (sh *strictHandler) PostAdminV1UserSignUp(ctx *gin.Context) {
+	var request PostAdminV1UserSignUpRequestObject
 
-	var body PostV1AdminUserSignUpJSONRequestBody
+	var body PostAdminV1UserSignUpJSONRequestBody
 	if err := ctx.ShouldBindJSON(&body); err != nil {
 		ctx.Status(http.StatusBadRequest)
 		ctx.Error(err)
@@ -780,10 +780,10 @@ func (sh *strictHandler) PostV1AdminUserSignUp(ctx *gin.Context) {
 	request.Body = &body
 
 	handler := func(ctx *gin.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.PostV1AdminUserSignUp(ctx, request.(PostV1AdminUserSignUpRequestObject))
+		return sh.ssi.PostAdminV1UserSignUp(ctx, request.(PostAdminV1UserSignUpRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PostV1AdminUserSignUp")
+		handler = middleware(handler, "PostAdminV1UserSignUp")
 	}
 
 	response, err := handler(ctx, request)
@@ -791,8 +791,8 @@ func (sh *strictHandler) PostV1AdminUserSignUp(ctx *gin.Context) {
 	if err != nil {
 		ctx.Error(err)
 		ctx.Status(http.StatusInternalServerError)
-	} else if validResponse, ok := response.(PostV1AdminUserSignUpResponseObject); ok {
-		if err := validResponse.VisitPostV1AdminUserSignUpResponse(ctx.Writer); err != nil {
+	} else if validResponse, ok := response.(PostAdminV1UserSignUpResponseObject); ok {
+		if err := validResponse.VisitPostAdminV1UserSignUpResponse(ctx.Writer); err != nil {
 			ctx.Error(err)
 		}
 	} else if response != nil {
@@ -803,26 +803,26 @@ func (sh *strictHandler) PostV1AdminUserSignUp(ctx *gin.Context) {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+xW7W4bRRR9lWVaJKC78TpJUWMJCYNAChQpalqQ2k2tqT12JrV3tzOzLWlkyUlQVUSl",
-	"IH4hEKUSPMBismSb1M4r3HkjNDOJvU42H45IIgS/7Bl77px77zln7gqqBq0w8IkvOCqtIF5dJC2sv37C",
-	"WMBuER4GPidqA9dqVNDAx805FoSECUo4KtVxkxMbhZktFbSmj9QIrzIaqlOohOAn6MOmBX35HFL4A7Yh",
-	"RTYSyyFBJcQFo34DtW3UIpzjRt75l7ALqVyFGHqQQnJCpLaNGHkUUUZqqHTPYBpGXxj8P3iwRKpC3Xwz",
-	"aFA/596foQ9/Qgo9C3ahDzvyBWxBH7oQyzVIYEduqMD465vEb4hFVJoq2qhF/f3ltI1CLARhKtj9e9h5",
-	"WnbuLux9us5MZWFl2p4qtq/mVWMOc/4kYLUcWL9CLDsGzymBTU6PALsxCqzs3MXOU9eZeevDK5531fPu",
-	"v+1Frjv5/nvvvFu59oHnOQvXcjF+WSzXWtS/wwmbpw1/1r9FHkWEizFZ09wv/1VG6qiErhSG5CzsMbNg",
-	"etRWyIeFOe7AoIAHCWGuywTKo0ROamdSxNITURHBQ5JDr8++um3JNejDNiTHU+xQ4SNOWCWKaB47ftMi",
-	"2YZYB+vJ7+C1BSlsqkvkGqTyG/Ozulp2xrj2QBmHGOxMlqeo5Z3wbDSpU8ZFxcetPIv4Ed7IjSOTsaAH",
-	"sQU7eidVBZLPIBnVyHV3RCPFPI14nuN5/Ag1NPHR8H6HGN5ACjuQXjrMc1abjUSjMs4lR8hzEMXOdj5b",
-	"5vEkrGj3n5NwPWAtLFAJ7Qk1yxXXmcFOvex8urByo+1kl9PjLIuTeQ/YGc2ibSNOqhGjYnlescR04OMg",
-	"eEhJOVKEX0GKWKiqt5CNjOBU0CEIHNLPyTJqq3DUrweHS1yem7VgU2tOrsOu7EAMXdhRBTYK3YJYN2DL",
-	"CHdCBaeiqaLPtzATt/GDJrG+CB7QJrHKc7PIRo8J4yZ6ccKdcFWTg5D4OKSohKYm3Ikp04BFnVPhcbGA",
-	"FT8LqjYFThu+YyQTBsYaD5Die+iafkMKW3IdErl2jJF0LYhhU3tOT7ETaTAMq2izNVRCcwEXhx45ZLpG",
-	"uPgoqC2bic4XxDdWHYZNWtURCks88Idz40lCP3JOaI/yRLCI6A2jU12nSdc9Txx7jqCBHFShXIVdSORz",
-	"5cqqpnG2AxDLZ4oqyEaLBNcI02jniXAMW08yC2RnQB8Uj0Iz/Q8mPjrT5yX7CyTQhUR2tN0kShxq2t5b",
-	"KBUokfTVEI40uOIFgns5GPfj3C5AaqunM5vBa/WMDqZ3/fAqtQwGZ5XE9Qut8A/Qk+tyTXa0yfTkhqJU",
-	"P5OZXNXoTQ6x8cKo1cJs+ZD898k3jgGoeHmmE4XHmM4rSFQN5aoGnsrOuRjPnfBijGc4eV6u8WRGkdMY",
-	"j6bMsAuD3qf/W9KIJc1ckiXl9UdbUr5IXqiR4y9ILLkq1+W3kKhz0DXK+tf50qt8bo7jS+323wEAAP//",
-	"m5eP/48SAAA=",
+	"H4sIAAAAAAAC/+xW7W4bRRR9FTMNEtDdeJ2kqLGEhEEgBYoUNU2R2k2tiT12JrV3tzOzLWlkyUlQVUSl",
+	"IH4hEKUSPMBismSb1M4r3HkjNDOJvU42H45IIkR/2TP23Dn33nPO3FVU8ZuB7xFPcFRcRbyyRJpYf/2M",
+	"MZ/dJjzwPU7UBq5WqaC+hxuzzA8IE5RwVKzhBicWClJbKmhVH6kSXmE0UKdQEcHP0IOtHPTkc0jgT9iB",
+	"BFlIrAQEFREXjHp11LJQk3CO61nnX8IeJHINIuhCAvEpkVoWYuRRSBmpouJ9g2kQfaH/f39xmVSEuvmW",
+	"X6dexr2/QA/+ggS6OdiDHuzKF7ANPehAJNchhl25qQLjb24Rry6WUHGyYKEm9Q6WUxYKsBCEqWAP7mP7",
+	"acm+t7D/6djT5YXVKWuy0BrLqsYs5vyJz6oZsH6DSLYNnjMCm5gaAnZzGFjJvoftp449/c7H11x3zHUf",
+	"vOuGjjPx4QfvvV++/pHr2gvXMzHeLZSqTerNc8LmaN2b8W6TRyHhYkTWNA7KP8ZIDRXRtfyAnPl9ZuZN",
+	"j1oK+aAwJx3oF/AwIcx1qUBZlMhI7VyKWH4iysJ/SDLo9cXXd3JyHXqwA/HJFDtS+JATVg5DmsWO37VI",
+	"diDSwbrye3idgwS21CVyHRL5rflZXS3bI1x7qIwDDFYqyzPUcj44H01qlHFR9nAzyyJ+gjdy89hkctCF",
+	"KAe7eidRBZLPIB7WyA1nSCOFLI24ru26/Bg1NPDx8P6ACN5AAruQXDnMC1abhUS9PMolx8izH8VKdz5d",
+	"5tEkrGj3v5NwzWdNLFAR7Qs1zRXHnsZ2rWR/vrB6s2Wnl1OjLAsTWQ/YOc2iZSFOKiGjYmVOscR04FPf",
+	"f0hJKVSEX0WKWKiit5CFjOBU0AEIHNAvyQpqqXDUq/lHS1yancnBltac3IA92YYIOrCrCmwUug2RbsC2",
+	"Ee64Ck5FQ0Wfa2Im7uDFBsl95S/SBsmVZmeQhR4Txk30wrgz7qgm+wHxcEBREU2OO+OTpgFLOqc8VuTM",
+	"Py7kVW3ynNY920gm8I01HiLFD9Ax/YYEtuUGxHL9BCPp5CCCLe05XcVOpMEwrKLNVFERzfpcaH3cLQwe",
+	"OWS6Rrj4xK+umInOE8QzVh0EDVrREfLL3PcGc+NpQj92TmgN80SwkOgNo1NdpwnHuUgc+46ggRxWoVyD",
+	"PYjlc+XKqqZRugMQyWeKKshCSwRXCdNo54iwDVtPMwtkpUAfFo9CM/UvJj4802cl+yvE0IFYtrXdxEoc",
+	"atreXygVKJH01BCONLjCJYJ72R/3o8wuQGKppzOdwWv1jPand/3wKrX0B2eVxI1LrfCP0JUbcl22tcl0",
+	"5aaiVC+VmVzT6E0OkfHCsNnEbOWI/A/IN4oBqHhZphMGJ5jOK4hVDeWaBp7I9oUYz3xwOcYzmDyv1nhS",
+	"o8hZjEdTZtCFfu+Tt5Y0ZEnTV2RJWf3RlpQtkhdq5Pgb4pxckxvyO4jVOegYZf3nfOlVNjdH8aVW658A",
+	"AAD//1l7qaSPEgAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file
