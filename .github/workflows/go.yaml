@@ -32,7 +32,7 @@ jobs:
       - name: Lint
         run: |
           cd backend/smart-table/build/services/smart-table
-          go run github.com/golangci/golangci-lint/cmd/golangci-lint run --config .golangci.yml
+          go run github.com/golangci/golangci-lint/cmd/golangci-lint run --config .golangci.yaml
       - name: Test
         run: |
           cd backend/smart-table/build/services/smart-table
