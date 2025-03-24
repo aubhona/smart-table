@@ -28,13 +28,13 @@ jobs:
         run: |
           cd backend/smart-table/build/services/smart-table
           go mod tidy
-          go build -v ./...
+          go build -v -o build/bin ./...
       - name: Lint
         run: |
-          cd backend/smart-table/build/services/smart-table
-          go run github.com/golangci/golangci-lint/cmd/golangci-lint run --config .golangci.yml
+          cd backend/smart-table
+          go run github.com/golangci/golangci-lint/cmd/golangci-lint run --config .golangci.yaml
       - name: Test
         run: |
-          cd backend/smart-table/build/services/smart-table
+          cd backend/smart-table
           go mod tidy
           go test -v -race -coverpkg=./... ./...
