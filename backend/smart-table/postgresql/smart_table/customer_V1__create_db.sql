@@ -1,4 +1,8 @@
-CREATE TABLE IF NOT EXISTS "smart-table.customers" (
+BEGIN;
+
+CREATE SCHEMA IF NOT EXISTS smart_table_customer;
+
+CREATE TABLE IF NOT EXISTS smart_table_customer.customers (
    "uuid" UUID PRIMARY KEY NOT NULL,
    "tg_id" TEXT NOT NULL,
    "tg_login" TEXT NOT NULL UNIQUE,
@@ -8,7 +12,7 @@ CREATE TABLE IF NOT EXISTS "smart-table.customers" (
    "updated_at" TIMESTAMPTZ NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "smart-table.orders" (
+CREATE TABLE IF NOT EXISTS smart_table_customer.orders (
     "uuid" UUID PRIMARY KEY NOT NULL,
     "room_code" TEXT NOT NULL,
     "table_id" TEXT NOT NULL,
@@ -20,7 +24,7 @@ CREATE TABLE IF NOT EXISTS "smart-table.orders" (
     "updated_at" TIMESTAMPTZ NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "smart-table.items" (
+CREATE TABLE IF NOT EXISTS smart_table_customer.items (
    "uuid" UUID PRIMARY KEY NOT NULL,
    "order_uuid" UUID NOT NULL,
    "comment" TEXT,
@@ -39,7 +43,7 @@ CREATE TABLE IF NOT EXISTS "smart-table.items" (
    "updated_at" TIMESTAMPTZ NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "smart-table.dishes" (
+CREATE TABLE IF NOT EXISTS smart_table_customer.dishes (
     "uuid" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -51,7 +55,7 @@ CREATE TABLE IF NOT EXISTS "smart-table.dishes" (
     "updated_at" TIMESTAMPTZ NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "smart-table.menu-dishes" (
+CREATE TABLE IF NOT EXISTS smart_table_customer.menu_dishes (
     "uuid" UUID PRIMARY KEY NOT NULL,
     "dish_uuid" UUID NOT NULL,
     "place_uuid" UUID NOT NULL,
@@ -61,7 +65,7 @@ CREATE TABLE IF NOT EXISTS "smart-table.menu-dishes" (
     "updated_at" TIMESTAMPTZ NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "smart-table.places" (
+CREATE TABLE IF NOT EXISTS smart_table_customer.places (
     "uuid" UUID PRIMARY KEY NOT NULL,
     "rest_uuid" UUID NOT NULL,
     "address" TEXT NOT NULL,
@@ -72,7 +76,7 @@ CREATE TABLE IF NOT EXISTS "smart-table.places" (
     "updated_at" TIMESTAMPTZ NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "smart-table.restaurants" (
+CREATE TABLE IF NOT EXISTS smart_table_customer.restaurants (
      "uuid" UUID PRIMARY KEY NOT NULL,
      "name" TEXT NOT NULL,
      "owner_uuid" UUID NOT NULL,
@@ -80,7 +84,7 @@ CREATE TABLE IF NOT EXISTS "smart-table.restaurants" (
      "updated_at" TIMESTAMPTZ NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "smart-table.users" (
+CREATE TABLE IF NOT EXISTS smart_table_customer.users (
    "uuid" UUID PRIMARY KEY NOT NULL,
    "avatar_link" TEXT NOT NULL,
    "login" TEXT NOT NULL,
@@ -93,7 +97,7 @@ CREATE TABLE IF NOT EXISTS "smart-table.users" (
    "updated_at" TIMESTAMPTZ NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "smart-table.staff" (
+CREATE TABLE IF NOT EXISTS smart_table_customer.staff (
    "user_uuid" UUID PRIMARY KEY NOT NULL,
    "place_uuid" UUID NOT NULL,
    "role" TEXT NOT NULL,
@@ -113,7 +117,7 @@ $$ LANGUAGE plpgsql;
 DO $$
 DECLARE tbl TEXT;
 BEGIN
-FOR tbl IN SELECT tablename FROM pg_tables WHERE schemaname = 'public' LOOP
+FOR tbl IN SELECT tablename FROM pg_tables WHERE schemaname = 'smart_table_customer' LOOP
         EXECUTE format(
             'CREATE TRIGGER trigger_%s_updated_at
             BEFORE UPDATE ON %s
@@ -123,14 +127,16 @@ FOR tbl IN SELECT tablename FROM pg_tables WHERE schemaname = 'public' LOOP
 END LOOP;
 END $$;
 
-ALTER TABLE "smart-table.orders" ADD CONSTRAINT fk_orders_customers FOREIGN KEY ("customers_uuid") REFERENCES "smart-table.customers" ("uuid");
-ALTER TABLE "smart-table.items" ADD CONSTRAINT fk_items_orders FOREIGN KEY ("order_uuid") REFERENCES "smart-table.orders" ("uuid");
-ALTER TABLE "smart-table.items" ADD CONSTRAINT fk_items_customers FOREIGN KEY ("customer_uuid") REFERENCES "smart-table.customers" ("uuid");
-ALTER TABLE "smart-table.items" ADD CONSTRAINT fk_items_dishes FOREIGN KEY ("dish_uuid") REFERENCES "smart-table.dishes" ("uuid");
-ALTER TABLE "smart-table.dishes" ADD CONSTRAINT fk_dishes_restaurants FOREIGN KEY ("rest_uuid") REFERENCES "smart-table.restaurants" ("uuid");
-ALTER TABLE "smart-table.menu" ADD CONSTRAINT fk_menu_dishes FOREIGN KEY ("dish_uuid") REFERENCES "smart-table.dishes" ("uuid");
-ALTER TABLE "smart-table.menu" ADD CONSTRAINT fk_menu_places FOREIGN KEY ("place_uuid") REFERENCES "smart-table.places" ("uuid");
-ALTER TABLE "smart-table.places" ADD CONSTRAINT fk_places_restaurants FOREIGN KEY ("rest_uuid") REFERENCES "smart-table.restaurants" ("uuid");
-ALTER TABLE "smart-table.restaurants" ADD CONSTRAINT fk_restaurants_users FOREIGN KEY ("owner_uuid") REFERENCES "smart-table.users" ("uuid");
-ALTER TABLE "smart-table.staff" ADD CONSTRAINT fk_staff_users FOREIGN KEY ("user_uuid") REFERENCES "smart-table.users" ("uuid");
-ALTER TABLE "smart-table.staff" ADD CONSTRAINT fk_staff_places FOREIGN KEY ("place_uuid") REFERENCES "smart-table.places" ("uuid");
+ALTER TABLE smart_table_customer.orders ADD CONSTRAINT fk_orders_customers FOREIGN KEY ("customers_uuid") REFERENCES smart_table_customer.customers ("uuid");
+ALTER TABLE smart_table_customer.items ADD CONSTRAINT fk_items_orders FOREIGN KEY ("order_uuid") REFERENCES smart_table_customer.orders ("uuid");
+ALTER TABLE smart_table_customer.items ADD CONSTRAINT fk_items_customers FOREIGN KEY ("customer_uuid") REFERENCES smart_table_customer.customers ("uuid");
+ALTER TABLE smart_table_customer.items ADD CONSTRAINT fk_items_dishes FOREIGN KEY ("dish_uuid") REFERENCES smart_table_customer.dishes ("uuid");
+ALTER TABLE smart_table_customer.dishes ADD CONSTRAINT fk_dishes_restaurants FOREIGN KEY ("rest_uuid") REFERENCES smart_table_customer.restaurants ("uuid");
+ALTER TABLE smart_table_customer.menu ADD CONSTRAINT fk_menu_dishes FOREIGN KEY ("dish_uuid") REFERENCES smart_table_customer.dishes ("uuid");
+ALTER TABLE smart_table_customer.menu ADD CONSTRAINT fk_menu_places FOREIGN KEY ("place_uuid") REFERENCES smart_table_customer.places ("uuid");
+ALTER TABLE smart_table_customer.places ADD CONSTRAINT fk_places_restaurants FOREIGN KEY ("rest_uuid") REFERENCES smart_table_customer.restaurants ("uuid");
+ALTER TABLE smart_table_customer.restaurants ADD CONSTRAINT fk_restaurants_users FOREIGN KEY ("owner_uuid") REFERENCES smart_table_customer.users ("uuid");
+ALTER TABLE smart_table_customer.staff ADD CONSTRAINT fk_staff_users FOREIGN KEY ("user_uuid") REFERENCES smart_table_customer.users ("uuid");
+ALTER TABLE smart_table_customer.staff ADD CONSTRAINT fk_staff_places FOREIGN KEY ("place_uuid") REFERENCES smart_table_customer.places ("uuid");
+
+COMMIT;

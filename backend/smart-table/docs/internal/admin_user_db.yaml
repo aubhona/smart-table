@@ -1,0 +1,54 @@
+components:
+    schemas:
+        PgUser:
+            type: object
+            additionalProperties: false
+            properties:
+                uuid:
+                    type: string
+                    format: uuid
+                login:
+                    $ref: '#/components/schemas/Login'
+                tg_id:
+                    type: string
+                tg_login:
+                    $ref: '#/components/schemas/Login'
+                chat_id:
+                    type: string
+                first_name:
+                    type: string
+                    minLength: 1
+                    maxLength: 50
+                    pattern: "^[A-Za-z\\-\\s]+$"
+                last_name:
+                    type: string
+                    minLength: 1
+                    maxLength: 50
+                    pattern: "^[A-Za-z\\-\\s]+$"
+                password_hash: 
+                    type: string
+                created_at:
+                    type: string
+                    format: date-time
+                updated_at:
+                    type: string
+                    format: date-time
+
+            required:
+                - uuid
+                - login
+                - tg_id
+                - tg_login
+                - chat_id
+                - first_name
+                - last_name
+                - password_hash
+                - created_at
+                - updated_at
+            
+        Login:
+            type: string
+            description: Логин пользователя
+            pattern: "^[a-zA-Z][a-zA-Z0-9_]{4,31}$"
+            minLength: 4
+            maxLength: 31
