@@ -9,7 +9,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type SmartTableCustomer struct {
+type SmartTableCustomerCustomer struct {
 	Uuid       uuid.UUID
 	TgID       string
 	TgLogin    string
@@ -19,7 +19,7 @@ type SmartTableCustomer struct {
 	UpdatedAt  pgtype.Timestamptz
 }
 
-type SmartTableDish struct {
+type SmartTableCustomerDish struct {
 	Uuid        uuid.UUID
 	Name        string
 	Description string
@@ -31,7 +31,7 @@ type SmartTableDish struct {
 	UpdatedAt   pgtype.Timestamptz
 }
 
-type SmartTableItem struct {
+type SmartTableCustomerItem struct {
 	Uuid         uuid.UUID
 	OrderUuid    uuid.UUID
 	Comment      pgtype.Text
@@ -50,7 +50,7 @@ type SmartTableItem struct {
 	UpdatedAt    pgtype.Timestamptz
 }
 
-type SmartTableMenuDish struct {
+type SmartTableCustomerMenuDish struct {
 	Uuid      uuid.UUID
 	DishUuid  uuid.UUID
 	PlaceUuid uuid.UUID
@@ -60,7 +60,7 @@ type SmartTableMenuDish struct {
 	UpdatedAt pgtype.Timestamptz
 }
 
-type SmartTableOrder struct {
+type SmartTableCustomerOrder struct {
 	Uuid          uuid.UUID
 	RoomCode      string
 	TableID       string
@@ -72,7 +72,7 @@ type SmartTableOrder struct {
 	UpdatedAt     pgtype.Timestamptz
 }
 
-type SmartTablePlace struct {
+type SmartTableCustomerPlace struct {
 	Uuid        uuid.UUID
 	RestUuid    uuid.UUID
 	Address     string
@@ -83,7 +83,7 @@ type SmartTablePlace struct {
 	UpdatedAt   pgtype.Timestamptz
 }
 
-type SmartTableRestaurant struct {
+type SmartTableCustomerRestaurant struct {
 	Uuid      uuid.UUID
 	Name      string
 	OwnerUuid uuid.UUID
@@ -91,7 +91,7 @@ type SmartTableRestaurant struct {
 	UpdatedAt pgtype.Timestamptz
 }
 
-type SmartTableStaff struct {
+type SmartTableCustomerStaff struct {
 	UserUuid  uuid.UUID
 	PlaceUuid uuid.UUID
 	Role      string
@@ -100,7 +100,7 @@ type SmartTableStaff struct {
 	UpdatedAt pgtype.Timestamptz
 }
 
-type SmartTableUser struct {
+type SmartTableCustomerUser struct {
 	Uuid         uuid.UUID
 	AvatarLink   string
 	Login        string

@@ -6,6 +6,6 @@
 SELECT
     to_jsonb(c)
 FROM
-    "smart-table.customers" c
+    smart_table_customer.customers c
 WHERE
     tg_id = $1::TEXT;

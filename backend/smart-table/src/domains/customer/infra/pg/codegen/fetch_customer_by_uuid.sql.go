@@ -16,7 +16,7 @@ const fetchCustomer = `-- name: FetchCustomer :one
 SELECT
     to_jsonb(c)
 FROM
-    "smart-table.customers" c
+    smart_table_customer.customers c
 WHERE
     uuid = $1::UUID
 `

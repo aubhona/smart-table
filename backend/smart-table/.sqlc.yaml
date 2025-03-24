@@ -3,7 +3,7 @@ sql:
   - engine: "postgresql"
     queries:
       - "src/domains/customer/infra/pg/sql"
-    schema: "postgresql/smart-table"
+    schema: "postgresql/smart_table"
     gen:
       go:
         package: "db"

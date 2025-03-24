@@ -6,7 +6,7 @@
 SELECT
     uuid
 FROM
-    "smart-table.orders"
+    smart_table_customer.orders
 WHERE
     table_id = $1::TEXT
     AND resolution IS NULL;
