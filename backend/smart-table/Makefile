@@ -67,8 +67,9 @@ gen: gen-views gen-models gen-sqlc
 gen-views:
 	@for file in $(API_SPECS); do \
 		base_name=$$(basename $$file .yaml); \
+		camel_case_name=$$(echo $$base_name | sed -E 's/(^|_)([a-z])/\U\2/g' | sed -E 's/^(.)/\L\1/') ; \
 		dir_path="$(OUTPUT_VIEWS)/$$base_name"; \
-		package_name="views_$$base_name"; \
+		package_name="views$$camel_case_name"; \
 		output_file="$$dir_path/gen.go"; \
 		mkdir -p $$dir_path; \
 		echo "Generating $$output_file with package $$package_name from $$file"; \
@@ -79,17 +80,20 @@ gen-views:
 gen-models:
 	@for file in $(wildcard $(DOCS_INTERNAL)); do \
 		base_name=$$(basename $$file .yaml); \
+		camel_case_name=$$(echo $$base_name | sed -E 's/(^|_)([a-z])/\U\2/g' | sed -E 's/^(.)/\L\1/') ; \
 		dir_path="$(OUTPUT_MODELS_INTERNAL)/$$base_name"; \
-		package_name="defs_internal_$$base_name"; \
+		package_name="defsInternal$$camel_case_name"; \
 		output_file="$$dir_path/gen.go"; \
 		mkdir -p $$dir_path; \
 		echo "Generating $$output_file with package $$package_name from $$file"; \
 		oapi-codegen --config $(OAPI_MODELS_CONFIG) -o $$output_file -package $$package_name $$file; \
 	done
+
 	@for file in $(wildcard $(DOCS_DEFINITIONS)); do \
 		base_name=$$(basename $$file .yaml); \
+		camel_case_name=$$(echo $$base_name | sed -E 's/(^|_)([a-z])/\U\2/g' | sed -E 's/^(.)/\L\1/') ; \
 		dir_path="$(OUTPUT_MODELS_DEFINITIONS)/$$base_name"; \
-		package_name="defs_definitions_$$base_name"; \
+		package_name="defsDefinitions$$camel_case_name"; \
 		output_file="$$dir_path/gen.go"; \
 		mkdir -p $$dir_path; \
 		echo "Generating $$output_file with package $$package_name from $$file"; \
@@ -101,3 +105,8 @@ gen-sqlc:
 	mkdir -p $(SQL_OUTPUT)
 	echo "Generating SQL code from $(SQLC_CONFIG)..."
 	sqlc generate -f $(SQLC_CONFIG)
+
+.PHONY: mocks
+mocks:
+	mockery --config .mockery.yaml
+	@go mod tidy
