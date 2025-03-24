@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/smart-table/src/dependencies"
 	"github.com/smart-table/src/domains/customer/di"
 )
@@ -16,7 +18,7 @@ func main() {
 
 	router := di.GetRouter(container, deps)
 
-	err = router.Run(deps.Config.App.Port)
+	err = router.Run(fmt.Sprintf(":%d", deps.Config.App.Port))
 	if err != nil {
 		logger.Fatal(err.Error())
 	}

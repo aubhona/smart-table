@@ -17,7 +17,8 @@ import (
 func GetRouter(container *dig.Container, deps *dependencies.Dependencies) *gin.Engine {
 	router := gin.New()
 
-	gin.Default()
+	//nolint
+	// router.SetTrustedProxies() Think about security
 
 	router.
 		Use(GinZapLogger(deps.Logger, deps.Config)).

@@ -2,6 +2,7 @@
 APP_NAME := smart-table
 MAIN_FILE := build/services/smart-table/src/main.go
 BUILD_DIR := build/bin
+CONFIGS := $(wildcard configs/*.env) $(wildcard configs/.env)
 
 # Go
 GO := go
@@ -60,7 +61,7 @@ deps:
 	$(GO) mod tidy
 
 .PHONY: gen
-gen: gen-views gen-models gen-sqlc
+gen: gen-views gen-models gen-sqlc generate_env
 	$(GO) mod tidy
 
 .PHONY: gen-views
@@ -110,3 +111,17 @@ gen-sqlc:
 mocks:
 	mockery --config .mockery.yaml
 	@go mod tidy
+
+.PHONY: generate_env
+generate_env:
+	@echo "🔹 Generating .env files..."
+	@chmod +x load_env.sh && ./load_env.sh
+	@echo "✅ .env files successfully created!"
+
+.PHONY: up
+up: gen
+	@echo "🔹Running docker compose..."
+	@echo "Using env files: $(CONFIGS)"
+	@docker compose \
+		$(foreach envfile, $(CONFIGS), --env-file=$(envfile)) \
+		up --build

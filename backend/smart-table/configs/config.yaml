@@ -3,7 +3,7 @@ app:
     env: development
 
 database:
-    host: localhost
+    host: smart-table-db
     port: 5432
     user: DATABASE_USER
     password: DATABASE_PASSWORD
@@ -21,7 +21,7 @@ database:
 
 logging:
     level: debug
-    format: json
+    format: console
     file: logs/app.log
     max_size: 10
     max_backups: 3
