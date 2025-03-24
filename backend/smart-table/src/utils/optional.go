@@ -37,5 +37,6 @@ func OptionalFromPointer[T any](ptr *T) Optional[T] {
 	if ptr == nil {
 		return EmptyOptional[T]()
 	}
+
 	return NewOptional(*ptr)
 }

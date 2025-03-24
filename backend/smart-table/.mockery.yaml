@@ -1,0 +1,13 @@
+issue-845-fix: True
+resolve-type-alias: False
+disable-version-string: True
+filename: "{{.InterfaceName | snakecase}}.go"
+mockname: "{{.InterfaceName | firstUpper}}"
+outpkg: mocks
+dir: "tests/mocks/"
+packages:
+    github.com/smart-table/src:
+        config:
+            all: true
+            recursive: true
+            with-expecter: true

@@ -1,0 +1,40 @@
+name: Go
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: backend/smart-table/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Build
+        run: |
+          cd backend/smart-table/build/services/smart-table
+          go mod tidy
+          go build -v ./...
+      - name: Lint
+        run: |
+          cd backend/smart-table/build/services/smart-table
+          go run github.com/golangci/golangci-lint/cmd/golangci-lint run --config .golangci.yml
+      - name: Test
+        run: |
+          cd backend/smart-table/build/services/smart-table
+          go mod tidy
+          go test -v -race -coverpkg=./... ./...

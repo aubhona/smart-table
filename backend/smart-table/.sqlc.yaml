@@ -2,12 +2,12 @@ version: "2"
 sql:
   - engine: "postgresql"
     queries:
-      - "src/domains/orders/infra/pg/sql"
+      - "src/domains/customer/infra/pg/sql"
     schema: "postgresql/smart-table"
     gen:
       go:
         package: "db"
-        out: "src/domains/orders/infra/pg/codegen"
+        out: "src/domains/customer/infra/pg/codegen"
         sql_package: "pgx/v5"
         overrides:
           -   db_type: "uuid"
