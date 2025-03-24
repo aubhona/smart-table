@@ -28,7 +28,7 @@ jobs:
         run: |
           cd backend/smart-table/build/services/smart-table
           go mod tidy
-          go build -v ./...
+          go build -v -o build/bin ./...
       - name: Lint
         run: |
           cd backend/smart-table/build/services/smart-table
