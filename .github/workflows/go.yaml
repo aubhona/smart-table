@@ -26,7 +26,7 @@ jobs:
             ${{ runner.os }}-go-
       - name: Build
         run: |
-          cd backend/smart-table
+          cd backend/smart-table/build/services/smart-table
           go mod tidy
           go build -v -o build/bin ./...
       - name: Lint
