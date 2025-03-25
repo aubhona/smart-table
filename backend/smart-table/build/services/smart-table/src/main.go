@@ -2,13 +2,21 @@ package main
 
 import (
 	"fmt"
+	"log"
+
+	"github.com/smart-table/src/config"
 
 	"github.com/smart-table/src/dependencies"
 	"github.com/smart-table/src/domains/customer/di"
 )
 
 func main() {
-	deps := dependencies.InitDependencies()
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Failed to load configuration: %v", err)
+	}
+
+	deps := dependencies.InitDependencies(cfg)
 	logger := deps.Logger
 
 	container, err := di.BuildContainer(deps)

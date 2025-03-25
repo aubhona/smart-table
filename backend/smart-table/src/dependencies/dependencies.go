@@ -3,7 +3,6 @@ package dependencies
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/smart-table/src/config"
 	"github.com/smart-table/src/logging"
@@ -18,12 +17,7 @@ type Dependencies struct {
 	Logger     *zap.Logger
 }
 
-func InitDependencies() *Dependencies {
-	cfg, err := config.LoadConfig()
-	if err != nil {
-		log.Fatalf("Failed to load configuration: %v", err)
-	}
-
+func InitDependencies(cfg *config.Config) *Dependencies {
 	logger := logging.InitLogger(cfg)
 	dbPool := initDBPool(cfg)
 
