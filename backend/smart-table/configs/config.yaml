@@ -4,7 +4,7 @@ app:
     admin:
         jwt:
             secret_key: APP_ADMIN_JWT_SECRET_KEY
-            expiration: 1d
+            expiration: 24h
 
 database:
     host: smart-table-db
