@@ -8,6 +8,9 @@ import (
 	"go.uber.org/dig"
 
 	"github.com/smart-table/src/config"
+	"log"
+
+	"github.com/smart-table/src/config"
 
 	"github.com/smart-table/src/dependencies"
 	adminDi "github.com/smart-table/src/domains/admin/di"
