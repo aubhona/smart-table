@@ -3,7 +3,7 @@
 -- args:
 -- $1 - JSONB
 
-INSERT INTO "smart-table.orders" (
+INSERT INTO smart_table_customer.orders (
     uuid,
     room_code,
     table_id,

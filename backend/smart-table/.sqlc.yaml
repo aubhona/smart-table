@@ -3,11 +3,25 @@ sql:
   - engine: "postgresql"
     queries:
       - "src/domains/customer/infra/pg/sql"
-    schema: "postgresql/smart-table"
+    schema: "postgresql/smart_table"
     gen:
       go:
         package: "db"
         out: "src/domains/customer/infra/pg/codegen"
+        sql_package: "pgx/v5"
+        overrides:
+          -   db_type: "uuid"
+              go_type:
+                import: "github.com/google/uuid"
+                type: "UUID"
+  - engine: "postgresql"
+    queries:
+      - "src/domains/admin/infra/pg/sql"
+    schema: "postgresql/smart_table"
+    gen:
+      go:
+        package: "db"
+        out: "src/domains/admin/infra/pg/codegen"
         sql_package: "pgx/v5"
         overrides:
           -   db_type: "uuid"
