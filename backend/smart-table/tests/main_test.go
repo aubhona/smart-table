@@ -15,7 +15,7 @@ import (
 	"go.uber.org/dig"
 )
 
-var container *dig.Container
+var container *dig.Container = dig.New()
 
 func TestMain(m *testing.M) {
 	ctx := context.Background()
@@ -59,6 +59,13 @@ func TestMain(m *testing.M) {
 
 	deps := dependencies.InitDependencies(cfg)
 	logger := deps.Logger
+
+	err = container.Provide(func() *dependencies.Dependencies {
+		return deps
+	})
+	if err != nil {
+		logger.Fatal(err.Error())
+	}
 
 	err = customerDi.AddDeps(container)
 	if err != nil {
