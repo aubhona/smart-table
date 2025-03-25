@@ -10,7 +10,7 @@ func (h *CustomerV1OrderHandler) PostCustomerV1OrderCustomerSignIn(
 	ctx context.Context,
 	request viewsCustomer.PostCustomerV1OrderCustomerSignInRequestObject,
 ) (viewsCustomer.PostCustomerV1OrderCustomerSignInResponseObject, error) {
-	//nolint:godox, gocritic
+	//nolint: godox, gocritic
 	// TODO: impl
 	return nil, nil
 }

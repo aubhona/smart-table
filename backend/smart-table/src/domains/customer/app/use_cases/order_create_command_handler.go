@@ -55,7 +55,7 @@ func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateComma
 	}
 
 	if isNewOrder {
-		//nolint:godox, gocritic
+		//nolint: godox, gocritic
 		// TODO: Check table id existence
 		roomCode, err := handler.roomCodeService.CreateRoomCode(createCommand.TableID, createCommand.CustomerUUID)
 		if err != nil {
