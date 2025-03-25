@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import TableId from './components/TableId/TableId';
 import RoomCode from './components/RoomCode/RoomCode';
+import UsersList from './components/UsersList/UsersList'
 //import UsersList from './components/UsersList/UsersList';
 import Catalog from './components/Catalog/Catalog';
 import Item from './components/Item/Item';
@@ -16,9 +17,10 @@ function App() {
       <Routes>
         <Route path="/" element={<TableId />} />
         <Route path="/room-code" element={<RoomCode />} />
+        <Route path="/catalog/users-list" element={<UsersList />} />
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/catalog/item/:id" element={<Item />} />
-        <Route path="/cart" element={<Cart />}/>
+        <Route path="/cart" element={<Cart />} />
       </Routes>
     </Router>
   );

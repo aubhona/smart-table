@@ -58,7 +58,7 @@ const Cart = () => {
         <button className="call-waiter-button" onClick={handleCallWaiter}>
             официант
           </button>
-          <button className="checkout-button" onClick={handleCheckout}>
+          <button className="checkout-button-cart" onClick={handleCheckout}>
             гоу чекаут
           </button>
           <button className="clear-button" onClick={clearCart}>
