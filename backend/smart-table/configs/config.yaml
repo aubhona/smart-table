@@ -1,6 +1,10 @@
 app:
     port: 8080
     env: development
+    admin:
+        jwt:
+            secret_key: APP_ADMIN_JWT_SECRET_KEY
+            expiration: 24h
 
 database:
     host: smart-table-db

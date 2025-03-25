@@ -5,11 +5,13 @@ import (
 	"log"
 
 	"github.com/smart-table/src/servers"
+	"go.uber.org/dig"
 
 	"github.com/smart-table/src/config"
 
 	"github.com/smart-table/src/dependencies"
-	"github.com/smart-table/src/domains/customer/di"
+	adminDi "github.com/smart-table/src/domains/admin/di"
+	customerDi "github.com/smart-table/src/domains/customer/di"
 )
 
 func main() {
@@ -20,8 +22,18 @@ func main() {
 
 	deps := dependencies.InitDependencies(cfg)
 	logger := deps.Logger
+	container := dig.New()
 
-	container, err := di.BuildContainer(deps)
+	if err != nil {
+		logger.Fatal(err.Error())
+	}
+
+	err = customerDi.AddDeps(container)
+	if err != nil {
+		logger.Fatal(err.Error())
+	}
+
+	err = adminDi.AddDeps(container)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
