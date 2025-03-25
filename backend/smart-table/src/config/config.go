@@ -15,8 +15,14 @@ const kEnvPath = "configs/.env"
 
 type Config struct {
 	App struct {
-		Port int         `mapstructure:"port"`
-		Env  Environment `mapstructure:"env"`
+		Port  int         `mapstructure:"port"`
+		Env   Environment `mapstructure:"env"`
+		Admin struct {
+			Jwt struct {
+				SecretKey  string        `mapstructure:"secret_key"`
+				Expiration time.Duration `mapstructure:"expiration"`
+			} `mapstructure:"jwt"`
+		} `mapstructure:"admin"`
 	} `mapstructure:"app"`
 
 	Database struct {

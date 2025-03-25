@@ -1,11 +1,9 @@
 package app
 
 type UserSingUpCommand struct {
-	Login        string
-	TgID         string
-	TgLogin      string
-	ChatID       string
-	FirstName    string
-	LastName     string
-	PasswordHash string
+	Login     string
+	TgLogin   string
+	FirstName string
+	LastName  string
+	Password  string
 }

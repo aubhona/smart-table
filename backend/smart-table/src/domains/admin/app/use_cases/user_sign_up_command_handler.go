@@ -4,28 +4,35 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	app_errors "github.com/smart-table/src/domains/admin/app/use_cases/errors"
+	app "github.com/smart-table/src/domains/admin/app/services"
+	appErrors "github.com/smart-table/src/domains/admin/app/use_cases/errors"
 	"github.com/smart-table/src/domains/admin/domain"
 	domainServices "github.com/smart-table/src/domains/admin/domain/services"
 )
 
 type UserSingUpCommandHandlerResult struct {
 	UserUUID uuid.UUID
+	JwtToken string
 }
 
 type UserSingUpCommandHandler struct {
 	userRepository domain.UserRepository
 	uuidGenerator  *domainServices.UUIDGenerator
+	hashService    *app.HashService
+	jwtService     *app.JwtService
 }
 
-func NewOrderCreateCommandHandler(
+func NewUserSingUpCommandHandler(
 	userRepository domain.UserRepository,
-
 	uuidGenerator *domainServices.UUIDGenerator,
+	hashService *app.HashService,
+	jwtService *app.JwtService,
 ) *UserSingUpCommandHandler {
 	return &UserSingUpCommandHandler{
 		userRepository,
 		uuidGenerator,
+		hashService,
+		jwtService,
 	}
 }
 
@@ -36,20 +43,39 @@ func (handler *UserSingUpCommandHandler) Handle(signUpCommand *UserSingUpCommand
 	}
 
 	if isExist {
-		return UserSingUpCommandHandlerResult{}, app_errors.LoginOrTgLoginAlreadyExists{
+		return UserSingUpCommandHandlerResult{}, appErrors.LoginOrTgLoginAlreadyExists{
 			Login:   signUpCommand.Login,
 			TgLogin: signUpCommand.TgLogin,
 		}
 	}
 
+	passwordHash, err := handler.hashService.HashPassword(signUpCommand.Password)
+	if err != nil {
+		return UserSingUpCommandHandlerResult{}, err
+	}
+
 	user := domain.NewUser(signUpCommand.Login,
-		signUpCommand.TgID,
+		//nolint: godox, gocritic
+		// TODO добавить поход в тг за валидацией логина и получения TgID и ChatID
+		"signUpCommand.TgID",
 		signUpCommand.TgLogin,
-		signUpCommand.ChatID,
+		"signUpCommand.ChatID",
 		signUpCommand.FirstName,
 		signUpCommand.LastName,
-		signUpCommand.PasswordHash,
+		passwordHash,
 		handler.uuidGenerator)
 
-	return UserSingUpCommandHandlerResult{user.Get().GetUUID()}, nil
+	err = handler.userRepository.Save(context.Background(), user)
+	if err != nil {
+		return UserSingUpCommandHandlerResult{}, err
+	}
+
+	userUUID := user.Get().GetUUID()
+
+	jwtToken, err := handler.jwtService.GenerateJWT(userUUID)
+	if err != nil {
+		return UserSingUpCommandHandlerResult{}, err
+	}
+
+	return UserSingUpCommandHandlerResult{userUUID, jwtToken}, nil
 }
