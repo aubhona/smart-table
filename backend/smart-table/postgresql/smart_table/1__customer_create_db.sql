@@ -45,6 +45,9 @@ CREATE TABLE IF NOT EXISTS smart_table_customer.items (
    "updated_at" TIMESTAMPTZ NOT NULL
 );
 
+ALTER TABLE smart_table_customer.items DROP CONSTRAINT IF EXISTS fk_items_orders;
+ALTER TABLE smart_table_customer.items DROP CONSTRAINT IF EXISTS fk_items_customers;
+
 ALTER TABLE smart_table_customer.items ADD CONSTRAINT fk_items_orders FOREIGN KEY ("order_uuid") REFERENCES smart_table_customer.orders ("uuid");
 ALTER TABLE smart_table_customer.items ADD CONSTRAINT fk_items_customers FOREIGN KEY ("customer_uuid") REFERENCES smart_table_customer.customers ("uuid");
 

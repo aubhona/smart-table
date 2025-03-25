@@ -68,6 +68,14 @@ CREATE TABLE IF NOT EXISTS smart_table_admin.staff (
    "updated_at" TIMESTAMPTZ NOT NULL
 );
 
+ALTER TABLE smart_table_admin.dishes DROP CONSTRAINT IF EXISTS fk_dishes_restaurants;
+ALTER TABLE smart_table_admin.menu_dishes DROP CONSTRAINT IF EXISTS fk_menu_dishes;
+ALTER TABLE smart_table_admin.menu_dishes DROP CONSTRAINT IF EXISTS fk_menu_places;
+ALTER TABLE smart_table_admin.places DROP CONSTRAINT IF EXISTS fk_places_restaurants;
+ALTER TABLE smart_table_admin.restaurants DROP CONSTRAINT IF EXISTS fk_restaurants_users;
+ALTER TABLE smart_table_admin.staff DROP CONSTRAINT IF EXISTS fk_staff_users;
+ALTER TABLE smart_table_admin.staff DROP CONSTRAINT IF EXISTS fk_staff_places;
+
 ALTER TABLE smart_table_admin.dishes ADD CONSTRAINT fk_dishes_restaurants FOREIGN KEY ("rest_uuid") REFERENCES smart_table_admin.restaurants ("uuid");
 ALTER TABLE smart_table_admin.menu_dishes ADD CONSTRAINT fk_menu_dishes FOREIGN KEY ("dish_uuid") REFERENCES smart_table_admin.dishes ("uuid");
 ALTER TABLE smart_table_admin.menu_dishes ADD CONSTRAINT fk_menu_places FOREIGN KEY ("place_uuid") REFERENCES smart_table_admin.places ("uuid");
