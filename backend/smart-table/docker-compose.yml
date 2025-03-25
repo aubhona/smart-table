@@ -1,0 +1,32 @@
+services:
+    smart-table:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        environment:
+            - PROJECT_ROOT=/app
+        env_file:
+            - configs/config.env
+            - configs/.env
+        ports:
+            - "${SMART_TABLE_APP_PORT}:${SMART_TABLE_APP_PORT}"
+        restart: always
+        volumes:
+            - "./${SMART_TABLE_LOGGING_FILE}:/${SMART_TABLE_LOGGING_FILE}"
+        depends_on:
+            - smart-table-db
+
+    smart-table-db:
+        image: postgres:15
+        environment:
+            POSTGRES_DB: ${DATABASE_NAME}
+            POSTGRES_USER: ${DATABASE_USER}
+            POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+        ports:
+            - "${SMART_TABLE_DATABASE_PORT}:${SMART_TABLE_DATABASE_PORT}"
+        restart: always
+        volumes:
+            - smart_table_db_data:/var/lib/postgresql/data
+
+volumes:
+    smart_table_db_data:

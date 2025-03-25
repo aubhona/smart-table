@@ -15,7 +15,7 @@ const kEnvPath = "configs/.env"
 
 type Config struct {
 	App struct {
-		Port string      `mapstructure:"port"`
+		Port int         `mapstructure:"port"`
 		Env  Environment `mapstructure:"env"`
 	} `mapstructure:"app"`
 
