@@ -1,3 +1,5 @@
+-- +goose Up
+-- +goose StatementBegin
 BEGIN;
 
 CREATE SCHEMA IF NOT EXISTS smart_table_customer;
@@ -43,29 +45,11 @@ CREATE TABLE IF NOT EXISTS smart_table_customer.items (
    "updated_at" TIMESTAMPTZ NOT NULL
 );
 
-CREATE OR REPLACE FUNCTION set_timestamp()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = now();
-RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+ALTER TABLE smart_table_customer.items DROP CONSTRAINT IF EXISTS fk_items_orders;
+ALTER TABLE smart_table_customer.items DROP CONSTRAINT IF EXISTS fk_items_customers;
 
-DO $$
-DECLARE tbl TEXT;
-BEGIN
-FOR tbl IN SELECT tablename FROM pg_tables WHERE schemaname = 'smart_table_customer' LOOP
-        EXECUTE format(
-            'CREATE TRIGGER trigger_%s_updated_at
-            BEFORE UPDATE ON %s
-            FOR EACH ROW
-            EXECUTE FUNCTION set_timestamp();', tbl, tbl
-        );
-END LOOP;
-END $$;
-
-ALTER TABLE smart_table_customer.orders ADD CONSTRAINT fk_orders_customers FOREIGN KEY ("customers_uuid") REFERENCES smart_table_customer.customers ("uuid");
 ALTER TABLE smart_table_customer.items ADD CONSTRAINT fk_items_orders FOREIGN KEY ("order_uuid") REFERENCES smart_table_customer.orders ("uuid");
 ALTER TABLE smart_table_customer.items ADD CONSTRAINT fk_items_customers FOREIGN KEY ("customer_uuid") REFERENCES smart_table_customer.customers ("uuid");
 
 COMMIT;
+-- +goose StatementEnd

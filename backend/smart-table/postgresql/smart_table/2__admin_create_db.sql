@@ -1,3 +1,5 @@
+-- +goose Up
+-- +goose StatementBegin
 BEGIN;
 
 CREATE SCHEMA IF NOT EXISTS smart_table_admin;
@@ -66,35 +68,21 @@ CREATE TABLE IF NOT EXISTS smart_table_admin.staff (
    "updated_at" TIMESTAMPTZ NOT NULL
 );
 
-CREATE OR REPLACE FUNCTION set_timestamp()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = now();
-RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+ALTER TABLE smart_table_admin.dishes DROP CONSTRAINT IF EXISTS fk_dishes_restaurants;
+ALTER TABLE smart_table_admin.menu_dishes DROP CONSTRAINT IF EXISTS fk_menu_dishes;
+ALTER TABLE smart_table_admin.menu_dishes DROP CONSTRAINT IF EXISTS fk_menu_places;
+ALTER TABLE smart_table_admin.places DROP CONSTRAINT IF EXISTS fk_places_restaurants;
+ALTER TABLE smart_table_admin.restaurants DROP CONSTRAINT IF EXISTS fk_restaurants_users;
+ALTER TABLE smart_table_admin.staff DROP CONSTRAINT IF EXISTS fk_staff_users;
+ALTER TABLE smart_table_admin.staff DROP CONSTRAINT IF EXISTS fk_staff_places;
 
-DO $$
-DECLARE tbl TEXT;
-BEGIN
-FOR tbl IN SELECT tablename FROM pg_tables WHERE schemaname = 'smart_table_admin' LOOP
-        EXECUTE format(
-            'CREATE TRIGGER trigger_%s_updated_at
-            BEFORE UPDATE ON %s
-            FOR EACH ROW
-            EXECUTE FUNCTION set_timestamp();', tbl, tbl
-        );
-END LOOP;
-END $$;
-
-ALTER TABLE smart_table_customer.items ADD CONSTRAINT fk_items_dishes FOREIGN KEY ("dish_uuid") REFERENCES smart_table_admin.dishes ("uuid");
 ALTER TABLE smart_table_admin.dishes ADD CONSTRAINT fk_dishes_restaurants FOREIGN KEY ("rest_uuid") REFERENCES smart_table_admin.restaurants ("uuid");
-ALTER TABLE smart_table_admin.menu ADD CONSTRAINT fk_menu_dishes FOREIGN KEY ("dish_uuid") REFERENCES smart_table_admin.dishes ("uuid");
-ALTER TABLE smart_table_admin.menu ADD CONSTRAINT fk_menu_places FOREIGN KEY ("place_uuid") REFERENCES smart_table_admin.places ("uuid");
+ALTER TABLE smart_table_admin.menu_dishes ADD CONSTRAINT fk_menu_dishes FOREIGN KEY ("dish_uuid") REFERENCES smart_table_admin.dishes ("uuid");
+ALTER TABLE smart_table_admin.menu_dishes ADD CONSTRAINT fk_menu_places FOREIGN KEY ("place_uuid") REFERENCES smart_table_admin.places ("uuid");
 ALTER TABLE smart_table_admin.places ADD CONSTRAINT fk_places_restaurants FOREIGN KEY ("rest_uuid") REFERENCES smart_table_admin.restaurants ("uuid");
 ALTER TABLE smart_table_admin.restaurants ADD CONSTRAINT fk_restaurants_users FOREIGN KEY ("owner_uuid") REFERENCES smart_table_admin.users ("uuid");
 ALTER TABLE smart_table_admin.staff ADD CONSTRAINT fk_staff_users FOREIGN KEY ("user_uuid") REFERENCES smart_table_admin.users ("uuid");
 ALTER TABLE smart_table_admin.staff ADD CONSTRAINT fk_staff_places FOREIGN KEY ("place_uuid") REFERENCES smart_table_admin.places ("uuid");
 
-
 COMMIT;
+-- +goose StatementEnd
