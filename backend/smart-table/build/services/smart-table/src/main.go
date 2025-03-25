@@ -12,8 +12,6 @@ import (
 	"github.com/smart-table/src/dependencies"
 	adminDi "github.com/smart-table/src/domains/admin/di"
 	customerDi "github.com/smart-table/src/domains/customer/di"
-	adminDi "github.com/smart-table/src/domains/admin/di"
-	customerDi "github.com/smart-table/src/domains/customer/di"
 )
 
 func main() {
@@ -24,21 +22,6 @@ func main() {
 
 	deps := dependencies.InitDependencies(cfg)
 	logger := deps.Logger
-	container := dig.New()
-
-	err = container.Provide(func() *dependencies.Dependencies {
-		return deps
-	})
-	if err != nil {
-		logger.Fatal(err.Error())
-	}
-
-	err = adminDi.AddDeps(container)
-	if err != nil {
-		logger.Fatal(err.Error())
-	}
-
-	err = customerDi.AddDeps(container)
 	container := dig.New()
 
 	err = container.Provide(func() *dependencies.Dependencies {
