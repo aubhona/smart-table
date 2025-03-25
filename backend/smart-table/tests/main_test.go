@@ -8,13 +8,14 @@ import (
 
 	"github.com/smart-table/src/config"
 	"github.com/smart-table/src/dependencies"
-	"github.com/smart-table/src/domains/customer/di"
+	adminDi "github.com/smart-table/src/domains/admin/di"
+	customerDi "github.com/smart-table/src/domains/customer/di"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"go.uber.org/dig"
 )
 
-var container *dig.Container
+var container *dig.Container = dig.New()
 
 func TestMain(m *testing.M) {
 	ctx := context.Background()
@@ -59,7 +60,19 @@ func TestMain(m *testing.M) {
 	deps := dependencies.InitDependencies(cfg)
 	logger := deps.Logger
 
-	container, err = di.BuildContainer(deps)
+	err = container.Provide(func() *dependencies.Dependencies {
+		return deps
+	})
+	if err != nil {
+		logger.Fatal(err.Error())
+	}
+
+	err = adminDi.AddDeps(container)
+	if err != nil {
+		logger.Fatal(err.Error())
+	}
+
+	err = customerDi.AddDeps(container)
 	if err != nil {
 		logger.Fatal(err.Error())
 	}

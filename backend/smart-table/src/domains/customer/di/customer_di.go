@@ -10,44 +10,35 @@ import (
 	"go.uber.org/dig"
 )
 
-func BuildContainer(deps *dependencies.Dependencies) (*dig.Container, error) {
-	container := dig.New()
-
-	err := container.Provide(func() *dependencies.Dependencies {
-		return deps
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	err = container.Provide(func(deps *dependencies.Dependencies) domain.OrderRepository {
+func AddDeps(container *dig.Container) error {
+	err := container.Provide(func(deps *dependencies.Dependencies) domain.OrderRepository {
 		return pg.NewOrderRepository(deps.DBConnPool)
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	err = container.Provide(func(deps *dependencies.Dependencies) domain.CustomerRepository {
 		return pg.NewCustomerRepository(deps.DBConnPool)
 	})
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	err = container.Provide(appServices.NewRoomCodeService)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	err = container.Provide(domainServices.NewUUIDGenerator)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	err = container.Provide(app.NewOrderCreateCommandHandler)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return container, nil
+	return nil
 }

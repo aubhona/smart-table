@@ -6,6 +6,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 	"github.com/smart-table/src/dependencies"
+	appErrors "github.com/smart-table/src/domains/admin/app/services/errors"
 )
 
 type JwtService struct {
@@ -52,8 +53,10 @@ func (js *JwtService) ValidateJWT(tokenString string) (*UserClaims, error) {
 		return js.secretKey, nil
 	})
 
-	if err != nil || !token.Valid {
+	if err != nil {
 		return nil, err
+	} else if !token.Valid {
+		return nil, appErrors.InvalidToken{}
 	}
 
 	return claims, nil

@@ -22,7 +22,7 @@ type UserSingUpCommandHandler struct {
 	jwtService     *app.JwtService
 }
 
-func NewOrderCreateCommandHandler(
+func NewUserSingUpCommandHandler(
 	userRepository domain.UserRepository,
 	uuidGenerator *domainServices.UUIDGenerator,
 	hashService *app.HashService,

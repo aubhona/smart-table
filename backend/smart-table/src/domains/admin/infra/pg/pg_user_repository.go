@@ -19,7 +19,7 @@ type UserRepository struct {
 	trx      *pgx.Tx
 }
 
-func NewOrderRepository(pool *pgxpool.Pool) *UserRepository {
+func NewUserRepository(pool *pgxpool.Pool) *UserRepository {
 	return &UserRepository{pool, nil}
 }
 
