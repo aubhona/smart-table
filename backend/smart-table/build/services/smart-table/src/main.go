@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/smart-table/src/servers"
+
 	"github.com/smart-table/src/config"
 
 	"github.com/smart-table/src/dependencies"
@@ -24,7 +26,7 @@ func main() {
 		logger.Fatal(err.Error())
 	}
 
-	router := di.GetRouter(container, deps)
+	router := servers.GetRouter(container, deps)
 
 	err = router.Run(fmt.Sprintf(":%d", deps.Config.App.Port))
 	if err != nil {
