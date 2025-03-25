@@ -1,0 +1,79 @@
+.users-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.users-container body {
+    overflow-y: hidden;
+}
+  
+  .users-header {
+    background-color: #552f04;
+    padding: 5px;
+    color: white;
+    border-radius: 8px;
+    margin-bottom: 5%;
+    margin-top: 5%;
+  }
+  
+  .room-code {
+    margin-left: 42%;
+    font-weight: bold;
+  }
+
+  .users-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 20px;
+  }
+  
+  .user-item {
+    display: flex;
+    align-items: center;
+    background-color: #faf6ee;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+  }
+  
+  .user-picture {
+    background-color: gray;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    text-align: center;
+    line-height: 50px;
+    color: white;
+  }
+  
+  .user-name {
+    font-weight: bold;
+    font-size: 1.1em;
+  }
+  
+  .users-count {
+    font-size: 1.2em;
+  }
+  
+  .go-back-button {
+    font-family: 'Courier New', Consolas, monospace;
+    background: #552f04; 
+    color: white;
+    border: none;
+    padding: 6%;
+    padding-left: 20%;
+    padding-right: 20%;
+    border-radius: 8px;
+    font-size: 1.2em; 
+    cursor: pointer;
+    font-weight: bold;
+    margin-bottom: 20%;
+    margin-left: 19%;
+  }
+  
+  .go-back-button:hover {
+    background-color: #381f02;
+  }
+  
