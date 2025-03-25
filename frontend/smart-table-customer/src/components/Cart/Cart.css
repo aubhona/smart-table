@@ -11,7 +11,7 @@
     padding: 1%;
     border-radius: 1%;
     gap: 4%;
-    padding-left: 6%; 
+    padding-left: 2%; 
   }
   
   .close-button {
@@ -37,7 +37,7 @@
     margin-right: -15%;
   }
 
-  .call-waiter-button, .checkout-button {
+  .call-waiter-button, .checkout-button-cart {
     font-family: 'Courier New', Consolas, monospace;
     background: #552f04; 
     color: white;

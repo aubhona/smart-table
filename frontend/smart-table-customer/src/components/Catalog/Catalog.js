@@ -64,11 +64,15 @@ function Catalog() {
     navigate('/cart', { state: { cart } }); 
   };
 
+  const handleGoToUsers = () => {
+    navigate('/catalog/users-list'); 
+  };
+
   return (
     <div className="catalog-container">
       <div className="top-buttons">
         <button className="small-button">Удалить сессию</button>
-        <button className="small-button">Код комнаты</button>
+        <button className="small-button" onClick={handleGoToUsers}>Код комнаты</button>
         <button className="small-button">Официант</button>
         <button className="small-button">Чекаут гоу</button>
       </div>
@@ -116,7 +120,7 @@ function Catalog() {
         <div className="scroll-padding"></div>
         
       <div className="total-price">
-        <p>Итого: <strong>{totalPrice} рублей</strong></p>
+        <p>Итого: <strong>{totalPrice} ₽</strong></p>
         <button className="checkout-button" onClick={handleGoToCart}>Далее</button>
       </div>
     </div>

@@ -141,6 +141,10 @@
   margin: 3px 0;
   color: black;
 }
+
+.dish-name {
+  font-weight: bold;
+}
   
 .total-price {
   font-weight: bold;
