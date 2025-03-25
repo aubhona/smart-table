@@ -1,0 +1,185 @@
+openapi: 3.0.3
+info:
+    title: SmartTable Mobile API
+    version: 1.0.0
+    description: API для управления заказами.
+
+paths:
+    /customer/v1/order/customer/sign-in:
+        post:
+            summary: Авторизация пользователя в приложении
+            description: Авторизует пользователя
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CustomerV1OrderCustomerSignInRequest'
+            responses:
+                '200':
+                    description: Авторизирован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CustomerV1OrderCustomerSignInResponse'
+                '403':
+                    description: Ошибка авторизации или доступа
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Не найден пользователь
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /customer/v1/order/customer/sign-up:
+        post:
+            summary: Регистрация пользователя в приложении
+            description: Регистрирует пользователя
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            $ref: '#/components/schemas/CustomerV1OrderCustomerSignUpRequest'
+            responses:
+                '200':
+                    description: Авторизирован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CustomerV1OrderCustomerSignUpResponse'
+                '409':
+                    description: Ошибка регистрации
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /customer/v1/order/create:
+        post:
+            summary: Создание заказа, если первый пользователь в группе, иначе присоединение к заказу.
+            description: Создаёт новый заказ
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CustomerV1OrderCreateRequest'
+
+            responses:
+                '200':
+                    description: Заказ успешно создан
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CustomerV1OrderCreateResponse'
+
+                '403':
+                    description: Ошибка авторизации или доступа
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+    schemas:
+        CustomerV1OrderCustomerSignUpRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                tg_id:
+                    type: string
+                tg_login:
+                    type: string
+                chat_id:
+                    type: string
+                avatar:
+                    type: string
+                    format: binary
+            required:
+                - tg_id
+                - tg_login
+                - chat_id
+                - avatar
+
+        CustomerV1OrderCustomerSignUpResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                customer_uuid:
+                    type: string
+                    format: uuid
+            required:
+                - customer_uuid
+
+        CustomerV1OrderCustomerSignInRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                tg_id:
+                    type: string
+                tg_login:
+                    type: string
+                chat_id:
+                    type: string
+            required:
+                - tg_id
+                - tg_login
+                - chat_id
+
+        CustomerV1OrderCustomerSignInResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                customer_uuid:
+                    type: string
+                    format: uuid
+            required:
+                - customer_uuid
+
+        CustomerV1OrderCreateRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                table_id:
+                    type: string
+                    description: Уникальный идентификатор стола
+                room_code:
+                    type: string
+                    description: Код комнаты для группового заказа
+                customer_uuid:
+                    type: string
+                    format: uuid
+                    description: Логин пользователя в Telegram
+            required:
+                - table_id
+                - customer_uuid
+
+        CustomerV1OrderCreateResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                order_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор созданного заказа
+            required:
+                - order_uuid
+
+        ErrorResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                code:
+                    type: string
+                    description: Код ошибки
+                message:
+                    type: string
+                    description: Описание ошибки
+            required:
+                - code
+                - message
