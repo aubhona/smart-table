@@ -3,7 +3,6 @@ module github.com/smart-table
 go 1.23.1
 
 require (
-	github.com/getkin/kin-openapi v0.129.0
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/golangci/golangci-lint v1.64.8
@@ -17,7 +16,6 @@ require (
 	github.com/shopspring/decimal v1.4.0
 	github.com/spf13/viper v1.20.0
 	github.com/sqlc-dev/sqlc v1.28.0
-	github.com/stretchr/testify v1.10.0
 	github.com/testcontainers/testcontainers-go v0.35.0
 	github.com/thoas/go-funk v0.9.3
 	github.com/vektra/mockery/v2 v2.53.3
@@ -97,6 +95,7 @@ require (
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/fzipp/gocyclo v0.6.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.7 // indirect
+	github.com/getkin/kin-openapi v0.129.0 // indirect
 	github.com/ghostiam/protogetter v0.3.9 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-critic/go-critic v0.12.0 // indirect
@@ -256,6 +255,7 @@ require (
 	github.com/stbenjam/no-sprintf-host-port v0.2.0 // indirect
 	github.com/stoewer/go-strcase v1.2.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
+	github.com/stretchr/testify v1.10.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/tdakkota/asciicheck v0.4.1 // indirect
 	github.com/tetafro/godot v1.5.0 // indirect

@@ -42,7 +42,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd backend/smart-table
-          go mod tidy
+          go mod download
 
       - name: Check if Go files changed
         id: changed-files
