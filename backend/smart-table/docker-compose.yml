@@ -28,5 +28,23 @@ services:
         volumes:
             - smart_table_db_data:/var/lib/postgresql/data
 
+    liquibase:
+        image: liquibase/liquibase:4.26
+        depends_on:
+            - smart-table-db
+        volumes:
+            - ./postgresql:/liquibase/changelog
+        environment:
+            - LIQUIBASE_LOG_LEVEL=info
+        command:
+            - --searchPath=/liquibase/changelog/
+            - --changelog-file=changelog.xml
+            - --driver=org.postgresql.Driver
+            - --url=jdbc:postgresql://smart-table-db:${SMART_TABLE_DATABASE_PORT}/${DATABASE_NAME}
+            - --username=${DATABASE_USER}
+            - --password=${DATABASE_PASSWORD}
+            - update
+        restart: "no"
+
 volumes:
     smart_table_db_data:

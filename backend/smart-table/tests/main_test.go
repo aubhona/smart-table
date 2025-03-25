@@ -2,10 +2,15 @@ package tests //nolint
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
 	"log"
 	"os"
 	"testing"
 
+	"github.com/pressly/goose"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/smart-table/src/config"
 	"github.com/smart-table/src/dependencies"
 	"github.com/smart-table/src/domains/customer/di"
@@ -55,6 +60,18 @@ func TestMain(m *testing.M) {
 
 	cfg.Database.Host = host
 	cfg.Database.Port = port.Port()
+
+	db, err := sql.Open(
+		"pgx",
+		fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+			cfg.Database.Host, cfg.Database.Port, cfg.Database.User, cfg.Database.Password, cfg.Database.Name))
+	if err != nil {
+		log.Fatalf("Failed to connect db: %v", err)
+	}
+
+	if err = goose.Up(db, "../postgresql/smart_table"); err != nil {
+		log.Fatalf("Failed to create migration: %v", err)
+	}
 
 	deps := dependencies.InitDependencies(cfg)
 	logger := deps.Logger
