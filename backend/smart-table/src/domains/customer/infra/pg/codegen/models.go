@@ -9,6 +9,56 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type SmartTableAdminDish struct {
+	Uuid        uuid.UUID
+	Name        string
+	Description string
+	Weight      int32
+	PictureLink string
+	RestUuid    uuid.UUID
+	Category    string
+	CreatedAt   pgtype.Timestamptz
+	UpdatedAt   pgtype.Timestamptz
+}
+
+type SmartTableAdminMenuDish struct {
+	Uuid      uuid.UUID
+	DishUuid  uuid.UUID
+	PlaceUuid uuid.UUID
+	Price     pgtype.Numeric
+	Exist     bool
+	CreatedAt pgtype.Timestamptz
+	UpdatedAt pgtype.Timestamptz
+}
+
+type SmartTableAdminPlace struct {
+	Uuid        uuid.UUID
+	RestUuid    uuid.UUID
+	Address     string
+	OpeningTime pgtype.Time
+	ClosingTime pgtype.Time
+	TableCount  int32
+	CreatedAt   pgtype.Timestamptz
+	UpdatedAt   pgtype.Timestamptz
+}
+
+type SmartTableAdminRestaurant struct {
+	Uuid      uuid.UUID
+	Name      string
+	OwnerUuid uuid.UUID
+	CreatedAt pgtype.Timestamptz
+	UpdatedAt pgtype.Timestamptz
+}
+
+type SmartTableAdminStaff struct {
+	UserUuid  uuid.UUID
+	PlaceUuid uuid.UUID
+	Role      string
+	Active    bool
+	CreatedAt pgtype.Timestamptz
+	UpdatedAt pgtype.Timestamptz
+}
+
 type SmartTableAdminUser struct {
 	Uuid         uuid.UUID
 	Login        string
@@ -32,18 +82,6 @@ type SmartTableCustomerCustomer struct {
 	UpdatedAt  pgtype.Timestamptz
 }
 
-type SmartTableCustomerDish struct {
-	Uuid        uuid.UUID
-	Name        string
-	Description string
-	Weight      int32
-	PictureLink string
-	RestUuid    uuid.UUID
-	Category    string
-	CreatedAt   pgtype.Timestamptz
-	UpdatedAt   pgtype.Timestamptz
-}
-
 type SmartTableCustomerItem struct {
 	Uuid         uuid.UUID
 	OrderUuid    uuid.UUID
@@ -63,16 +101,6 @@ type SmartTableCustomerItem struct {
 	UpdatedAt    pgtype.Timestamptz
 }
 
-type SmartTableCustomerMenuDish struct {
-	Uuid      uuid.UUID
-	DishUuid  uuid.UUID
-	PlaceUuid uuid.UUID
-	Price     pgtype.Numeric
-	Exist     bool
-	CreatedAt pgtype.Timestamptz
-	UpdatedAt pgtype.Timestamptz
-}
-
 type SmartTableCustomerOrder struct {
 	Uuid          uuid.UUID
 	RoomCode      string
@@ -83,45 +111,4 @@ type SmartTableCustomerOrder struct {
 	Resolution    pgtype.Text
 	CreatedAt     pgtype.Timestamptz
 	UpdatedAt     pgtype.Timestamptz
-}
-
-type SmartTableCustomerPlace struct {
-	Uuid        uuid.UUID
-	RestUuid    uuid.UUID
-	Address     string
-	OpeningTime pgtype.Time
-	ClosingTime pgtype.Time
-	TableCount  int32
-	CreatedAt   pgtype.Timestamptz
-	UpdatedAt   pgtype.Timestamptz
-}
-
-type SmartTableCustomerRestaurant struct {
-	Uuid      uuid.UUID
-	Name      string
-	OwnerUuid uuid.UUID
-	CreatedAt pgtype.Timestamptz
-	UpdatedAt pgtype.Timestamptz
-}
-
-type SmartTableCustomerStaff struct {
-	UserUuid  uuid.UUID
-	PlaceUuid uuid.UUID
-	Role      string
-	Active    bool
-	CreatedAt pgtype.Timestamptz
-	UpdatedAt pgtype.Timestamptz
-}
-
-type SmartTableCustomerUser struct {
-	Uuid         uuid.UUID
-	AvatarLink   string
-	Login        string
-	TgLogin      string
-	Name         string
-	Phone        string
-	PasswordHash string
-	ChatID       string
-	CreatedAt    pgtype.Timestamptz
-	UpdatedAt    pgtype.Timestamptz
 }
