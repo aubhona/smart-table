@@ -20,101 +20,68 @@ func (_m *ServerInterface) EXPECT() *ServerInterface_Expecter {
 	return &ServerInterface_Expecter{mock: &_m.Mock}
 }
 
-// PostCustomerV1OrderCreate provides a mock function with given fields: c
-func (_m *ServerInterface) PostCustomerV1OrderCreate(c *gin.Context) {
+// PostAdminV1UserSignIn provides a mock function with given fields: c
+func (_m *ServerInterface) PostAdminV1UserSignIn(c *gin.Context) {
 	_m.Called(c)
 }
 
-// ServerInterface_PostCustomerV1OrderCreate_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'PostCustomerV1OrderCreate'
-type ServerInterface_PostCustomerV1OrderCreate_Call struct {
+// ServerInterface_PostAdminV1UserSignIn_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'PostAdminV1UserSignIn'
+type ServerInterface_PostAdminV1UserSignIn_Call struct {
 	*mock.Call
 }
 
-// PostCustomerV1OrderCreate is a helper method to define mock.On call
+// PostAdminV1UserSignIn is a helper method to define mock.On call
 //   - c *gin.Context
-func (_e *ServerInterface_Expecter) PostCustomerV1OrderCreate(c interface{}) *ServerInterface_PostCustomerV1OrderCreate_Call {
-	return &ServerInterface_PostCustomerV1OrderCreate_Call{Call: _e.mock.On("PostCustomerV1OrderCreate", c)}
+func (_e *ServerInterface_Expecter) PostAdminV1UserSignIn(c interface{}) *ServerInterface_PostAdminV1UserSignIn_Call {
+	return &ServerInterface_PostAdminV1UserSignIn_Call{Call: _e.mock.On("PostAdminV1UserSignIn", c)}
 }
 
-func (_c *ServerInterface_PostCustomerV1OrderCreate_Call) Run(run func(c *gin.Context)) *ServerInterface_PostCustomerV1OrderCreate_Call {
+func (_c *ServerInterface_PostAdminV1UserSignIn_Call) Run(run func(c *gin.Context)) *ServerInterface_PostAdminV1UserSignIn_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(*gin.Context))
 	})
 	return _c
 }
 
-func (_c *ServerInterface_PostCustomerV1OrderCreate_Call) Return() *ServerInterface_PostCustomerV1OrderCreate_Call {
+func (_c *ServerInterface_PostAdminV1UserSignIn_Call) Return() *ServerInterface_PostAdminV1UserSignIn_Call {
 	_c.Call.Return()
 	return _c
 }
 
-func (_c *ServerInterface_PostCustomerV1OrderCreate_Call) RunAndReturn(run func(*gin.Context)) *ServerInterface_PostCustomerV1OrderCreate_Call {
+func (_c *ServerInterface_PostAdminV1UserSignIn_Call) RunAndReturn(run func(*gin.Context)) *ServerInterface_PostAdminV1UserSignIn_Call {
 	_c.Run(run)
 	return _c
 }
 
-// PostCustomerV1OrderCustomerSignIn provides a mock function with given fields: c
-func (_m *ServerInterface) PostCustomerV1OrderCustomerSignIn(c *gin.Context) {
+// PostAdminV1UserSignUp provides a mock function with given fields: c
+func (_m *ServerInterface) PostAdminV1UserSignUp(c *gin.Context) {
 	_m.Called(c)
 }
 
-// ServerInterface_PostCustomerV1OrderCustomerSignIn_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'PostCustomerV1OrderCustomerSignIn'
-type ServerInterface_PostCustomerV1OrderCustomerSignIn_Call struct {
+// ServerInterface_PostAdminV1UserSignUp_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'PostAdminV1UserSignUp'
+type ServerInterface_PostAdminV1UserSignUp_Call struct {
 	*mock.Call
 }
 
-// PostCustomerV1OrderCustomerSignIn is a helper method to define mock.On call
+// PostAdminV1UserSignUp is a helper method to define mock.On call
 //   - c *gin.Context
-func (_e *ServerInterface_Expecter) PostCustomerV1OrderCustomerSignIn(c interface{}) *ServerInterface_PostCustomerV1OrderCustomerSignIn_Call {
-	return &ServerInterface_PostCustomerV1OrderCustomerSignIn_Call{Call: _e.mock.On("PostCustomerV1OrderCustomerSignIn", c)}
+func (_e *ServerInterface_Expecter) PostAdminV1UserSignUp(c interface{}) *ServerInterface_PostAdminV1UserSignUp_Call {
+	return &ServerInterface_PostAdminV1UserSignUp_Call{Call: _e.mock.On("PostAdminV1UserSignUp", c)}
 }
 
-func (_c *ServerInterface_PostCustomerV1OrderCustomerSignIn_Call) Run(run func(c *gin.Context)) *ServerInterface_PostCustomerV1OrderCustomerSignIn_Call {
+func (_c *ServerInterface_PostAdminV1UserSignUp_Call) Run(run func(c *gin.Context)) *ServerInterface_PostAdminV1UserSignUp_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		run(args[0].(*gin.Context))
 	})
 	return _c
 }
 
-func (_c *ServerInterface_PostCustomerV1OrderCustomerSignIn_Call) Return() *ServerInterface_PostCustomerV1OrderCustomerSignIn_Call {
+func (_c *ServerInterface_PostAdminV1UserSignUp_Call) Return() *ServerInterface_PostAdminV1UserSignUp_Call {
 	_c.Call.Return()
 	return _c
 }
 
-func (_c *ServerInterface_PostCustomerV1OrderCustomerSignIn_Call) RunAndReturn(run func(*gin.Context)) *ServerInterface_PostCustomerV1OrderCustomerSignIn_Call {
-	_c.Run(run)
-	return _c
-}
-
-// PostCustomerV1OrderCustomerSignUp provides a mock function with given fields: c
-func (_m *ServerInterface) PostCustomerV1OrderCustomerSignUp(c *gin.Context) {
-	_m.Called(c)
-}
-
-// ServerInterface_PostCustomerV1OrderCustomerSignUp_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'PostCustomerV1OrderCustomerSignUp'
-type ServerInterface_PostCustomerV1OrderCustomerSignUp_Call struct {
-	*mock.Call
-}
-
-// PostCustomerV1OrderCustomerSignUp is a helper method to define mock.On call
-//   - c *gin.Context
-func (_e *ServerInterface_Expecter) PostCustomerV1OrderCustomerSignUp(c interface{}) *ServerInterface_PostCustomerV1OrderCustomerSignUp_Call {
-	return &ServerInterface_PostCustomerV1OrderCustomerSignUp_Call{Call: _e.mock.On("PostCustomerV1OrderCustomerSignUp", c)}
-}
-
-func (_c *ServerInterface_PostCustomerV1OrderCustomerSignUp_Call) Run(run func(c *gin.Context)) *ServerInterface_PostCustomerV1OrderCustomerSignUp_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(*gin.Context))
-	})
-	return _c
-}
-
-func (_c *ServerInterface_PostCustomerV1OrderCustomerSignUp_Call) Return() *ServerInterface_PostCustomerV1OrderCustomerSignUp_Call {
-	_c.Call.Return()
-	return _c
-}
-
-func (_c *ServerInterface_PostCustomerV1OrderCustomerSignUp_Call) RunAndReturn(run func(*gin.Context)) *ServerInterface_PostCustomerV1OrderCustomerSignUp_Call {
+func (_c *ServerInterface_PostAdminV1UserSignUp_Call) RunAndReturn(run func(*gin.Context)) *ServerInterface_PostAdminV1UserSignUp_Call {
 	_c.Run(run)
 	return _c
 }

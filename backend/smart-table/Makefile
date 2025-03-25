@@ -18,11 +18,6 @@ OUTPUT_MODELS_DEFINITIONS := src/codegen/definitions
 DOCS_INTERNAL := docs/internal/*.yaml
 DOCS_DEFINITIONS := docs/definitions/*.yaml
 
-# SQLC Paths
-SQL_QUERIES := src/domains/orders/infra/pg/sql
-SQL_SCHEMA := postgresql/smart-table
-SQL_OUTPUT := src/domains/orders/infra/pg/codegen
-
 .PHONY: all
 all: build
 
@@ -46,14 +41,7 @@ lint:
 .PHONY: clean
 clean:
 	find $(BUILD_DIR) -type f -delete
-	find $(OUTPUT_VIEWS) -type f -name "gen.go" -delete
-	find $(OUTPUT_MODELS_INTERNAL) -type f -name "gen.go" -delete
-	find $(OUTPUT_MODELS_DEFINITIONS) -type f -name "gen.go" -delete
-	find $(SQL_OUTPUT) -type f -name "*.go" -delete
-	find $(OUTPUT_VIEWS) -type d -mindepth 1 -empty -delete
-	find $(OUTPUT_MODELS_INTERNAL) -type d -empty -delete
-	find $(OUTPUT_MODELS_DEFINITIONS) -type d -empty -delete
-	find $(SQL_OUTPUT) -type d -empty -delete
+	find . -type d -name "codegen" -exec rm -rf {} +
 	mkdir -p $(OUTPUT_VIEWS)
 
 .PHONY: deps
@@ -103,7 +91,6 @@ gen-models:
 
 .PHONY: gen-sqlc
 gen-sqlc:
-	mkdir -p $(SQL_OUTPUT)
 	echo "Generating SQL code from $(SQLC_CONFIG)..."
 	sqlc generate -f $(SQLC_CONFIG)
 

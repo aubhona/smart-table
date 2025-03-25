@@ -1,13 +1,12 @@
-package di
+package servers
 
 import (
 	"bytes"
 	"io"
 	"strings"
 
-	"github.com/smart-table/src/config"
-
 	"github.com/gin-gonic/gin"
+	"github.com/smart-table/src/config"
 )
 
 func getRequestBody(c *gin.Context, cfg *config.Config) string {
