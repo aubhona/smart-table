@@ -135,12 +135,8 @@ components:
                     format: uuid
                     description: Уникальный идентификатор пользователя
                     pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-                jwt_token:
-                    type: string
-                    description: JWT токен пользователя
             required:
                 - user_uuid
-                - jwt_token
 
         # /v1/admin/user/sign-in_POST
         V1AdminUserSignInRequest:
@@ -163,12 +159,8 @@ components:
                 user_uuid:
                     type: string
                     description: Уникальный идентификатор пользователя
-                jwt_token:
-                    type: string
-                    description: JWT токен пользователя
             required:
                 - user_uuid
-                - jwt_token
 
         ErrorResponse:
             type: object
