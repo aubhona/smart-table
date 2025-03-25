@@ -4,7 +4,7 @@ import "./Item.css";
 
 const dishes = [
     { id: 1, category: "novinki", name: "Бурурброт", price: 10, calories: 250 },
-    { id: 2, category: "novinki", name: "Плов", price: 12, calories: 300 },
+    { id: 2, category: "novinki", name: "Плов", price: 1200, calories: 300 },
     { id: 3, category: "pervoe", name: "Супчок", price: 15, calories: 400 },
     { id: 4, category: "vtoroe", name: "Котлета с пюре", price: 20, calories: 500 },
     { id: 5, category: "napitki", name: "Кофе", price: 17, calories: 200 },

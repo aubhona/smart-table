@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import "./Catalog.css";
 import { useNavigate } from "react-router-dom";
+import "./Catalog.css";
 
 const categories = [
   { id: "novinki", name: "Новинки" },
@@ -13,7 +13,7 @@ const categories = [
 
 const dishes = [
   { id: 1, category: "novinki", name: "Бурурброт", price: 10, calories: 250 },
-  { id: 2, category: "novinki", name: "Плов", price: 12, calories: 300 },
+  { id: 2, category: "novinki", name: "Плов", price: 1200, calories: 300 },
   { id: 3, category: "pervoe", name: "Супчок", price: 15, calories: 400 },
   { id: 4, category: "vtoroe", name: "Котлета с пюре", price: 20, calories: 500 },
   { id: 5, category: "napitki", name: "Кофе", price: 17, calories: 200 },
@@ -58,6 +58,10 @@ function Catalog() {
         behavior: "smooth", 
       });
     }
+  };
+
+  const handleGoToCart = () => {
+    navigate('/cart', { state: { cart } }); 
   };
 
   return (
@@ -113,7 +117,7 @@ function Catalog() {
         
       <div className="total-price">
         <p>Итого: <strong>{totalPrice} рублей</strong></p>
-        <button className="checkout-button">Далее   </button>
+        <button className="checkout-button" onClick={handleGoToCart}>Далее</button>
       </div>
     </div>
   );
