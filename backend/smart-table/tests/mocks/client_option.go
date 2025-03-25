@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	viewsLUcustomer "github.com/smart-table/src/views/codegen/customer"
+	viewsLUadminUuser "github.com/smart-table/src/views/codegen/admin_user"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -21,7 +21,7 @@ func (_m *ClientOption) EXPECT() *ClientOption_Expecter {
 }
 
 // Execute provides a mock function with given fields: _a0
-func (_m *ClientOption) Execute(_a0 *viewsLUcustomer.Client) error {
+func (_m *ClientOption) Execute(_a0 *viewsLUadminUuser.Client) error {
 	ret := _m.Called(_a0)
 
 	if len(ret) == 0 {
@@ -29,7 +29,7 @@ func (_m *ClientOption) Execute(_a0 *viewsLUcustomer.Client) error {
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(*viewsLUcustomer.Client) error); ok {
+	if rf, ok := ret.Get(0).(func(*viewsLUadminUuser.Client) error); ok {
 		r0 = rf(_a0)
 	} else {
 		r0 = ret.Error(0)
@@ -44,14 +44,14 @@ type ClientOption_Execute_Call struct {
 }
 
 // Execute is a helper method to define mock.On call
-//   - _a0 *viewsLUcustomer.Client
+//   - _a0 *viewsLUadminUuser.Client
 func (_e *ClientOption_Expecter) Execute(_a0 interface{}) *ClientOption_Execute_Call {
 	return &ClientOption_Execute_Call{Call: _e.mock.On("Execute", _a0)}
 }
 
-func (_c *ClientOption_Execute_Call) Run(run func(_a0 *viewsLUcustomer.Client)) *ClientOption_Execute_Call {
+func (_c *ClientOption_Execute_Call) Run(run func(_a0 *viewsLUadminUuser.Client)) *ClientOption_Execute_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(*viewsLUcustomer.Client))
+		run(args[0].(*viewsLUadminUuser.Client))
 	})
 	return _c
 }
@@ -61,7 +61,7 @@ func (_c *ClientOption_Execute_Call) Return(_a0 error) *ClientOption_Execute_Cal
 	return _c
 }
 
-func (_c *ClientOption_Execute_Call) RunAndReturn(run func(*viewsLUcustomer.Client) error) *ClientOption_Execute_Call {
+func (_c *ClientOption_Execute_Call) RunAndReturn(run func(*viewsLUadminUuser.Client) error) *ClientOption_Execute_Call {
 	_c.Call.Return(run)
 	return _c
 }

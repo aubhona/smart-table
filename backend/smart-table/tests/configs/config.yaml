@@ -1,0 +1,30 @@
+app:
+    port: 8080
+    env: development
+
+database:
+    host: smart-table-db
+    port: 5432
+    user: DATABASE_USER
+    password: DATABASE_PASSWORD
+    name: DATABASE_NAME
+    timeout: 5s
+    max_connections: 50
+    min_connections: 5
+    max_connection_lifetime: 30m
+    max_connection_idle_time: 10m
+    health_check_period: 5m
+    max_connection_lifetime_jitter: 1m
+    server:
+        request_sym_limit: 1000
+        response_sym_limit: 1000
+
+logging:
+    level: debug
+    format: console
+    file: logs/app.log
+    max_size: 10
+    max_backups: 3
+    max_age: 30
+    compress: true
+    enable_console_and_file: true

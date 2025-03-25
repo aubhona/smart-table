@@ -61,7 +61,7 @@ deps:
 	$(GO) mod tidy
 
 .PHONY: gen
-gen: gen-views gen-models gen-sqlc generate_env
+gen: gen-views gen-models gen-sqlc generate_env mocks
 	$(GO) mod tidy
 
 .PHONY: gen-views

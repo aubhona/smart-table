@@ -54,7 +54,7 @@ func NewUser(
 }
 
 func RestoreUser(
-	uuid uuid.UUID,
+	id uuid.UUID,
 	login string,
 	tgID string,
 	tgLogin string,
@@ -66,7 +66,7 @@ func RestoreUser(
 	updatedAt time.Time,
 ) utils.SharedRef[User] {
 	user := User{
-		uuid:         uuid,
+		uuid:         id,
 		login:        login,
 		tgID:         tgID,
 		tgLogin:      tgLogin,
