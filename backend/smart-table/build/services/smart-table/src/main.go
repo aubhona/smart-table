@@ -24,10 +24,6 @@ func main() {
 	logger := deps.Logger
 	container := dig.New()
 
-	if err != nil {
-		logger.Fatal(err.Error())
-	}
-
 	err = customerDi.AddDeps(container)
 	if err != nil {
 		logger.Fatal(err.Error())

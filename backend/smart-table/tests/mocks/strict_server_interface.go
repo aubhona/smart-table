@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	viewsLUcustomer "github.com/smart-table/src/views/codegen/customer"
+	viewsLUadminUuser "github.com/smart-table/src/views/codegen/admin_user"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -22,28 +22,28 @@ func (_m *StrictServerInterface) EXPECT() *StrictServerInterface_Expecter {
 	return &StrictServerInterface_Expecter{mock: &_m.Mock}
 }
 
-// PostCustomerV1OrderCreate provides a mock function with given fields: ctx, request
-func (_m *StrictServerInterface) PostCustomerV1OrderCreate(ctx context.Context, request viewsLUcustomer.PostCustomerV1OrderCreateRequestObject) (viewsLUcustomer.PostCustomerV1OrderCreateResponseObject, error) {
+// PostAdminV1UserSignIn provides a mock function with given fields: ctx, request
+func (_m *StrictServerInterface) PostAdminV1UserSignIn(ctx context.Context, request viewsLUadminUuser.PostAdminV1UserSignInRequestObject) (viewsLUadminUuser.PostAdminV1UserSignInResponseObject, error) {
 	ret := _m.Called(ctx, request)
 
 	if len(ret) == 0 {
-		panic("no return value specified for PostCustomerV1OrderCreate")
+		panic("no return value specified for PostAdminV1UserSignIn")
 	}
 
-	var r0 viewsLUcustomer.PostCustomerV1OrderCreateResponseObject
+	var r0 viewsLUadminUuser.PostAdminV1UserSignInResponseObject
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, viewsLUcustomer.PostCustomerV1OrderCreateRequestObject) (viewsLUcustomer.PostCustomerV1OrderCreateResponseObject, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, viewsLUadminUuser.PostAdminV1UserSignInRequestObject) (viewsLUadminUuser.PostAdminV1UserSignInResponseObject, error)); ok {
 		return rf(ctx, request)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, viewsLUcustomer.PostCustomerV1OrderCreateRequestObject) viewsLUcustomer.PostCustomerV1OrderCreateResponseObject); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, viewsLUadminUuser.PostAdminV1UserSignInRequestObject) viewsLUadminUuser.PostAdminV1UserSignInResponseObject); ok {
 		r0 = rf(ctx, request)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(viewsLUcustomer.PostCustomerV1OrderCreateResponseObject)
+			r0 = ret.Get(0).(viewsLUadminUuser.PostAdminV1UserSignInResponseObject)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, viewsLUcustomer.PostCustomerV1OrderCreateRequestObject) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, viewsLUadminUuser.PostAdminV1UserSignInRequestObject) error); ok {
 		r1 = rf(ctx, request)
 	} else {
 		r1 = ret.Error(1)
@@ -52,57 +52,57 @@ func (_m *StrictServerInterface) PostCustomerV1OrderCreate(ctx context.Context, 
 	return r0, r1
 }
 
-// StrictServerInterface_PostCustomerV1OrderCreate_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'PostCustomerV1OrderCreate'
-type StrictServerInterface_PostCustomerV1OrderCreate_Call struct {
+// StrictServerInterface_PostAdminV1UserSignIn_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'PostAdminV1UserSignIn'
+type StrictServerInterface_PostAdminV1UserSignIn_Call struct {
 	*mock.Call
 }
 
-// PostCustomerV1OrderCreate is a helper method to define mock.On call
+// PostAdminV1UserSignIn is a helper method to define mock.On call
 //   - ctx context.Context
-//   - request viewsLUcustomer.PostCustomerV1OrderCreateRequestObject
-func (_e *StrictServerInterface_Expecter) PostCustomerV1OrderCreate(ctx interface{}, request interface{}) *StrictServerInterface_PostCustomerV1OrderCreate_Call {
-	return &StrictServerInterface_PostCustomerV1OrderCreate_Call{Call: _e.mock.On("PostCustomerV1OrderCreate", ctx, request)}
+//   - request viewsLUadminUuser.PostAdminV1UserSignInRequestObject
+func (_e *StrictServerInterface_Expecter) PostAdminV1UserSignIn(ctx interface{}, request interface{}) *StrictServerInterface_PostAdminV1UserSignIn_Call {
+	return &StrictServerInterface_PostAdminV1UserSignIn_Call{Call: _e.mock.On("PostAdminV1UserSignIn", ctx, request)}
 }
 
-func (_c *StrictServerInterface_PostCustomerV1OrderCreate_Call) Run(run func(ctx context.Context, request viewsLUcustomer.PostCustomerV1OrderCreateRequestObject)) *StrictServerInterface_PostCustomerV1OrderCreate_Call {
+func (_c *StrictServerInterface_PostAdminV1UserSignIn_Call) Run(run func(ctx context.Context, request viewsLUadminUuser.PostAdminV1UserSignInRequestObject)) *StrictServerInterface_PostAdminV1UserSignIn_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(viewsLUcustomer.PostCustomerV1OrderCreateRequestObject))
+		run(args[0].(context.Context), args[1].(viewsLUadminUuser.PostAdminV1UserSignInRequestObject))
 	})
 	return _c
 }
 
-func (_c *StrictServerInterface_PostCustomerV1OrderCreate_Call) Return(_a0 viewsLUcustomer.PostCustomerV1OrderCreateResponseObject, _a1 error) *StrictServerInterface_PostCustomerV1OrderCreate_Call {
+func (_c *StrictServerInterface_PostAdminV1UserSignIn_Call) Return(_a0 viewsLUadminUuser.PostAdminV1UserSignInResponseObject, _a1 error) *StrictServerInterface_PostAdminV1UserSignIn_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *StrictServerInterface_PostCustomerV1OrderCreate_Call) RunAndReturn(run func(context.Context, viewsLUcustomer.PostCustomerV1OrderCreateRequestObject) (viewsLUcustomer.PostCustomerV1OrderCreateResponseObject, error)) *StrictServerInterface_PostCustomerV1OrderCreate_Call {
+func (_c *StrictServerInterface_PostAdminV1UserSignIn_Call) RunAndReturn(run func(context.Context, viewsLUadminUuser.PostAdminV1UserSignInRequestObject) (viewsLUadminUuser.PostAdminV1UserSignInResponseObject, error)) *StrictServerInterface_PostAdminV1UserSignIn_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// PostCustomerV1OrderCustomerSignIn provides a mock function with given fields: ctx, request
-func (_m *StrictServerInterface) PostCustomerV1OrderCustomerSignIn(ctx context.Context, request viewsLUcustomer.PostCustomerV1OrderCustomerSignInRequestObject) (viewsLUcustomer.PostCustomerV1OrderCustomerSignInResponseObject, error) {
+// PostAdminV1UserSignUp provides a mock function with given fields: ctx, request
+func (_m *StrictServerInterface) PostAdminV1UserSignUp(ctx context.Context, request viewsLUadminUuser.PostAdminV1UserSignUpRequestObject) (viewsLUadminUuser.PostAdminV1UserSignUpResponseObject, error) {
 	ret := _m.Called(ctx, request)
 
 	if len(ret) == 0 {
-		panic("no return value specified for PostCustomerV1OrderCustomerSignIn")
+		panic("no return value specified for PostAdminV1UserSignUp")
 	}
 
-	var r0 viewsLUcustomer.PostCustomerV1OrderCustomerSignInResponseObject
+	var r0 viewsLUadminUuser.PostAdminV1UserSignUpResponseObject
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, viewsLUcustomer.PostCustomerV1OrderCustomerSignInRequestObject) (viewsLUcustomer.PostCustomerV1OrderCustomerSignInResponseObject, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, viewsLUadminUuser.PostAdminV1UserSignUpRequestObject) (viewsLUadminUuser.PostAdminV1UserSignUpResponseObject, error)); ok {
 		return rf(ctx, request)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, viewsLUcustomer.PostCustomerV1OrderCustomerSignInRequestObject) viewsLUcustomer.PostCustomerV1OrderCustomerSignInResponseObject); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, viewsLUadminUuser.PostAdminV1UserSignUpRequestObject) viewsLUadminUuser.PostAdminV1UserSignUpResponseObject); ok {
 		r0 = rf(ctx, request)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(viewsLUcustomer.PostCustomerV1OrderCustomerSignInResponseObject)
+			r0 = ret.Get(0).(viewsLUadminUuser.PostAdminV1UserSignUpResponseObject)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, viewsLUcustomer.PostCustomerV1OrderCustomerSignInRequestObject) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, viewsLUadminUuser.PostAdminV1UserSignUpRequestObject) error); ok {
 		r1 = rf(ctx, request)
 	} else {
 		r1 = ret.Error(1)
@@ -111,90 +111,31 @@ func (_m *StrictServerInterface) PostCustomerV1OrderCustomerSignIn(ctx context.C
 	return r0, r1
 }
 
-// StrictServerInterface_PostCustomerV1OrderCustomerSignIn_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'PostCustomerV1OrderCustomerSignIn'
-type StrictServerInterface_PostCustomerV1OrderCustomerSignIn_Call struct {
+// StrictServerInterface_PostAdminV1UserSignUp_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'PostAdminV1UserSignUp'
+type StrictServerInterface_PostAdminV1UserSignUp_Call struct {
 	*mock.Call
 }
 
-// PostCustomerV1OrderCustomerSignIn is a helper method to define mock.On call
+// PostAdminV1UserSignUp is a helper method to define mock.On call
 //   - ctx context.Context
-//   - request viewsLUcustomer.PostCustomerV1OrderCustomerSignInRequestObject
-func (_e *StrictServerInterface_Expecter) PostCustomerV1OrderCustomerSignIn(ctx interface{}, request interface{}) *StrictServerInterface_PostCustomerV1OrderCustomerSignIn_Call {
-	return &StrictServerInterface_PostCustomerV1OrderCustomerSignIn_Call{Call: _e.mock.On("PostCustomerV1OrderCustomerSignIn", ctx, request)}
+//   - request viewsLUadminUuser.PostAdminV1UserSignUpRequestObject
+func (_e *StrictServerInterface_Expecter) PostAdminV1UserSignUp(ctx interface{}, request interface{}) *StrictServerInterface_PostAdminV1UserSignUp_Call {
+	return &StrictServerInterface_PostAdminV1UserSignUp_Call{Call: _e.mock.On("PostAdminV1UserSignUp", ctx, request)}
 }
 
-func (_c *StrictServerInterface_PostCustomerV1OrderCustomerSignIn_Call) Run(run func(ctx context.Context, request viewsLUcustomer.PostCustomerV1OrderCustomerSignInRequestObject)) *StrictServerInterface_PostCustomerV1OrderCustomerSignIn_Call {
+func (_c *StrictServerInterface_PostAdminV1UserSignUp_Call) Run(run func(ctx context.Context, request viewsLUadminUuser.PostAdminV1UserSignUpRequestObject)) *StrictServerInterface_PostAdminV1UserSignUp_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(viewsLUcustomer.PostCustomerV1OrderCustomerSignInRequestObject))
+		run(args[0].(context.Context), args[1].(viewsLUadminUuser.PostAdminV1UserSignUpRequestObject))
 	})
 	return _c
 }
 
-func (_c *StrictServerInterface_PostCustomerV1OrderCustomerSignIn_Call) Return(_a0 viewsLUcustomer.PostCustomerV1OrderCustomerSignInResponseObject, _a1 error) *StrictServerInterface_PostCustomerV1OrderCustomerSignIn_Call {
+func (_c *StrictServerInterface_PostAdminV1UserSignUp_Call) Return(_a0 viewsLUadminUuser.PostAdminV1UserSignUpResponseObject, _a1 error) *StrictServerInterface_PostAdminV1UserSignUp_Call {
 	_c.Call.Return(_a0, _a1)
 	return _c
 }
 
-func (_c *StrictServerInterface_PostCustomerV1OrderCustomerSignIn_Call) RunAndReturn(run func(context.Context, viewsLUcustomer.PostCustomerV1OrderCustomerSignInRequestObject) (viewsLUcustomer.PostCustomerV1OrderCustomerSignInResponseObject, error)) *StrictServerInterface_PostCustomerV1OrderCustomerSignIn_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// PostCustomerV1OrderCustomerSignUp provides a mock function with given fields: ctx, request
-func (_m *StrictServerInterface) PostCustomerV1OrderCustomerSignUp(ctx context.Context, request viewsLUcustomer.PostCustomerV1OrderCustomerSignUpRequestObject) (viewsLUcustomer.PostCustomerV1OrderCustomerSignUpResponseObject, error) {
-	ret := _m.Called(ctx, request)
-
-	if len(ret) == 0 {
-		panic("no return value specified for PostCustomerV1OrderCustomerSignUp")
-	}
-
-	var r0 viewsLUcustomer.PostCustomerV1OrderCustomerSignUpResponseObject
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, viewsLUcustomer.PostCustomerV1OrderCustomerSignUpRequestObject) (viewsLUcustomer.PostCustomerV1OrderCustomerSignUpResponseObject, error)); ok {
-		return rf(ctx, request)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, viewsLUcustomer.PostCustomerV1OrderCustomerSignUpRequestObject) viewsLUcustomer.PostCustomerV1OrderCustomerSignUpResponseObject); ok {
-		r0 = rf(ctx, request)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(viewsLUcustomer.PostCustomerV1OrderCustomerSignUpResponseObject)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(context.Context, viewsLUcustomer.PostCustomerV1OrderCustomerSignUpRequestObject) error); ok {
-		r1 = rf(ctx, request)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// StrictServerInterface_PostCustomerV1OrderCustomerSignUp_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'PostCustomerV1OrderCustomerSignUp'
-type StrictServerInterface_PostCustomerV1OrderCustomerSignUp_Call struct {
-	*mock.Call
-}
-
-// PostCustomerV1OrderCustomerSignUp is a helper method to define mock.On call
-//   - ctx context.Context
-//   - request viewsLUcustomer.PostCustomerV1OrderCustomerSignUpRequestObject
-func (_e *StrictServerInterface_Expecter) PostCustomerV1OrderCustomerSignUp(ctx interface{}, request interface{}) *StrictServerInterface_PostCustomerV1OrderCustomerSignUp_Call {
-	return &StrictServerInterface_PostCustomerV1OrderCustomerSignUp_Call{Call: _e.mock.On("PostCustomerV1OrderCustomerSignUp", ctx, request)}
-}
-
-func (_c *StrictServerInterface_PostCustomerV1OrderCustomerSignUp_Call) Run(run func(ctx context.Context, request viewsLUcustomer.PostCustomerV1OrderCustomerSignUpRequestObject)) *StrictServerInterface_PostCustomerV1OrderCustomerSignUp_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(viewsLUcustomer.PostCustomerV1OrderCustomerSignUpRequestObject))
-	})
-	return _c
-}
-
-func (_c *StrictServerInterface_PostCustomerV1OrderCustomerSignUp_Call) Return(_a0 viewsLUcustomer.PostCustomerV1OrderCustomerSignUpResponseObject, _a1 error) *StrictServerInterface_PostCustomerV1OrderCustomerSignUp_Call {
-	_c.Call.Return(_a0, _a1)
-	return _c
-}
-
-func (_c *StrictServerInterface_PostCustomerV1OrderCustomerSignUp_Call) RunAndReturn(run func(context.Context, viewsLUcustomer.PostCustomerV1OrderCustomerSignUpRequestObject) (viewsLUcustomer.PostCustomerV1OrderCustomerSignUpResponseObject, error)) *StrictServerInterface_PostCustomerV1OrderCustomerSignUp_Call {
+func (_c *StrictServerInterface_PostAdminV1UserSignUp_Call) RunAndReturn(run func(context.Context, viewsLUadminUuser.PostAdminV1UserSignUpRequestObject) (viewsLUadminUuser.PostAdminV1UserSignUpResponseObject, error)) *StrictServerInterface_PostAdminV1UserSignUp_Call {
 	_c.Call.Return(run)
 	return _c
 }
