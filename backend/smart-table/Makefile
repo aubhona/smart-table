@@ -18,97 +18,123 @@ OUTPUT_MODELS_DEFINITIONS := src/codegen/definitions
 DOCS_INTERNAL := docs/internal/*.yaml
 DOCS_DEFINITIONS := docs/definitions/*.yaml
 
+# Colors
+GREEN  := \033[0;32m
+BLUE   := \033[0;34m
+YELLOW := \033[0;33m
+RED    := \033[0;31m
+NC     := \033[0m
+
 .PHONY: all
 all: build
 
 .PHONY: build
 build: gen
-	mkdir -p $(BUILD_DIR)
-	$(GO) build -o $(BUILD_DIR)/$(APP_NAME) $(MAIN_FILE)
+	@echo "${BLUE}🔹 Building application...${NC}"
+	@mkdir -p $(BUILD_DIR)
+	@$(GO) build -o $(BUILD_DIR)/$(APP_NAME) $(MAIN_FILE)
+	@echo "${GREEN}✅ Application built successfully!${NC}"
 
 .PHONY: run
 run: build
-	$(BUILD_DIR)/$(APP_NAME)
+	@echo "${BLUE}🔹 Starting application...${NC}"
+	@$(BUILD_DIR)/$(APP_NAME)
 
 .PHONY: test
 test:
-	$(GO) test ./... -v -cover
+	@echo "${BLUE}🔹 Running tests...${NC}"
+	@$(GO) test ./... -v -cover
+	@echo "${GREEN}✅ Tests completed!${NC}"
 
 .PHONY: lint
 lint:
-	golangci-lint run
+	@echo "${BLUE}🔹 Running linter...${NC}"
+	@go run github.com/golangci/golangci-lint/cmd/golangci-lint run
+	@echo "${GREEN}✅ Linting completed!${NC}"
 
 .PHONY: clean
 clean:
-	find $(BUILD_DIR) -type f -delete
-	find . -type d -name "codegen" -exec rm -rf {} +
-	mkdir -p $(OUTPUT_VIEWS)
+	@echo "${YELLOW}🔸 Cleaning up...${NC}"
+	@find tests/mocks -type f -delete
+	@find $(BUILD_DIR) -type f -delete
+	@find . -type d -name "codegen" -exec rm -rf {} +
+	@mkdir -p $(OUTPUT_VIEWS)
+	@echo "${GREEN}✅ Cleanup completed!${NC}"
 
 .PHONY: deps
 deps:
-	$(GO) mod tidy
+	@echo "${BLUE}🔹 Updating dependencies...${NC}"
+	@$(GO) mod tidy
+	@echo "${GREEN}✅ Dependencies updated!${NC}"
 
 .PHONY: gen
 gen: gen-views gen-models gen-sqlc generate_env mocks
-	$(GO) mod tidy
+	@$(GO) mod tidy
+	@echo "${GREEN}✅ All code generation completed!${NC}"
 
 .PHONY: gen-views
 gen-views:
+	@echo "${BLUE}🔹 Generating views code...${NC}"
 	@for file in $(API_SPECS); do \
 		base_name=$$(basename $$file .yaml); \
 		camel_case_name=$$(echo $$base_name | sed -E 's/(^|_)([a-z])/\U\2/g' | sed -E 's/^(.)/\L\1/') ; \
 		dir_path="$(OUTPUT_VIEWS)/$$base_name"; \
-		package_name="views$$camel_case_name"; \
+		package_name="views$$(echo $$base_name | sed 's/_//g')"; \
 		output_file="$$dir_path/gen.go"; \
 		mkdir -p $$dir_path; \
-		echo "Generating $$output_file with package $$package_name from $$file"; \
-		oapi-codegen --config $(OAPI_CONFIG) -o $$output_file -package $$package_name $$file; \
+		echo "${BLUE}🔸 Generating $$output_file with package $$package_name from $$file${NC}"; \
+		go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen --config $(OAPI_CONFIG) -o $$output_file -package $$package_name $$file || exit 1; \
 	done
+	@echo "${GREEN}✅ Views generation completed!${NC}"
 
 .PHONY: gen-models
 gen-models:
+	@echo "${BLUE}🔹 Generating models code...${NC}"
 	@for file in $(wildcard $(DOCS_INTERNAL)); do \
 		base_name=$$(basename $$file .yaml); \
-		camel_case_name=$$(echo $$base_name | sed -E 's/(^|_)([a-z])/\U\2/g' | sed -E 's/^(.)/\L\1/') ; \
+		package_name="defsinternal$$(echo $$base_name | sed 's/_//g')"; \
 		dir_path="$(OUTPUT_MODELS_INTERNAL)/$$base_name"; \
-		package_name="defsInternal$$camel_case_name"; \
 		output_file="$$dir_path/gen.go"; \
 		mkdir -p $$dir_path; \
-		echo "Generating $$output_file with package $$package_name from $$file"; \
-		oapi-codegen --config $(OAPI_MODELS_CONFIG) -o $$output_file -package $$package_name $$file; \
+		echo "${BLUE}🔸 Generating $$output_file with package $$package_name from $$file${NC}"; \
+		go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen --config $(OAPI_MODELS_CONFIG) -o $$output_file -package $$package_name $$file || exit 1; \
 	done
 
 	@for file in $(wildcard $(DOCS_DEFINITIONS)); do \
 		base_name=$$(basename $$file .yaml); \
-		camel_case_name=$$(echo $$base_name | sed -E 's/(^|_)([a-z])/\U\2/g' | sed -E 's/^(.)/\L\1/') ; \
+		package_name="defsdefinitions$$(echo $$base_name | sed 's/_//g')"; \
 		dir_path="$(OUTPUT_MODELS_DEFINITIONS)/$$base_name"; \
-		package_name="defsDefinitions$$camel_case_name"; \
 		output_file="$$dir_path/gen.go"; \
 		mkdir -p $$dir_path; \
-		echo "Generating $$output_file with package $$package_name from $$file"; \
-		oapi-codegen --config $(OAPI_MODELS_CONFIG) -o $$output_file -package $$package_name $$file; \
+		echo "${BLUE}🔸 Generating $$output_file with package $$package_name from $$file${NC}"; \
+		go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen --config $(OAPI_MODELS_CONFIG) -o $$output_file -package $$package_name $$file || exit 1; \
 	done
+	@echo "${GREEN}✅ Models generation completed!${NC}"
 
 .PHONY: gen-sqlc
 gen-sqlc:
-	echo "Generating SQL code from $(SQLC_CONFIG)..."
-	sqlc generate -f $(SQLC_CONFIG)
+	@echo "${BLUE}🔹 Generating SQL code...${NC}"
+	@echo "${BLUE}🔸 Using config: $(SQLC_CONFIG)${NC}"
+	@go run github.com/sqlc-dev/sqlc/cmd/sqlc generate -f $(SQLC_CONFIG)
+	@echo "${GREEN}✅ SQL code generated successfully!${NC}"
 
 .PHONY: mocks
 mocks:
-	mockery --config .mockery.yaml
-	@go mod tidy
+	@echo "${BLUE}🔹 Generating mocks...${NC}"
+	@go run github.com/vektra/mockery/v2 --config .mockery.yaml
+	@$(GO) mod tidy
+	@echo "${GREEN}✅ Mocks generated successfully!${NC}"
 
 .PHONY: generate_env
 generate_env:
-	@echo "🔹 Generating .env files..."
+	@echo "${BLUE}🔹 Generating .env files...${NC}"
 	@chmod +x load_env.sh && ./load_env.sh
-	@echo "✅ .env files successfully created!"
+	@echo "${GREEN}✅ .env files successfully created!${NC}"
 
 .PHONY: up
 up: gen
-	@echo "🔹Running docker compose..."
-	@echo "Using env files: $(CONFIGS)"
+	@echo "${BLUE}🔹 Running docker compose...${NC}"
+	@echo "${BLUE}🔸 Using env files: $(CONFIGS)${NC}"
 	@docker compose \
 		$(foreach envfile, $(CONFIGS), --env-file=$(envfile)) \
 		up --build

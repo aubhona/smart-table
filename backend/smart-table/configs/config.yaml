@@ -20,8 +20,8 @@ database:
     health_check_period: 5m
     max_connection_lifetime_jitter: 1m
     server:
-        request_sym_limit: 1000000
-        response_sym_limit: 1000000
+        request_sym_limit: 100000000
+        response_sym_limit: 100000000
 
 logging:
     level: debug

@@ -8,8 +8,10 @@ import (
 	"github.com/smart-table/src/config"
 	"github.com/smart-table/src/dependencies"
 	"github.com/smart-table/src/utils"
+	viewsUser "github.com/smart-table/src/views/admin/v1/user"
+	viewsAdmin "github.com/smart-table/src/views/codegen/admin_user"
 	viewsCustomer "github.com/smart-table/src/views/codegen/customer"
-	views "github.com/smart-table/src/views/customer/v1/order"
+	viewsOrder "github.com/smart-table/src/views/customer/v1/order"
 	"go.uber.org/dig"
 	"go.uber.org/zap"
 )
@@ -29,8 +31,11 @@ func GetRouter(container *dig.Container, deps *dependencies.Dependencies) *gin.E
 			c.Next()
 		})
 
-	strictHandler := viewsCustomer.NewStrictHandler(&views.CustomerV1OrderHandler{}, nil)
-	viewsCustomer.RegisterHandlers(router, strictHandler)
+	customerStrictHandler := viewsCustomer.NewStrictHandler(&viewsOrder.CustomerV1OrderHandler{}, nil)
+	viewsCustomer.RegisterHandlers(router, customerStrictHandler)
+
+	adminStrictHandler := viewsAdmin.NewStrictHandler(&viewsUser.AdminV1UserHandler{}, nil)
+	viewsAdmin.RegisterHandlers(router, adminStrictHandler)
 
 	return router
 }

@@ -1,3 +1,3 @@
 package views
 
-type V1AdminUserHandler struct{}
+type AdminV1UserHandler struct{}

@@ -8,7 +8,7 @@ import (
 	viewsAdminUser "github.com/smart-table/src/views/codegen/admin_user"
 )
 
-func (h *V1AdminUserHandler) PostV1AdminUserSignUp(
+func (h *AdminV1UserHandler) PostAdminV1UserSignUp(
 	ctx context.Context,
 	request viewsAdminUser.PostAdminV1UserSignUpRequestObject,
 ) (viewsAdminUser.PostAdminV1UserSignUpResponseObject, error) {
