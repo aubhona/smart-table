@@ -5,14 +5,17 @@ import (
 	"time"
 
 	"github.com/gin-contrib/cors"
+	viewsCodegenAdmin "github.com/smart-table/src/views/codegen/admin_user"
+
 	"github.com/gin-gonic/gin"
 	"github.com/smart-table/src/config"
 	"github.com/smart-table/src/dependencies"
 	"github.com/smart-table/src/utils"
 	viewsUser "github.com/smart-table/src/views/admin/v1/user"
-	viewsAdmin "github.com/smart-table/src/views/codegen/admin_user"
-	viewsCustomer "github.com/smart-table/src/views/codegen/customer"
-	viewsOrder "github.com/smart-table/src/views/customer/v1/order"
+	viewsCodegenCustomer "github.com/smart-table/src/views/codegen/customer"
+	viewsCodegenCustomerOrder "github.com/smart-table/src/views/codegen/customer_order"
+	viewsCustomer "github.com/smart-table/src/views/customer/v1"
+	viewsCustomerOrder "github.com/smart-table/src/views/customer/v1/order"
 	"go.uber.org/dig"
 	"go.uber.org/zap"
 )
@@ -38,11 +41,14 @@ func GetRouter(container *dig.Container, deps *dependencies.Dependencies) *gin.E
 			c.Next()
 		}).Use(cors.New(config))
 
-	customerStrictHandler := viewsCustomer.NewStrictHandler(&viewsOrder.CustomerV1OrderHandler{}, nil)
-	viewsCustomer.RegisterHandlers(router, customerStrictHandler)
+	customerStrictHandler := viewsCodegenCustomer.NewStrictHandler(&viewsCustomer.CustomerV1Handler{}, nil)
+	viewsCodegenCustomer.RegisterHandlers(router, customerStrictHandler)
 
-	adminStrictHandler := viewsAdmin.NewStrictHandler(&viewsUser.AdminV1UserHandler{}, nil)
-	viewsAdmin.RegisterHandlers(router, adminStrictHandler)
+	customerOrderStrictHandler := viewsCodegenCustomerOrder.NewStrictHandler(&viewsCustomerOrder.CustomerV1OrderHandler{}, nil)
+	viewsCodegenCustomerOrder.RegisterHandlers(router, customerOrderStrictHandler)
+
+	adminStrictHandler := viewsCodegenAdmin.NewStrictHandler(&viewsUser.AdminV1UserHandler{}, nil)
+	viewsCodegenAdmin.RegisterHandlers(router, adminStrictHandler)
 
 	return router
 }
