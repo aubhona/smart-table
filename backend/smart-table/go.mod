@@ -4,6 +4,7 @@ go 1.23.1
 
 require (
 	github.com/getkin/kin-openapi v0.129.0
+	github.com/gin-contrib/cors v1.7.4
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/golangci/golangci-lint v1.64.8
