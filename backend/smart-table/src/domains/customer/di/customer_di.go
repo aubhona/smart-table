@@ -35,6 +35,16 @@ func AddDeps(container *dig.Container) error {
 		return err
 	}
 
+	err = container.Provide(app.NewCustomerAuthorizeCommandHandler)
+	if err != nil {
+		return err
+	}
+
+	err = container.Provide(app.NewCustomerRegisterCommandHandler)
+	if err != nil {
+		return err
+	}
+
 	err = container.Provide(app.NewOrderCreateCommandHandler)
 	if err != nil {
 		return err

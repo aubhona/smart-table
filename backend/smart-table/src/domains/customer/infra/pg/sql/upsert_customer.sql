@@ -28,7 +28,8 @@ FROM jsonb_to_record($1::jsonb) AS input(
    chat_id      TEXT,
    created_at   TIMESTAMPTZ,
    updated_at   TIMESTAMPTZ
-) ON CONFLICT (tg_id) DO UPDATE
+) ON CONFLICT (uuid) DO UPDATE
 SET
-    chat_id = EXCLUDED.chat_id
+    chat_id = EXCLUDED.chat_id,
+    tg_login = EXCLUDED.tg_login
 RETURNING uuid;

@@ -2,7 +2,8 @@ package app
 
 import (
 	"context"
-	"errors"
+
+	"github.com/smart-table/src/utils"
 
 	"github.com/google/uuid"
 	app "github.com/smart-table/src/domains/customer/app/services"
@@ -38,7 +39,9 @@ func NewOrderCreateCommandHandler(
 }
 
 func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateCommand) (OrderCreateCommandHandlerResult, error) {
+	ctx := context.Background()
 	user, err := handler.customerRepository.FindCustomer(context.Background(), createCommand.CustomerUUID)
+
 	if err != nil {
 		return OrderCreateCommandHandlerResult{}, err
 	}
@@ -47,7 +50,7 @@ func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateComma
 	isNewOrder := false
 
 	if err != nil {
-		if errors.Is(err, domainErrors.OrderNotFoundByTableID{}) {
+		if utils.IsTheSameErrorType(err, domainErrors.OrderNotFoundByTableID{}) {
 			isNewOrder = true
 		} else {
 			return OrderCreateCommandHandlerResult{}, err
@@ -56,13 +59,29 @@ func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateComma
 
 	if isNewOrder {
 		//nolint: godox, gocritic
-		// TODO: Check table id existence
+		// TODO: Check table id existence, check active order id on user
 		roomCode, err := handler.roomCodeService.CreateRoomCode(createCommand.TableID, createCommand.CustomerUUID)
+
 		if err != nil {
 			return OrderCreateCommandHandlerResult{}, err
 		}
 
 		order = domain.NewOrder(roomCode, createCommand.TableID, user, handler.uuidGenerator)
+		err = handler.orderRepository.Begin(ctx)
+
+		if err != nil {
+			return OrderCreateCommandHandlerResult{}, err
+		}
+
+		defer func(orderRepository domain.OrderRepository, ctx context.Context) {
+			_ = orderRepository.Commit(ctx)
+		}(handler.orderRepository, ctx)
+
+		err = handler.orderRepository.Save(ctx, order)
+
+		if err != nil {
+			return OrderCreateCommandHandlerResult{}, err
+		}
 
 		return OrderCreateCommandHandlerResult{order.Get().GetUUID()}, nil
 	}

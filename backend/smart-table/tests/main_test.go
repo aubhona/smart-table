@@ -1,12 +1,18 @@
-package tests //nolint
+package smarttable_test
 
 import (
 	"context"
 	"database/sql"
 	"fmt"
 	"log"
+	"net/http/httptest"
 	"os"
+	"sync"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	dbCustomer "github.com/smart-table/src/domains/customer/infra/pg/codegen"
+	"github.com/smart-table/src/utils"
 
 	"github.com/pressly/goose"
 
@@ -20,9 +26,92 @@ import (
 	"go.uber.org/dig"
 )
 
-var container *dig.Container = dig.New()
+var testMutex sync.Mutex
+var container = dig.New()
+var responseRecorder = httptest.NewRecorder()
+var ginCtx, _ = gin.CreateTestContext(responseRecorder)
+var deps = &dependencies.Dependencies{}
+
+func GetCustomerQueries() *dbCustomer.Queries {
+	return dbCustomer.New(deps.DBConnPool)
+}
+
+func GetCtx() context.Context {
+	return ginCtx
+}
+
+func GetTestMutex() *sync.Mutex {
+	return &testMutex
+}
+
+func SetupOnceTest() {
+	db, err := sql.Open(
+		"pgx",
+		fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+			deps.Config.Database.Host, deps.Config.Database.Port,
+			deps.Config.Database.User, deps.Config.Database.Password, deps.Config.Database.Name))
+	if err != nil {
+		log.Fatalf("Failed to connect db: %v", err)
+	}
+	defer db.Close()
+
+	if err = goose.Up(db, "../postgresql/smart_table"); err != nil {
+		log.Fatalf("Failed to create migration: %v", err)
+	}
+}
+
+func CleanTest() {
+	db, err := sql.Open(
+		"pgx",
+		fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+			deps.Config.Database.Host, deps.Config.Database.Port,
+			deps.Config.Database.User, deps.Config.Database.Password, deps.Config.Database.Name))
+	if err != nil {
+		log.Fatalf("Failed to connect db: %v", err)
+	}
+	defer db.Close()
+
+	_, err = db.Exec(`
+        DO $$
+        DECLARE
+            tbl text;
+        BEGIN
+            FOR tbl IN 
+                SELECT tablename 
+                FROM pg_tables 
+                WHERE schemaname = 'smart_table_customer'
+            LOOP
+                EXECUTE 'TRUNCATE TABLE smart_table_customer.' || quote_ident(tbl) || ' CASCADE';
+                RAISE NOTICE 'Очищена таблица: smart_table_customer.%', tbl;
+            END LOOP;
+        END $$;
+    `)
+	if err != nil {
+		log.Fatalf("Failed to truncate smart_table_customer: %v", err)
+	}
+
+	_, err = db.Exec(`
+        DO $$
+        DECLARE
+            tbl text;
+        BEGIN
+            FOR tbl IN 
+                SELECT tablename 
+                FROM pg_tables 
+                WHERE schemaname = 'smart_table_admin'
+            LOOP
+                EXECUTE 'TRUNCATE TABLE smart_table_admin.' || quote_ident(tbl) || ' CASCADE';
+                RAISE NOTICE 'Очищена таблица: smart_table_admin.%', tbl;
+            END LOOP;
+        END $$;
+    `)
+	if err != nil {
+		log.Fatalf("Failed to truncate smart_table_admin: %v", err)
+	}
+}
 
 func TestMain(m *testing.M) {
+	container = dig.New()
 	ctx := context.Background()
 	req := testcontainers.ContainerRequest{
 		Image:        "postgres:15",
@@ -62,20 +151,10 @@ func TestMain(m *testing.M) {
 	cfg.Database.Host = host
 	cfg.Database.Port = port.Port()
 
-	db, err := sql.Open(
-		"pgx",
-		fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-			cfg.Database.Host, cfg.Database.Port, cfg.Database.User, cfg.Database.Password, cfg.Database.Name))
-	if err != nil {
-		log.Fatalf("Failed to connect db: %v", err)
-	}
-
-	if err = goose.Up(db, "../postgresql/smart_table"); err != nil {
-		log.Fatalf("Failed to create migration: %v", err)
-	}
-
-	deps := dependencies.InitDependencies(cfg)
+	deps = dependencies.InitDependencies(cfg)
 	logger := deps.Logger
+
+	SetupOnceTest()
 
 	err = container.Provide(func() *dependencies.Dependencies {
 		return deps
@@ -93,6 +172,8 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		logger.Fatal(err.Error())
 	}
+
+	ginCtx.Set(utils.DiContainerName, container)
 
 	code := m.Run()
 

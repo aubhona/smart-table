@@ -2,6 +2,8 @@
 -- +goose StatementBegin
 BEGIN;
 
+DROP SCHEMA IF EXISTS smart_table_admin;
+
 CREATE SCHEMA IF NOT EXISTS smart_table_admin;
 
 CREATE TABLE IF NOT EXISTS smart_table_admin.users (
