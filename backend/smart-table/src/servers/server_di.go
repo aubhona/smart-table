@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/smart-table/src/config"
 	"github.com/smart-table/src/dependencies"
@@ -22,14 +23,20 @@ func GetRouter(container *dig.Container, deps *dependencies.Dependencies) *gin.E
 	//nolint
 	// router.SetTrustedProxies() Think about security
 
+	config := cors.DefaultConfig()
+	config.AllowOrigins = deps.Config.App.Cors.AllowOrigins
+	config.AllowMethods = deps.Config.App.Cors.AllowMethods
+	config.AllowHeaders = deps.Config.App.Cors.AllowHeaders
+	config.AllowCredentials = deps.Config.App.Cors.AllowCredentials
+
 	router.
-		Use(GinZapLogger(deps.Logger, deps.Config)).
 		Use(GinZapResponseLogger(deps.Logger, deps.Config)).
+		Use(GinZapLogger(deps.Logger, deps.Config)).
 		Use(GinZapRecovery(deps.Logger)).
 		Use(func(c *gin.Context) {
 			c.Set(utils.DiContainerName, container)
 			c.Next()
-		})
+		}).Use(cors.New(config))
 
 	customerStrictHandler := viewsCustomer.NewStrictHandler(&viewsOrder.CustomerV1OrderHandler{}, nil)
 	viewsCustomer.RegisterHandlers(router, customerStrictHandler)

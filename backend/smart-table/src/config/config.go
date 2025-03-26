@@ -23,6 +23,12 @@ type Config struct {
 				Expiration time.Duration `mapstructure:"expiration"`
 			} `mapstructure:"jwt"`
 		} `mapstructure:"admin"`
+		Cors struct {
+			AllowOrigins     []string `mapstructure:"allow_origins"`
+			AllowMethods     []string `mapstructure:"allow_methods"`
+			AllowHeaders     []string `mapstructure:"allow_headers"`
+			AllowCredentials bool     `mapstructure:"allow_credentials"`
+		}
 	} `mapstructure:"app"`
 
 	Database struct {
