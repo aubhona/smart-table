@@ -71,3 +71,6 @@ func (c *Customer) GetAvatarLink() string   { return c.avatarLink }
 func (c *Customer) GetChatID() string       { return c.chatID }
 func (c *Customer) GetCreatedAt() time.Time { return c.createdAt }
 func (c *Customer) GetUpdatedAt() time.Time { return c.updatedAt }
+
+func (c *Customer) SetChatID(chatID string)   { c.chatID = chatID }
+func (c *Customer) SetTgLogin(tgLogin string) { c.tgLogin = tgLogin }
