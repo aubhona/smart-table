@@ -2,12 +2,14 @@ package app
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	app "github.com/smart-table/src/domains/admin/app/services"
 	appErrors "github.com/smart-table/src/domains/admin/app/use_cases/errors"
 	"github.com/smart-table/src/domains/admin/domain"
 	domainServices "github.com/smart-table/src/domains/admin/domain/services"
+	"github.com/smart-table/src/logging"
 )
 
 type UserSingUpCommandHandlerResult struct {
@@ -39,6 +41,7 @@ func NewUserSingUpCommandHandler(
 func (handler *UserSingUpCommandHandler) Handle(signUpCommand *UserSingUpCommand) (UserSingUpCommandHandlerResult, error) {
 	isExist, err := handler.userRepository.CheckLoginOrTgLoginExist(context.Background(), signUpCommand.Login, signUpCommand.TgLogin)
 	if err != nil {
+		logging.GetLogger().Error(fmt.Sprintf("Error while checking login and tg_login existence: %v", err))
 		return UserSingUpCommandHandlerResult{}, err
 	}
 
@@ -51,6 +54,7 @@ func (handler *UserSingUpCommandHandler) Handle(signUpCommand *UserSingUpCommand
 
 	passwordHash, err := handler.hashService.HashPassword(signUpCommand.Password)
 	if err != nil {
+		logging.GetLogger().Error(fmt.Sprintf("Error while password hashing: %v", err))
 		return UserSingUpCommandHandlerResult{}, err
 	}
 
@@ -67,6 +71,7 @@ func (handler *UserSingUpCommandHandler) Handle(signUpCommand *UserSingUpCommand
 
 	err = handler.userRepository.Save(context.Background(), user)
 	if err != nil {
+		logging.GetLogger().Error(fmt.Sprintf("Error while user saving: %v", err))
 		return UserSingUpCommandHandlerResult{}, err
 	}
 
@@ -74,6 +79,7 @@ func (handler *UserSingUpCommandHandler) Handle(signUpCommand *UserSingUpCommand
 
 	jwtToken, err := handler.jwtService.GenerateJWT(userUUID)
 	if err != nil {
+		logging.GetLogger().Error(fmt.Sprintf("Error while token generating: %v", err))
 		return UserSingUpCommandHandlerResult{}, err
 	}
 
