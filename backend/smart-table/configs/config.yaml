@@ -16,6 +16,7 @@ app:
             - OPTIONS
         allow_headers:
             - Set-Cookie
+            - content-type
         allow_credentials: true
 
 database:
