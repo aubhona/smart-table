@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	dbAdmin "github.com/smart-table/src/domains/admin/infra/pg/codegen"
 	dbCustomer "github.com/smart-table/src/domains/customer/infra/pg/codegen"
 	"github.com/smart-table/src/utils"
 
@@ -31,6 +32,10 @@ var container = dig.New()
 var responseRecorder = httptest.NewRecorder()
 var ginCtx, _ = gin.CreateTestContext(responseRecorder)
 var deps = &dependencies.Dependencies{}
+
+func GetAdminQueries() *dbAdmin.Queries {
+	return dbAdmin.New(deps.DBConnPool)
+}
 
 func GetCustomerQueries() *dbCustomer.Queries {
 	return dbCustomer.New(deps.DBConnPool)

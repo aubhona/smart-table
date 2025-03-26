@@ -14,7 +14,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/V1AdminUserSignUpRequest'
+                            $ref: '#/components/schemas/AdminV1UserSignUpRequest'
             responses:
                 '200':
                     description: Успешная регистрация и авторизация
@@ -26,25 +26,14 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/V1AdminUserSignUpResponse'
-                '400':
-                    description: Неверные данные запроса
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/ErrorResponse'
+                                $ref: '#/components/schemas/AdminV1UserSignUpResponse'
                 '409':
                     description: Ошибка регистрации, пользователь уже существует
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ErrorResponse'
-                '500':
-                    description: Внутренняя ошибка сервера
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/ErrorResponse'
+                                $ref: '#/components/schemas/AdminV1UserSignUp409ErrorResponse'
+
     /admin/v1/user/sign-in:
         post:
             summary: Авторизация пользователя в админке
@@ -54,7 +43,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/V1AdminUserSignInRequest'
+                            $ref: '#/components/schemas/AdminV1UserSignInRequest'
             responses:
                 '200':
                     description: Успешная авторизация
@@ -66,25 +55,13 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/V1AdminUserSignInResponse'
-                '400':
-                    description: Неверные данные запроса
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/ErrorResponse'
-                '401':
+                                $ref: '#/components/schemas/AdminV1UserSignInResponse'
+                '403':
                     description: Ошибка авторизации, неверный логин или пароль
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ErrorResponse'
-                '500':
-                    description: Внутренняя ошибка сервера
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/ErrorResponse'
+                                $ref: '#/components/schemas/AdminV1UserSignIn403ErrorResponse'
 
 components:
     securitySchemes:
@@ -94,8 +71,8 @@ components:
             name: jwt
 
     schemas:
-        # /v1/admin/user/sign-up_POST
-        V1AdminUserSignUpRequest:
+        # /admin/v1/user/sign-up_POST
+        AdminV1UserSignUpRequest:
             type: object
             additionalProperties: false
             properties:
@@ -126,17 +103,35 @@ components:
                 - last_name
                 - password
 
-        V1AdminUserSignUpResponse:
+        AdminV1UserSignUpResponse:
             type: object
             additionalProperties: false
             properties:
                 user_uuid:
-                    ref: '#/components/schemas/UserUUID'
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор пользователя
             required:
                 - user_uuid
 
-        # /v1/admin/user/sign-in_POST
-        V1AdminUserSignInRequest:
+        AdminV1UserSignUp409ErrorResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                code:
+                    type: string
+                    description: Код ошибки
+                    enum: 
+                        - already_exist
+                message:
+                    type: string
+                    description: Описание ошибки
+            required:
+                - code
+                - message
+
+        # /admin/v1/user/sign-in_POST
+        AdminV1UserSignInRequest:
             type: object
             additionalProperties: false
             properties:
@@ -149,34 +144,33 @@ components:
                 - login
                 - password
 
-        V1AdminUserSignInResponse:
+        AdminV1UserSignInResponse:
             type: object
             additionalProperties: false
             properties:
                 user_uuid:
-                    ref: '#/components/schemas/UserUUID'
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор пользователя
             required:
                 - user_uuid
 
-        ErrorResponse:
+        AdminV1UserSignIn403ErrorResponse:
             type: object
             additionalProperties: false
             properties:
                 code:
                     type: string
                     description: Код ошибки
+                    enum: 
+                        - not_found
+                        - incorrect_password
                 message:
                     type: string
                     description: Описание ошибки
             required:
                 - code
                 - message
-
-        UserUUID:
-            type: string
-            format: uuid
-            description: Уникальный идентификатор пользователя
-            pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
 
         Login:
             type: string
