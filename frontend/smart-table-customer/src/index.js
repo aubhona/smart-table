@@ -9,13 +9,12 @@ TwaSdk.ready();
 
 console.log("Telegram WebApp:", window.Telegram.WebApp);
 
-window.Telegram.WebApp.expand(); 
-window.Telegram.WebApp.ready();
-
-if (!window.Telegram.WebApp) {
-    alert("Ошибка: Telegram WebApp не загружен! Запустите приложение в Telegram.");
+if (!window.Telegram || !window.Telegram.WebApp) {
+  alert("Ошибка: Telegram WebApp не загружен! Запустите приложение в Telegram.");
 } else {
-    console.log("Telegram WebApp загружен:", window.Telegram.WebApp);
+  console.log("Telegram WebApp загружен:", window.Telegram.WebApp);
+  window.Telegram.WebApp.ready();
+  window.Telegram.WebApp.expand();
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

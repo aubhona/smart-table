@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import OrderFlow from './components/Tester/OrderFlow'
 import TableId from './components/TableId/TableId';
 import RoomCode from './components/RoomCode/RoomCode';
 import UsersList from './components/UsersList/UsersList'
@@ -15,7 +16,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<TableId />} />
+        <Route path="/" element={<OrderFlow />} />
+        <Route path="/table-id" element={<TableId />} />
         <Route path="/room-code" element={<RoomCode />} />
         <Route path="/catalog/users-list" element={<UsersList />} />
         <Route path="/catalog" element={<Catalog />} />

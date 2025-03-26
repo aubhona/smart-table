@@ -1,36 +1,29 @@
 import React, { useState } from 'react';
 import './TableId.css';
 
-function TableId() {
+function TableId({ onSubmit, error }) {
   const [tableId, setTableId] = useState('');
-  const [error, setError] = useState('');
-
-  const validateTableId = (id) => {
-    const isValid = /^\d{6}$/.test(id);
-    setError(isValid ? '' : 'Неверный номер стола');
-    return isValid;
-  };
 
   const handleChange = (event) => {
     setTableId(event.target.value);
-    setError('');
   };
 
   const handleSubmit = () => {
-    if (validateTableId(tableId)) {
-      alert(`Проверка успешна! Table ID: ${tableId}`);
-      window.location.href = '/room-code';
+    if (tableId.length === 6) {
+      onSubmit(tableId);
+    } else {
+      alert('Неверный номер стола');
     }
   };
 
   return (
-    <div className="table-id-container">
+    <div className="table-id-container"> 
       <h2>Введите номер стола</h2>
       <input
         type="text"
-        placeholder="печатайте..."
         value={tableId}
         onChange={handleChange}
+        placeholder="6 цифр"
       />
       <button onClick={handleSubmit}>Подтвердить</button>
       {error && <p className="table-id-error">{error}</p>}
