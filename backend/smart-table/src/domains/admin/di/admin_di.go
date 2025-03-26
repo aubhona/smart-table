@@ -38,5 +38,10 @@ func AddDeps(container *dig.Container) error {
 		return err
 	}
 
+	err = container.Provide(app.NewUserSingInCommandHandler)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

@@ -14,7 +14,7 @@ func (h *AdminV1UserHandler) PostAdminV1UserSignUp(
 	ctx context.Context,
 	request viewsAdminUser.PostAdminV1UserSignUpRequestObject,
 ) (viewsAdminUser.PostAdminV1UserSignUpResponseObject, error) {
-	handler, err := utils.GetFromContainer[app.UserSingUpCommandHandler](ctx)
+	handler, err := utils.GetFromContainer[*app.UserSingUpCommandHandler](ctx)
 	if err != nil {
 		logging.GetLogger().Error(fmt.Sprintf("Error while getting command handler: %v", err))
 		return nil, err
