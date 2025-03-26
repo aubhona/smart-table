@@ -94,14 +94,10 @@ func (o *UserRepository) CheckLoginOrTgLoginExist(ctx context.Context, login, tg
 		Column2: tgLogin,
 	}
 
-	_, err := queries.CheckLoginOrTgLoginExist(ctx, params)
+	userExists, err := queries.CheckLoginOrTgLoginExist(ctx, params)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			return false, nil
-		}
-
 		return false, err
 	}
 
-	return true, nil
+	return userExists, nil
 }

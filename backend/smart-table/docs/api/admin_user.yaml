@@ -131,10 +131,7 @@ components:
             additionalProperties: false
             properties:
                 user_uuid:
-                    type: string
-                    format: uuid
-                    description: Уникальный идентификатор пользователя
-                    pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+                    ref: '#/components/schemas/UserUUID'
             required:
                 - user_uuid
 
@@ -157,8 +154,7 @@ components:
             additionalProperties: false
             properties:
                 user_uuid:
-                    type: string
-                    description: Уникальный идентификатор пользователя
+                    ref: '#/components/schemas/UserUUID'
             required:
                 - user_uuid
 
@@ -175,6 +171,12 @@ components:
             required:
                 - code
                 - message
+
+        UserUUID:
+            type: string
+            format: uuid
+            description: Уникальный идентификатор пользователя
+            pattern: "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
 
         Login:
             type: string
