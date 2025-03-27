@@ -38,7 +38,7 @@ func (handler *CustomerRegisterCommandHandler) Handle(
 		return CustomerRegisterCommandHandlerResult{}, &apperrors.CustomerAlreadyExist{TgID: createCommand.TgID}
 	}
 
-	if !utils.IsTheSameErrorType(err, domainerrors.CustomerNotFoundByTgID{}) {
+	if !utils.IsTheSameErrorType[domainerrors.CustomerNotFoundByTgID](err) {
 		return CustomerRegisterCommandHandlerResult{}, err
 	}
 

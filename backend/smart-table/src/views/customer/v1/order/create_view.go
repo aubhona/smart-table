@@ -26,7 +26,7 @@ func (h *CustomerV1OrderHandler) PostCustomerV1OrderCreate(
 	})
 
 	if err != nil {
-		if utils.IsTheSameErrorType(err, appErrors.IncorrectRoomCodeError{}) {
+		if utils.IsTheSameErrorType[appErrors.IncorrectRoomCodeError](err) {
 			return viewsCustomerOrder.PostCustomerV1OrderCreate403JSONResponse{
 				Code:    viewsCustomerOrder.InvalidRoomCode,
 				Message: err.Error(),

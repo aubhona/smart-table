@@ -24,7 +24,7 @@ func (h *CustomerV1Handler) PostCustomerV1SignUp(
 		ChatID:  request.Body.ChatID,
 	})
 	if err != nil {
-		if utils.IsTheSameErrorType(err, appErrors.CustomerAlreadyExist{}) {
+		if utils.IsTheSameErrorType[appErrors.CustomerAlreadyExist](err) {
 			return viewsCustomer.PostCustomerV1SignUp409JSONResponse{
 				Code:    viewsCustomer.AlreadyExist,
 				Message: err.Error(),

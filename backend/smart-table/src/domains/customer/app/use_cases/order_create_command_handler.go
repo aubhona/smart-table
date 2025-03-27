@@ -50,7 +50,7 @@ func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateComma
 	isNewOrder := false
 
 	if err != nil {
-		if utils.IsTheSameErrorType(err, domainErrors.OrderNotFoundByTableID{}) {
+		if utils.IsTheSameErrorType[domainErrors.OrderNotFoundByTableID](err) {
 			isNewOrder = true
 		} else {
 			return OrderCreateCommandHandlerResult{}, err

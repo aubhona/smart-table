@@ -7,14 +7,14 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	defsinternalcustomerdb "github.com/smart-table/src/codegen/intern/customer_db"
+	defsInternalCustomerDb "github.com/smart-table/src/codegen/intern/customer_db"
 	viewsCodegenCustomer "github.com/smart-table/src/views/codegen/customer"
 	viewsCustomer "github.com/smart-table/src/views/customer/v1"
 	"github.com/stretchr/testify/assert"
 )
 
-func FindCustomerByTgID(tgID string) (defsinternalcustomerdb.PgCustomer, error) {
-	customer := defsinternalcustomerdb.PgCustomer{}
+func FindCustomerByTgID(tgID string) (defsInternalCustomerDb.PgCustomer, error) {
+	customer := defsInternalCustomerDb.PgCustomer{}
 
 	customerJSON, err := GetCustomerQueries().FetchCustomerByTgId(context.Background(), tgID)
 	if err != nil {

@@ -25,7 +25,7 @@ func (h *CustomerV1Handler) PostCustomerV1SignIn(
 		ChatID:  request.Body.ChatID,
 	})
 	if err != nil {
-		if utils.IsTheSameErrorType(err, domainErrors.CustomerNotFoundByTgID{}) {
+		if utils.IsTheSameErrorType[domainErrors.CustomerNotFoundByTgID](err) {
 			return viewsCustomer.PostCustomerV1SignIn404JSONResponse{
 				Code:    viewsCustomer.NotFound,
 				Message: err.Error(),
