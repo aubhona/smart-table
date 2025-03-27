@@ -29,7 +29,8 @@ func (c *CustomerRepository) Commit(ctx context.Context, tx pgx.Tx) error {
 	return tx.Commit(ctx)
 }
 
-func (c *CustomerRepository) FindCustomerByTgIDForUpdate(ctx context.Context, tx pgx.Tx, customerTgID string) (utils.SharedRef[domain.Customer], error) {
+func (c *CustomerRepository) FindCustomerByTgIDForUpdate(
+	ctx context.Context, tx pgx.Tx, customerTgID string) (utils.SharedRef[domain.Customer], error) {
 	queries := db.New(c.coonPool).WithTx(tx)
 
 	pgResult, err := queries.FetchCustomerByTgIdForUpdate(ctx, customerTgID)

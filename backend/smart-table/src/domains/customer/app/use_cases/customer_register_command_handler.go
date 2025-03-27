@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+
 	"github.com/jackc/pgx/v5"
 
 	"github.com/smart-table/src/utils"
@@ -36,6 +37,7 @@ func (handler *CustomerRegisterCommandHandler) Handle(
 	createCommand *CustomerRegisterCommand) (CustomerRegisterCommandHandlerResult, error) {
 	ctx := context.Background()
 	_, err := handler.customerRepository.FindCustomerByTgID(context.Background(), createCommand.TgID)
+
 	if err == nil {
 		return CustomerRegisterCommandHandlerResult{}, &apperrors.CustomerAlreadyExist{TgID: createCommand.TgID}
 	}

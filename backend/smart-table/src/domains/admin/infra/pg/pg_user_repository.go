@@ -3,6 +3,7 @@ package pg
 import (
 	"context"
 	"errors"
+
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/smart-table/src/domains/admin/domain"

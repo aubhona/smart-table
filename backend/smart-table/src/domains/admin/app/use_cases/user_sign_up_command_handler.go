@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5"
 
 	"github.com/google/uuid"
@@ -42,6 +43,7 @@ func NewUserSingUpCommandHandler(
 func (handler *UserSingUpCommandHandler) Handle(signUpCommand *UserSingUpCommand) (UserSingUpCommandHandlerResult, error) {
 	ctx := context.Background()
 	isExist, err := handler.userRepository.CheckLoginOrTgLoginExist(context.Background(), signUpCommand.Login, signUpCommand.TgLogin)
+
 	if err != nil {
 		logging.GetLogger().Error(fmt.Sprintf("Error while checking login and tg_login existence: %v", err))
 		return UserSingUpCommandHandlerResult{}, err
