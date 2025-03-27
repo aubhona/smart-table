@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
+
 	"github.com/google/uuid"
 	app "github.com/smart-table/src/domains/admin/app/services"
 	appErrors "github.com/smart-table/src/domains/admin/app/use_cases/errors"
@@ -39,7 +41,9 @@ func NewUserSingUpCommandHandler(
 }
 
 func (handler *UserSingUpCommandHandler) Handle(signUpCommand *UserSingUpCommand) (UserSingUpCommandHandlerResult, error) {
+	ctx := context.Background()
 	isExist, err := handler.userRepository.CheckLoginOrTgLoginExist(context.Background(), signUpCommand.Login, signUpCommand.TgLogin)
+
 	if err != nil {
 		logging.GetLogger().Error(fmt.Sprintf("Error while checking login and tg_login existence: %v", err))
 		return UserSingUpCommandHandlerResult{}, err
@@ -69,7 +73,16 @@ func (handler *UserSingUpCommandHandler) Handle(signUpCommand *UserSingUpCommand
 		passwordHash,
 		handler.uuidGenerator)
 
-	err = handler.userRepository.Save(context.Background(), user)
+	tx, err := handler.userRepository.Begin(ctx)
+	if err != nil {
+		return UserSingUpCommandHandlerResult{}, err
+	}
+
+	defer func(userRepository domain.UserRepository, ctx context.Context, tx pgx.Tx) {
+		_ = userRepository.Commit(ctx, tx)
+	}(handler.userRepository, ctx, tx)
+
+	err = handler.userRepository.Save(ctx, tx, user)
 	if err != nil {
 		logging.GetLogger().Error(fmt.Sprintf("Error while user saving: %v", err))
 		return UserSingUpCommandHandlerResult{}, err

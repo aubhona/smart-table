@@ -3,7 +3,6 @@ package pg
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -18,15 +17,14 @@ import (
 
 type OrderRepository struct {
 	coonPool *pgxpool.Pool
-	trx      *pgx.Tx
 }
 
 func NewOrderRepository(pool *pgxpool.Pool) *OrderRepository {
-	return &OrderRepository{pool, nil}
+	return &OrderRepository{pool}
 }
 
-func (o *OrderRepository) Save(ctx context.Context, order utils.SharedRef[domain.Order]) error {
-	queries := db.New(o.coonPool)
+func (o *OrderRepository) Save(ctx context.Context, tx pgx.Tx, order utils.SharedRef[domain.Order]) error {
+	queries := db.New(o.coonPool).WithTx(tx)
 
 	pgOrder, err := mapper.ConvertToPgOrder(order)
 	if err != nil {
@@ -48,34 +46,12 @@ func (o *OrderRepository) Save(ctx context.Context, order utils.SharedRef[domain
 	return err
 }
 
-func (o *OrderRepository) Begin(ctx context.Context) error {
-	if o.trx != nil {
-		return fmt.Errorf("transaction already started")
-	}
-
-	trx, err := o.coonPool.Begin(ctx)
-	if err != nil {
-		return err
-	}
-
-	*o.trx = trx
-
-	return nil
+func (o *OrderRepository) Begin(ctx context.Context) (pgx.Tx, error) {
+	return o.coonPool.Begin(ctx)
 }
 
-func (o *OrderRepository) Commit(ctx context.Context) error {
-	if o.trx == nil {
-		return fmt.Errorf("transaction doesn't exist")
-	}
-
-	err := (*o.trx).Commit(ctx)
-	if err != nil {
-		return err
-	}
-
-	*o.trx = nil
-
-	return nil
+func (o *OrderRepository) Commit(ctx context.Context, tx pgx.Tx) error {
+	return tx.Commit(ctx)
 }
 
 func (o *OrderRepository) FindOrders(ctx context.Context, orderUuids []uuid.UUID) ([]utils.SharedRef[domain.Order], error) {

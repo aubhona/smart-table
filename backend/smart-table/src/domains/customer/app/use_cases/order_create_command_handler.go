@@ -3,6 +3,8 @@ package app
 import (
 	"context"
 
+	"github.com/jackc/pgx/v5"
+
 	"github.com/smart-table/src/utils"
 
 	"github.com/google/uuid"
@@ -67,17 +69,17 @@ func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateComma
 		}
 
 		order = domain.NewOrder(roomCode, createCommand.TableID, user, handler.uuidGenerator)
-		err = handler.orderRepository.Begin(ctx)
+		tx, err := handler.orderRepository.Begin(ctx)
 
 		if err != nil {
 			return OrderCreateCommandHandlerResult{}, err
 		}
 
-		defer func(orderRepository domain.OrderRepository, ctx context.Context) {
-			_ = orderRepository.Commit(ctx)
-		}(handler.orderRepository, ctx)
+		defer func(orderRepository domain.OrderRepository, ctx context.Context, tx pgx.Tx) {
+			_ = orderRepository.Commit(ctx, tx)
+		}(handler.orderRepository, ctx, tx)
 
-		err = handler.orderRepository.Save(ctx, order)
+		err = handler.orderRepository.Save(ctx, tx, order)
 
 		if err != nil {
 			return OrderCreateCommandHandlerResult{}, err

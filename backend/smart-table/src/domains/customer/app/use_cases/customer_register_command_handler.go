@@ -3,6 +3,8 @@ package app
 import (
 	"context"
 
+	"github.com/jackc/pgx/v5"
+
 	"github.com/smart-table/src/utils"
 
 	"github.com/google/uuid"
@@ -33,7 +35,9 @@ func NewCustomerRegisterCommandHandler(
 
 func (handler *CustomerRegisterCommandHandler) Handle(
 	createCommand *CustomerRegisterCommand) (CustomerRegisterCommandHandlerResult, error) {
+	ctx := context.Background()
 	_, err := handler.customerRepository.FindCustomerByTgID(context.Background(), createCommand.TgID)
+
 	if err == nil {
 		return CustomerRegisterCommandHandlerResult{}, &apperrors.CustomerAlreadyExist{TgID: createCommand.TgID}
 	}
@@ -44,7 +48,17 @@ func (handler *CustomerRegisterCommandHandler) Handle(
 
 	customer := domain.NewCustomer(
 		createCommand.TgID, createCommand.TgLogin, "TODO", createCommand.ChatID, *handler.uuidGenerator)
-	err = handler.customerRepository.SaveAndUpdate(context.Background(), customer)
+
+	tx, err := handler.customerRepository.Begin(ctx)
+	if err != nil {
+		return CustomerRegisterCommandHandlerResult{}, err
+	}
+
+	defer func(customerRepository domain.CustomerRepository, ctx context.Context, tx pgx.Tx) {
+		_ = customerRepository.Commit(ctx, tx)
+	}(handler.customerRepository, ctx, tx)
+
+	err = handler.customerRepository.SaveAndUpdate(ctx, tx, customer)
 
 	if err != nil {
 		return CustomerRegisterCommandHandlerResult{}, err

@@ -22,8 +22,36 @@ func NewCustomerRepository(pool *pgxpool.Pool) *CustomerRepository {
 	return &CustomerRepository{pool}
 }
 
-func (c *CustomerRepository) SaveAndUpdate(ctx context.Context, customer utils.SharedRef[domain.Customer]) error {
-	queries := db.New(c.coonPool)
+func (c *CustomerRepository) Begin(ctx context.Context) (pgx.Tx, error) {
+	return c.coonPool.Begin(ctx)
+}
+func (c *CustomerRepository) Commit(ctx context.Context, tx pgx.Tx) error {
+	return tx.Commit(ctx)
+}
+
+func (c *CustomerRepository) FindCustomerByTgIDForUpdate(
+	ctx context.Context, tx pgx.Tx, customerTgID string) (utils.SharedRef[domain.Customer], error) {
+	queries := db.New(c.coonPool).WithTx(tx)
+
+	pgResult, err := queries.FetchCustomerByTgIdForUpdate(ctx, customerTgID)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return utils.SharedRef[domain.Customer]{}, domainErrors.CustomerNotFoundByTgID{TgID: customerTgID}
+		}
+
+		return utils.SharedRef[domain.Customer]{}, err
+	}
+
+	model, err := mapper.ConvertPgCustomerToModel(pgResult)
+	if err != nil {
+		return utils.SharedRef[domain.Customer]{}, err
+	}
+
+	return model, nil
+}
+
+func (c *CustomerRepository) SaveAndUpdate(ctx context.Context, tx pgx.Tx, customer utils.SharedRef[domain.Customer]) error {
+	queries := db.New(c.coonPool).WithTx(tx)
 
 	pgCustomer, err := mapper.ConvertToPgCustomer(customer)
 	if err != nil {
