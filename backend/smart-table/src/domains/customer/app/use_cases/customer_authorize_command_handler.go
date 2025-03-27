@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"github.com/jackc/pgx/v5"
 
 	"github.com/google/uuid"
 	"github.com/smart-table/src/domains/customer/domain"
@@ -40,7 +41,16 @@ func (handler *CustomerAuthorizeCommandHandler) Handle(
 		customer.Get().SetTgLogin(createCommand.TgLogin)
 		customer.Get().SetChatID(createCommand.ChatID)
 
-		err := handler.customerRepository.SaveAndUpdate(ctx, customer)
+		tx, err := handler.customerRepository.Begin(ctx)
+		if err != nil {
+			return CustomerAuthorizeCommandHandlerResult{}, err
+		}
+
+		defer func(customerRepository domain.CustomerRepository, ctx context.Context, tx pgx.Tx) {
+			_ = customerRepository.Commit(ctx, tx)
+		}(handler.customerRepository, ctx, tx)
+
+		err = handler.customerRepository.SaveAndUpdate(ctx, tx, customer)
 		if err != nil {
 			return CustomerAuthorizeCommandHandlerResult{}, err
 		}

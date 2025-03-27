@@ -3,8 +3,6 @@ package pg
 import (
 	"context"
 	"errors"
-	"fmt"
-
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/smart-table/src/domains/admin/domain"
@@ -16,15 +14,14 @@ import (
 
 type UserRepository struct {
 	coonPool *pgxpool.Pool
-	trx      *pgx.Tx
 }
 
 func NewUserRepository(pool *pgxpool.Pool) *UserRepository {
-	return &UserRepository{pool, nil}
+	return &UserRepository{pool}
 }
 
-func (o *UserRepository) Save(ctx context.Context, user utils.SharedRef[domain.User]) error {
-	queries := db.New(o.coonPool)
+func (o *UserRepository) Save(ctx context.Context, tx pgx.Tx, user utils.SharedRef[domain.User]) error {
+	queries := db.New(o.coonPool).WithTx(tx)
 
 	pgUser, err := mapper.ConvertToPgUser(user)
 	if err != nil {
@@ -36,34 +33,12 @@ func (o *UserRepository) Save(ctx context.Context, user utils.SharedRef[domain.U
 	return err
 }
 
-func (o *UserRepository) Begin(ctx context.Context) error {
-	if o.trx != nil {
-		return fmt.Errorf("transaction already started")
-	}
-
-	trx, err := o.coonPool.Begin(ctx)
-	if err != nil {
-		return err
-	}
-
-	o.trx = &trx
-
-	return nil
+func (o *UserRepository) Begin(ctx context.Context) (pgx.Tx, error) {
+	return o.coonPool.Begin(ctx)
 }
 
-func (o *UserRepository) Commit(ctx context.Context) error {
-	if o.trx == nil {
-		return fmt.Errorf("transaction doesn't exist")
-	}
-
-	err := (*o.trx).Commit(ctx)
-	if err != nil {
-		return err
-	}
-
-	*o.trx = nil
-
-	return nil
+func (o *UserRepository) Commit(ctx context.Context, tx pgx.Tx) error {
+	return tx.Commit(ctx)
 }
 
 func (o *UserRepository) FindUser(ctx context.Context, login string) (utils.SharedRef[domain.User], error) {
