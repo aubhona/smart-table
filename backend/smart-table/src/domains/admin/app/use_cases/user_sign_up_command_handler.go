@@ -40,9 +40,9 @@ func NewUserSingUpCommandHandler(
 	}
 }
 
-func (handler *UserSingUpCommandHandler) Handle(signUpCommand *UserSingUpCommand) (UserSingUpCommandHandlerResult, error) {
+func (handler *UserSingUpCommandHandler) Handle(userSignUpCommand *UserSingUpCommand) (UserSingUpCommandHandlerResult, error) {
 	ctx := context.Background()
-	isExist, err := handler.userRepository.CheckLoginOrTgLoginExist(context.Background(), signUpCommand.Login, signUpCommand.TgLogin)
+	isExist, err := handler.userRepository.CheckLoginOrTgLoginExist(context.Background(), userSignUpCommand.Login, userSignUpCommand.TgLogin)
 
 	if err != nil {
 		logging.GetLogger().Error(fmt.Sprintf("Error while checking login and tg_login existence: %v", err))
@@ -51,27 +51,29 @@ func (handler *UserSingUpCommandHandler) Handle(signUpCommand *UserSingUpCommand
 
 	if isExist {
 		return UserSingUpCommandHandlerResult{}, appErrors.LoginOrTgLoginAlreadyExists{
-			Login:   signUpCommand.Login,
-			TgLogin: signUpCommand.TgLogin,
+			Login:   userSignUpCommand.Login,
+			TgLogin: userSignUpCommand.TgLogin,
 		}
 	}
 
-	passwordHash, err := handler.hashService.HashPassword(signUpCommand.Password)
+	passwordHash, err := handler.hashService.HashPassword(userSignUpCommand.Password)
 	if err != nil {
 		logging.GetLogger().Error(fmt.Sprintf("Error while password hashing: %v", err))
 		return UserSingUpCommandHandlerResult{}, err
 	}
 
-	user := domain.NewUser(signUpCommand.Login,
+	user := domain.NewUser(
+		userSignUpCommand.Login,
 		//nolint: godox, gocritic
 		// TODO добавить поход в тг за валидацией логина и получения TgID и ChatID
-		"signUpCommand.TgID",
-		signUpCommand.TgLogin,
-		"signUpCommand.ChatID",
-		signUpCommand.FirstName,
-		signUpCommand.LastName,
+		"userSignUpCommand.TgID",
+		userSignUpCommand.TgLogin,
+		"userSignUpCommand.ChatID",
+		userSignUpCommand.FirstName,
+		userSignUpCommand.LastName,
 		passwordHash,
-		handler.uuidGenerator)
+		handler.uuidGenerator,
+	)
 
 	tx, err := handler.userRepository.Begin(ctx)
 	if err != nil {

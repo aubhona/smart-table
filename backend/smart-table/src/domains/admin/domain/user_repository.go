@@ -5,6 +5,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 
+	"github.com/google/uuid"
 	"github.com/smart-table/src/utils"
 )
 
@@ -14,6 +15,7 @@ type UserRepository interface {
 
 	Save(ctx context.Context, tx pgx.Tx, user utils.SharedRef[User]) error
 
-	FindUser(ctx context.Context, userLogin string) (utils.SharedRef[User], error)
+	FindUserByUUID(ctx context.Context, uuid uuid.UUID) (utils.SharedRef[User], error)
+	FindUserByLogin(ctx context.Context, userLogin string) (utils.SharedRef[User], error)
 	CheckLoginOrTgLoginExist(ctx context.Context, userLogin string, tgLogin string) (bool, error)
 }
