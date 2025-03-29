@@ -34,14 +34,14 @@ func NewUserSingInCommandHandler(
 	}
 }
 
-func (handler *UserSingInCommandHandler) Handle(signInCommand *UserSingInCommand) (UserSingInCommandHandlerResult, error) {
-	user, err := handler.userRepository.FindUser(context.Background(), signInCommand.Login)
+func (handler *UserSingInCommandHandler) Handle(userSignInCommand *UserSingInCommand) (UserSingInCommandHandlerResult, error) {
+	user, err := handler.userRepository.FindUserByLogin(context.Background(), userSignInCommand.Login)
 	if err != nil {
 		logging.GetLogger().Error(fmt.Sprintf("Error while finding user by login: %v", err))
 		return UserSingInCommandHandlerResult{}, err
 	}
 
-	if !handler.hashService.ComparePasswords(user.Get().GetPasswordHash(), signInCommand.Password) {
+	if !handler.hashService.ComparePasswords(user.Get().GetPasswordHash(), userSignInCommand.Password) {
 		logging.GetLogger().Info(fmt.Sprintf("Incorrect password: %v", err))
 		return UserSingInCommandHandlerResult{}, appErrors.IncorrectPassword{}
 	}

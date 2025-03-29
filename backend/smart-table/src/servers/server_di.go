@@ -1,17 +1,22 @@
 package servers
 
 import (
+	"net/http"
+	"fmt"
 	"bytes"
 	"time"
 
 	"github.com/gin-contrib/cors"
-	viewsCodegenAdmin "github.com/smart-table/src/views/codegen/admin_user"
+	viewsCodegenAdminUser "github.com/smart-table/src/views/codegen/admin_user"
+	viewsCodegenAdminRestaurant "github.com/smart-table/src/views/codegen/admin_restaurant"
 
 	"github.com/gin-gonic/gin"
 	"github.com/smart-table/src/config"
+	app "github.com/smart-table/src/domains/admin/app/services"
 	"github.com/smart-table/src/dependencies"
 	"github.com/smart-table/src/utils"
 	viewsUser "github.com/smart-table/src/views/admin/v1/user"
+	viewsRestaurant "github.com/smart-table/src/views/admin/v1/restaurant"
 	viewsCodegenCustomer "github.com/smart-table/src/views/codegen/customer"
 	viewsCodegenCustomerOrder "github.com/smart-table/src/views/codegen/customer_order"
 	viewsCustomer "github.com/smart-table/src/views/customer/v1"
@@ -40,6 +45,9 @@ func GetRouter(container *dig.Container, deps *dependencies.Dependencies) *gin.E
 			c.Set(utils.DiContainerName, container)
 			c.Next()
 		}).Use(cors.New(config))
+	
+	private := router.Group("/")
+	private.Use(JWTAuthMiddleware(deps.Logger))
 
 	customerStrictHandler := viewsCodegenCustomer.NewStrictHandler(&viewsCustomer.CustomerV1Handler{}, nil)
 	viewsCodegenCustomer.RegisterHandlers(router, customerStrictHandler)
@@ -47,8 +55,11 @@ func GetRouter(container *dig.Container, deps *dependencies.Dependencies) *gin.E
 	customerOrderStrictHandler := viewsCodegenCustomerOrder.NewStrictHandler(&viewsCustomerOrder.CustomerV1OrderHandler{}, nil)
 	viewsCodegenCustomerOrder.RegisterHandlers(router, customerOrderStrictHandler)
 
-	adminStrictHandler := viewsCodegenAdmin.NewStrictHandler(&viewsUser.AdminV1UserHandler{}, nil)
-	viewsCodegenAdmin.RegisterHandlers(router, adminStrictHandler)
+	adminUserStrictHandler := viewsCodegenAdminUser.NewStrictHandler(&viewsUser.AdminV1UserHandler{}, nil)
+	viewsCodegenAdminUser.RegisterHandlers(router, adminUserStrictHandler)
+
+	adminRestaurantStrictHandler := viewsCodegenAdminRestaurant.NewStrictHandler(&viewsRestaurant.AdminV1RestaurantHandler{}, nil)
+	viewsCodegenAdminRestaurant.RegisterHandlers(private, adminRestaurantStrictHandler)
 
 	return router
 }
@@ -78,6 +89,12 @@ func GinZapLogger(logger *zap.Logger, cfg *config.Config) gin.HandlerFunc {
 		queryParams := c.Request.URL.Query().Encode()
 		requestHeaders := getRequestHeaders(c)
 
+		cookies := c.Request.Cookies()
+		var cookieString string
+		for _, cookie := range cookies {
+			cookieString += cookie.Name + "=" + cookie.Value + "; "
+		}
+
 		c.Next()
 
 		logger.Info("HTTP Request",
@@ -86,6 +103,7 @@ func GinZapLogger(logger *zap.Logger, cfg *config.Config) gin.HandlerFunc {
 			zap.String("query_params", queryParams),
 			zap.String("request_headers", requestHeaders),
 			zap.String("request_body", requestBody),
+			zap.String("cookies", cookieString),
 			zap.Int("status", c.Writer.Status()),
 			zap.Duration("latency", time.Since(start)),
 		)
@@ -109,5 +127,38 @@ func GinZapResponseLogger(logger *zap.Logger, cfg *config.Config) gin.HandlerFun
 			zap.Int("status", c.Writer.Status()),
 			zap.String("response_body", responseBody),
 		)
+	}
+}
+
+func JWTAuthMiddleware(logger *zap.Logger) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		tokenString, err := c.Cookie("jwt")
+		if err != nil {
+			logger.Warn("JWT cookie missing", zap.Error(err))
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"code":    "unauthorized",
+				"message": "Authorization required",
+			})
+			return
+		}
+
+		jwtService, err := utils.GetFromContainer[*app.JwtService](c)
+		if err != nil {
+			logger.Error(fmt.Sprintf("Error while getting JWT service: %v", err))
+			return 
+		}
+
+		_, err = jwtService.ValidateJWT(tokenString)
+
+		if err != nil {
+			logger.Warn("Invalid JWT token", zap.Error(err))
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"code":    "invalid_token",
+				"message": "Invalid authentication token",
+			})
+			return
+		}
+
+		c.Next()
 	}
 }

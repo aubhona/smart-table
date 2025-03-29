@@ -3,6 +3,7 @@ package mapper
 import (
 	"encoding/json"
 
+	defsInternalAdminRestaurantDb "github.com/smart-table/src/codegen/intern/admin_restaurant_db"
 	defsInternalAdminUserDb "github.com/smart-table/src/codegen/intern/admin_user_db"
 	"github.com/smart-table/src/domains/admin/domain"
 	"github.com/smart-table/src/utils"
@@ -50,5 +51,40 @@ func ConvertPgUserToModel(pgResult []byte) (utils.SharedRef[domain.User], error)
 		pgUser.PasswordHash,
 		pgUser.CreatedAt,
 		pgUser.UpdatedAt,
+	), nil
+}
+
+func ConvertToPgRestaurant(user utils.SharedRef[domain.Restaurant]) ([]byte, error) {
+	pgRestaurant := defsInternalAdminRestaurantDb.PgRestaurant{
+		UUID:      user.Get().GetUUID(),
+		OwnerUUID: user.Get().GetOwnerUUID(),
+		Name:      user.Get().GetName(),
+		CreatedAt: user.Get().GetCreatedAt(),
+		UpdatedAt: user.Get().GetUpdatedAt(),
+	}
+
+	jsonBytes, err := json.Marshal(pgRestaurant)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return jsonBytes, nil
+}
+
+func ConvertPgRestaurantToModel(pgResult []byte) (utils.SharedRef[domain.Restaurant], error) {
+	pgRestaurant := defsInternalAdminRestaurantDb.PgRestaurant{}
+	err := json.Unmarshal(pgResult, &pgRestaurant)
+
+	if err != nil {
+		return utils.SharedRef[domain.Restaurant]{}, err
+	}
+
+	return domain.RestoreRestaurant(
+		pgRestaurant.UUID,
+		pgRestaurant.OwnerUUID,
+		pgRestaurant.Name,
+		pgRestaurant.CreatedAt,
+		pgRestaurant.UpdatedAt,
 	), nil
 }

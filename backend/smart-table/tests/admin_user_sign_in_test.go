@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAdminSignInHappyPath(t *testing.T) {
+func TestAdminUserSignInHappyPath(t *testing.T) {
 	GetTestMutex().Lock()
 	defer GetTestMutex().Unlock()
 	defer CleanTest()

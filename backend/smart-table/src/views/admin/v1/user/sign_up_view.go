@@ -19,7 +19,7 @@ func (h *AdminV1UserHandler) PostAdminV1UserSignUp(
 	if err != nil {
 		if utils.IsTheSameErrorType[appErrors.LoginOrTgLoginAlreadyExists](err) {
 			return viewsAdminUser.PostAdminV1UserSignUp409JSONResponse{
-				Code:    "already_exist",
+				Code:    viewsAdminUser.AlreadyExist,
 				Message: err.Error(),
 			}, nil
 		}
@@ -37,7 +37,15 @@ func (h *AdminV1UserHandler) PostAdminV1UserSignUp(
 		Password:  request.Body.Password,
 	})
 	if err != nil {
+		if utils.IsTheSameErrorType[appErrors.LoginOrTgLoginAlreadyExists](err) {
+			return viewsAdminUser.PostAdminV1UserSignUp409JSONResponse{
+				Code:    viewsAdminUser.AlreadyExist,
+				Message: err.Error(),
+			}, nil
+		}
+
 		logging.GetLogger().Error(fmt.Sprintf("Error while getting result from command handler: %v", err))
+
 		return nil, err
 	}
 
@@ -46,7 +54,7 @@ func (h *AdminV1UserHandler) PostAdminV1UserSignUp(
 			UserUUID: result.UserUUID,
 		},
 		Headers: viewsAdminUser.PostAdminV1UserSignUp200ResponseHeaders{
-			SetCookie: result.JwtToken,
+			SetCookie: fmt.Sprintf("%s=%s", "jwt", result.JwtToken),
 		},
 	}, nil
 }

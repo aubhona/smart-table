@@ -50,7 +50,7 @@ func CreateUser(firstName, lastName, login, password, tgLogin string) (uuid.UUID
 	return responseObj.Body.UserUUID, nil
 }
 
-func TestAdminSignUpHappyPath(t *testing.T) {
+func TestAdminUserSignUpHappyPath(t *testing.T) {
 	GetTestMutex().Lock()
 	defer GetTestMutex().Unlock()
 	defer CleanTest()

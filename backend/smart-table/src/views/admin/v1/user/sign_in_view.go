@@ -6,7 +6,7 @@ import (
 
 	app "github.com/smart-table/src/domains/admin/app/use_cases"
 	appErrors "github.com/smart-table/src/domains/admin/app/use_cases/errors"
-	domain_errors "github.com/smart-table/src/domains/admin/domain/errors"
+	domainErrors "github.com/smart-table/src/domains/admin/domain/errors"
 	"github.com/smart-table/src/logging"
 	"github.com/smart-table/src/utils"
 	viewsAdminUser "github.com/smart-table/src/views/codegen/admin_user"
@@ -27,14 +27,14 @@ func (h *AdminV1UserHandler) PostAdminV1UserSignIn(
 		Password: request.Body.Password,
 	})
 	if err != nil {
-		if utils.IsTheSameErrorType[domain_errors.UserNotFoundByLogin](err) {
+		if utils.IsTheSameErrorType[domainErrors.UserNotFoundByLogin](err) {
 			return viewsAdminUser.PostAdminV1UserSignIn403JSONResponse{
-				Code:    "not_found",
+				Code:    viewsAdminUser.NotFound,
 				Message: err.Error(),
 			}, nil
 		} else if utils.IsTheSameErrorType[appErrors.IncorrectPassword](err) {
 			return viewsAdminUser.PostAdminV1UserSignIn403JSONResponse{
-				Code:    "incorrect_password",
+				Code:    viewsAdminUser.IncorrectPassword,
 				Message: err.Error(),
 			}, nil
 		}

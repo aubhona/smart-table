@@ -1,0 +1,116 @@
+openapi: 3.0.3
+info:
+    title: SmartTable Mobile API
+    version: 1.0.0
+    description: API для управления заказами.
+
+paths:
+    /admin/v1/restaurant/create:
+        post:
+            summary: Создание ресторана
+            description: Создание ресторана
+            security:
+                - CookieAuth: []
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1RestaurantCreateRequest'
+            responses:
+                '200':
+                    description: Успешное создание ресторана
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1RestaurantCreateResponse'
+                '401':
+                    description: Ошибка создания ресторана, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1RestaurantCreate401ErrorResponse'
+                '403':
+                    description: Ошибка создания ресторана, некорретные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1RestaurantCreate403ErrorResponse'
+
+components:
+    securitySchemes:
+        CookieAuth:
+            name: jwt
+            type: apiKey
+            in: cookie
+        
+    parameters:
+        user_uuid:
+            in: header
+            name: User-UUID
+            description: Уникальный идентификатор пользователя
+            required: true
+            schema:
+                type: string
+                format: uuid
+
+    schemas:
+        # /admin/v1/restaurant/create_POST
+        AdminV1RestaurantCreateRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                name:
+                    type: string
+                    description: Назавние ресторана на латинице
+                    minLength: 1
+                    maxLength: 50
+                    pattern: "^[A-Za-z0-9 \\-]+$"
+            required:
+                - name
+
+        AdminV1RestaurantCreateResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                restaurant_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор ресторана
+            required:
+                - restaurant_uuid
+
+        AdminV1RestaurantCreate401ErrorResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                code:
+                    type: string
+                    description: Код ошибки
+                    enum: 
+                        - not_authorized
+                message:
+                    type: string
+                    description: Описание ошибки
+            required:
+                - code
+                - message
+
+        AdminV1RestaurantCreate403ErrorResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                code:
+                    type: string
+                    description: Код ошибки
+                    enum: 
+                        - already_exist
+                        - user_not_found
+                message:
+                    type: string
+                    description: Описание ошибки
+            required:
+                - code
+                - message

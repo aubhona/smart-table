@@ -38,4 +38,4 @@ FROM jsonb_to_record($1::jsonb) AS input(
   created_at      TIMESTAMPTZ,
   updated_at      TIMESTAMPTZ
 )
-RETURNING *;
+RETURNING uuid;
