@@ -1,0 +1,132 @@
+openapi: 3.0.3
+info:
+    title: SmartTable Mobile API
+    version: 1.0.0
+    description: API для управления заказами.
+
+paths:
+    /customer/v1/sign-in:
+        post:
+            summary: Авторизация пользователя в приложении
+            description: Авторизует пользователя
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CustomerV1OrderCustomerSignInRequest'
+            responses:
+                '200':
+                    description: Авторизирован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CustomerV1OrderCustomerSignInResponse'
+                '404':
+                    description: Не найден пользователь
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /customer/v1/sign-up:
+        post:
+            summary: Регистрация пользователя в приложении
+            description: Регистрирует пользователя
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CustomerV1OrderCustomerSignUpRequest'
+            responses:
+                '200':
+                    description: Авторизирован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CustomerV1OrderCustomerSignUpResponse'
+                '409':
+                    description: Ошибка регистрации
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+components:
+    schemas:
+        CustomerV1OrderCustomerSignUpRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                tg_id:
+                    type: string
+                tg_login:
+                    $ref: '#/components/schemas/TgLogin'
+                chat_id:
+                    type: string
+                avatar:
+                    type: string
+                    format: binary
+            required:
+                - tg_id
+                - tg_login
+                - chat_id
+
+        CustomerV1OrderCustomerSignUpResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                customer_uuid:
+                    type: string
+                    format: uuid
+            required:
+                - customer_uuid
+
+        CustomerV1OrderCustomerSignInRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                tg_id:
+                    type: string
+                tg_login:
+                    $ref: '#/components/schemas/TgLogin'
+                chat_id:
+                    type: string
+            required:
+                - tg_id
+                - tg_login
+                - chat_id
+
+        CustomerV1OrderCustomerSignInResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                customer_uuid:
+                    type: string
+                    format: uuid
+            required:
+                - customer_uuid
+
+        ErrorResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                code:
+                    type: string
+                    description: Код ошибки
+                    enum:
+                        - not_found
+                        - already_exist
+                message:
+                    type: string
+                    description: Описание ошибки
+            required:
+                - code
+                - message
+
+        TgLogin:
+            type: string
+            description: Телеграм логин пользователя
+            pattern: "^[a-zA-Z][a-zA-Z0-9_]{4,31}$"
+            minLength: 4
+            maxLength: 31
