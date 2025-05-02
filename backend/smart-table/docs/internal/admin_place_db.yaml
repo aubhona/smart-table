@@ -1,0 +1,43 @@
+components:
+    schemas:
+        PgPlace:
+            type: object
+            additionalProperties: false
+            properties:
+                uuid:
+                    type: string
+                    format: uuid
+                restaurant_uuid:
+                    type: string
+                    format: uuid
+                address:
+                    type: string
+                    minLength: 1
+                    maxLength: 50
+                    pattern: "^[A-Za-z0-9 \\-]+$"
+                table_count:
+                    type: integer
+                    minimum: 0
+                    exclusiveMinimum: true
+                opening_time:
+                    type: string
+                    pattern: time
+                closing_time:
+                    type: string
+                    pattern: time
+                created_at:
+                    type: string
+                    format: date-time
+                updated_at:
+                    type: string
+                    format: date-time
+
+            required:
+                - uuid
+                - restaurant_uuid
+                - address
+                - table_count
+                - opening_time
+                - closing_time
+                - created_at
+                - updated_at

@@ -1,0 +1,178 @@
+openapi: 3.0.3
+info:
+    title: SmartTable Mobile API
+    version: 1.0.0
+    description: API для управления плейсом.
+
+paths:
+    /admin/v1/place/create:
+        post:
+            summary: Создание плейса
+            description: Создание плейса
+            security:
+                - CookieAuth: []
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1PlaceCreateRequest'
+            responses:
+                '200':
+                    description: Успешное создание плейса
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1PlaceCreateResponse'
+                '400':
+                    description: Ошибка создания плейса, некорректный формат данных
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1PlaceCreate400ErrorResponse'              
+                '401':
+                    description: Ошибка создания плейса, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1PlaceCreate401ErrorResponse'
+                '403':
+                    description: Ошибка создания плейса, отказано в доступе, некорретные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1PlaceCreate403ErrorResponse'
+                '404':
+                    description: Ошибка создания плейса, пользователь или ресторан не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1PlaceCreate404ErrorResponse'
+
+components:
+    securitySchemes:
+        CookieAuth:
+            name: jwt
+            type: apiKey
+            in: cookie
+        
+    parameters:
+        user_uuid:
+            in: header
+            name: User-UUID
+            description: Уникальный идентификатор пользователя
+            required: true
+            schema:
+                type: string
+                format: uuid
+
+    schemas:
+        # /admin/v1/place/create_POST
+        AdminV1PlaceCreateRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                restaurant_uuid:
+                    type: string
+                    format: uuid
+                address:
+                    type: string
+                    minLength: 1
+                    maxLength: 50
+                    pattern: "^[A-Za-z0-9 \\-]+$"
+                table_count:
+                    type: integer
+                    minimum: 0
+                    exclusiveMinimum: true
+                opening_time:
+                    type: string
+                    pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$'
+                closing_time:
+                    type: string
+                    pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$'
+            required:
+                - restaurant_uuid
+                - address
+                - table_count
+                - opening_time
+                - closing_time
+
+        AdminV1PlaceCreateResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                place_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
+            required:
+                - place_uuid
+        
+        AdminV1PlaceCreate400ErrorResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                code:
+                    type: string
+                    description: Код ошибки
+                    enum: 
+                        - incorrect_time_format
+                        - incorrect_table_count
+                message:
+                    type: string
+                    description: Описание ошибки
+            required:
+                - code
+                - message
+
+        AdminV1PlaceCreate401ErrorResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                code:
+                    type: string
+                    description: Код ошибки
+                    enum: 
+                        - not_authorized
+                message:
+                    type: string
+                    description: Описание ошибки
+            required:
+                - code
+                - message
+
+        AdminV1PlaceCreate403ErrorResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                code:
+                    type: string
+                    description: Код ошибки
+                    enum: 
+                        - already_exist
+                        - access_denied
+                message:
+                    type: string
+                    description: Описание ошибки
+            required:
+                - code
+                - message
+
+        AdminV1PlaceCreate404ErrorResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                code:
+                    type: string
+                    description: Код ошибки
+                    enum: 
+                        - user_not_found
+                        - restaurant_not_found
+                message:
+                    type: string
+                    description: Описание ошибки
+            required:
+                - code
+                - message

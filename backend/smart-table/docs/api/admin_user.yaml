@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
     title: SmartTable Mobile API
     version: 1.0.0
-    description: API для управления заказами.
+    description: API для управления пользователем.
 
 paths:
     /admin/v1/user/sign-up:
@@ -57,7 +57,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/AdminV1UserSignInResponse'
                 '403':
-                    description: Ошибка авторизации, некорретные данные
+                    description: Ошибка авторизации, отказано в доступе, некорретные данные
                     content:
                         application/json:
                             schema:

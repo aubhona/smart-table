@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
     title: SmartTable Mobile API
     version: 1.0.0
-    description: API для управления заказами.
+    description: API для управления рестораном.
 
 paths:
     /admin/v1/restaurant/create:
@@ -33,11 +33,17 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/AdminV1RestaurantCreate401ErrorResponse'
                 '403':
-                    description: Ошибка создания ресторана, некорретные данные
+                    description: Ошибка создания ресторана, отказано в доступе, некорретные данные
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/AdminV1RestaurantCreate403ErrorResponse'
+                '404':
+                    description: Ошибка создания ресторана, пользователь не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1RestaurantCreate404ErrorResponse'
 
 components:
     securitySchemes:
@@ -107,6 +113,21 @@ components:
                     description: Код ошибки
                     enum: 
                         - already_exist
+                message:
+                    type: string
+                    description: Описание ошибки
+            required:
+                - code
+                - message
+
+        AdminV1RestaurantCreate404ErrorResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                code:
+                    type: string
+                    description: Код ошибки
+                    enum: 
                         - user_not_found
                 message:
                     type: string

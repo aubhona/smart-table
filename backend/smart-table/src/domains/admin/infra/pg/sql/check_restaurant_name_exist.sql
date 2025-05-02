@@ -1,4 +1,4 @@
--- name: CheckNameExist :one
+-- name: CheckRestaurantNameExist :one
 --
 -- args:
 -- $1 - TEXT (name)
