@@ -35,9 +35,11 @@ func NewRestaurantCreateCommandHandler(
 	}
 }
 
-func (handler *RestaurantCreateCommandHandler) Handle(restaurantCreateCommand *RestaurantCreateCommand) (RestaurantCreateCommandHandlerResult, error) {
+func (handler *RestaurantCreateCommandHandler) Handle(
+	restaurantCreateCommand *RestaurantCreateCommand,
+) (RestaurantCreateCommandHandlerResult, error) {
 	ctx := context.Background()
-	isExist, err := handler.restaurantRepository.CheckNameExist(context.Background(), restaurantCreateCommand.Name)
+	isExist, err := handler.restaurantRepository.CheckNameExist(ctx, restaurantCreateCommand.Name)
 
 	if err != nil {
 		logging.GetLogger().Error(fmt.Sprintf("Error while checking login and tg_login existence: %v", err))
@@ -50,7 +52,7 @@ func (handler *RestaurantCreateCommandHandler) Handle(restaurantCreateCommand *R
 		}
 	}
 
-	_, err = handler.userRepository.FindUserByUUID(context.Background(), restaurantCreateCommand.OwnerUUID)
+	_, err = handler.userRepository.FindUserByUUID(ctx, restaurantCreateCommand.OwnerUUID)
 	if err != nil {
 		logging.GetLogger().Error(fmt.Sprintf("Error while checking owner_uuid existence: %v", err))
 		return RestaurantCreateCommandHandlerResult{}, err

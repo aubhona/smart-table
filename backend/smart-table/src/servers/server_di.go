@@ -1,22 +1,22 @@
 package servers
 
 import (
-	"net/http"
-	"fmt"
 	"bytes"
+	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/gin-contrib/cors"
-	viewsCodegenAdminUser "github.com/smart-table/src/views/codegen/admin_user"
 	viewsCodegenAdminRestaurant "github.com/smart-table/src/views/codegen/admin_restaurant"
+	viewsCodegenAdminUser "github.com/smart-table/src/views/codegen/admin_user"
 
 	"github.com/gin-gonic/gin"
 	"github.com/smart-table/src/config"
-	app "github.com/smart-table/src/domains/admin/app/services"
 	"github.com/smart-table/src/dependencies"
+	app "github.com/smart-table/src/domains/admin/app/services"
 	"github.com/smart-table/src/utils"
-	viewsUser "github.com/smart-table/src/views/admin/v1/user"
 	viewsRestaurant "github.com/smart-table/src/views/admin/v1/restaurant"
+	viewsUser "github.com/smart-table/src/views/admin/v1/user"
 	viewsCodegenCustomer "github.com/smart-table/src/views/codegen/customer"
 	viewsCodegenCustomerOrder "github.com/smart-table/src/views/codegen/customer_order"
 	viewsCustomer "github.com/smart-table/src/views/customer/v1"
@@ -45,7 +45,7 @@ func GetRouter(container *dig.Container, deps *dependencies.Dependencies) *gin.E
 			c.Set(utils.DiContainerName, container)
 			c.Next()
 		}).Use(cors.New(config))
-	
+
 	private := router.Group("/")
 	private.Use(JWTAuthMiddleware(deps.Logger))
 
@@ -90,6 +90,7 @@ func GinZapLogger(logger *zap.Logger, cfg *config.Config) gin.HandlerFunc {
 		requestHeaders := getRequestHeaders(c)
 
 		cookies := c.Request.Cookies()
+
 		var cookieString string
 		for _, cookie := range cookies {
 			cookieString += cookie.Name + "=" + cookie.Value + "; "
@@ -139,13 +140,14 @@ func JWTAuthMiddleware(logger *zap.Logger) gin.HandlerFunc {
 				"code":    "unauthorized",
 				"message": "Authorization required",
 			})
+
 			return
 		}
 
 		jwtService, err := utils.GetFromContainer[*app.JwtService](c)
 		if err != nil {
 			logger.Error(fmt.Sprintf("Error while getting JWT service: %v", err))
-			return 
+			return
 		}
 
 		_, err = jwtService.ValidateJWT(tokenString)
@@ -156,6 +158,7 @@ func JWTAuthMiddleware(logger *zap.Logger) gin.HandlerFunc {
 				"code":    "invalid_token",
 				"message": "Invalid authentication token",
 			})
+
 			return
 		}
 

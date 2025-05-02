@@ -43,8 +43,8 @@ func (u *UserRepository) Save(ctx context.Context, tx pgx.Tx, user utils.SharedR
 	return err
 }
 
-func (o *UserRepository) FindUserByUUID(ctx context.Context, uuid uuid.UUID) (utils.SharedRef[domain.User], error) {
-	queries := db.New(o.coonPool)
+func (u *UserRepository) FindUserByUUID(ctx context.Context, uuid uuid.UUID) (utils.SharedRef[domain.User], error) {
+	queries := db.New(u.coonPool)
 
 	pgResult, err := queries.FetchUserByUUID(ctx, uuid)
 	if err != nil {
@@ -63,8 +63,8 @@ func (o *UserRepository) FindUserByUUID(ctx context.Context, uuid uuid.UUID) (ut
 	return user, nil
 }
 
-func (o *UserRepository) FindUserByLogin(ctx context.Context, userLogin string) (utils.SharedRef[domain.User], error) {
-	queries := db.New(o.coonPool)
+func (u *UserRepository) FindUserByLogin(ctx context.Context, userLogin string) (utils.SharedRef[domain.User], error) {
+	queries := db.New(u.coonPool)
 
 	pgResult, err := queries.FetchUserByLogin(ctx, userLogin)
 	if err != nil {
@@ -83,8 +83,8 @@ func (o *UserRepository) FindUserByLogin(ctx context.Context, userLogin string) 
 	return user, nil
 }
 
-func (o *UserRepository) CheckLoginOrTgLoginExist(ctx context.Context, login, tgLogin string) (bool, error) {
-	queries := db.New(o.coonPool)
+func (u *UserRepository) CheckLoginOrTgLoginExist(ctx context.Context, login, tgLogin string) (bool, error) {
+	queries := db.New(u.coonPool)
 
 	params := db.CheckLoginOrTgLoginExistParams{
 		Column1: login,

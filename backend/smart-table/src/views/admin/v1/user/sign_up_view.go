@@ -17,15 +17,7 @@ func (h *AdminV1UserHandler) PostAdminV1UserSignUp(
 ) (viewsAdminUser.PostAdminV1UserSignUpResponseObject, error) {
 	handler, err := utils.GetFromContainer[*app.UserSingUpCommandHandler](ctx)
 	if err != nil {
-		if utils.IsTheSameErrorType[appErrors.LoginOrTgLoginAlreadyExists](err) {
-			return viewsAdminUser.PostAdminV1UserSignUp409JSONResponse{
-				Code:    viewsAdminUser.AlreadyExist,
-				Message: err.Error(),
-			}, nil
-		}
-
 		logging.GetLogger().Error(fmt.Sprintf("Error while getting command handler: %v", err))
-
 		return nil, err
 	}
 

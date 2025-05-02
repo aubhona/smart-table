@@ -2,9 +2,11 @@ package viewscustomer
 
 import (
 	"context"
+	"fmt"
 
 	app "github.com/smart-table/src/domains/customer/app/use_cases"
 	domainErrors "github.com/smart-table/src/domains/customer/domain/errors"
+	"github.com/smart-table/src/logging"
 	"github.com/smart-table/src/utils"
 	viewsCustomer "github.com/smart-table/src/views/codegen/customer"
 )
@@ -14,8 +16,8 @@ func (h *CustomerV1Handler) PostCustomerV1SignIn(
 	request viewsCustomer.PostCustomerV1SignInRequestObject,
 ) (viewsCustomer.PostCustomerV1SignInResponseObject, error) {
 	handler, err := utils.GetFromContainer[*app.CustomerAuthorizeCommandHandler](ctx)
-
 	if err != nil {
+		logging.GetLogger().Error(fmt.Sprintf("Error while getting command handler: %v", err))
 		return nil, err
 	}
 

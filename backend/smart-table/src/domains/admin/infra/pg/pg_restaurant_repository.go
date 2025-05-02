@@ -19,18 +19,18 @@ func NewRestaurantRepository(pool *pgxpool.Pool) *RestaurantRepository {
 	return &RestaurantRepository{pool}
 }
 
-func (o *RestaurantRepository) Begin(ctx context.Context) (pgx.Tx, error) {
-	return o.coonPool.Begin(ctx)
+func (r *RestaurantRepository) Begin(ctx context.Context) (pgx.Tx, error) {
+	return r.coonPool.Begin(ctx)
 }
 
-func (o *RestaurantRepository) Commit(ctx context.Context, tx pgx.Tx) error {
+func (r *RestaurantRepository) Commit(ctx context.Context, tx pgx.Tx) error {
 	return tx.Commit(ctx)
 }
 
-func (o *RestaurantRepository) Save(ctx context.Context, tx pgx.Tx, Restaurant utils.SharedRef[domain.Restaurant]) error {
-	queries := db.New(o.coonPool).WithTx(tx)
+func (r *RestaurantRepository) Save(ctx context.Context, tx pgx.Tx, restaurant utils.SharedRef[domain.Restaurant]) error {
+	queries := db.New(r.coonPool).WithTx(tx)
 
-	pgRestaurant, err := mapper.ConvertToPgRestaurant(Restaurant)
+	pgRestaurant, err := mapper.ConvertToPgRestaurant(restaurant)
 	if err != nil {
 		return err
 	}
@@ -40,13 +40,13 @@ func (o *RestaurantRepository) Save(ctx context.Context, tx pgx.Tx, Restaurant u
 	return err
 }
 
-func (o *RestaurantRepository) CheckNameExist(ctx context.Context, name string) (bool, error) {
-	queries := db.New(o.coonPool)
+func (r *RestaurantRepository) CheckNameExist(ctx context.Context, name string) (bool, error) {
+	queries := db.New(r.coonPool)
 
-	RestaurantExists, err := queries.CheckNameExist(ctx, name)
+	restaurantExists, err := queries.CheckNameExist(ctx, name)
 	if err != nil {
 		return false, err
 	}
 
-	return RestaurantExists, nil
+	return restaurantExists, nil
 }

@@ -18,21 +18,13 @@ func (h *AdminV1RestaurantHandler) PostAdminV1RestaurantCreate(
 ) (viewsAdminRestaurant.PostAdminV1RestaurantCreateResponseObject, error) {
 	handler, err := utils.GetFromContainer[*app.RestaurantCreateCommandHandler](ctx)
 	if err != nil {
-		if utils.IsTheSameErrorType[domainErrors.UserNotFoundByUUID](err) {
-			return viewsAdminRestaurant.PostAdminV1RestaurantCreate403JSONResponse{
-				Code:    viewsAdminRestaurant.AlreadyExist,
-				Message: err.Error(),
-			}, nil
-		}
-
 		logging.GetLogger().Error(fmt.Sprintf("Error while getting command handler: %v", err))
-
 		return nil, err
 	}
 
 	result, err := handler.Handle(&app.RestaurantCreateCommand{
-		OwnerUUID:  request.Params.UserUUID,
-		Name:   		request.Body.Name,
+		OwnerUUID: request.Params.UserUUID,
+		Name:      request.Body.Name,
 	})
 	if err != nil {
 		if utils.IsTheSameErrorType[domainErrors.UserNotFoundByUUID](err) {
