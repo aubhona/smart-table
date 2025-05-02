@@ -3,24 +3,30 @@ import DefaultApi from "../api/generated/src/api/DefaultApi";
 import AdminV1UserSignInRequest from "../api/generated/src/model/AdminV1UserSignInRequest";
 import "../styles/AuthScreens.css";
 
-const api = new DefaultApi();
-
-function LoginForm() {
+export default function LoginForm() {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const payload = AdminV1UserSignInRequest.constructFromObject({ login, password });
+
+    const api = new DefaultApi();
+    api.apiClient.basePath = "https://8bb9-138-124-99-156.ngrok-free.app";
 
     try {
       const response = await api.adminV1UserSignInPost(payload, { withCredentials: true });
-      alert(`Авторизация успешна. Ваш UUID: ${response.user_uuid}`);
+
+      const { user_uuid } = response;
+      localStorage.setItem("userUuid", user_uuid);
+
+      alert(`Авторизация успешна. Ваш UUID: ${user_uuid}`);
     } catch (err) {
-      if (err.response?.body?.code === "not_found") {
+      const code = err.response?.body?.code;
+      if (code === "not_found") {
         alert("Пользователь не найден");
-      } else if (err.response?.body?.code === "incorrect_password") {
+      } else if (code === "incorrect_password") {
         alert("Неверный пароль");
       } else {
         alert("Ошибка авторизации");
@@ -46,10 +52,10 @@ function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit" className="auth-button">Войти</button>
+        <button type="submit" className="auth-button">
+          Войти
+        </button>
       </form>
     </div>
   );
 }
-
-export default LoginForm;
