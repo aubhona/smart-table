@@ -44,9 +44,7 @@ func NewUser(
 	user.updatedAt = time.Now()
 
 	shardID := uuidGenerator.GetShardID()
-	userUUID := uuidGenerator.GenerateShardedUUID(shardID)
-
-	user.uuid = userUUID
+	user.uuid = uuidGenerator.GenerateShardedUUID(shardID)
 
 	userRef, _ := utils.NewSharedRef(&user)
 

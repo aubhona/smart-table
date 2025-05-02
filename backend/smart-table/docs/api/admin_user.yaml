@@ -57,19 +57,13 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/AdminV1UserSignInResponse'
                 '403':
-                    description: Ошибка авторизации, неверный логин или пароль
+                    description: Ошибка авторизации, некорретные данные
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/AdminV1UserSignIn403ErrorResponse'
 
 components:
-    securitySchemes:
-        CookieAuth:
-            type: apiKey
-            in: cookie
-            name: jwt
-
     schemas:
         # /admin/v1/user/sign-up_POST
         AdminV1UserSignUpRequest:
@@ -87,13 +81,13 @@ components:
                     description: Имя пользователя на латинице
                     minLength: 1
                     maxLength: 50
-                    pattern: "^[A-Za-z\\-\\s]+$"
+                    pattern: "^[A-Za-z \\-]+$"
                 last_name:
                     type: string
                     description: Фамилия пользователя на латинице
                     minLength: 1
                     maxLength: 50
-                    pattern: "^[A-Za-z\\-\\s]+$"
+                    pattern: "^[A-Za-z \\-]+$"
                 password: 
                     $ref: '#/components/schemas/Password'
             required:

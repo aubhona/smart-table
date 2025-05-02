@@ -1,0 +1,30 @@
+components:
+    schemas:
+        PgRestaurant:
+            type: object
+            additionalProperties: false
+            properties:
+                uuid:
+                    type: string
+                    format: uuid
+                owner_uuid:
+                    type: string
+                    format: uuid
+                name:
+                    type: string
+                    minLength: 1
+                    maxLength: 50
+                    pattern: "^[A-Za-z0-9 \\-]+$"
+                created_at:
+                    type: string
+                    format: date-time
+                updated_at:
+                    type: string
+                    format: date-time
+
+            required:
+                - uuid
+                - owner_uuid
+                - name
+                - created_at
+                - updated_at

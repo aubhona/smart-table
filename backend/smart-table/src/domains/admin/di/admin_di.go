@@ -18,6 +18,13 @@ func AddDeps(container *dig.Container) error {
 		return err
 	}
 
+	err = container.Provide(func(deps *dependencies.Dependencies) domain.RestaurantRepository {
+		return pg.NewRestaurantRepository(deps.DBConnPool)
+	})
+	if err != nil {
+		return err
+	}
+
 	err = container.Provide(appServices.NewHashService)
 	if err != nil {
 		return err
@@ -39,6 +46,11 @@ func AddDeps(container *dig.Container) error {
 	}
 
 	err = container.Provide(app.NewUserSingInCommandHandler)
+	if err != nil {
+		return err
+	}
+
+	err = container.Provide(app.NewRestaurantCreateCommandHandler)
 	if err != nil {
 		return err
 	}

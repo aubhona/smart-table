@@ -2,9 +2,11 @@ package viewscustomer
 
 import (
 	"context"
+	"fmt"
 
 	app "github.com/smart-table/src/domains/customer/app/use_cases"
 	appErrors "github.com/smart-table/src/domains/customer/app/use_cases/errors"
+	"github.com/smart-table/src/logging"
 	"github.com/smart-table/src/utils"
 	viewsCustomer "github.com/smart-table/src/views/codegen/customer"
 )
@@ -15,6 +17,7 @@ func (h *CustomerV1Handler) PostCustomerV1SignUp(
 ) (viewsCustomer.PostCustomerV1SignUpResponseObject, error) {
 	handler, err := utils.GetFromContainer[*app.CustomerRegisterCommandHandler](ctx)
 	if err != nil {
+		logging.GetLogger().Error(fmt.Sprintf("Error while getting command handler: %v", err))
 		return nil, err
 	}
 
