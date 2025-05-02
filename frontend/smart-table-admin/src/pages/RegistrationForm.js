@@ -4,8 +4,9 @@ import AdminV1UserSignUpRequest from "../api/generated/src/model/AdminV1UserSign
 import "../styles/AuthScreens.css";
 
 const api = new DefaultApi();
+api.apiClient.basePath = "https://8bb9-138-124-99-156.ngrok-free.app";
 
-function RegistrationForm() {
+export default function RegistrationForm() {
   const [form, setForm] = useState({
     login: "",
     tg_login: "",
@@ -22,10 +23,9 @@ function RegistrationForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.password !== form.password_confirm) {
-      alert("Пароли не совпадают!");
-      return;
+      return alert("Пароли не совпадают!");
     }
-    
+
     const payload = AdminV1UserSignUpRequest.constructFromObject({
       login: form.login,
       tg_login: form.tg_login,
@@ -38,12 +38,13 @@ function RegistrationForm() {
       await api.adminV1UserSignUpPost(payload, { withCredentials: true });
       alert("Регистрация успешна!");
     } catch (err) {
-      if (err.response?.body?.code === "already_exist") {
-        alert("Такой пользователь уже существует!");
+      const code = err.response?.body?.code;
+      if (code === "already_exist") {
+        alert("Пользователь с таким логином уже существует");
       } else {
         alert("Ошибка при регистрации");
       }
-      console.error("Ошибка регистрации:", err);
+      console.error(err);
     }
   };
 
@@ -53,14 +54,36 @@ function RegistrationForm() {
       <form className="auth-form" onSubmit={handleSubmit}>
         <input name="login" placeholder="Логин" onChange={handleChange} required />
         <input name="tg_login" placeholder="Telegram логин" onChange={handleChange} />
-        <input name="first_name" placeholder="Имя (латиницей)" onChange={handleChange} required />
-        <input name="last_name" placeholder="Фамилия (латиницей)" onChange={handleChange} required />
-        <input name="password" type="password" placeholder="Пароль" onChange={handleChange} required />
-        <input name="password_confirm" type="password" placeholder="Повторите пароль" onChange={handleChange} required />
-        <button type="submit" className="auth-button">Зарегистрироваться</button>
+        <input
+          name="first_name"
+          placeholder="Имя (латиницей)"
+          onChange={handleChange}
+          required
+        />
+        <input
+          name="last_name"
+          placeholder="Фамилия (латиницей)"
+          onChange={handleChange}
+          required
+        />
+        <input
+          name="password"
+          type="password"
+          placeholder="Пароль"
+          onChange={handleChange}
+          required
+        />
+        <input
+          name="password_confirm"
+          type="password"
+          placeholder="Повторите пароль"
+          onChange={handleChange}
+          required
+        />
+        <button type="submit" className="auth-button">
+          Зарегистрироваться
+        </button>
       </form>
     </div>
   );
 }
-
-export default RegistrationForm;
