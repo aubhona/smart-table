@@ -52,4 +52,11 @@ html, body, #root {
     border: 1px solid #ccc;
     border-radius: 4px;
   }
+
+  .auth-error {
+    color: #f44336;   
+    font-size: 14px;     
+    margin-top: 0.5rem;  
+    text-align: center;  
+  }
   
