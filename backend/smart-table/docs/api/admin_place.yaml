@@ -31,25 +31,25 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AdminV1PlaceCreate400ErrorResponse'              
+                                $ref: '#/components/schemas/ErrorResponse'              
                 '401':
                     description: Ошибка создания плейса, пользователь не авторизован
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AdminV1PlaceCreate401ErrorResponse'
+                                $ref: '#/components/schemas/ErrorResponse'
                 '403':
                     description: Ошибка создания плейса, отказано в доступе, некорретные данные
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AdminV1PlaceCreate403ErrorResponse'
+                                $ref: '#/components/schemas/ErrorResponse'
                 '404':
                     description: Ошибка создания плейса, пользователь или ресторан не найден
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AdminV1PlaceCreate404ErrorResponse'
+                                $ref: '#/components/schemas/ErrorResponse'
 
 components:
     securitySchemes:
@@ -110,7 +110,7 @@ components:
             required:
                 - place_uuid
         
-        AdminV1PlaceCreate400ErrorResponse:
+        ErrorResponse:
             type: object
             additionalProperties: false
             properties:
@@ -120,54 +120,9 @@ components:
                     enum: 
                         - incorrect_time_format
                         - incorrect_table_count
-                message:
-                    type: string
-                    description: Описание ошибки
-            required:
-                - code
-                - message
-
-        AdminV1PlaceCreate401ErrorResponse:
-            type: object
-            additionalProperties: false
-            properties:
-                code:
-                    type: string
-                    description: Код ошибки
-                    enum: 
                         - not_authorized
-                message:
-                    type: string
-                    description: Описание ошибки
-            required:
-                - code
-                - message
-
-        AdminV1PlaceCreate403ErrorResponse:
-            type: object
-            additionalProperties: false
-            properties:
-                code:
-                    type: string
-                    description: Код ошибки
-                    enum: 
                         - already_exist
                         - access_denied
-                message:
-                    type: string
-                    description: Описание ошибки
-            required:
-                - code
-                - message
-
-        AdminV1PlaceCreate404ErrorResponse:
-            type: object
-            additionalProperties: false
-            properties:
-                code:
-                    type: string
-                    description: Код ошибки
-                    enum: 
                         - user_not_found
                         - restaurant_not_found
                 message:

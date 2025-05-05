@@ -23,7 +23,7 @@ func TestAdminPlaceCreateHappyPath(t *testing.T) {
 	assert.Nil(t, err)
 
 	restaurantUUID, err := CreateRestaurant(
-		"testName",
+		"testRestaurantName",
 		userUUID,
 	)
 	assert.Nil(t, err)

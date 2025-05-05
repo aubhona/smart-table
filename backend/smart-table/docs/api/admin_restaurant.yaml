@@ -31,19 +31,47 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AdminV1RestaurantCreate401ErrorResponse'
+                                $ref: '#/components/schemas/ErrorResponse'
                 '403':
                     description: Ошибка создания ресторана, отказано в доступе, некорретные данные
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AdminV1RestaurantCreate403ErrorResponse'
+                                $ref: '#/components/schemas/ErrorResponse'
                 '404':
                     description: Ошибка создания ресторана, пользователь не найден
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AdminV1RestaurantCreate404ErrorResponse'
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /admin/v1/restaurant/list:
+        get:
+            summary: Получение списка ресторанов пользователя
+            description: Получение списка ресторанов пользователя
+            security:
+                - CookieAuth: []
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+            responses:
+                '200':
+                    description: Список ресторанов пользователя
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1RestaurantListResponse'
+                '401':
+                    description: Ошибка получения списка ресторанов, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка получения списка ресторанов, пользователь не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
 
 components:
     securitySchemes:
@@ -68,27 +96,33 @@ components:
             type: object
             additionalProperties: false
             properties:
-                name:
-                    type: string
-                    description: Назавние ресторана на латинице
-                    minLength: 1
-                    maxLength: 50
-                    pattern: "^[A-Za-z0-9 \\-]+$"
+                restaurant_name:
+                    $ref: '#/components/schemas/RestaurantName'
             required:
-                - name
+                - restaurant_name
 
         AdminV1RestaurantCreateResponse:
             type: object
             additionalProperties: false
             properties:
                 restaurant_uuid:
-                    type: string
-                    format: uuid
-                    description: Уникальный идентификатор ресторана
+                    $ref: '#/components/schemas/RestaurantUUID'
             required:
                 - restaurant_uuid
 
-        AdminV1RestaurantCreate401ErrorResponse:
+        # /admin/v1/restaurant/list_GET
+        AdminV1RestaurantListResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                restaurant_list:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Restaurant'
+            required:
+                - restaurant_list
+
+        ErrorResponse:
             type: object
             additionalProperties: false
             properties:
@@ -97,37 +131,7 @@ components:
                     description: Код ошибки
                     enum: 
                         - not_authorized
-                message:
-                    type: string
-                    description: Описание ошибки
-            required:
-                - code
-                - message
-
-        AdminV1RestaurantCreate403ErrorResponse:
-            type: object
-            additionalProperties: false
-            properties:
-                code:
-                    type: string
-                    description: Код ошибки
-                    enum: 
                         - already_exist
-                message:
-                    type: string
-                    description: Описание ошибки
-            required:
-                - code
-                - message
-
-        AdminV1RestaurantCreate404ErrorResponse:
-            type: object
-            additionalProperties: false
-            properties:
-                code:
-                    type: string
-                    description: Код ошибки
-                    enum: 
                         - user_not_found
                 message:
                     type: string
@@ -135,3 +139,28 @@ components:
             required:
                 - code
                 - message
+
+        # Objects
+        Restaurant:
+            type: object
+            additionalProperties: false
+            properties:
+                uuid:
+                    $ref: '#/components/schemas/RestaurantUUID'
+                name:
+                    $ref: '#/components/schemas/RestaurantName'
+            required:
+                - uuid
+                - name
+
+        RestaurantUUID:
+            type: string
+            format: uuid
+            description: Уникальный идентификатор ресторана
+        
+        RestaurantName:
+            type: string
+            description: Назавние ресторана на латинице
+            minLength: 1
+            maxLength: 50
+            pattern: "^[A-Za-z0-9 \\-]+$"

@@ -55,7 +55,7 @@ func (handler *PlaceCreateCommandHandler) Handle(
 
 	isExist, err := handler.placeRepository.CheckAddressExist(ctx, placeCreateCommand.Address, placeCreateCommand.RestaurantUUID)
 	if err != nil {
-		logging.GetLogger().Error(fmt.Sprintf("Error while checking address existence: %v", err))
+		logging.GetLogger().Error(fmt.Sprintf("Error while checking place address existence: %v", err))
 		return PlaceCreateCommandHandlerResult{}, err
 	}
 

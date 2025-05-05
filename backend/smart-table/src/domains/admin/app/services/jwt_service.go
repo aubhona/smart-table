@@ -61,7 +61,7 @@ func (js *JwtService) ValidateJWT(tokenString string, userUUID uuid.UUID) (*User
 	case err != nil:
 		return nil, err
 	case claims.UserUUID != userUUID:
-		logger.Error(fmt.Sprintf("Token.user_uuid mismatch with Header.user_uuid=%v", userUUID))
+		logger.Error(fmt.Sprintf("Token.user_uuid=%v mismatch with Header.user_uuid=%v", claims.UserUUID, userUUID))
 		return nil, appErrors.InvalidToken{}
 	case !token.Valid:
 		logger.Error("Invalid token")

@@ -10,14 +10,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func CreateRestaurant(name string, ownerUUID uuid.UUID) (uuid.UUID, error) {
+func CreateRestaurant(restaurantName string, ownerUUID uuid.UUID) (uuid.UUID, error) {
 	handler := viewsAdmin.AdminV1RestaurantHandler{}
 	response, err := handler.PostAdminV1RestaurantCreate(GetCtx(), viewsCodegenAdmin.PostAdminV1RestaurantCreateRequestObject{
 		Params: viewsCodegenAdmin.PostAdminV1RestaurantCreateParams{
 			UserUUID: ownerUUID,
 		},
 		Body: &viewsCodegenAdmin.AdminV1RestaurantCreateRequest{
-			Name: name,
+			RestaurantName: restaurantName,
 		},
 	})
 
@@ -54,7 +54,7 @@ func TestAdminRestaurantCreateHappyPath(t *testing.T) {
 			UserUUID: id,
 		},
 		Body: &viewsCodegenAdmin.AdminV1RestaurantCreateRequest{
-			Name: "testName",
+			RestaurantName: "testRestaurantName",
 		},
 	})
 
