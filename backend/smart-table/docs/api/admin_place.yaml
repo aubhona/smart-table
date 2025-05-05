@@ -51,6 +51,52 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
 
+    /admin/v1/place/list:
+        post:
+            summary: Получение списка плейсов пользователя
+            description: Получение списка плейсов пользователя
+            security:
+                - CookieAuth: []
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1PlaceListRequest'
+            responses:
+                '200':
+                    description: Список плейсов ресторана
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1PlaceListResponse'
+                '400':
+                    description: Ошибка получения списка плейсов ресторана, некорректный формат данных
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'              
+                '401':
+                    description: Ошибка получения списка плейсов ресторана, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка получения списка плейсов ресторана, отказано в доступе, некорретные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка получения списка плейсов ресторана, пользователь или ресторан не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
 components:
     securitySchemes:
         CookieAuth:
@@ -75,23 +121,15 @@ components:
             additionalProperties: false
             properties:
                 restaurant_uuid:
-                    type: string
-                    format: uuid
+                    $ref: '#/components/schemas/RestaurantUUID'
                 address:
-                    type: string
-                    minLength: 1
-                    maxLength: 50
-                    pattern: "^[A-Za-z0-9 \\-]+$"
+                    $ref: '#/components/schemas/Address'
                 table_count:
-                    type: integer
-                    minimum: 0
-                    exclusiveMinimum: true
+                    $ref: '#/components/schemas/TableCount'
                 opening_time:
-                    type: string
-                    pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$'
+                    $ref: '#/components/schemas/Time'
                 closing_time:
-                    type: string
-                    pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$'
+                    $ref: '#/components/schemas/Time'
             required:
                 - restaurant_uuid
                 - address
@@ -104,12 +142,31 @@ components:
             additionalProperties: false
             properties:
                 place_uuid:
-                    type: string
-                    format: uuid
-                    description: Уникальный идентификатор плейса
+                    $ref: '#/components/schemas/PlaceUUID'
             required:
                 - place_uuid
-        
+
+        # /admin/v1/place/list_POST
+        AdminV1PlaceListRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                restaurant_uuid:
+                    $ref: '#/components/schemas/RestaurantUUID'
+            required:
+                - restaurant_uuid
+
+        AdminV1PlaceListResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                place_list:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/PlaceInfo'
+            required:
+                - place_list
+
         ErrorResponse:
             type: object
             additionalProperties: false
@@ -131,3 +188,50 @@ components:
             required:
                 - code
                 - message
+
+        # Objects
+        PlaceInfo:
+            type: object
+            additionalProperties: false
+            properties:
+                uuid:
+                    $ref: '#/components/schemas/PlaceUUID'
+                address:
+                    $ref: '#/components/schemas/Address'
+                table_count:
+                    $ref: '#/components/schemas/TableCount'
+                opening_time:
+                    $ref: '#/components/schemas/Time'
+                closing_time:
+                    $ref: '#/components/schemas/Time'
+            required:
+                - uuid
+                - address
+                - table_count
+                - opening_time
+                - closing_time
+
+        RestaurantUUID:
+            type: string
+            format: uuid
+            description: Уникальный идентификатор ресторана
+
+        PlaceUUID:
+            type: string
+            format: uuid
+            description: Уникальный идентификатор плейса
+        
+        Address:
+            type: string
+            minLength: 1
+            maxLength: 50
+            pattern: "^[A-Za-z0-9 \\-]+$"
+        
+        TableCount:
+            type: integer
+            minimum: 0
+            exclusiveMinimum: true
+
+        Time:
+            type: string
+            pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$'

@@ -56,3 +56,22 @@ func (p *PlaceRepository) CheckAddressExist(ctx context.Context, address string,
 
 	return placeExists, nil
 }
+
+func (p *PlaceRepository) FindPlaceListByRestaurantUUID(
+	ctx context.Context,
+	restaurantUUID uuid.UUID,
+) ([]utils.SharedRef[domain.Place], error) {
+	queries := db.New(p.coonPool)
+
+	pgResult, err := queries.FetchPlaceListByRestaurantUUID(ctx, restaurantUUID)
+	if err != nil || pgResult == nil {
+		return []utils.SharedRef[domain.Place]{}, err
+	}
+
+	placeList, err := mapper.ConvertPgPlaceListToModelList(pgResult)
+	if err != nil {
+		return []utils.SharedRef[domain.Place]{}, err
+	}
+
+	return placeList, nil
+}

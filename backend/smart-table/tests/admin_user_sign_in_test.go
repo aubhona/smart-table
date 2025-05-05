@@ -13,13 +13,7 @@ func TestAdminUserSignInHappyPath(t *testing.T) {
 	defer GetTestMutex().Unlock()
 	defer CleanTest()
 
-	id, err := CreateUser(
-		"testFisrtName",
-		"testLastName",
-		"testLogin",
-		"testPassword",
-		"testTgLogin",
-	)
+	id, err := CreateDefaultUser()
 	assert.Nil(t, err)
 
 	handler := viewsAdmin.AdminV1UserHandler{}

@@ -12,12 +12,12 @@ import (
 	viewsAdminRestaurant "github.com/smart-table/src/views/codegen/admin_restaurant"
 )
 
-func convertDomainRestauranToGenRestaurant(
-	domainRestaurant utils.SharedRef[domain.Restaurant],
-) viewsAdminRestaurant.Restaurant {
-	return viewsAdminRestaurant.Restaurant{
-		Name: domainRestaurant.Get().GetName(),
-		UUID: domainRestaurant.Get().GetUUID(),
+func convertRestauranToRestaurantInfo(
+	restaurant utils.SharedRef[domain.Restaurant],
+) viewsAdminRestaurant.RestaurantInfo {
+	return viewsAdminRestaurant.RestaurantInfo{
+		Name: restaurant.Get().GetName(),
+		UUID: restaurant.Get().GetUUID(),
 	}
 }
 
@@ -47,13 +47,13 @@ func (h *AdminV1RestaurantHandler) GetAdminV1RestaurantList(
 		return nil, err
 	}
 
-	restaurantList := make([]viewsAdminRestaurant.Restaurant, 0, len(result.DomainRestaurantList))
+	restaurantInfoList := make([]viewsAdminRestaurant.RestaurantInfo, 0, len(result.RestaurantList))
 
-	for _, domainRestaurant := range result.DomainRestaurantList {
-		restaurantList = append(restaurantList, convertDomainRestauranToGenRestaurant(domainRestaurant))
+	for _, restaurant := range result.RestaurantList {
+		restaurantInfoList = append(restaurantInfoList, convertRestauranToRestaurantInfo(restaurant))
 	}
 
 	return viewsAdminRestaurant.GetAdminV1RestaurantList200JSONResponse{
-		RestaurantList: restaurantList,
+		RestaurantList: restaurantInfoList,
 	}, nil
 }

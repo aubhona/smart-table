@@ -16,4 +16,5 @@ type PlaceRepository interface {
 	Save(ctx context.Context, tx pgx.Tx, place utils.SharedRef[Place]) error
 
 	CheckAddressExist(ctx context.Context, address string, restaurantUUID uuid.UUID) (bool, error)
+	FindPlaceListByRestaurantUUID(ctx context.Context, restaurantUUID uuid.UUID) ([]utils.SharedRef[Place], error)
 }

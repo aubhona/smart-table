@@ -26,6 +26,16 @@ func FindUserByLogin(login string) (defsInternalAdminDb.PgUser, error) {
 	return user, err
 }
 
+func CreateDefaultUser() (uuid.UUID, error) {
+	return CreateUser(
+		"testFisrtName",
+		"testLastName",
+		"testLogin",
+		"testPassword",
+		"testTgLogin",
+	)
+}
+
 func CreateUser(firstName, lastName, login, password, tgLogin string) (uuid.UUID, error) {
 	handler := viewsAdmin.AdminV1UserHandler{}
 	response, err := handler.PostAdminV1UserSignUp(GetCtx(), viewsCodegenAdmin.PostAdminV1UserSignUpRequestObject{

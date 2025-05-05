@@ -10,6 +10,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func CreateDefaultRestaurant(ownerUUID uuid.UUID) (uuid.UUID, error) {
+	return CreateRestaurant(
+		"testRestaurantName",
+		ownerUUID,
+	)
+}
+
 func CreateRestaurant(restaurantName string, ownerUUID uuid.UUID) (uuid.UUID, error) {
 	handler := viewsAdmin.AdminV1RestaurantHandler{}
 	response, err := handler.PostAdminV1RestaurantCreate(GetCtx(), viewsCodegenAdmin.PostAdminV1RestaurantCreateRequestObject{
@@ -27,7 +34,7 @@ func CreateRestaurant(restaurantName string, ownerUUID uuid.UUID) (uuid.UUID, er
 
 	responseObj, ok := response.(viewsCodegenAdmin.PostAdminV1RestaurantCreate200JSONResponse)
 	if !ok {
-		return uuid.Nil, errors.New("response is not a PostAdminV1UserSignUp200JSONResponse")
+		return uuid.Nil, errors.New("response is not a PostAdminV1RestaurantCreate200JSONResponse")
 	}
 
 	return responseObj.RestaurantUUID, nil
@@ -38,20 +45,14 @@ func TestAdminRestaurantCreateHappyPath(t *testing.T) {
 	defer GetTestMutex().Unlock()
 	defer CleanTest()
 
-	id, err := CreateUser(
-		"testFisrtName",
-		"testLastName",
-		"testLogin",
-		"testPassword",
-		"testTgLogin",
-	)
+	userUUID, err := CreateDefaultUser()
 	assert.Nil(t, err)
 
 	handler := viewsAdmin.AdminV1RestaurantHandler{}
 
 	response, err := handler.PostAdminV1RestaurantCreate(GetCtx(), viewsCodegenAdmin.PostAdminV1RestaurantCreateRequestObject{
 		Params: viewsCodegenAdmin.PostAdminV1RestaurantCreateParams{
-			UserUUID: id,
+			UserUUID: userUUID,
 		},
 		Body: &viewsCodegenAdmin.AdminV1RestaurantCreateRequest{
 			RestaurantName: "testRestaurantName",

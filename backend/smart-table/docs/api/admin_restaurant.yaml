@@ -118,7 +118,7 @@ components:
                 restaurant_list:
                     type: array
                     items:
-                        $ref: '#/components/schemas/Restaurant'
+                        $ref: '#/components/schemas/RestaurantInfo'
             required:
                 - restaurant_list
 
@@ -141,7 +141,7 @@ components:
                 - message
 
         # Objects
-        Restaurant:
+        RestaurantInfo:
             type: object
             additionalProperties: false
             properties:

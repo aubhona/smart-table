@@ -11,7 +11,7 @@ import (
 )
 
 type RestaurantListCommandHandlerResult struct {
-	DomainRestaurantList []utils.SharedRef[domain.Restaurant]
+	RestaurantList []utils.SharedRef[domain.Restaurant]
 }
 
 type RestaurantListCommandHandler struct {
@@ -43,11 +43,11 @@ func (handler *RestaurantListCommandHandler) Handle(
 		return RestaurantListCommandHandlerResult{}, err
 	}
 
-	domainRestaurantList, err := handler.restaurantRepository.FindRestaurantListByOwnerUUID(ctx, restaurantListCommand.OwnerUUID)
+	restaurantList, err := handler.restaurantRepository.FindRestaurantListByOwnerUUID(ctx, restaurantListCommand.OwnerUUID)
 	if err != nil {
 		logging.GetLogger().Error(fmt.Sprintf("Error while finding restaurant_list by owner_uuid: %v", err))
 		return RestaurantListCommandHandlerResult{}, err
 	}
 
-	return RestaurantListCommandHandlerResult{domainRestaurantList}, nil
+	return RestaurantListCommandHandlerResult{restaurantList}, nil
 }
