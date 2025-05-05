@@ -12,6 +12,7 @@ import (
 	viewsCodegenAdminUser "github.com/smart-table/src/views/codegen/admin_user"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/smart-table/src/config"
 	"github.com/smart-table/src/dependencies"
 	app "github.com/smart-table/src/domains/admin/app/services"
@@ -149,13 +150,24 @@ func JWTAuthMiddleware(logger *zap.Logger) gin.HandlerFunc {
 			return
 		}
 
+		userUUID, err := uuid.Parse(c.GetHeader("User-UUID"))
+		if err != nil {
+			logger.Error(fmt.Sprintf("Error while parsing user_uuid: %v", err))
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"code":    "invalid_headers",
+				"message": "Invalid user_uuid header",
+			})
+
+			return
+		}
+
 		jwtService, err := utils.GetFromContainer[*app.JwtService](c)
 		if err != nil {
 			logger.Error(fmt.Sprintf("Error while getting JWT service: %v", err))
 			return
 		}
 
-		_, err = jwtService.ValidateJWT(tokenString)
+		_, err = jwtService.ValidateJWT(tokenString, userUUID)
 
 		if err != nil {
 			logger.Warn("Invalid JWT token", zap.Error(err))
