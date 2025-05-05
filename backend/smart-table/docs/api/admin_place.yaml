@@ -110,6 +110,7 @@ components:
             required:
                 - place_uuid
         
+        # Errors
         AdminV1PlaceCreate400ErrorResponse:
             type: object
             additionalProperties: false
