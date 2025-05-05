@@ -60,6 +60,12 @@ type Config struct {
 			ResponseSymLimit int `mapstructure:"response_sym_limit"`
 		} `mapstructure:"server"`
 	} `mapstructure:"logging"`
+
+	Bot struct {
+		Token         string        `mapstructure:"token"`
+		PollerTimeout time.Duration `mapstructure:"poller_timeout"`
+		WebAppURL     string        `mapstructure:"web_app_url"`
+	} `mapstructure:"bot"`
 }
 
 func LoadConfig() (*Config, error) {

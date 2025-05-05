@@ -41,7 +41,15 @@ func main() {
 		logger.Fatal(err.Error())
 	}
 
-	router := servers.GetRouter(container, deps)
+	bot, err := servers.NewBot(container, deps)
+	if err != nil {
+		logger.Fatal(err.Error())
+	}
+
+	go bot.Start()
+	logger.Info("Bot started")
+
+	router := servers.NewGinRouter(container, deps)
 
 	err = router.Run(fmt.Sprintf(":%d", deps.Config.App.Port))
 	if err != nil {

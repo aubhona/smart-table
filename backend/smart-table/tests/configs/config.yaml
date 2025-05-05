@@ -1,6 +1,24 @@
 app:
     port: 8080
     env: development
+    admin:
+        jwt:
+            secret_key: APP_ADMIN_JWT_SECRET_KEY
+            expiration: 24h
+    cors:
+        allow_origins:
+            - http://localhost:3000
+            - https://5910-213-183-51-117.ngrok-free.app
+        allow_methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+        allow_headers:
+            - Set-Cookie
+            - content-type
+        allow_credentials: true
 
 database:
     host: smart-table-db
@@ -16,8 +34,8 @@ database:
     health_check_period: 5m
     max_connection_lifetime_jitter: 1m
     server:
-        request_sym_limit: 1000
-        response_sym_limit: 1000
+        request_sym_limit: 100000000
+        response_sym_limit: 100000000
 
 logging:
     level: debug
@@ -28,3 +46,8 @@ logging:
     max_age: 30
     compress: true
     enable_console_and_file: true
+
+bot:
+    token: BOT_TOKEN
+    poller_timeout: 10s
+    web_app_url: https://5910-213-183-51-117.ngrok-free.app
