@@ -1,12 +1,14 @@
 package app
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 	"github.com/smart-table/src/dependencies"
 	appErrors "github.com/smart-table/src/domains/admin/app/services/errors"
+	"github.com/smart-table/src/logging"
 )
 
 type JwtService struct {
@@ -46,16 +48,23 @@ func (js *JwtService) GenerateJWT(userUUID uuid.UUID) (string, error) {
 	return tokenString, nil
 }
 
-func (js *JwtService) ValidateJWT(tokenString string) (*UserClaims, error) {
+func (js *JwtService) ValidateJWT(tokenString string, userUUID uuid.UUID) (*UserClaims, error) {
 	claims := &UserClaims{}
 
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		return js.secretKey, nil
 	})
 
-	if err != nil {
+	logger := logging.GetLogger()
+
+	switch {
+	case err != nil:
 		return nil, err
-	} else if !token.Valid {
+	case claims.UserUUID != userUUID:
+		logger.Error(fmt.Sprintf("Token.user_uuid mismatch with Header.user_uuid=%v", userUUID))
+		return nil, appErrors.InvalidToken{}
+	case !token.Valid:
+		logger.Error("Invalid token")
 		return nil, appErrors.InvalidToken{}
 	}
 

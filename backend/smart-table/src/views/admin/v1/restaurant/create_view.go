@@ -28,7 +28,7 @@ func (h *AdminV1RestaurantHandler) PostAdminV1RestaurantCreate(
 	})
 	if err != nil {
 		if utils.IsTheSameErrorType[domainErrors.UserNotFoundByUUID](err) {
-			return viewsAdminRestaurant.PostAdminV1RestaurantCreate403JSONResponse{
+			return viewsAdminRestaurant.PostAdminV1RestaurantCreate404JSONResponse{
 				Code:    viewsAdminRestaurant.UserNotFound,
 				Message: err.Error(),
 			}, nil

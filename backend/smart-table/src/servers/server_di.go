@@ -7,14 +7,17 @@ import (
 	"time"
 
 	"github.com/gin-contrib/cors"
+	viewsCodegenAdminPlace "github.com/smart-table/src/views/codegen/admin_place"
 	viewsCodegenAdminRestaurant "github.com/smart-table/src/views/codegen/admin_restaurant"
 	viewsCodegenAdminUser "github.com/smart-table/src/views/codegen/admin_user"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/smart-table/src/config"
 	"github.com/smart-table/src/dependencies"
 	app "github.com/smart-table/src/domains/admin/app/services"
 	"github.com/smart-table/src/utils"
+	viewsPlace "github.com/smart-table/src/views/admin/v1/place"
 	viewsRestaurant "github.com/smart-table/src/views/admin/v1/restaurant"
 	viewsUser "github.com/smart-table/src/views/admin/v1/user"
 	viewsCodegenCustomer "github.com/smart-table/src/views/codegen/customer"
@@ -60,6 +63,9 @@ func GetRouter(container *dig.Container, deps *dependencies.Dependencies) *gin.E
 
 	adminRestaurantStrictHandler := viewsCodegenAdminRestaurant.NewStrictHandler(&viewsRestaurant.AdminV1RestaurantHandler{}, nil)
 	viewsCodegenAdminRestaurant.RegisterHandlers(private, adminRestaurantStrictHandler)
+
+	adminPlaceStrictHandler := viewsCodegenAdminPlace.NewStrictHandler(&viewsPlace.AdminV1PlaceHandler{}, nil)
+	viewsCodegenAdminPlace.RegisterHandlers(private, adminPlaceStrictHandler)
 
 	return router
 }
@@ -144,13 +150,24 @@ func JWTAuthMiddleware(logger *zap.Logger) gin.HandlerFunc {
 			return
 		}
 
+		userUUID, err := uuid.Parse(c.GetHeader("User-UUID"))
+		if err != nil {
+			logger.Error(fmt.Sprintf("Error while parsing user_uuid: %v", err))
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"code":    "invalid_headers",
+				"message": "Invalid user_uuid header",
+			})
+
+			return
+		}
+
 		jwtService, err := utils.GetFromContainer[*app.JwtService](c)
 		if err != nil {
 			logger.Error(fmt.Sprintf("Error while getting JWT service: %v", err))
 			return
 		}
 
-		_, err = jwtService.ValidateJWT(tokenString)
+		_, err = jwtService.ValidateJWT(tokenString, userUUID)
 
 		if err != nil {
 			logger.Warn("Invalid JWT token", zap.Error(err))

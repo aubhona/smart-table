@@ -2,7 +2,9 @@ package mapper
 
 import (
 	"encoding/json"
+	"time"
 
+	defsInternalAdminPlaceDb "github.com/smart-table/src/codegen/intern/admin_place_db"
 	defsInternalAdminRestaurantDb "github.com/smart-table/src/codegen/intern/admin_restaurant_db"
 	defsInternalAdminUserDb "github.com/smart-table/src/codegen/intern/admin_user_db"
 	"github.com/smart-table/src/domains/admin/domain"
@@ -54,13 +56,13 @@ func ConvertPgUserToModel(pgResult []byte) (utils.SharedRef[domain.User], error)
 	), nil
 }
 
-func ConvertToPgRestaurant(user utils.SharedRef[domain.Restaurant]) ([]byte, error) {
+func ConvertToPgRestaurant(restaurant utils.SharedRef[domain.Restaurant]) ([]byte, error) {
 	pgRestaurant := defsInternalAdminRestaurantDb.PgRestaurant{
-		UUID:      user.Get().GetUUID(),
-		OwnerUUID: user.Get().GetOwnerUUID(),
-		Name:      user.Get().GetName(),
-		CreatedAt: user.Get().GetCreatedAt(),
-		UpdatedAt: user.Get().GetUpdatedAt(),
+		UUID:      restaurant.Get().GetUUID(),
+		OwnerUUID: restaurant.Get().GetOwnerUUID(),
+		Name:      restaurant.Get().GetName(),
+		CreatedAt: restaurant.Get().GetCreatedAt(),
+		UpdatedAt: restaurant.Get().GetUpdatedAt(),
 	}
 
 	jsonBytes, err := json.Marshal(pgRestaurant)
@@ -86,5 +88,56 @@ func ConvertPgRestaurantToModel(pgResult []byte) (utils.SharedRef[domain.Restaur
 		pgRestaurant.Name,
 		pgRestaurant.CreatedAt,
 		pgRestaurant.UpdatedAt,
+	), nil
+}
+
+func ConvertToPgPlace(place utils.SharedRef[domain.Place]) ([]byte, error) {
+	pgPlace := defsInternalAdminPlaceDb.PgPlace{
+		UUID:           place.Get().GetUUID(),
+		RestaurantUUID: place.Get().GetRestauranUUID(),
+		Address:        place.Get().GetAddress(),
+		TableCount:     place.Get().GetTableCount(),
+		OpeningTime:    place.Get().GetOpeningTime().Format("15:04"),
+		ClosingTime:    place.Get().GetClosingTime().Format("15:04"),
+		CreatedAt:      place.Get().GetCreatedAt(),
+		UpdatedAt:      place.Get().GetUpdatedAt(),
+	}
+
+	jsonBytes, err := json.Marshal(pgPlace)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return jsonBytes, nil
+}
+
+func ConvertPgPlaceToModel(pgResult []byte) (utils.SharedRef[domain.Place], error) {
+	pgPlace := defsInternalAdminPlaceDb.PgPlace{}
+	err := json.Unmarshal(pgResult, &pgPlace)
+
+	if err != nil {
+		return utils.SharedRef[domain.Place]{}, err
+	}
+
+	openingTime, err := time.Parse("15:04", pgPlace.OpeningTime)
+	if err != nil {
+		panic(err)
+	}
+
+	closingTime, err := time.Parse("15:04", pgPlace.OpeningTime)
+	if err != nil {
+		panic(err)
+	}
+
+	return domain.RestorePlace(
+		pgPlace.UUID,
+		pgPlace.RestaurantUUID,
+		pgPlace.Address,
+		pgPlace.TableCount,
+		openingTime,
+		closingTime,
+		pgPlace.CreatedAt,
+		pgPlace.UpdatedAt,
 	), nil
 }
