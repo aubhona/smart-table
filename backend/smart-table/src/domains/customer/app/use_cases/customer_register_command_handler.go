@@ -36,17 +36,20 @@ func NewCustomerRegisterCommandHandler(
 func (handler *CustomerRegisterCommandHandler) Handle(
 	createCommand *CustomerRegisterCommand) (CustomerRegisterCommandHandlerResult, error) {
 	ctx := context.Background()
-	_, err := handler.customerRepository.FindCustomerByTgID(context.Background(), createCommand.TgID)
+
+	customer, err := handler.customerRepository.FindCustomerByTgID(context.Background(), createCommand.TgID)
 
 	if err == nil {
-		return CustomerRegisterCommandHandlerResult{}, &apperrors.CustomerAlreadyExist{TgID: createCommand.TgID}
+		return CustomerRegisterCommandHandlerResult{
+			CustomerUUID: customer.Get().GetUUID(),
+		}, &apperrors.CustomerAlreadyExist{TgID: createCommand.TgID}
 	}
 
 	if !utils.IsTheSameErrorType[domainerrors.CustomerNotFoundByTgID](err) {
 		return CustomerRegisterCommandHandlerResult{}, err
 	}
 
-	customer := domain.NewCustomer(
+	customer = domain.NewCustomer(
 		createCommand.TgID, createCommand.TgLogin, "TODO", createCommand.ChatID, *handler.uuidGenerator)
 
 	tx, err := handler.customerRepository.Begin(ctx)

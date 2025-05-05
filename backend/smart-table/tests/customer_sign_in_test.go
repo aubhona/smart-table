@@ -13,15 +13,15 @@ func TestCustomerAuthHappyPath(t *testing.T) {
 	defer GetTestMutex().Unlock()
 	defer CleanTest()
 
-	id, err := CreateCustomer("test_login", "test_id", "test_chat_id")
+	id, err := CreateCustomer("test_login", 123, 1234)
 	assert.Nil(t, err)
 
 	handler := viewsCustomer.CustomerV1Handler{}
 	response, err := handler.PostCustomerV1SignIn(GetCtx(), viewsCodegenCustomer.PostCustomerV1SignInRequestObject{
 		Body: &viewsCodegenCustomer.PostCustomerV1SignInJSONRequestBody{
 			TgLogin: "test_login",
-			TgID:    "test_id",
-			ChatID:  "test_chat_id1",
+			TgID:    "123",
+			ChatID:  "1234",
 		},
 	})
 
@@ -32,11 +32,11 @@ func TestCustomerAuthHappyPath(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, responseObj.CustomerUUID, id)
 
-	customerPg, err := FindCustomerByTgID("test_id")
+	customerPg, err := FindCustomerByTgID("123")
 	assert.NoError(t, err)
 
 	assert.Equal(t, "test_login", customerPg.TgLogin)
-	assert.Equal(t, "test_id", customerPg.TgID)
-	assert.Equal(t, "test_chat_id1", customerPg.ChatID)
+	assert.Equal(t, "123", customerPg.TgID)
+	assert.Equal(t, "1234", customerPg.ChatID)
 	assert.Equal(t, customerPg.UUID, id)
 }

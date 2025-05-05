@@ -46,3 +46,8 @@ logging:
     max_age: 30
     compress: true
     enable_console_and_file: true
+
+bot:
+    token: BOT_TOKEN
+    poller_timeout: 10s
+    web_app_url: https://5910-213-183-51-117.ngrok-free.app

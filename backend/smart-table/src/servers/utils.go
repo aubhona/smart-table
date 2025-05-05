@@ -5,6 +5,9 @@ import (
 	"io"
 	"strings"
 
+	"go.uber.org/zap"
+	"gopkg.in/telebot.v4"
+
 	"github.com/gin-gonic/gin"
 	"github.com/smart-table/src/config"
 )
@@ -52,4 +55,13 @@ type responseRecorder struct {
 func (r *responseRecorder) Write(b []byte) (int, error) {
 	r.body.Write(b)
 	return r.ResponseWriter.Write(b)
+}
+
+func botLogger(logger *zap.Logger) telebot.MiddlewareFunc {
+	return func(next telebot.HandlerFunc) telebot.HandlerFunc {
+		return func(c telebot.Context) error {
+			logger.Info("Get update from telegram bot", zap.Any("update", c.Update()))
+			return next(c)
+		}
+	}
 }

@@ -49,6 +49,10 @@ func GetTestMutex() *sync.Mutex {
 	return &testMutex
 }
 
+func GetContainer() *dig.Container {
+	return container
+}
+
 func SetupOnceTest() {
 	db, err := sql.Open(
 		"pgx",
@@ -136,7 +140,6 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatal("Failed to launch db container", err)
 	}
-	defer dbContainer.Terminate(ctx) //nolint
 
 	host, err := dbContainer.Host(ctx)
 	if err != nil {
@@ -181,6 +184,8 @@ func TestMain(m *testing.M) {
 	ginCtx.Set(utils.DiContainerName, container)
 
 	code := m.Run()
+
+	_ = dbContainer.Terminate(ctx)
 
 	os.Exit(code)
 }

@@ -28,17 +28,17 @@ import (
 	"go.uber.org/zap"
 )
 
-func GetRouter(container *dig.Container, deps *dependencies.Dependencies) *gin.Engine {
+func NewGinRouter(container *dig.Container, deps *dependencies.Dependencies) *gin.Engine {
 	router := gin.New()
 
 	//nolint
 	// router.SetTrustedProxies() Think about security
 
-	config := cors.DefaultConfig()
-	config.AllowOrigins = deps.Config.App.Cors.AllowOrigins
-	config.AllowMethods = deps.Config.App.Cors.AllowMethods
-	config.AllowHeaders = deps.Config.App.Cors.AllowHeaders
-	config.AllowCredentials = deps.Config.App.Cors.AllowCredentials
+	cfg := cors.DefaultConfig()
+	cfg.AllowOrigins = deps.Config.App.Cors.AllowOrigins
+	cfg.AllowMethods = deps.Config.App.Cors.AllowMethods
+	cfg.AllowHeaders = deps.Config.App.Cors.AllowHeaders
+	cfg.AllowCredentials = deps.Config.App.Cors.AllowCredentials
 
 	router.
 		Use(GinZapResponseLogger(deps.Logger, deps.Config)).
@@ -47,7 +47,7 @@ func GetRouter(container *dig.Container, deps *dependencies.Dependencies) *gin.E
 		Use(func(c *gin.Context) {
 			c.Set(utils.DiContainerName, container)
 			c.Next()
-		}).Use(cors.New(config))
+		}).Use(cors.New(cfg))
 
 	private := router.Group("/")
 	private.Use(JWTAuthMiddleware(deps.Logger))
@@ -102,8 +102,6 @@ func GinZapLogger(logger *zap.Logger, cfg *config.Config) gin.HandlerFunc {
 			cookieString += cookie.Name + "=" + cookie.Value + "; "
 		}
 
-		c.Next()
-
 		logger.Info("HTTP Request",
 			zap.String("method", method),
 			zap.String("uri", path),
@@ -114,6 +112,8 @@ func GinZapLogger(logger *zap.Logger, cfg *config.Config) gin.HandlerFunc {
 			zap.Int("status", c.Writer.Status()),
 			zap.Duration("latency", time.Since(start)),
 		)
+
+		c.Next()
 	}
 }
 

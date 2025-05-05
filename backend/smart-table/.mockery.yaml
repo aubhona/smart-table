@@ -11,3 +11,11 @@ packages:
             all: true
             recursive: true
             with-expecter: true
+    gopkg.in/telebot.v4:
+        interfaces:
+            API:
+                config:
+                    with-expecter: true
+            Context:
+                config:
+                    with-expecter: true

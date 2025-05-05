@@ -3,13 +3,17 @@ package smarttable_test
 import (
 	"context"
 	"encoding/json"
-	"errors"
+	"strconv"
+
+	views "github.com/smart-table/src/views/bot"
+	"github.com/smart-table/tests/mocks"
+	"github.com/stretchr/testify/mock"
+	"gopkg.in/telebot.v4"
+
 	"testing"
 
 	"github.com/google/uuid"
 	defsInternalCustomerDb "github.com/smart-table/src/codegen/intern/customer_db"
-	viewsCodegenCustomer "github.com/smart-table/src/views/codegen/customer"
-	viewsCustomer "github.com/smart-table/src/views/customer/v1"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -26,26 +30,35 @@ func FindCustomerByTgID(tgID string) (defsInternalCustomerDb.PgCustomer, error) 
 	return customer, err
 }
 
-func CreateCustomer(tgLogin, tgID, chatID string) (uuid.UUID, error) {
-	handler := viewsCustomer.CustomerV1Handler{}
-	response, err := handler.PostCustomerV1SignUp(GetCtx(), viewsCodegenCustomer.PostCustomerV1SignUpRequestObject{
-		Body: &viewsCodegenCustomer.CustomerV1OrderCustomerSignUpRequest{
-			TgLogin: tgLogin,
-			TgID:    tgID,
-			ChatID:  chatID,
-		},
-	})
+func CreateCustomer(tgLogin string, tgID, chatID int64) (uuid.UUID, error) {
+	user := &telebot.User{
+		ID:       tgID,
+		Username: tgLogin,
+	}
+	chat := &telebot.Chat{
+		ID: chatID,
+	}
+
+	handler := views.BotUpdatesHandler{
+		WebAppURL: "some_url",
+	}
+	mockContext := new(mocks.Context)
+
+	mockContext.On("Text", mock.Anything, mock.Anything).Return("/start")
+	mockContext.On("Sender", mock.Anything, mock.Anything).Return(user)
+	mockContext.On("Chat", mock.Anything, mock.Anything).Return(chat)
+	mockContext.On("Send", mock.Anything, mock.Anything).Return(nil)
+	mockContext.On("Get", mock.Anything, mock.Anything).Return(GetContainer())
+
+	err := handler.HandleOnTextUpdates(mockContext)
 
 	if err != nil {
 		return uuid.Nil, err
 	}
 
-	responseObj, ok := response.(viewsCodegenCustomer.PostCustomerV1SignUp200JSONResponse)
-	if !ok {
-		return uuid.Nil, errors.New("response is not a PostCustomerV1SignUp200JSONResponse")
-	}
+	customerPg, err := FindCustomerByTgID(strconv.FormatInt(tgID, 10))
 
-	return responseObj.CustomerUUID, nil
+	return customerPg.UUID, err
 }
 
 func TestCustomerRegisterHappyPath(t *testing.T) {
@@ -53,27 +66,33 @@ func TestCustomerRegisterHappyPath(t *testing.T) {
 	defer GetTestMutex().Unlock()
 	defer CleanTest()
 
-	handler := viewsCustomer.CustomerV1Handler{}
+	user := &telebot.User{
+		ID:       123,
+		Username: "test_login",
+	}
+	chat := &telebot.Chat{
+		ID: 123,
+	}
 
-	response, err := handler.PostCustomerV1SignUp(GetCtx(), viewsCodegenCustomer.PostCustomerV1SignUpRequestObject{
-		Body: &viewsCodegenCustomer.CustomerV1OrderCustomerSignUpRequest{
-			TgLogin: "test_login",
-			TgID:    "test_id",
-			ChatID:  "test_chat_id",
-		},
-	})
+	handler := views.BotUpdatesHandler{
+		WebAppURL: "some_url",
+	}
 
+	mockContext := new(mocks.Context)
+
+	mockContext.On("Text", mock.Anything).Return("/start")
+	mockContext.On("Sender", mock.Anything).Return(user)
+	mockContext.On("Chat", mock.Anything).Return(chat)
+	mockContext.On("Get", mock.Anything).Return(GetContainer())
+	mockContext.On("Send", mock.Anything, mock.Anything).Return(nil)
+
+	err := handler.HandleOnTextUpdates(mockContext)
 	assert.NoError(t, err)
-	assert.NotNil(t, response)
 
-	responseObj, ok := response.(viewsCodegenCustomer.PostCustomerV1SignUp200JSONResponse)
-	assert.True(t, ok)
-	assert.NotEqual(t, responseObj.CustomerUUID, uuid.Nil)
-
-	customerPg, err := FindCustomerByTgID("test_id")
+	customerPg, err := FindCustomerByTgID("123")
 	assert.NoError(t, err)
 
 	assert.Equal(t, "test_login", customerPg.TgLogin)
-	assert.Equal(t, "test_id", customerPg.TgID)
-	assert.Equal(t, "test_chat_id", customerPg.ChatID)
+	assert.Equal(t, "123", customerPg.TgID)
+	assert.Equal(t, "123", customerPg.ChatID)
 }

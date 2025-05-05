@@ -28,60 +28,8 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
-
-    /customer/v1/sign-up:
-        post:
-            summary: Регистрация пользователя в приложении
-            description: Регистрирует пользователя
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/CustomerV1OrderCustomerSignUpRequest'
-            responses:
-                '200':
-                    description: Авторизирован
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/CustomerV1OrderCustomerSignUpResponse'
-                '409':
-                    description: Ошибка регистрации
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/ErrorResponse'
 components:
     schemas:
-        CustomerV1OrderCustomerSignUpRequest:
-            type: object
-            additionalProperties: false
-            properties:
-                tg_id:
-                    type: string
-                tg_login:
-                    $ref: '#/components/schemas/TgLogin'
-                chat_id:
-                    type: string
-                avatar:
-                    type: string
-                    format: binary
-            required:
-                - tg_id
-                - tg_login
-                - chat_id
-
-        CustomerV1OrderCustomerSignUpResponse:
-            type: object
-            additionalProperties: false
-            properties:
-                customer_uuid:
-                    type: string
-                    format: uuid
-            required:
-                - customer_uuid
-
         CustomerV1OrderCustomerSignInRequest:
             type: object
             additionalProperties: false
