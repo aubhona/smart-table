@@ -5,11 +5,21 @@ import (
 	"fmt"
 
 	app "github.com/smart-table/src/domains/admin/app/use_cases"
+	"github.com/smart-table/src/domains/admin/domain"
 	domainErrors "github.com/smart-table/src/domains/admin/domain/errors"
 	"github.com/smart-table/src/logging"
 	"github.com/smart-table/src/utils"
 	viewsAdminRestaurant "github.com/smart-table/src/views/codegen/admin_restaurant"
 )
+
+func convertDomainRestauranToGenRestaurant(
+	domainRestaurant utils.SharedRef[domain.Restaurant],
+) viewsAdminRestaurant.Restaurant {
+	return viewsAdminRestaurant.Restaurant{
+		Name: domainRestaurant.Get().GetName(),
+		UUID: domainRestaurant.Get().GetUUID(),
+	}
+}
 
 func (h *AdminV1RestaurantHandler) GetAdminV1RestaurantList(
 	ctx context.Context,
@@ -37,7 +47,13 @@ func (h *AdminV1RestaurantHandler) GetAdminV1RestaurantList(
 		return nil, err
 	}
 
+	restaurantList := make([]viewsAdminRestaurant.Restaurant, 0, len(result.DomainRestaurantList))
+
+	for _, domainRestaurant := range result.DomainRestaurantList {
+		restaurantList = append(restaurantList, convertDomainRestauranToGenRestaurant(domainRestaurant))
+	}
+
 	return viewsAdminRestaurant.GetAdminV1RestaurantList200JSONResponse{
-		RestaurantList: result.GenRestaurantList,
+		RestaurantList: restaurantList,
 	}, nil
 }

@@ -31,19 +31,19 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AdminV1Restaurant401ErrorResponse'
+                                $ref: '#/components/schemas/ErrorResponse'
                 '403':
                     description: Ошибка создания ресторана, отказано в доступе, некорретные данные
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AdminV1Restaurant403ErrorResponse'
+                                $ref: '#/components/schemas/ErrorResponse'
                 '404':
                     description: Ошибка создания ресторана, пользователь не найден
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AdminV1Restaurant404ErrorResponse'
+                                $ref: '#/components/schemas/ErrorResponse'
 
     /admin/v1/restaurant/list:
         get:
@@ -65,13 +65,13 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AdminV1Restaurant401ErrorResponse'
+                                $ref: '#/components/schemas/ErrorResponse'
                 '404':
                     description: Ошибка получения списка ресторанов, пользователь не найден
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AdminV1Restaurant404ErrorResponse'
+                                $ref: '#/components/schemas/ErrorResponse'
 
 components:
     securitySchemes:
@@ -122,8 +122,7 @@ components:
             required:
                 - restaurant_list
 
-        # Errors
-        AdminV1Restaurant401ErrorResponse:
+        ErrorResponse:
             type: object
             additionalProperties: false
             properties:
@@ -132,37 +131,7 @@ components:
                     description: Код ошибки
                     enum: 
                         - not_authorized
-                message:
-                    type: string
-                    description: Описание ошибки
-            required:
-                - code
-                - message
-
-        AdminV1Restaurant403ErrorResponse:
-            type: object
-            additionalProperties: false
-            properties:
-                code:
-                    type: string
-                    description: Код ошибки
-                    enum: 
                         - already_exist
-                message:
-                    type: string
-                    description: Описание ошибки
-            required:
-                - code
-                - message
-
-        AdminV1Restaurant404ErrorResponse:
-            type: object
-            additionalProperties: false
-            properties:
-                code:
-                    type: string
-                    description: Код ошибки
-                    enum: 
                         - user_not_found
                 message:
                     type: string

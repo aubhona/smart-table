@@ -8,11 +8,10 @@ import (
 	domainServices "github.com/smart-table/src/domains/admin/domain/services"
 	"github.com/smart-table/src/logging"
 	"github.com/smart-table/src/utils"
-	gen "github.com/smart-table/src/views/codegen/admin_restaurant"
 )
 
 type RestaurantListCommandHandlerResult struct {
-	GenRestaurantList []gen.Restaurant
+	DomainRestaurantList []utils.SharedRef[domain.Restaurant]
 }
 
 type RestaurantListCommandHandler struct {
@@ -33,15 +32,6 @@ func NewRestaurantListCommandHandler(
 	}
 }
 
-func convertDomainRestauranToGenRestaurant(
-	domainRestaurant utils.SharedRef[domain.Restaurant],
-) gen.Restaurant {
-	return gen.Restaurant{
-		Name: domainRestaurant.Get().GetName(),
-		UUID: domainRestaurant.Get().GetUUID(),
-	}
-}
-
 func (handler *RestaurantListCommandHandler) Handle(
 	restaurantListCommand *RestaurantListCommand,
 ) (RestaurantListCommandHandlerResult, error) {
@@ -59,11 +49,5 @@ func (handler *RestaurantListCommandHandler) Handle(
 		return RestaurantListCommandHandlerResult{}, err
 	}
 
-	genRestaurantList := make([]gen.Restaurant, 0, len(domainRestaurantList))
-
-	for _, domainRestaurant := range domainRestaurantList {
-		genRestaurantList = append(genRestaurantList, convertDomainRestauranToGenRestaurant(domainRestaurant))
-	}
-
-	return RestaurantListCommandHandlerResult{genRestaurantList}, nil
+	return RestaurantListCommandHandlerResult{domainRestaurantList}, nil
 }

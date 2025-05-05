@@ -32,7 +32,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AdminV1User409ErrorResponse'
+                                $ref: '#/components/schemas/ErrorResponse'
 
     /admin/v1/user/sign-in:
         post:
@@ -61,7 +61,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/AdminV1User403ErrorResponse'
+                                $ref: '#/components/schemas/ErrorResponse'
 
 components:
     schemas:
@@ -133,8 +133,7 @@ components:
             required:
                 - user_uuid
 
-        # Errors
-        AdminV1User403ErrorResponse:
+        ErrorResponse:
             type: object
             additionalProperties: false
             properties:
@@ -144,21 +143,6 @@ components:
                     enum: 
                         - not_found
                         - incorrect_password
-                message:
-                    type: string
-                    description: Описание ошибки
-            required:
-                - code
-                - message
-
-        AdminV1User409ErrorResponse:
-            type: object
-            additionalProperties: false
-            properties:
-                code:
-                    type: string
-                    description: Код ошибки
-                    enum: 
                         - already_exist
                 message:
                     type: string
