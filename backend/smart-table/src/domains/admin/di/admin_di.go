@@ -62,6 +62,11 @@ func AddDeps(container *dig.Container) error {
 		return err
 	}
 
+	err = container.Provide(app.NewRestaurantListCommandHandler)
+	if err != nil {
+		return err
+	}
+
 	err = container.Provide(app.NewPlaceCreateCommandHandler)
 	if err != nil {
 		return err

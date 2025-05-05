@@ -17,4 +17,5 @@ type RestaurantRepository interface {
 
 	CheckNameExist(ctx context.Context, name string) (bool, error)
 	FindRestaurantByUUID(ctx context.Context, uuid uuid.UUID) (utils.SharedRef[Restaurant], error)
+	FindRestaurantListByOwnerUUID(ctx context.Context, ownerUUID uuid.UUID) ([]utils.SharedRef[Restaurant], error)
 }

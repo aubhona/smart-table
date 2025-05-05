@@ -42,7 +42,7 @@ func (handler *RestaurantCreateCommandHandler) Handle(
 	isExist, err := handler.restaurantRepository.CheckNameExist(ctx, restaurantCreateCommand.Name)
 
 	if err != nil {
-		logging.GetLogger().Error(fmt.Sprintf("Error while checking login and tg_login existence: %v", err))
+		logging.GetLogger().Error(fmt.Sprintf("Error while checking restaurant name existence: %v", err))
 		return RestaurantCreateCommandHandlerResult{}, err
 	}
 

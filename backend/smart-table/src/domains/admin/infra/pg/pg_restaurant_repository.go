@@ -73,3 +73,21 @@ func (r *RestaurantRepository) FindRestaurantByUUID(ctx context.Context, uuid uu
 
 	return restaurant, nil
 }
+
+func (r *RestaurantRepository) FindRestaurantListByOwnerUUID(
+	ctx context.Context, ownerUUID uuid.UUID,
+) ([]utils.SharedRef[domain.Restaurant], error) {
+	queries := db.New(r.coonPool)
+
+	pgResult, err := queries.FetchRestaurantListByOwnerUUID(ctx, ownerUUID)
+	if err != nil || pgResult == nil {
+		return []utils.SharedRef[domain.Restaurant]{}, err
+	}
+
+	restaurantList, err := mapper.ConvertPgRestaurantListToModelList(pgResult)
+	if err != nil {
+		return []utils.SharedRef[domain.Restaurant]{}, err
+	}
+
+	return restaurantList, nil
+}

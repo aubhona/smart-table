@@ -24,7 +24,7 @@ func (h *AdminV1RestaurantHandler) PostAdminV1RestaurantCreate(
 
 	result, err := handler.Handle(&app.RestaurantCreateCommand{
 		OwnerUUID: request.Params.UserUUID,
-		Name:      request.Body.Name,
+		Name:      request.Body.RestaurantName,
 	})
 	if err != nil {
 		if utils.IsTheSameErrorType[domainErrors.UserNotFoundByUUID](err) {
