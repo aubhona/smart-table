@@ -11,14 +11,14 @@ import (
 )
 
 func CreateDefaultPlace(userUUID, restaurantUUID uuid.UUID) (uuid.UUID, error) {
-		return CreatePlace(
-			userUUID,
-			restaurantUUID,
-			"testAddress",
-			"12:00",
-			"13:00",
-			10,
-		)
+	return CreatePlace(
+		userUUID,
+		restaurantUUID,
+		"testAddress",
+		"12:00",
+		"13:00",
+		10,
+	)
 }
 
 func CreatePlace(userUUID, restaurantUUID uuid.UUID, address, openingTime, closingTime string, tableCount int) (uuid.UUID, error) {

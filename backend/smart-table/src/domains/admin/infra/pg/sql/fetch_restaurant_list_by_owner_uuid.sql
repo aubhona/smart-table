@@ -1,10 +1,10 @@
--- name: FetchRestaurantListByOwnerUUID :one
+-- name: FetchRestaurantListByOwnerUUID :many
 --
 -- args:
 -- $1 - UUID
 
 SELECT
-    jsonb_agg(to_jsonb(r))
+    to_jsonb(r)
 FROM
     smart_table_admin.restaurants r
 WHERE

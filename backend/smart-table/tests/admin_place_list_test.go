@@ -67,18 +67,18 @@ func TestAdminPlaceListHappyPath(t *testing.T) {
 	expectedResponse := viewsCodegenAdmin.PostAdminV1PlaceList200JSONResponse{
 		PlaceList: []viewsCodegenAdmin.PlaceInfo{
 			{
-				Address: testPlaceAddress1,
-				OpeningTime: testOpeningTime, 
+				Address:     testPlaceAddress1,
+				OpeningTime: testOpeningTime,
 				ClosingTime: testClosingTime,
-				TableCount: testTableCount,
-				UUID: placeUUID1,
+				TableCount:  testTableCount,
+				UUID:        placeUUID1,
 			},
 			{
-				Address: testPlaceAddress2,
-				OpeningTime: testOpeningTime, 
+				Address:     testPlaceAddress2,
+				OpeningTime: testOpeningTime,
 				ClosingTime: testClosingTime,
-				TableCount: testTableCount,
-				UUID: placeUUID2,
+				TableCount:  testTableCount,
+				UUID:        placeUUID2,
 			},
 		},
 	}

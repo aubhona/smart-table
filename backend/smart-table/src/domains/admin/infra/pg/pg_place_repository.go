@@ -68,9 +68,15 @@ func (p *PlaceRepository) FindPlaceListByRestaurantUUID(
 		return []utils.SharedRef[domain.Place]{}, err
 	}
 
-	placeList, err := mapper.ConvertPgPlaceListToModelList(pgResult)
-	if err != nil {
-		return []utils.SharedRef[domain.Place]{}, err
+	placeList := make([]utils.SharedRef[domain.Place], 0, len(pgResult))
+
+	for i := range pgResult {
+		place, err := mapper.ConvertPgPlaceToModel(pgResult[i])
+		if err != nil {
+			return []utils.SharedRef[domain.Place]{}, err
+		}
+
+		placeList = append(placeList, place)
 	}
 
 	return placeList, nil
