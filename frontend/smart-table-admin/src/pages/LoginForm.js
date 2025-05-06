@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
-import DefaultApi from "../api/generated/src/api/DefaultApi";
-import AdminV1UserSignInRequest from "../api/generated/src/model/AdminV1UserSignInRequest";
+import DefaultApi from "../api/user_api/generated/src/api/DefaultApi";
+import AdminV1UserSignInRequest from "../api/user_api/generated/src/model/AdminV1UserSignInRequest";
 import "../styles/AuthScreens.css";
 
 export default function LoginForm() {
@@ -12,16 +12,30 @@ export default function LoginForm() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError("");  // сброс предыдущей ошибки
-
     const payload = AdminV1UserSignInRequest.constructFromObject({ login, password });
     const api = new DefaultApi();
-    api.apiClient.basePath = "https://8bb9-138-124-99-156.ngrok-free.app";
+    api.apiClient.basePath = "https://d193-2a12-5940-8a19-00-2.ngrok-free.app";
 
     try {
-      const { user_uuid } = await api.adminV1UserSignInPost(payload, { withCredentials: true });
-      localStorage.setItem("userUuid", user_uuid);
-      setRedirect(true);  // переключимся на экран ресторанов
+      const response = await api.adminV1UserSignInPost(payload, { withCredentials: true });
+      
+      const parsedResponse = JSON.parse(response.text);
+      const { user_uuid } = parsedResponse;
+
+      const cookies = document.cookie;
+
+      console.log(cookies);
+      const jwt = cookies
+        .split('; ')  
+        .find(row => row.startsWith('jwt='))
+        ?.split('=')[1];  
+
+      localStorage.setItem("user_uuid", user_uuid);
+      localStorage.setItem("jwt", jwt);
+
+      console.log(jwt);
+
+      setRedirect(true);  
     } catch (err) {
       const code = err.response?.body?.code;
       if (code === "not_found") {

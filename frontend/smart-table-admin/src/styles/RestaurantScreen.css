@@ -1,122 +1,159 @@
 .rest-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem;
-    background-color: #2d2a2a; 
-    min-height: 100vh;
-    box-sizing: border-box;
-    font-family: sans-serif;
-  }
-  
-  .rest-header {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-    padding-right: 50%;
-    color: #ffffff;
-  }
-  
-  .rest-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 2rem 0;
-    width: 100%;
-    max-width: 400px;
-  }
-  
-  .rest-item {
-    margin-bottom: 1rem;
-  }
-  
-  .rest-button {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
-    background-color: #1976d2;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .rest-button:hover {
-    background-color: #125aa3;
-  }
-  
-  .create-button {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    background-color: #4caf50;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-bottom: 2rem;
-  }
-  
-  .create-button:hover {
-    background-color: #3b8b3b;
-  }
-  
-  .rest-no {
-    font-size: 1.1rem;
-    color: #666;
-    margin-bottom: 2rem;
-  }
-  
-  .modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-  
-  .modal {
-    background: #fff;
-    padding: 2rem;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 340px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    box-sizing: border-box;
-  }
-  
-  .modal h3 {
-    margin: 0 0 1rem;
-    font-size: 1.25rem;
-    color: #333;
-    text-align: center;
-  }
-  
-  .modal input {
-    width: 100%;
-    padding: 0.5rem;
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-  
-  .modal-buttons {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .modal-buttons .rest-button {
-    flex: 1;
-    margin-right: 0.5rem;
-  }
-  
-  .modal-buttons .rest-button:last-child {
-    margin-right: 0;
-  }
-  
+  min-height: 100vh;
+  background-color: #2d2a2a;
+  color: #fff;
+  font-family: sans-serif;
+  box-sizing: border-box;
+  padding: 1rem;
+}
+
+.rest-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.back-button {
+  padding: 0.5rem 1.5rem;
+  border: 2px solid #7d7575;
+  border-radius: 4px;
+  background: transparent;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-right: 1rem;
+  background-color: #7d7575;
+}
+
+.back-button:hover {
+  background-color: #666060;
+}
+
+.header-title {
+  flex: 1;
+  text-align: left;
+  margin: 0 1rem;
+  font-size: 1.5rem;
+}
+
+.create-rest-button {
+  padding: 0.5rem 1.5rem;
+  border: 2px solid #7d7575;
+  border-radius: 4px;
+  background: transparent;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-right: 1rem;
+  background-color: #7d7575;
+}
+
+.create-rest-button:hover {
+  background-color: #666060;
+}
+
+.profile-button {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 2px solid #7d7575;
+  background: transparent;
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
+  background-color: #7d7575;
+}
+
+.profile-button:hover {
+  background-color: #666060;
+}
+
+.rest-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.no-rest {
+  color: #8f8e8e;
+  text-align: left;
+  margin-left: 0.5rem;
+}
+
+.rest-item {
+  border: 1px solid #8f8e8e;
+  border-radius: 999px;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s;
+  background: 0.2s;
+}
+
+.rest-item:hover {
+  border-color: #1976d2;
+  background: rgba(25, 118, 210, 0.1);
+}
+
+.modal-backdrop {
+  position: fixed; top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(0,0,0,0.5);
+  display:flex; align-items:center; justify-content:center;
+}
+
+.modal {
+  background: #fff;
+  color: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 320px;
+  background-color: #5f5256;
+}
+
+.input-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.modal h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.modal input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.modal-buttons .pill-button {
+  flex: 1;
+  border: 1px solid #2d2a2a;
+  border-radius: 999px;
+  padding: 0.5rem;
+  background: #2d2a2a;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+}
+
+.modal-buttons .pill-button:last-child {
+  background: #fff;
+  color: #000;
+  border-color: #ccc;
+}
