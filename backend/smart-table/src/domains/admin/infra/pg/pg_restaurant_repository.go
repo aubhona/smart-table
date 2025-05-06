@@ -84,9 +84,15 @@ func (r *RestaurantRepository) FindRestaurantListByOwnerUUID(
 		return []utils.SharedRef[domain.Restaurant]{}, err
 	}
 
-	restaurantList, err := mapper.ConvertPgRestaurantListToModelList(pgResult)
-	if err != nil {
-		return []utils.SharedRef[domain.Restaurant]{}, err
+	restaurantList := make([]utils.SharedRef[domain.Restaurant], 0, len(pgResult))
+
+	for i := range pgResult {
+		place, err := mapper.ConvertPgRestaurantToModel(pgResult[i])
+		if err != nil {
+			return []utils.SharedRef[domain.Restaurant]{}, err
+		}
+
+		restaurantList = append(restaurantList, place)
 	}
 
 	return restaurantList, nil

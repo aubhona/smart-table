@@ -91,31 +91,6 @@ func ConvertPgRestaurantToModel(pgResult []byte) (utils.SharedRef[domain.Restaur
 	), nil
 }
 
-func ConvertPgRestaurantListToModelList(pgResults []byte) ([]utils.SharedRef[domain.Restaurant], error) {
-	var pgRestaurantList []defsInternalAdminRestaurantDb.PgRestaurant
-	err := json.Unmarshal(pgResults, &pgRestaurantList)
-
-	if err != nil {
-		return []utils.SharedRef[domain.Restaurant]{}, err
-	}
-
-	restaurantModelList := make([]utils.SharedRef[domain.Restaurant], 0, len(pgRestaurantList))
-
-	for _, pgRestaurant := range pgRestaurantList {
-		restaurant := domain.RestoreRestaurant(
-			pgRestaurant.UUID,
-			pgRestaurant.OwnerUUID,
-			pgRestaurant.Name,
-			pgRestaurant.CreatedAt,
-			pgRestaurant.UpdatedAt,
-		)
-
-		restaurantModelList = append(restaurantModelList, restaurant)
-	}
-
-	return restaurantModelList, nil
-}
-
 func ConvertToPgPlace(place utils.SharedRef[domain.Place]) ([]byte, error) {
 	pgPlace := defsInternalAdminPlaceDb.PgPlace{
 		UUID:           place.Get().GetUUID(),
@@ -145,14 +120,14 @@ func ConvertPgPlaceToModel(pgResult []byte) (utils.SharedRef[domain.Place], erro
 		return utils.SharedRef[domain.Place]{}, err
 	}
 
-	openingTime, err := time.Parse("15:04", pgPlace.OpeningTime)
+	openingTime, err := time.Parse("15:04:05", pgPlace.OpeningTime)
 	if err != nil {
-		panic(err)
+		return utils.SharedRef[domain.Place]{}, err
 	}
 
-	closingTime, err := time.Parse("15:04", pgPlace.OpeningTime)
+	closingTime, err := time.Parse("15:04:05", pgPlace.ClosingTime)
 	if err != nil {
-		panic(err)
+		return utils.SharedRef[domain.Place]{}, err
 	}
 
 	return domain.RestorePlace(

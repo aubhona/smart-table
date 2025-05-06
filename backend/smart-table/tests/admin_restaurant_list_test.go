@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	testRestaurantName1 = "testRestaurantName_1"
-	testRestaurantName2 = "testRestaurantName_2"
+	testRestaurantName1 = "testRestaurantName1"
+	testRestaurantName2 = "testRestaurantName2"
 )
 
 func TestAdminRestaurantListHappyPath(t *testing.T) {
@@ -18,13 +18,7 @@ func TestAdminRestaurantListHappyPath(t *testing.T) {
 	defer GetTestMutex().Unlock()
 	defer CleanTest()
 
-	userUUID, err := CreateUser(
-		"testFisrtName",
-		"testLastName",
-		"testLogin",
-		"testPassword",
-		"testTgLogin",
-	)
+	userUUID, err := CreateDefaultUser()
 	assert.Nil(t, err)
 
 	restaurantUUID1, err := CreateRestaurant(
@@ -50,7 +44,7 @@ func TestAdminRestaurantListHappyPath(t *testing.T) {
 	assert.NoError(t, err)
 
 	expectedResponse := viewsCodegenAdmin.GetAdminV1RestaurantList200JSONResponse{
-		RestaurantList: []viewsCodegenAdmin.Restaurant{
+		RestaurantList: []viewsCodegenAdmin.RestaurantInfo{
 			{
 				Name: testRestaurantName1,
 				UUID: restaurantUUID1,
