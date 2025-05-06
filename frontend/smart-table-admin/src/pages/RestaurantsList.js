@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import DefaultApi from "../restaurant_api/generated/src/api/DefaultApi";
-import AdminV1RestaurantCreateRequest from "../restaurant_api/generated/src/model/AdminV1RestaurantCreateRequest";
+import DefaultApi from "../api/restaurant_api/generated/src/api/DefaultApi";
+import AdminV1RestaurantCreateRequest from "../api/restaurant_api/generated/src/model/AdminV1RestaurantCreateRequest";
 import "../styles/RestaurantScreen.css";
 
 export default function RestaurantsList() {
@@ -8,91 +8,96 @@ export default function RestaurantsList() {
   const [showModal, setShowModal] = useState(false);
   const [newName, setNewName] = useState("");
 
-  const userUuid = localStorage.getItem("userUuid");
+  const userUuid = localStorage.getItem("user_uuid");
   const api = new DefaultApi();
-  api.apiClient.basePath = "https://8bb9-138-124-99-156.ngrok-free.app";
+  api.apiClient.basePath = "https://d193-2a12-5940-8a19-00-2.ngrok-free.app";
 
-  // TODO: при наличии ручки «список ресторанов»:
-  // useEffect(() => {
-  //   api.adminV1RestaurantListGet(userUuid, { withCredentials: true })
-  //     .then((data) => setRestaurants(data))
-  //     .catch(console.error);
-  // }, []);
+  useEffect(() => {
+    if (userUuid) {
+      api.adminV1RestaurantListGet(userUuid, (err, data) => {
+        if (err) {
+          console.error("Ошибка получения списка ресторанов:", err);
+        } else {
+          setRestaurants(Array.isArray(data) ? data : []);
+        }
+      });
+    }
+  }, [userUuid]);
 
   const handleCreate = async () => {
-    if (!newName.trim()) {
-      return alert("Введите название ресторана");
-    }
-
+    if (!newName.trim()) return alert("Введите название ресторана");
+    
     const req = AdminV1RestaurantCreateRequest.constructFromObject({
       name: newName.trim(),
     });
 
-    try {
-      const created = await new Promise((resolve, reject) => {
-        api.adminV1RestaurantCreatePost(
-          userUuid,
-          req,
-          (err, data, response) => {
-            if (err) reject(err);
-            else resolve(data);
-          }
-        );
-      });
-      setRestaurants((prev) => [...prev, created]);
-      setNewName("");
-      setShowModal(false);
-    } catch (err) {
-      console.error("Ошибка создания ресторана:", err);
-      alert("Не удалось создать ресторан");
+    const jwt = localStorage.getItem("jwt");
+
+    console.log("jwt: ", jwt);
+
+    if (jwt) {
+      api.apiClient.defaultHeaders['Authorization'] = `Bearer ${jwt}`;
     }
+
+    api.adminV1RestaurantCreatePost(userUuid, req, { withCredentials: true })
+    .end((err, response) => {
+      if (err) {
+        alert("Не удалось создать ресторан");
+        console.error(err);
+      } else {
+        setRestaurants((prev) => [...prev, response]);
+        setNewName("");
+        setShowModal(false);
+      }
+    });
   };
 
   return (
     <div className="rest-container">
-      <h2 className="rest-header">Мои рестораны</h2>
+      <div className="rest-header-bar">
+        <button className="back-button">Выйти из аккаунта</button>
+        <h1 className="header-title">Мои рестораны</h1>
+        <button
+          className="create-rest-button"
+          onClick={() => setShowModal(true)}
+        >
+          Создать ресторан
+        </button>
+        <button className="profile-button">𓀡</button>
+      </div>
 
-      {restaurants.length === 0 ? (
-        <p className="rest-header">Нет ресторанов</p>
-      ) : (
-        <ul className="rest-list">
-          {restaurants.map((r) => (
-            <li key={r.restaurant_uuid} className="rest-item">
-              <button
-                className="rest-button"
-                onClick={() => alert("Откроем плейсы ресторана")}
-              >
-                {r.name}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <button
-        className="create-button"
-        onClick={() => setShowModal(true)}
-      >
-        Создать ресторан
-      </button>
+      <div className="rest-list">
+        {restaurants.length === 0 ? (
+          <p className="no-rest">Нет ресторанов</p>
+        ) : (
+          restaurants.map((r) => (
+            <button
+              key={r.restaurant_uuid}
+              className="rest-item"
+              onClick={() => alert("Откроем плейсы")}
+            >
+              {r.name}
+            </button>
+          ))
+        )}
+      </div>
 
       {showModal && (
         <div className="modal-backdrop">
           <div className="modal">
             <h3>Название ресторана</h3>
-            <input
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              placeholder="Введите название"
-            />
+            <div class="input-container">
+              <input
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder="Введите название"
+              />
+              </div>
             <div className="modal-buttons">
-              <button className="rest-button" onClick={handleCreate}>
+              <button className="pill-button" onClick={handleCreate}>
                 Создать
               </button>
-              <button
-                className="rest-button"
-                onClick={() => setShowModal(false)}
-              >
+              <button className="pill-button" onClick={() => setShowModal(false)}>
                 Отмена
               </button>
             </div>

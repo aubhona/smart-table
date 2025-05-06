@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import DefaultApi from "../api/generated/src/api/DefaultApi";
-import AdminV1UserSignUpRequest from "../api/generated/src/model/AdminV1UserSignUpRequest";
+import DefaultApi from "../api/user_api/generated/src/api/DefaultApi";
+import AdminV1UserSignUpRequest from "../api/user_api/generated/src/model/AdminV1UserSignUpRequest";
 import "../styles/AuthScreens.css";
 
 const api = new DefaultApi();
-api.apiClient.basePath = "https://8bb9-138-124-99-156.ngrok-free.app";
+api.apiClient.basePath = "https://d193-2a12-5940-8a19-00-2.ngrok-free.app";
 
 export default function RegistrationForm() {
   const [form, setForm] = useState({
