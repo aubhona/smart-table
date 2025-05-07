@@ -30,5 +30,5 @@ func TestAdminUserSignInHappyPath(t *testing.T) {
 
 	responseObj, ok := response.(viewsCodegenAdmin.PostAdminV1UserSignIn200JSONResponse)
 	assert.True(t, ok)
-	assert.Equal(t, responseObj.Body.UserUUID, id)
+	assert.Equal(t, responseObj.UserUUID, id)
 }

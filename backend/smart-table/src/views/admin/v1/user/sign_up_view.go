@@ -42,11 +42,7 @@ func (h *AdminV1UserHandler) PostAdminV1UserSignUp(
 	}
 
 	return viewsAdminUser.PostAdminV1UserSignUp200JSONResponse{
-		Body: viewsAdminUser.AdminV1UserSignUpResponse{
-			UserUUID: result.UserUUID,
-		},
-		Headers: viewsAdminUser.PostAdminV1UserSignUp200ResponseHeaders{
-			SetCookie: fmt.Sprintf("%s=%s", "jwt", result.JwtToken),
-		},
+		UserUUID: result.UserUUID,
+		JwtToken: result.JwtToken,
 	}, nil
 }

@@ -8,8 +8,8 @@ app:
             expiration: 24h
     cors:
         allow_origins: 
-            - http://localhost:3001
-            - https://8bb9-138-124-99-156.ngrok-free.app
+            - http://localhost:3002
+            - https://aba3-213-183-51-117.ngrok-free.app
         allow_methods:
             - GET
             - POST
@@ -17,6 +17,8 @@ app:
             - DELETE
             - OPTIONS
         allow_headers:
+            - Authorization
+            - User-Uuid
             - Set-Cookie
             - content-type
         allow_credentials: true

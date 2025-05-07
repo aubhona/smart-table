@@ -57,7 +57,7 @@ func CreateUser(firstName, lastName, login, password, tgLogin string) (uuid.UUID
 		return uuid.Nil, errors.New("response is not a PostAdminV1UserSignUp200JSONResponse")
 	}
 
-	return responseObj.Body.UserUUID, nil
+	return responseObj.UserUUID, nil
 }
 
 func TestAdminUserSignUpHappyPath(t *testing.T) {
@@ -82,7 +82,7 @@ func TestAdminUserSignUpHappyPath(t *testing.T) {
 
 	responseObj, ok := response.(viewsCodegenAdmin.PostAdminV1UserSignUp200JSONResponse)
 	assert.True(t, ok)
-	assert.NotEqual(t, responseObj.Body.UserUUID, uuid.Nil)
+	assert.NotEqual(t, responseObj.UserUUID, uuid.Nil)
 
 	userPg, err := FindUserByLogin("testLogin")
 	assert.NoError(t, err)

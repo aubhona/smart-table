@@ -45,11 +45,7 @@ func (h *AdminV1UserHandler) PostAdminV1UserSignIn(
 	}
 
 	return viewsAdminUser.PostAdminV1UserSignIn200JSONResponse{
-		Body: viewsAdminUser.AdminV1UserSignInResponse{
-			UserUUID: result.UserUUID,
-		},
-		Headers: viewsAdminUser.PostAdminV1UserSignIn200ResponseHeaders{
-			SetCookie: result.JwtToken,
-		},
+		UserUUID: result.UserUUID,
+		JwtToken: result.JwtToken,
 	}, nil
 }

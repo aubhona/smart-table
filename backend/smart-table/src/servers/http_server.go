@@ -143,16 +143,7 @@ func GinZapResponseLogger(logger *zap.Logger, cfg *config.Config) gin.HandlerFun
 
 func JWTAuthMiddleware(logger *zap.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		tokenString, err := c.Cookie("jwt")
-		if err != nil {
-			logger.Warn("JWT cookie missing", zap.Error(err))
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"code":    "unauthorized",
-				"message": "Authorization required",
-			})
-
-			return
-		}
+		tokenString := c.GetHeader("JWT-Token")
 
 		userUUID, err := uuid.Parse(c.GetHeader("User-UUID"))
 		if err != nil {
