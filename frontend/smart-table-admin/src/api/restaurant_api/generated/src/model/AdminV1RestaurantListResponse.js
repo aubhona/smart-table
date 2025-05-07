@@ -12,7 +12,7 @@
  */
 
 import ApiClient from '../ApiClient';
-import Restaurant from './Restaurant';
+import RestaurantInfo from './RestaurantInfo';
 
 /**
  * The AdminV1RestaurantListResponse model module.
@@ -23,7 +23,7 @@ class AdminV1RestaurantListResponse {
     /**
      * Constructs a new <code>AdminV1RestaurantListResponse</code>.
      * @alias module:model/AdminV1RestaurantListResponse
-     * @param restaurantList {Array.<module:model/Restaurant>} 
+     * @param restaurantList {Array.<module:model/RestaurantInfo>} 
      */
     constructor(restaurantList) { 
         
@@ -51,7 +51,7 @@ class AdminV1RestaurantListResponse {
             obj = obj || new AdminV1RestaurantListResponse();
 
             if (data.hasOwnProperty('restaurant_list')) {
-                obj['restaurant_list'] = ApiClient.convertToType(data['restaurant_list'], [Restaurant]);
+                obj['restaurant_list'] = ApiClient.convertToType(data['restaurant_list'], [RestaurantInfo]);
             }
         }
         return obj;
@@ -76,7 +76,7 @@ class AdminV1RestaurantListResponse {
             }
             // validate the optional field `restaurant_list` (array)
             for (const item of data['restaurant_list']) {
-                Restaurant.validateJSON(item);
+                RestaurantInfo.validateJSON(item);
             };
         }
 
@@ -89,7 +89,7 @@ class AdminV1RestaurantListResponse {
 AdminV1RestaurantListResponse.RequiredProperties = ["restaurant_list"];
 
 /**
- * @member {Array.<module:model/Restaurant>} restaurant_list
+ * @member {Array.<module:model/RestaurantInfo>} restaurant_list
  */
 AdminV1RestaurantListResponse.prototype['restaurant_list'] = undefined;
 

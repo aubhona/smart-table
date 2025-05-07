@@ -1,6 +1,5 @@
 .babelrc
 .gitignore
-.openapi-generator-ignore
 .travis.yml
 README.md
 docs/AdminV1UserSignInRequest.md
@@ -20,9 +19,3 @@ src/model/AdminV1UserSignInResponse.js
 src/model/AdminV1UserSignUpRequest.js
 src/model/AdminV1UserSignUpResponse.js
 src/model/ErrorResponse.js
-test/api/DefaultApi.spec.js
-test/model/AdminV1UserSignInRequest.spec.js
-test/model/AdminV1UserSignInResponse.spec.js
-test/model/AdminV1UserSignUpRequest.spec.js
-test/model/AdminV1UserSignUpResponse.spec.js
-test/model/ErrorResponse.spec.js

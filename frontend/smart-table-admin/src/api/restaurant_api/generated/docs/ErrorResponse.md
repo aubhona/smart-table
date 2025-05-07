@@ -18,6 +18,12 @@ Name | Type | Description | Notes
 
 * `user_not_found` (value: `"user_not_found"`)
 
+* `invalid_request` (value: `"invalid_request"`)
+
+* `restaurant_not_found` (value: `"restaurant_not_found"`)
+
+* `access_denied` (value: `"access_denied"`)
+
 
 
 

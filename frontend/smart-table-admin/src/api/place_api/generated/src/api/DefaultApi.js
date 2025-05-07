@@ -15,6 +15,8 @@
 import ApiClient from "../ApiClient";
 import AdminV1PlaceCreateRequest from '../model/AdminV1PlaceCreateRequest';
 import AdminV1PlaceCreateResponse from '../model/AdminV1PlaceCreateResponse';
+import AdminV1PlaceListRequest from '../model/AdminV1PlaceListRequest';
+import AdminV1PlaceListResponse from '../model/AdminV1PlaceListResponse';
 import ErrorResponse from '../model/ErrorResponse';
 
 /**
@@ -79,6 +81,54 @@ export default class DefaultApi {
       let returnType = AdminV1PlaceCreateResponse;
       return this.apiClient.callApi(
         '/admin/v1/place/create', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1PlaceListPost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceListPostCallback
+     * @param {String} error Error message, if any.
+     * @param {module:model/AdminV1PlaceListResponse} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Получение списка плейсов пользователя
+     * Получение списка плейсов пользователя
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {module:model/AdminV1PlaceListRequest} adminV1PlaceListRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceListPostCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link module:model/AdminV1PlaceListResponse}
+     */
+    adminV1PlaceListPost(userUUID, adminV1PlaceListRequest, callback) {
+      let postBody = adminV1PlaceListRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceListPost");
+      }
+      // verify the required parameter 'adminV1PlaceListRequest' is set
+      if (adminV1PlaceListRequest === undefined || adminV1PlaceListRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1PlaceListRequest' when calling adminV1PlaceListPost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID
+      };
+      let formParams = {
+      };
+
+      let authNames = ['CookieAuth'];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = AdminV1PlaceListResponse;
+      return this.apiClient.callApi(
+        '/admin/v1/place/list', 'POST',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, null, callback
       );

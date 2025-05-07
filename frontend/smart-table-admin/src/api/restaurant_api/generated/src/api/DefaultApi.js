@@ -15,6 +15,7 @@
 import ApiClient from "../ApiClient";
 import AdminV1RestaurantCreateRequest from '../model/AdminV1RestaurantCreateRequest';
 import AdminV1RestaurantCreateResponse from '../model/AdminV1RestaurantCreateResponse';
+import AdminV1RestaurantDishCreateResponse from '../model/AdminV1RestaurantDishCreateResponse';
 import AdminV1RestaurantListResponse from '../model/AdminV1RestaurantListResponse';
 import ErrorResponse from '../model/ErrorResponse';
 
@@ -80,6 +81,91 @@ export default class DefaultApi {
       let returnType = AdminV1RestaurantCreateResponse;
       return this.apiClient.callApi(
         '/admin/v1/restaurant/create', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1RestaurantDishCreatePost operation.
+     * @callback module:api/DefaultApi~adminV1RestaurantDishCreatePostCallback
+     * @param {String} error Error message, if any.
+     * @param {module:model/AdminV1RestaurantDishCreateResponse} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Создание блюда ресторана
+     * Создание блюда ресторана
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} restaurantUuid Уникальный идентификатор ресторана
+     * @param {String} dishName 
+     * @param {String} description 
+     * @param {String} category 
+     * @param {Number} calories 
+     * @param {Number} weight 
+     * @param {File} dishPictureFile 
+     * @param {module:api/DefaultApi~adminV1RestaurantDishCreatePostCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link module:model/AdminV1RestaurantDishCreateResponse}
+     */
+    adminV1RestaurantDishCreatePost(userUUID, restaurantUuid, dishName, description, category, calories, weight, dishPictureFile, callback) {
+      let postBody = null;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1RestaurantDishCreatePost");
+      }
+      // verify the required parameter 'restaurantUuid' is set
+      if (restaurantUuid === undefined || restaurantUuid === null) {
+        throw new Error("Missing the required parameter 'restaurantUuid' when calling adminV1RestaurantDishCreatePost");
+      }
+      // verify the required parameter 'dishName' is set
+      if (dishName === undefined || dishName === null) {
+        throw new Error("Missing the required parameter 'dishName' when calling adminV1RestaurantDishCreatePost");
+      }
+      // verify the required parameter 'description' is set
+      if (description === undefined || description === null) {
+        throw new Error("Missing the required parameter 'description' when calling adminV1RestaurantDishCreatePost");
+      }
+      // verify the required parameter 'category' is set
+      if (category === undefined || category === null) {
+        throw new Error("Missing the required parameter 'category' when calling adminV1RestaurantDishCreatePost");
+      }
+      // verify the required parameter 'calories' is set
+      if (calories === undefined || calories === null) {
+        throw new Error("Missing the required parameter 'calories' when calling adminV1RestaurantDishCreatePost");
+      }
+      // verify the required parameter 'weight' is set
+      if (weight === undefined || weight === null) {
+        throw new Error("Missing the required parameter 'weight' when calling adminV1RestaurantDishCreatePost");
+      }
+      // verify the required parameter 'dishPictureFile' is set
+      if (dishPictureFile === undefined || dishPictureFile === null) {
+        throw new Error("Missing the required parameter 'dishPictureFile' when calling adminV1RestaurantDishCreatePost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID
+      };
+      let formParams = {
+        'restaurant_uuid': restaurantUuid,
+        'dish_name': dishName,
+        'description': description,
+        'category': category,
+        'calories': calories,
+        'weight': weight,
+        'dish_picture_file': dishPictureFile
+      };
+
+      let authNames = ['CookieAuth'];
+      let contentTypes = ['multipart/form-data'];
+      let accepts = ['application/json'];
+      let returnType = AdminV1RestaurantDishCreateResponse;
+      return this.apiClient.callApi(
+        '/admin/v1/restaurant/dish/create', 'POST',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, null, callback
       );

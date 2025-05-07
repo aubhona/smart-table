@@ -12,28 +12,28 @@ export default function LoginForm() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    
     const payload = AdminV1UserSignInRequest.constructFromObject({ login, password });
     const api = new DefaultApi();
-    api.apiClient.basePath = "https://d193-2a12-5940-8a19-00-2.ngrok-free.app";
-
+    api.apiClient.basePath = "https://2663-2a01-4f9-c010-ecd2-00-1.ngrok-free.app";
+    
     try {
-      const response = await api.adminV1UserSignInPost(payload, { withCredentials: true });
-      
-      const parsedResponse = JSON.parse(response.text);
-      const { user_uuid } = parsedResponse;
+      const { user_uuid, jwt_token } = await new Promise((resolve, reject) => {
+        api.adminV1UserSignInPost(
+          payload,
+          (err, data, response) => {
+            if (err) return reject(err);
 
-      const cookies = document.cookie;
-
-      console.log(cookies);
-      const jwt = cookies
-        .split('; ')  
-        .find(row => row.startsWith('jwt='))
-        ?.split('=')[1];  
-
+            const body = JSON.parse(response.text);
+            resolve({
+              user_uuid: body.user_uuid,
+              jwt_token: body.jwt_token
+            });
+          }
+        );
+      });
       localStorage.setItem("user_uuid", user_uuid);
-      localStorage.setItem("jwt", jwt);
-
-      console.log(jwt);
+      localStorage.setItem("jwt_token", jwt_token);
 
       setRedirect(true);  
     } catch (err) {

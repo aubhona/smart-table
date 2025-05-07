@@ -4,10 +4,11 @@
 README.md
 docs/AdminV1RestaurantCreateRequest.md
 docs/AdminV1RestaurantCreateResponse.md
+docs/AdminV1RestaurantDishCreateResponse.md
 docs/AdminV1RestaurantListResponse.md
 docs/DefaultApi.md
 docs/ErrorResponse.md
-docs/Restaurant.md
+docs/RestaurantInfo.md
 git_push.sh
 mocha.opts
 package.json
@@ -16,9 +17,9 @@ src/api/DefaultApi.js
 src/index.js
 src/model/AdminV1RestaurantCreateRequest.js
 src/model/AdminV1RestaurantCreateResponse.js
+src/model/AdminV1RestaurantDishCreateResponse.js
 src/model/AdminV1RestaurantListResponse.js
 src/model/ErrorResponse.js
-src/model/Restaurant.js
-test/model/AdminV1RestaurantListResponse.spec.js
-test/model/ErrorResponse.spec.js
-test/model/Restaurant.spec.js
+src/model/RestaurantInfo.js
+test/model/AdminV1RestaurantDishCreateResponse.spec.js
+test/model/RestaurantInfo.spec.js
