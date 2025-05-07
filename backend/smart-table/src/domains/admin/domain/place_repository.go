@@ -1,20 +1,20 @@
 package domain
 
 import (
-	"context"
-
-	"github.com/jackc/pgx/v5"
-
 	"github.com/google/uuid"
 	"github.com/smart-table/src/utils"
 )
 
 type PlaceRepository interface {
-	Begin(ctx context.Context) (pgx.Tx, error)
-	Commit(ctx context.Context, tx pgx.Tx) error
+	Begin() (Transaction, error)
+	Commit(tx Transaction) error
+	Rollback(tx Transaction) error
 
-	Save(ctx context.Context, tx pgx.Tx, place utils.SharedRef[Place]) error
+	Save(tx Transaction, place utils.SharedRef[Place]) error
 
-	CheckAddressExist(ctx context.Context, address string, restaurantUUID uuid.UUID) (bool, error)
-	FindPlaceListByRestaurantUUID(ctx context.Context, restaurantUUID uuid.UUID) ([]utils.SharedRef[Place], error)
+	FindPlace(uuid uuid.UUID) (utils.SharedRef[Place], error)
+	FindPlaces(uuids []uuid.UUID) ([]utils.SharedRef[Place], error)
+
+	FindPlacesByRestaurantUUID(uuid uuid.UUID) ([]utils.SharedRef[Place], error)
+	FindPlaceByAddress(address string, restaurantUUID uuid.UUID) (utils.SharedRef[Place], error)
 }

@@ -24,8 +24,9 @@ CREATE TABLE IF NOT EXISTS smart_table_admin.dishes (
     "uuid" UUID PRIMARY KEY NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
+    "calories" INT NOT NULL,
     "weight" INT NOT NULL,
-    "picture_link" TEXT NOT NULL,
+    "picture_key" TEXT NOT NULL,
     "restaurant_uuid" UUID NOT NULL,
     "category" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ NOT NULL,
@@ -55,7 +56,7 @@ CREATE TABLE IF NOT EXISTS smart_table_admin.places (
 
 CREATE TABLE IF NOT EXISTS smart_table_admin.restaurants (
      "uuid" UUID PRIMARY KEY NOT NULL,
-     "name" TEXT NOT NULL,
+     "name" TEXT NOT NULL UNIQUE,
      "owner_uuid" UUID NOT NULL,
      "created_at" TIMESTAMPTZ NOT NULL,
      "updated_at" TIMESTAMPTZ NOT NULL

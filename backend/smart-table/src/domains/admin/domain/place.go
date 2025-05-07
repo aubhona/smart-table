@@ -10,21 +10,21 @@ import (
 )
 
 type Place struct {
-	uuid           uuid.UUID
-	restaurantUUID uuid.UUID
-	address        string
-	tableCount     int
-	openingTime    time.Time
-	closingTime    time.Time
-	createdAt      time.Time
-	updatedAt      time.Time
+	uuid        uuid.UUID
+	restaurant  utils.SharedRef[Restaurant]
+	address     string
+	tableCount  int
+	openingTime time.Time
+	closingTime time.Time
+	createdAt   time.Time
+	updatedAt   time.Time
 }
 
 func NewPlace(
-	restaurantUUID uuid.UUID,
+	restaurant utils.SharedRef[Restaurant],
 	address string,
 	tableCount int,
-	openingTime time.Time,
+	openingTime,
 	closingTime time.Time,
 	uuidGenerator *domainServices.UUIDGenerator,
 ) (utils.SharedRef[Place], error) {
@@ -32,39 +32,43 @@ func NewPlace(
 		return utils.SharedRef[Place]{}, domainErrors.InvalidTableCount{TableCount: tableCount}
 	}
 
-	shardID := uuidGenerator.GetShardID()
+	place := Place{
+		restaurant:  restaurant,
+		address:     address,
+		tableCount:  tableCount,
+		openingTime: openingTime,
+		closingTime: closingTime,
+		createdAt:   time.Now(),
+		updatedAt:   time.Now(),
+	}
 
-	return RestorePlace(
-		uuidGenerator.GenerateShardedUUID(shardID),
-		restaurantUUID,
-		address,
-		tableCount,
-		openingTime,
-		closingTime,
-		time.Now(),
-		time.Now(),
-	), nil
+	shardID := uuidGenerator.GetShardID()
+	place.uuid = uuidGenerator.GenerateShardedUUID(shardID)
+
+	placeRef, _ := utils.NewSharedRef(&place)
+
+	return placeRef, nil
 }
 
 func RestorePlace(
 	id uuid.UUID,
-	restaurantUUID uuid.UUID,
+	restaurant utils.SharedRef[Restaurant],
 	address string,
 	tableCount int,
-	openingTime time.Time,
-	closingTime time.Time,
-	createdAt time.Time,
+	openingTime,
+	closingTime,
+	createdAt,
 	updatedAt time.Time,
 ) utils.SharedRef[Place] {
 	place := Place{
-		uuid:           id,
-		restaurantUUID: restaurantUUID,
-		address:        address,
-		tableCount:     tableCount,
-		openingTime:    openingTime,
-		closingTime:    closingTime,
-		createdAt:      createdAt,
-		updatedAt:      updatedAt,
+		uuid:        id,
+		restaurant:  restaurant,
+		address:     address,
+		tableCount:  tableCount,
+		openingTime: openingTime,
+		closingTime: closingTime,
+		createdAt:   createdAt,
+		updatedAt:   updatedAt,
 	}
 
 	placeRef, _ := utils.NewSharedRef(&place)
@@ -72,11 +76,11 @@ func RestorePlace(
 	return placeRef
 }
 
-func (p *Place) GetUUID() uuid.UUID          { return p.uuid }
-func (p *Place) GetRestauranUUID() uuid.UUID { return p.restaurantUUID }
-func (p *Place) GetAddress() string          { return p.address }
-func (p *Place) GetTableCount() int          { return p.tableCount }
-func (p *Place) GetOpeningTime() time.Time   { return p.openingTime }
-func (p *Place) GetClosingTime() time.Time   { return p.closingTime }
-func (p *Place) GetCreatedAt() time.Time     { return p.createdAt }
-func (p *Place) GetUpdatedAt() time.Time     { return p.updatedAt }
+func (p *Place) GetUUID() uuid.UUID                         { return p.uuid }
+func (p *Place) GetRestaurant() utils.SharedRef[Restaurant] { return p.restaurant }
+func (p *Place) GetAddress() string                         { return p.address }
+func (p *Place) GetTableCount() int                         { return p.tableCount }
+func (p *Place) GetOpeningTime() time.Time                  { return p.openingTime }
+func (p *Place) GetClosingTime() time.Time                  { return p.closingTime }
+func (p *Place) GetCreatedAt() time.Time                    { return p.createdAt }
+func (p *Place) GetUpdatedAt() time.Time                    { return p.updatedAt }

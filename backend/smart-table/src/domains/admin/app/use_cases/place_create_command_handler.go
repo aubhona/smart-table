@@ -1,10 +1,9 @@
 package app
 
 import (
-	"context"
-	"fmt"
-
-	"github.com/jackc/pgx/v5"
+	domainErrors "github.com/smart-table/src/domains/admin/domain/errors"
+	"github.com/smart-table/src/utils"
+	"go.uber.org/zap"
 
 	"github.com/google/uuid"
 	appErrors "github.com/smart-table/src/domains/admin/app/use_cases/errors"
@@ -38,36 +37,42 @@ func NewPlaceCreateCommandHandler(
 func (handler *PlaceCreateCommandHandler) Handle(
 	placeCreateCommand *PlaceCreateCommand,
 ) (PlaceCreateCommandHandlerResult, error) {
-	ctx := context.Background()
-
-	restaurant, err := handler.restaurantRepository.FindRestaurantByUUID(ctx, placeCreateCommand.RestaurantUUID)
+	restaurant, err := handler.restaurantRepository.FindRestaurant(placeCreateCommand.RestaurantUUID)
 	if err != nil {
-		logging.GetLogger().Error(fmt.Sprintf("Error while finding restaurant by uuid: %v", err))
+		logging.GetLogger().Error("error while finding restaurant by uuid", zap.Error(err))
 		return PlaceCreateCommandHandlerResult{}, err
 	}
 
-	if restaurant.Get().GetOwnerUUID() != placeCreateCommand.OwnerUUID {
+	if restaurant.Get().GetOwner().Get().GetUUID() != placeCreateCommand.OwnerUUID {
+		logging.GetLogger().Error("restaurant access denied",
+			zap.String("user_uuid", placeCreateCommand.OwnerUUID.String()),
+			zap.String("restaurant_uuid", placeCreateCommand.RestaurantUUID.String()))
+
 		return PlaceCreateCommandHandlerResult{}, appErrors.RestaurantAccessDenied{
 			UserUUID:       placeCreateCommand.OwnerUUID,
 			RestaurantUUID: placeCreateCommand.RestaurantUUID,
 		}
 	}
 
-	isExist, err := handler.placeRepository.CheckAddressExist(ctx, placeCreateCommand.Address, placeCreateCommand.RestaurantUUID)
-	if err != nil {
-		logging.GetLogger().Error(fmt.Sprintf("Error while checking place address existence: %v", err))
-		return PlaceCreateCommandHandlerResult{}, err
-	}
+	_, err = handler.placeRepository.FindPlaceByAddress(placeCreateCommand.Address, placeCreateCommand.RestaurantUUID)
+	if err == nil {
+		logging.GetLogger().Error("place address already exists",
+			zap.String("address", placeCreateCommand.Address),
+			zap.String("restaurant_uuid", placeCreateCommand.RestaurantUUID.String()))
 
-	if isExist {
 		return PlaceCreateCommandHandlerResult{}, appErrors.PlaceAddressExists{
 			Address:        placeCreateCommand.Address,
 			RestaurantUUID: placeCreateCommand.RestaurantUUID,
 		}
 	}
 
+	if !utils.IsTheSameErrorType[domainErrors.PlaceNotFoundByAddress](err) {
+		logging.GetLogger().Error("error while checking place address existence", zap.Error(err))
+		return PlaceCreateCommandHandlerResult{}, err
+	}
+
 	place, err := domain.NewPlace(
-		placeCreateCommand.RestaurantUUID,
+		restaurant,
 		placeCreateCommand.Address,
 		placeCreateCommand.TableCount,
 		placeCreateCommand.OpeningTime,
@@ -75,22 +80,27 @@ func (handler *PlaceCreateCommandHandler) Handle(
 		handler.uuidGenerator,
 	)
 	if err != nil {
-		logging.GetLogger().Error(fmt.Sprintf("Error while new place creating: %v", err))
+		logging.GetLogger().Error("error while creating place", zap.Error(err))
 		return PlaceCreateCommandHandlerResult{}, err
 	}
 
-	tx, err := handler.placeRepository.Begin(ctx)
+	tx, err := handler.placeRepository.Begin()
 	if err != nil {
+		logging.GetLogger().Error("error while beginning transaction", zap.Error(err))
 		return PlaceCreateCommandHandlerResult{}, err
 	}
 
-	defer func(placeRepository domain.PlaceRepository, ctx context.Context, tx pgx.Tx) {
-		_ = placeRepository.Commit(ctx, tx)
-	}(handler.placeRepository, ctx, tx)
+	defer utils.Rollback(handler.placeRepository, tx)
 
-	err = handler.placeRepository.Save(ctx, tx, place)
+	err = handler.placeRepository.Save(tx, place)
 	if err != nil {
-		logging.GetLogger().Error(fmt.Sprintf("Error while place saving: %v", err))
+		logging.GetLogger().Error("error while saving place", zap.Error(err))
+		return PlaceCreateCommandHandlerResult{}, err
+	}
+
+	err = handler.placeRepository.Commit(tx)
+	if err != nil {
+		logging.GetLogger().Error("error while committing transaction", zap.Error(err))
 		return PlaceCreateCommandHandlerResult{}, err
 	}
 

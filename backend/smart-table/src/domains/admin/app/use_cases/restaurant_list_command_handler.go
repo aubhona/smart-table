@@ -1,8 +1,7 @@
 package app
 
 import (
-	"context"
-	"fmt"
+	"go.uber.org/zap"
 
 	"github.com/smart-table/src/domains/admin/domain"
 	domainServices "github.com/smart-table/src/domains/admin/domain/services"
@@ -11,7 +10,7 @@ import (
 )
 
 type RestaurantListCommandHandlerResult struct {
-	RestaurantList []utils.SharedRef[domain.Restaurant]
+	DomainRestaurantList []utils.SharedRef[domain.Restaurant]
 }
 
 type RestaurantListCommandHandler struct {
@@ -35,19 +34,23 @@ func NewRestaurantListCommandHandler(
 func (handler *RestaurantListCommandHandler) Handle(
 	restaurantListCommand *RestaurantListCommand,
 ) (RestaurantListCommandHandlerResult, error) {
-	ctx := context.Background()
-	_, err := handler.userRepository.FindUserByUUID(ctx, restaurantListCommand.OwnerUUID)
-
+	_, err := handler.userRepository.FindUserByUUID(restaurantListCommand.OwnerUUID)
 	if err != nil {
-		logging.GetLogger().Error(fmt.Sprintf("Error while checking owner_uuid existence: %v", err))
+		logging.GetLogger().Error("error while finding owner by uuid",
+			zap.String("owner_uuid", restaurantListCommand.OwnerUUID.String()),
+			zap.Error(err))
+
 		return RestaurantListCommandHandlerResult{}, err
 	}
 
-	restaurantList, err := handler.restaurantRepository.FindRestaurantListByOwnerUUID(ctx, restaurantListCommand.OwnerUUID)
+	domainRestaurantList, err := handler.restaurantRepository.FindRestaurantsByOwnerUUID(restaurantListCommand.OwnerUUID)
 	if err != nil {
-		logging.GetLogger().Error(fmt.Sprintf("Error while finding restaurant_list by owner_uuid: %v", err))
+		logging.GetLogger().Error("error while finding restaurants by owner uuid",
+			zap.String("owner_uuid", restaurantListCommand.OwnerUUID.String()),
+			zap.Error(err))
+
 		return RestaurantListCommandHandlerResult{}, err
 	}
 
-	return RestaurantListCommandHandlerResult{restaurantList}, nil
+	return RestaurantListCommandHandlerResult{domainRestaurantList}, nil
 }

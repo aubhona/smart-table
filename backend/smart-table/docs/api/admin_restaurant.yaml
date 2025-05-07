@@ -73,6 +73,55 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
 
+    /admin/v1/restaurant/dish/create:
+        post:
+            summary: Создание блюда ресторана
+            description: Создание блюда ресторана
+            security:
+                - CookieAuth: [ ]
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1RestaurantDishCreateRequest'
+                        encoding:
+                            dish_picture_file:
+                                contentType: image/png
+            responses:
+                '200':
+                    description: ID созданного блюда
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1RestaurantDishCreateResponse'
+                '400':
+                    description: Некорректный запрос создания
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '401':
+                    description: Ошибка создания, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка создания, отказано в доступе, некорретные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка создания, пользователь не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
 components:
     securitySchemes:
         CookieAuth:
@@ -122,6 +171,48 @@ components:
             required:
                 - restaurant_list
 
+        # /admin/v1/restaurant/dish/create_POST
+        AdminV1RestaurantDishCreateRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                restaurant_uuid:
+                    $ref: '#/components/schemas/RestaurantUUID'
+                dish_name:
+                    type: string
+                description:
+                    type: string
+                category:
+                    type: string
+                calories:
+                    type: integer
+                    minimum: 0
+                weight:
+                    type: integer
+                    minimum: 0
+                dish_picture_file:
+                    type: string
+                    format: binary
+            required:
+                - restaurant_uuid
+                - dish_name
+                - description
+                - category
+                - calories
+                - weight
+                - dish_picture_file
+
+        AdminV1RestaurantDishCreateResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                dish_uuid:
+                    type: string
+                    format: uuid
+            required:
+                - dish_uuid
+
+        # errors
         ErrorResponse:
             type: object
             additionalProperties: false
@@ -133,6 +224,9 @@ components:
                         - not_authorized
                         - already_exist
                         - user_not_found
+                        - invalid_request
+                        - restaurant_not_found
+                        - access_denied
                 message:
                     type: string
                     description: Описание ошибки

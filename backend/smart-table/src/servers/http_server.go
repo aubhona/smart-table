@@ -46,11 +46,15 @@ func NewGinRouter(container *dig.Container, deps *dependencies.Dependencies) *gi
 		Use(GinZapRecovery(deps.Logger)).
 		Use(func(c *gin.Context) {
 			c.Set(utils.DiContainerName, container)
+			c.Set(utils.DependenciesName, deps)
 			c.Next()
 		}).Use(cors.New(cfg))
 
 	private := router.Group("/")
-	private.Use(JWTAuthMiddleware(deps.Logger))
+
+	if deps.Config.App.Admin.Jwt.Enable {
+		private.Use(JWTAuthMiddleware(deps.Logger))
+	}
 
 	customerStrictHandler := viewsCodegenCustomer.NewStrictHandler(&viewsCustomer.CustomerV1Handler{}, nil)
 	viewsCodegenCustomer.RegisterHandlers(router, customerStrictHandler)

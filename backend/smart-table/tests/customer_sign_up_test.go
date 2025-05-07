@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"strconv"
 
+	"github.com/smart-table/src/utils"
+
 	views "github.com/smart-table/src/views/bot"
 	"github.com/smart-table/tests/mocks"
 	"github.com/stretchr/testify/mock"
@@ -39,16 +41,15 @@ func CreateCustomer(tgLogin string, tgID, chatID int64) (uuid.UUID, error) {
 		ID: chatID,
 	}
 
-	handler := views.BotUpdatesHandler{
-		WebAppURL: "some_url",
-	}
+	handler := views.BotUpdatesHandler{}
 	mockContext := new(mocks.Context)
 
 	mockContext.On("Text", mock.Anything, mock.Anything).Return("/start")
 	mockContext.On("Sender", mock.Anything, mock.Anything).Return(user)
 	mockContext.On("Chat", mock.Anything, mock.Anything).Return(chat)
 	mockContext.On("Send", mock.Anything, mock.Anything).Return(nil)
-	mockContext.On("Get", mock.Anything, mock.Anything).Return(GetContainer())
+	mockContext.On("Get", utils.DiContainerName).Return(GetContainer())
+	mockContext.On("Get", utils.DependenciesName).Return(GetDeps())
 
 	err := handler.HandleOnTextUpdates(mockContext)
 
@@ -74,16 +75,15 @@ func TestCustomerRegisterHappyPath(t *testing.T) {
 		ID: 123,
 	}
 
-	handler := views.BotUpdatesHandler{
-		WebAppURL: "some_url",
-	}
+	handler := views.BotUpdatesHandler{}
 
 	mockContext := new(mocks.Context)
 
 	mockContext.On("Text", mock.Anything).Return("/start")
 	mockContext.On("Sender", mock.Anything).Return(user)
 	mockContext.On("Chat", mock.Anything).Return(chat)
-	mockContext.On("Get", mock.Anything).Return(GetContainer())
+	mockContext.On("Get", utils.DiContainerName).Return(GetContainer())
+	mockContext.On("Get", utils.DependenciesName).Return(GetDeps())
 	mockContext.On("Send", mock.Anything, mock.Anything).Return(nil)
 
 	err := handler.HandleOnTextUpdates(mockContext)

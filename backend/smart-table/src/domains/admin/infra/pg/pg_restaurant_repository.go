@@ -12,6 +12,7 @@ import (
 	db "github.com/smart-table/src/domains/admin/infra/pg/codegen"
 	"github.com/smart-table/src/domains/admin/infra/pg/mapper"
 	"github.com/smart-table/src/utils"
+	"github.com/thoas/go-funk"
 )
 
 type RestaurantRepository struct {
@@ -22,16 +23,29 @@ func NewRestaurantRepository(pool *pgxpool.Pool) *RestaurantRepository {
 	return &RestaurantRepository{pool}
 }
 
-func (r *RestaurantRepository) Begin(ctx context.Context) (pgx.Tx, error) {
-	return r.coonPool.Begin(ctx)
+func (r *RestaurantRepository) Begin() (domain.Transaction, error) {
+	ctx := context.Background()
+	tx, err := r.coonPool.Begin(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pgTx{tx: tx, ctx: ctx}, nil
 }
 
-func (r *RestaurantRepository) Commit(ctx context.Context, tx pgx.Tx) error {
-	return tx.Commit(ctx)
+func (r *RestaurantRepository) Commit(tx domain.Transaction) error {
+	return tx.Commit()
 }
 
-func (r *RestaurantRepository) Save(ctx context.Context, tx pgx.Tx, restaurant utils.SharedRef[domain.Restaurant]) error {
-	queries := db.New(r.coonPool).WithTx(tx)
+func (r *RestaurantRepository) Rollback(tx domain.Transaction) error {
+	return tx.Rollback()
+}
+
+func (r *RestaurantRepository) Save(tx domain.Transaction, restaurant utils.SharedRef[domain.Restaurant]) error {
+	ctx := context.Background()
+	trx := tx.(*pgTx)
+	queries := db.New(r.coonPool).WithTx(trx.tx)
 
 	pgRestaurant, err := mapper.ConvertToPgRestaurant(restaurant)
 	if err != nil {
@@ -43,57 +57,128 @@ func (r *RestaurantRepository) Save(ctx context.Context, tx pgx.Tx, restaurant u
 	return err
 }
 
-func (r *RestaurantRepository) CheckNameExist(ctx context.Context, name string) (bool, error) {
+func (r *RestaurantRepository) FindRestaurantByName(name string) (utils.SharedRef[domain.Restaurant], error) {
+	ctx := context.Background()
 	queries := db.New(r.coonPool)
 
-	restaurantExists, err := queries.CheckRestaurantNameExist(ctx, name)
-	if err != nil {
-		return false, err
-	}
-
-	return restaurantExists, nil
-}
-
-func (r *RestaurantRepository) FindRestaurantByUUID(ctx context.Context, uuid uuid.UUID) (utils.SharedRef[domain.Restaurant], error) {
-	queries := db.New(r.coonPool)
-
-	pgResult, err := queries.FetchRestaurantByUUID(ctx, uuid)
+	restaurantUUID, err := queries.GetRestaurantUUIDByName(ctx, name)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return utils.SharedRef[domain.Restaurant]{}, domainErrors.RestaurantNotFoundByUUID{UUID: uuid}
+			return utils.SharedRef[domain.Restaurant]{}, domainErrors.RestaurantNotFoundByName{Name: name}
 		}
 
 		return utils.SharedRef[domain.Restaurant]{}, err
 	}
 
-	restaurant, err := mapper.ConvertPgRestaurantToModel(pgResult)
+	return r.FindRestaurant(restaurantUUID)
+}
+
+func (r *RestaurantRepository) FindRestaurants(uuids []uuid.UUID) ([]utils.SharedRef[domain.Restaurant], error) {
+	ctx := context.Background()
+	queries := db.New(r.coonPool)
+
+	pgResult, err := queries.FetchRestaurantsByUUID(ctx, uuids)
+	if err != nil {
+		return nil, err
+	}
+
+	restaurants, err := mapper.ConvertPgRestaurantsToModel(pgResult)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(restaurants) == len(uuids) {
+		return restaurants, nil
+	}
+
+	return nil, getRestaurantNotFoundError(uuids, restaurants)
+}
+
+func (r *RestaurantRepository) FindRestaurant(id uuid.UUID) (utils.SharedRef[domain.Restaurant], error) {
+	restaurants, err := r.FindRestaurants([]uuid.UUID{id})
 	if err != nil {
 		return utils.SharedRef[domain.Restaurant]{}, err
 	}
 
-	return restaurant, nil
+	return restaurants[0], nil
 }
 
-func (r *RestaurantRepository) FindRestaurantListByOwnerUUID(
-	ctx context.Context, ownerUUID uuid.UUID,
+func (r *RestaurantRepository) Update(tx domain.Transaction, restaurant utils.SharedRef[domain.Restaurant]) error {
+	ctx := context.Background()
+	trx := tx.(*pgTx)
+	queries := db.New(r.coonPool).WithTx(trx.tx)
+
+	pgDishes, err := mapper.ConvertToPgDishes(restaurant.Get().GetDishes())
+	if err != nil {
+		return err
+	}
+
+	_, err = queries.UpsertDishes(ctx, pgDishes)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *RestaurantRepository) FindRestaurantForUpdate(tx domain.Transaction, id uuid.UUID) (utils.SharedRef[domain.Restaurant], error) {
+	restaurants, err := r.FindRestaurantsForUpdate(tx, []uuid.UUID{id})
+	if err != nil {
+		return utils.SharedRef[domain.Restaurant]{}, err
+	}
+
+	return restaurants[0], nil
+}
+
+func (r *RestaurantRepository) FindRestaurantsForUpdate(
+	tx domain.Transaction,
+	uuids []uuid.UUID,
 ) ([]utils.SharedRef[domain.Restaurant], error) {
+	ctx := context.Background()
+	trx := tx.(*pgTx)
+	queries := db.New(r.coonPool).WithTx(trx.tx)
+
+	pgResult, err := queries.FetchRestaurantsForUpdateByUUID(ctx, uuids)
+	if err != nil {
+		return nil, err
+	}
+
+	restaurants, err := mapper.ConvertPgRestaurantsToModel(pgResult)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(restaurants) == len(uuids) {
+		return restaurants, nil
+	}
+
+	return nil, getRestaurantNotFoundError(uuids, restaurants)
+}
+
+func (r *RestaurantRepository) FindRestaurantsByOwnerUUID(
+	ownerUUID uuid.UUID,
+) ([]utils.SharedRef[domain.Restaurant], error) {
+	ctx := context.Background()
 	queries := db.New(r.coonPool)
 
-	pgResult, err := queries.FetchRestaurantListByOwnerUUID(ctx, ownerUUID)
+	pgResult, err := queries.GetRestaurantUUIDsByOwnerUUID(ctx, ownerUUID)
 	if err != nil || pgResult == nil {
 		return []utils.SharedRef[domain.Restaurant]{}, err
 	}
 
-	restaurantList := make([]utils.SharedRef[domain.Restaurant], 0, len(pgResult))
+	return r.FindRestaurants(pgResult)
+}
 
-	for i := range pgResult {
-		place, err := mapper.ConvertPgRestaurantToModel(pgResult[i])
-		if err != nil {
-			return []utils.SharedRef[domain.Restaurant]{}, err
+func getRestaurantNotFoundError(restaurantUUIDs []uuid.UUID, restaurants []utils.SharedRef[domain.Restaurant]) error {
+	restaurantUUIDSet := funk.Map(restaurants, func(restaurant utils.SharedRef[domain.Place]) (uuid.UUID, interface{}) {
+		return restaurant.Get().GetUUID(), nil
+	}).(map[uuid.UUID]interface{})
+
+	for _, restaurantUUID := range restaurantUUIDs {
+		if _, found := restaurantUUIDSet[restaurantUUID]; !found {
+			return domainErrors.PlaceNotFound{UUID: restaurantUUID}
 		}
-
-		restaurantList = append(restaurantList, place)
 	}
 
-	return restaurantList, nil
+	return nil
 }

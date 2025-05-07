@@ -22,16 +22,33 @@ func NewCustomerRepository(pool *pgxpool.Pool) *CustomerRepository {
 	return &CustomerRepository{pool}
 }
 
-func (c *CustomerRepository) Begin(ctx context.Context) (pgx.Tx, error) {
-	return c.coonPool.Begin(ctx)
+func (c *CustomerRepository) Begin() (domain.Transaction, error) {
+	ctx := context.Background()
+	tx, err := c.coonPool.Begin(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pgTx{tx: tx, ctx: ctx}, nil
 }
-func (c *CustomerRepository) Commit(ctx context.Context, tx pgx.Tx) error {
-	return tx.Commit(ctx)
+
+func (c *CustomerRepository) Commit(tx domain.Transaction) error {
+	return tx.Commit()
+}
+
+func (c *CustomerRepository) Rollback(tx domain.Transaction) error {
+	return tx.Rollback()
 }
 
 func (c *CustomerRepository) FindCustomerByTgIDForUpdate(
-	ctx context.Context, tx pgx.Tx, customerTgID string) (utils.SharedRef[domain.Customer], error) {
-	queries := db.New(c.coonPool).WithTx(tx)
+	tx domain.Transaction,
+	customerTgID string,
+) (utils.SharedRef[domain.Customer], error) {
+	ctx := context.Background()
+	trx := tx.(*pgTx)
+
+	queries := db.New(c.coonPool).WithTx(trx.tx)
 
 	pgResult, err := queries.FetchCustomerByTgIdForUpdate(ctx, customerTgID)
 	if err != nil {
@@ -50,8 +67,11 @@ func (c *CustomerRepository) FindCustomerByTgIDForUpdate(
 	return model, nil
 }
 
-func (c *CustomerRepository) SaveAndUpdate(ctx context.Context, tx pgx.Tx, customer utils.SharedRef[domain.Customer]) error {
-	queries := db.New(c.coonPool).WithTx(tx)
+func (c *CustomerRepository) SaveAndUpdate(tx domain.Transaction, customer utils.SharedRef[domain.Customer]) error {
+	ctx := context.Background()
+	trx := tx.(*pgTx)
+
+	queries := db.New(c.coonPool).WithTx(trx.tx)
 
 	pgCustomer, err := mapper.ConvertToPgCustomer(customer)
 	if err != nil {
@@ -63,7 +83,8 @@ func (c *CustomerRepository) SaveAndUpdate(ctx context.Context, tx pgx.Tx, custo
 	return err
 }
 
-func (c *CustomerRepository) FindCustomerByTgID(ctx context.Context, customerTgID string) (utils.SharedRef[domain.Customer], error) {
+func (c *CustomerRepository) FindCustomerByTgID(customerTgID string) (utils.SharedRef[domain.Customer], error) {
+	ctx := context.Background()
 	queries := db.New(c.coonPool)
 
 	pgResult, err := queries.FetchCustomerByTgId(ctx, customerTgID)
@@ -83,7 +104,8 @@ func (c *CustomerRepository) FindCustomerByTgID(ctx context.Context, customerTgI
 	return model, nil
 }
 
-func (c *CustomerRepository) FindCustomer(ctx context.Context, customerUUID uuid.UUID) (utils.SharedRef[domain.Customer], error) {
+func (c *CustomerRepository) FindCustomer(customerUUID uuid.UUID) (utils.SharedRef[domain.Customer], error) {
+	ctx := context.Background()
 	queries := db.New(c.coonPool)
 
 	pgResult, err := queries.FetchCustomer(ctx, customerUUID)

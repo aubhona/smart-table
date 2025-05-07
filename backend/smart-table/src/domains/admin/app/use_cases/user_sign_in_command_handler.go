@@ -1,8 +1,7 @@
 package app
 
 import (
-	"context"
-	"fmt"
+	"go.uber.org/zap"
 
 	"github.com/google/uuid"
 	app "github.com/smart-table/src/domains/admin/app/services"
@@ -35,14 +34,19 @@ func NewUserSingInCommandHandler(
 }
 
 func (handler *UserSingInCommandHandler) Handle(userSignInCommand *UserSingInCommand) (UserSingInCommandHandlerResult, error) {
-	user, err := handler.userRepository.FindUserByLogin(context.Background(), userSignInCommand.Login)
+	user, err := handler.userRepository.FindUserByLogin(userSignInCommand.Login)
 	if err != nil {
-		logging.GetLogger().Error(fmt.Sprintf("Error while finding user by login: %v", err))
+		logging.GetLogger().Error("error while finding user by login",
+			zap.String("login", userSignInCommand.Login),
+			zap.Error(err))
+
 		return UserSingInCommandHandlerResult{}, err
 	}
 
 	if !handler.hashService.ComparePasswords(user.Get().GetPasswordHash(), userSignInCommand.Password) {
-		logging.GetLogger().Info(fmt.Sprintf("Incorrect password: %v", err))
+		logging.GetLogger().Info("incorrect password attempt",
+			zap.String("login", userSignInCommand.Login))
+
 		return UserSingInCommandHandlerResult{}, appErrors.IncorrectPassword{}
 	}
 
@@ -50,7 +54,10 @@ func (handler *UserSingInCommandHandler) Handle(userSignInCommand *UserSingInCom
 
 	jwtToken, err := handler.jwtService.GenerateJWT(userUUID)
 	if err != nil {
-		logging.GetLogger().Error(fmt.Sprintf("Error while token generating: %v", err))
+		logging.GetLogger().Error("error while generating JWT token",
+			zap.String("user_uuid", userUUID.String()),
+			zap.Error(err))
+
 		return UserSingInCommandHandlerResult{}, err
 	}
 

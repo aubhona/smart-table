@@ -41,7 +41,7 @@ func (h *AdminV1PlaceHandler) PostAdminV1PlaceList(
 	})
 	if err != nil {
 		switch {
-		case utils.IsTheSameErrorType[domainErrors.RestaurantNotFoundByUUID](err):
+		case utils.IsTheSameErrorType[domainErrors.RestaurantNotFound](err):
 			return viewsAdminPlace.PostAdminV1PlaceList404JSONResponse{
 				Code:    viewsAdminPlace.RestaurantNotFound,
 				Message: err.Error(),

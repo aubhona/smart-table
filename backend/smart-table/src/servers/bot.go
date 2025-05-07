@@ -25,11 +25,13 @@ func NewBot(container *dig.Container, deps *dependencies.Dependencies) (*telebot
 	bot.Use(func(next telebot.HandlerFunc) telebot.HandlerFunc {
 		return func(c telebot.Context) error {
 			c.Set(utils.DiContainerName, container)
+			c.Set(utils.DependenciesName, deps)
+
 			return next(c)
 		}
 	})
 
-	botHandler := views.BotUpdatesHandler{WebAppURL: deps.Config.Bot.WebAppURL}
+	botHandler := views.BotUpdatesHandler{}
 
 	bot.Handle(telebot.OnText, botHandler.HandleOnTextUpdates)
 

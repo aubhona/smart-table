@@ -38,12 +38,9 @@ components:
                     type: string
                 tg_login:
                     $ref: '#/components/schemas/TgLogin'
-                chat_id:
-                    type: string
             required:
                 - tg_id
                 - tg_login
-                - chat_id
 
         CustomerV1OrderCustomerSignInResponse:
             type: object

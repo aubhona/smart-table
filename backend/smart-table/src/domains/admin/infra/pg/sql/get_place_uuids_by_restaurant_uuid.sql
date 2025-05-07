@@ -1,10 +1,10 @@
--- name: FetchPlaceListByRestaurantUUID :many
+-- name: GetPlaceUUIDsByRestaurantUUID :many
 --
 -- args:
 -- $1 - UUID
 
 SELECT
-    to_jsonb(p)
+    p.uuid
 FROM
     smart_table_admin.places p
 WHERE

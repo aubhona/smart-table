@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/minio/minio-go/v7"
+	"github.com/minio/minio-go/v7/pkg/credentials"
+
 	"github.com/smart-table/src/config"
 	"github.com/smart-table/src/logging"
 
@@ -15,16 +18,19 @@ type Dependencies struct {
 	Config     *config.Config
 	DBConnPool *pgxpool.Pool
 	Logger     *zap.Logger
+	S3Client   *minio.Client
 }
 
 func InitDependencies(cfg *config.Config) *Dependencies {
 	logger := logging.InitLogger(cfg)
 	dbPool := initDBPool(cfg)
+	s3Client := initS3Client(cfg)
 
 	return &Dependencies{
 		Config:     cfg,
 		DBConnPool: dbPool,
 		Logger:     logger,
+		S3Client:   s3Client,
 	}
 }
 
@@ -60,4 +66,17 @@ func initDBPool(cfg *config.Config) *pgxpool.Pool {
 	logging.GetLogger().Info("Successfully connected to the database")
 
 	return dbPool
+}
+
+func initS3Client(cfg *config.Config) *minio.Client {
+	client, err := minio.New(cfg.S3.Endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(cfg.S3.AccessKey, cfg.S3.SecretKey, ""),
+		Secure: true,
+		Region: cfg.S3.Region,
+	})
+	if err != nil {
+		logging.GetLogger().Fatal("Error creating MinIO client", zap.Error(err))
+	}
+
+	return client
 }

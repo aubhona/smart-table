@@ -1,10 +1,9 @@
 package app
 
 import (
-	"context"
-	"fmt"
-
-	"github.com/jackc/pgx/v5"
+	domainErrors "github.com/smart-table/src/domains/admin/domain/errors"
+	"github.com/smart-table/src/utils"
+	"go.uber.org/zap"
 
 	"github.com/google/uuid"
 	appErrors "github.com/smart-table/src/domains/admin/app/use_cases/errors"
@@ -38,44 +37,60 @@ func NewRestaurantCreateCommandHandler(
 func (handler *RestaurantCreateCommandHandler) Handle(
 	restaurantCreateCommand *RestaurantCreateCommand,
 ) (RestaurantCreateCommandHandlerResult, error) {
-	ctx := context.Background()
-	isExist, err := handler.restaurantRepository.CheckNameExist(ctx, restaurantCreateCommand.Name)
+	_, err := handler.restaurantRepository.FindRestaurantByName(restaurantCreateCommand.Name)
 
-	if err != nil {
-		logging.GetLogger().Error(fmt.Sprintf("Error while checking restaurant name existence: %v", err))
-		return RestaurantCreateCommandHandlerResult{}, err
-	}
+	if err == nil {
+		logging.GetLogger().Error("restaurant name already exists",
+			zap.String("name", restaurantCreateCommand.Name))
 
-	if isExist {
 		return RestaurantCreateCommandHandlerResult{}, appErrors.RestaurantNameExists{
 			Name: restaurantCreateCommand.Name,
 		}
 	}
 
-	_, err = handler.userRepository.FindUserByUUID(ctx, restaurantCreateCommand.OwnerUUID)
+	if !utils.IsTheSameErrorType[domainErrors.RestaurantNotFoundByName](err) {
+		logging.GetLogger().Error("error while checking restaurant name existence",
+			zap.Error(err))
+		return RestaurantCreateCommandHandlerResult{}, err
+	}
+
+	owner, err := handler.userRepository.FindUserByUUID(restaurantCreateCommand.OwnerUUID)
 	if err != nil {
-		logging.GetLogger().Error(fmt.Sprintf("Error while checking owner_uuid existence: %v", err))
+		logging.GetLogger().Error("error while finding owner by uuid",
+			zap.String("owner_uuid", restaurantCreateCommand.OwnerUUID.String()),
+			zap.Error(err))
+
 		return RestaurantCreateCommandHandlerResult{}, err
 	}
 
 	restaurant := domain.NewRestaurant(
-		restaurantCreateCommand.OwnerUUID,
+		owner,
 		restaurantCreateCommand.Name,
 		handler.uuidGenerator,
 	)
 
-	tx, err := handler.restaurantRepository.Begin(ctx)
+	tx, err := handler.restaurantRepository.Begin()
 	if err != nil {
+		logging.GetLogger().Error("error while beginning transaction",
+			zap.Error(err))
 		return RestaurantCreateCommandHandlerResult{}, err
 	}
 
-	defer func(restaurantRepository domain.RestaurantRepository, ctx context.Context, tx pgx.Tx) {
-		_ = restaurantRepository.Commit(ctx, tx)
-	}(handler.restaurantRepository, ctx, tx)
+	defer utils.Rollback(handler.restaurantRepository, tx)
 
-	err = handler.restaurantRepository.Save(ctx, tx, restaurant)
+	err = handler.restaurantRepository.Save(tx, restaurant)
 	if err != nil {
-		logging.GetLogger().Error(fmt.Sprintf("Error while restaurant saving: %v", err))
+		logging.GetLogger().Error("error while saving restaurant",
+			zap.String("restaurant_name", restaurantCreateCommand.Name),
+			zap.Error(err))
+
+		return RestaurantCreateCommandHandlerResult{}, err
+	}
+
+	err = handler.restaurantRepository.Commit(tx)
+	if err != nil {
+		logging.GetLogger().Error("error while committing transaction",
+			zap.Error(err))
 		return RestaurantCreateCommandHandlerResult{}, err
 	}
 

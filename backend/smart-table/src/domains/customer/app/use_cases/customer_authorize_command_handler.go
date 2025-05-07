@@ -1,13 +1,10 @@
 package app
 
 import (
-	"context"
-
-	"github.com/jackc/pgx/v5"
-
 	"github.com/google/uuid"
 	"github.com/smart-table/src/domains/customer/domain"
 	domainServices "github.com/smart-table/src/domains/customer/domain/services"
+	"github.com/smart-table/src/utils"
 )
 
 type CustomerAuthorizeCommandHandlerResult struct {
@@ -31,27 +28,28 @@ func NewCustomerAuthorizeCommandHandler(
 
 func (handler *CustomerAuthorizeCommandHandler) Handle(
 	createCommand *CustomerAuthorizeCommand) (CustomerAuthorizeCommandHandlerResult, error) {
-	ctx := context.Background()
-	customer, err := handler.customerRepository.FindCustomerByTgID(ctx, createCommand.TgID)
+	customer, err := handler.customerRepository.FindCustomerByTgID(createCommand.TgID)
 
 	if err != nil {
 		return CustomerAuthorizeCommandHandlerResult{}, err
 	}
 
-	if customer.Get().GetTgLogin() != createCommand.TgLogin || customer.Get().GetChatID() != createCommand.ChatID {
+	if customer.Get().GetTgLogin() != createCommand.TgLogin {
 		customer.Get().SetTgLogin(createCommand.TgLogin)
-		customer.Get().SetChatID(createCommand.ChatID)
 
-		tx, err := handler.customerRepository.Begin(ctx)
+		tx, err := handler.customerRepository.Begin()
 		if err != nil {
 			return CustomerAuthorizeCommandHandlerResult{}, err
 		}
 
-		defer func(customerRepository domain.CustomerRepository, ctx context.Context, tx pgx.Tx) {
-			_ = customerRepository.Commit(ctx, tx)
-		}(handler.customerRepository, ctx, tx)
+		defer utils.Rollback(handler.customerRepository, tx)
 
-		err = handler.customerRepository.SaveAndUpdate(ctx, tx, customer)
+		err = handler.customerRepository.SaveAndUpdate(tx, customer)
+		if err != nil {
+			return CustomerAuthorizeCommandHandlerResult{}, err
+		}
+
+		err = handler.customerRepository.Commit(tx)
 		if err != nil {
 			return CustomerAuthorizeCommandHandlerResult{}, err
 		}

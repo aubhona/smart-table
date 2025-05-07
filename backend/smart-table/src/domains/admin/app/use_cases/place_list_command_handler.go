@@ -1,8 +1,7 @@
 package app
 
 import (
-	"context"
-	"fmt"
+	"go.uber.org/zap"
 
 	appErrors "github.com/smart-table/src/domains/admin/app/use_cases/errors"
 	"github.com/smart-table/src/domains/admin/domain"
@@ -39,24 +38,24 @@ func NewPlaceListCommandHandler(
 func (handler *PlaceListCommandHandler) Handle(
 	placeListCommand *PlaceListCommand,
 ) (PlaceListCommandHandlerResult, error) {
-	ctx := context.Background()
-
-	restaurant, err := handler.restaurantRepository.FindRestaurantByUUID(ctx, placeListCommand.RestaurantUUID)
+	restaurant, err := handler.restaurantRepository.FindRestaurant(placeListCommand.RestaurantUUID)
 	if err != nil {
-		logging.GetLogger().Error(fmt.Sprintf("Error while finding restaurant by uuid: %v", err))
+		logging.GetLogger().Error("error while finding restaurant", zap.Error(err))
+
 		return PlaceListCommandHandlerResult{}, err
 	}
 
-	if restaurant.Get().GetOwnerUUID() != placeListCommand.OwnerUUID {
+	if restaurant.Get().GetOwner().Get().GetUUID() != placeListCommand.OwnerUUID {
 		return PlaceListCommandHandlerResult{}, appErrors.RestaurantAccessDenied{
 			UserUUID:       placeListCommand.OwnerUUID,
 			RestaurantUUID: placeListCommand.RestaurantUUID,
 		}
 	}
 
-	placeList, err := handler.placeRepository.FindPlaceListByRestaurantUUID(ctx, placeListCommand.RestaurantUUID)
+	placeList, err := handler.placeRepository.FindPlacesByRestaurantUUID(placeListCommand.RestaurantUUID)
 	if err != nil {
-		logging.GetLogger().Error(fmt.Sprintf("Error while finding place_list by owner_uuid: %v", err))
+		logging.GetLogger().Error("error while finding places", zap.Error(err))
+
 		return PlaceListCommandHandlerResult{}, err
 	}
 

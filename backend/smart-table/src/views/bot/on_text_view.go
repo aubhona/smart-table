@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/smart-table/src/dependencies"
+
 	"github.com/smart-table/src/domains/bot/presentation"
 	app "github.com/smart-table/src/domains/customer/app/use_cases"
 	appErrors "github.com/smart-table/src/domains/customer/app/use_cases/errors"
@@ -19,6 +21,7 @@ func (b *BotUpdatesHandler) HandleOnTextUpdates(context telebot.Context) error {
 		return ctxErr
 	}
 
+	deps := context.Get(utils.DependenciesName).(*dependencies.Dependencies)
 	handler, err := utils.GetFromTelebotContainer[*app.CustomerRegisterCommandHandler](context)
 
 	if err != nil {
@@ -54,7 +57,7 @@ func (b *BotUpdatesHandler) HandleOnTextUpdates(context telebot.Context) error {
 						Unique: result.CustomerUUID.String(),
 						Text:   presentation.OpenWebApp,
 						WebApp: &telebot.WebApp{
-							URL: b.WebAppURL,
+							URL: deps.Config.Bot.WebAppURL,
 						},
 					},
 				},
