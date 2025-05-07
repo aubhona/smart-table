@@ -54,7 +54,7 @@ func (h *AdminV1PlaceHandler) PostAdminV1PlaceCreate(
 				Code:    viewsAdminPlace.IncorrectTableCount,
 				Message: err.Error(),
 			}, nil
-		case utils.IsTheSameErrorType[domainErrors.RestaurantNotFoundByUUID](err):
+		case utils.IsTheSameErrorType[domainErrors.RestaurantNotFound](err):
 			return viewsAdminPlace.PostAdminV1PlaceCreate404JSONResponse{
 				Code:    viewsAdminPlace.RestaurantNotFound,
 				Message: err.Error(),

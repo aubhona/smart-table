@@ -24,7 +24,6 @@ func (h *CustomerV1Handler) PostCustomerV1SignIn(
 	result, err := handler.Handle(&app.CustomerAuthorizeCommand{
 		TgID:    request.Body.TgID,
 		TgLogin: request.Body.TgLogin,
-		ChatID:  request.Body.ChatID,
 	})
 	if err != nil {
 		if utils.IsTheSameErrorType[domainErrors.CustomerNotFoundByTgID](err) {

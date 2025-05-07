@@ -19,6 +19,7 @@ type Config struct {
 		Env   Environment `mapstructure:"env"`
 		Admin struct {
 			Jwt struct {
+				Enable     bool          `mapstructure:"enable"`
 				SecretKey  string        `mapstructure:"secret_key"`
 				Expiration time.Duration `mapstructure:"expiration"`
 			} `mapstructure:"jwt"`
@@ -29,6 +30,7 @@ type Config struct {
 			AllowHeaders     []string `mapstructure:"allow_headers"`
 			AllowCredentials bool     `mapstructure:"allow_credentials"`
 		}
+		MaxInputFileSizeMB int64 `mapstructure:"max_input_file_size_mb"`
 	} `mapstructure:"app"`
 
 	Database struct {
@@ -66,6 +68,14 @@ type Config struct {
 		PollerTimeout time.Duration `mapstructure:"poller_timeout"`
 		WebAppURL     string        `mapstructure:"web_app_url"`
 	} `mapstructure:"bot"`
+
+	S3 struct {
+		AccessKey string `mapstructure:"access_key"`
+		SecretKey string `mapstructure:"secret_key"`
+		Endpoint  string `mapstructure:"endpoint"`
+		Bucket    string `mapstructure:"bucket"`
+		Region    string `mapstructure:"region"`
+	} `mapstructure:"s3"`
 }
 
 func LoadConfig() (*Config, error) {

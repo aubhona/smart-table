@@ -53,6 +53,10 @@ func GetContainer() *dig.Container {
 	return container
 }
 
+func GetDeps() *dependencies.Dependencies {
+	return deps
+}
+
 func SetupOnceTest() {
 	db, err := sql.Open(
 		"pgx",

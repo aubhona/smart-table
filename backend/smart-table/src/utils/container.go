@@ -11,6 +11,7 @@ import (
 )
 
 const DiContainerName = "di-container"
+const DependenciesName = "dependencies"
 
 func GetFromContainer[T any](ctx context.Context) (T, error) {
 	var zeroValue T

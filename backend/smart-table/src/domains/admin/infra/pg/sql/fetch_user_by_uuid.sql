@@ -1,7 +1,7 @@
 -- name: FetchUserByUUID :one
 --
 -- args:
--- $1 - UUID
+-- $1 - UUID (user_uuid)
 
 SELECT
     to_jsonb(u)

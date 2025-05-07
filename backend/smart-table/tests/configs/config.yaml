@@ -3,12 +3,13 @@ app:
     env: development
     admin:
         jwt:
+            enable: false
             secret_key: APP_ADMIN_JWT_SECRET_KEY
             expiration: 24h
     cors:
         allow_origins:
-            - http://localhost:3000
-            - https://5910-213-183-51-117.ngrok-free.app
+            - http://localhost:3001
+            - https://8bb9-138-124-99-156.ngrok-free.app
         allow_methods:
             - GET
             - POST
@@ -19,6 +20,7 @@ app:
             - Set-Cookie
             - content-type
         allow_credentials: true
+    max_input_file_size_mb: 1000
 
 database:
     host: smart-table-db
@@ -33,9 +35,6 @@ database:
     max_connection_idle_time: 10m
     health_check_period: 5m
     max_connection_lifetime_jitter: 1m
-    server:
-        request_sym_limit: 100000000
-        response_sym_limit: 100000000
 
 logging:
     level: debug
@@ -46,8 +45,19 @@ logging:
     max_age: 30
     compress: true
     enable_console_and_file: true
+    server:
+        request_sym_limit: 100
+        response_sym_limit: 100
 
 bot:
     token: BOT_TOKEN
     poller_timeout: 10s
     web_app_url: https://5910-213-183-51-117.ngrok-free.app
+
+s3:
+    access_key: S3_ACCESS_KEY
+    secret_key: S3_SECRET_KEY
+    endpoint: storage.yandexcloud.net
+    region: ru-central1
+    bucket: smart-table
+

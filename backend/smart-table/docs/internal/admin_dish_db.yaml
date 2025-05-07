@@ -1,0 +1,42 @@
+components:
+    schemas:
+        PgDish:
+            type: object
+            additionalProperties: false
+            properties:
+                uuid:
+                    type: string
+                    format: uuid
+                restaurant_uuid:
+                    type: string
+                    format: uuid
+                name:
+                    type: string
+                description:
+                    type: string
+                calories:
+                    type: integer
+                weight:
+                    type: integer
+                picture_key:
+                    type: string
+                category:
+                    type: string
+                created_at:
+                    type: string
+                    format: date-time
+                updated_at:
+                    type: string
+                    format: date-time
+
+            required:
+                - uuid
+                - restaurant_uuid
+                - name
+                - description
+                - calories
+                - weight
+                - picture_key
+                - category
+                - created_at
+                - updated_at

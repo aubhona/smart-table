@@ -21,7 +21,6 @@ func TestCustomerAuthHappyPath(t *testing.T) {
 		Body: &viewsCodegenCustomer.PostCustomerV1SignInJSONRequestBody{
 			TgLogin: "test_login",
 			TgID:    "123",
-			ChatID:  "1234",
 		},
 	})
 

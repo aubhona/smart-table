@@ -1,10 +1,6 @@
 package app
 
 import (
-	"context"
-
-	"github.com/jackc/pgx/v5"
-
 	"github.com/smart-table/src/utils"
 
 	"github.com/google/uuid"
@@ -41,14 +37,13 @@ func NewOrderCreateCommandHandler(
 }
 
 func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateCommand) (OrderCreateCommandHandlerResult, error) {
-	ctx := context.Background()
-	user, err := handler.customerRepository.FindCustomer(context.Background(), createCommand.CustomerUUID)
+	user, err := handler.customerRepository.FindCustomer(createCommand.CustomerUUID)
 
 	if err != nil {
 		return OrderCreateCommandHandlerResult{}, err
 	}
 
-	order, err := handler.orderRepository.FindActiveOrderByTableID(context.Background(), createCommand.TableID)
+	order, err := handler.orderRepository.FindActiveOrderByTableID(createCommand.TableID)
 	isNewOrder := false
 
 	if err != nil {
@@ -69,18 +64,21 @@ func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateComma
 		}
 
 		order = domain.NewOrder(roomCode, createCommand.TableID, user, handler.uuidGenerator)
-		tx, err := handler.orderRepository.Begin(ctx)
+		tx, err := handler.orderRepository.Begin()
 
 		if err != nil {
 			return OrderCreateCommandHandlerResult{}, err
 		}
 
-		defer func(orderRepository domain.OrderRepository, ctx context.Context, tx pgx.Tx) {
-			_ = orderRepository.Commit(ctx, tx)
-		}(handler.orderRepository, ctx, tx)
+		defer utils.Rollback(handler.orderRepository, tx)
 
-		err = handler.orderRepository.Save(ctx, tx, order)
+		err = handler.orderRepository.Save(tx, order)
 
+		if err != nil {
+			return OrderCreateCommandHandlerResult{}, err
+		}
+
+		err = handler.orderRepository.Commit(tx)
 		if err != nil {
 			return OrderCreateCommandHandlerResult{}, err
 		}

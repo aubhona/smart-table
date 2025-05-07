@@ -3,7 +3,7 @@
 -- args:
 -- $1 - UUID[]
 
-SELECT jsonb_agg(order_data)
+SELECT jsonb_agg(orders_data)
 FROM (
     SELECT jsonb_build_object(
         'order', to_jsonb(o)
@@ -28,5 +28,4 @@ FROM (
     ) AS order_data
     FROM smart_table_customer.orders AS o
     WHERE o.uuid = ANY($1::UUID[])
-) AS orders;
-
+) AS orders_data;

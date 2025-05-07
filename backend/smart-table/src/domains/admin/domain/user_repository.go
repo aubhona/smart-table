@@ -1,21 +1,18 @@
 package domain
 
 import (
-	"context"
-
-	"github.com/jackc/pgx/v5"
-
 	"github.com/google/uuid"
 	"github.com/smart-table/src/utils"
 )
 
 type UserRepository interface {
-	Begin(ctx context.Context) (pgx.Tx, error)
-	Commit(ctx context.Context, tx pgx.Tx) error
+	Begin() (Transaction, error)
+	Commit(tx Transaction) error
+	Rollback(tx Transaction) error
 
-	Save(ctx context.Context, tx pgx.Tx, user utils.SharedRef[User]) error
+	Save(tx Transaction, user utils.SharedRef[User]) error
 
-	FindUserByUUID(ctx context.Context, uuid uuid.UUID) (utils.SharedRef[User], error)
-	FindUserByLogin(ctx context.Context, userLogin string) (utils.SharedRef[User], error)
-	CheckLoginOrTgLoginExist(ctx context.Context, userLogin string, tgLogin string) (bool, error)
+	FindUserByUUID(uuid uuid.UUID) (utils.SharedRef[User], error)
+	FindUserByLogin(userLogin string) (utils.SharedRef[User], error)
+	FindUserByLoginOrTgLogin(userLogin, tgLogin string) (utils.SharedRef[User], error)
 }

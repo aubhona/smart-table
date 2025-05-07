@@ -4,12 +4,99 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/samber/lo"
+	defsinternalAdminDishDb "github.com/smart-table/src/codegen/intern/admin_dish_db"
+
 	defsInternalAdminPlaceDb "github.com/smart-table/src/codegen/intern/admin_place_db"
 	defsInternalAdminRestaurantDb "github.com/smart-table/src/codegen/intern/admin_restaurant_db"
 	defsInternalAdminUserDb "github.com/smart-table/src/codegen/intern/admin_user_db"
 	"github.com/smart-table/src/domains/admin/domain"
 	"github.com/smart-table/src/utils"
 )
+
+type PgPlaceAggregate struct {
+	RestaurantAggregate PgRestaurantAggregate            `json:"restaurant"`
+	Place               defsInternalAdminPlaceDb.PgPlace `json:"place"`
+}
+
+type PgRestaurantAggregate struct {
+	Restaurant defsInternalAdminRestaurantDb.PgRestaurant `json:"restaurant"`
+	Dishes     []defsinternalAdminDishDb.PgDish           `json:"dishes"`
+	Owner      defsInternalAdminUserDb.PgUser             `json:"owner"`
+}
+
+func restoreUser(user *defsInternalAdminUserDb.PgUser) utils.SharedRef[domain.User] {
+	return domain.RestoreUser(
+		user.UUID,
+		user.Login,
+		user.TgID,
+		user.TgLogin,
+		user.ChatID,
+		user.FirstName,
+		user.LastName,
+		user.PasswordHash,
+		user.CreatedAt,
+		user.UpdatedAt,
+	)
+}
+
+func restoreDish(dish *defsinternalAdminDishDb.PgDish) utils.SharedRef[domain.Dish] {
+	return domain.RestoreDish(
+		dish.UUID,
+		dish.RestaurantUUID,
+		dish.Name,
+		dish.Description,
+		dish.PictureKey,
+		dish.Category,
+		dish.Calories,
+		dish.Weight,
+		dish.CreatedAt,
+		dish.UpdatedAt,
+	)
+}
+
+func restoreRestaurant(
+	restaurant *defsInternalAdminRestaurantDb.PgRestaurant,
+	owner utils.SharedRef[domain.User],
+	dishes []utils.SharedRef[domain.Dish]) utils.SharedRef[domain.Restaurant] {
+	return domain.RestoreRestaurant(
+		restaurant.UUID,
+		owner,
+		dishes,
+		restaurant.Name,
+		restaurant.CreatedAt,
+		restaurant.UpdatedAt,
+	)
+}
+
+func restorePlace(
+	place *defsInternalAdminPlaceDb.PgPlace,
+	restaurant utils.SharedRef[domain.Restaurant],
+	openingTime,
+	closingTime time.Time,
+) utils.SharedRef[domain.Place] {
+	return domain.RestorePlace(
+		place.UUID,
+		restaurant,
+		place.Address,
+		place.TableCount,
+		openingTime,
+		closingTime,
+		place.CreatedAt,
+		place.UpdatedAt,
+	)
+}
+
+func restoreFromPgRestaurantAggregate(
+	pgRestaurantAggregate *PgRestaurantAggregate,
+) utils.SharedRef[domain.Restaurant] {
+	dishes := lo.Map(pgRestaurantAggregate.Dishes, func(dish defsinternalAdminDishDb.PgDish, _ int) utils.SharedRef[domain.Dish] {
+		return restoreDish(&dish)
+	})
+	owner := restoreUser(&pgRestaurantAggregate.Owner)
+
+	return restoreRestaurant(&pgRestaurantAggregate.Restaurant, owner, dishes)
+}
 
 func ConvertToPgUser(user utils.SharedRef[domain.User]) ([]byte, error) {
 	pgUser := defsInternalAdminUserDb.PgUser{
@@ -34,6 +121,25 @@ func ConvertToPgUser(user utils.SharedRef[domain.User]) ([]byte, error) {
 	return jsonBytes, nil
 }
 
+func ConvertToPgDishes(dishes []utils.SharedRef[domain.Dish]) ([]byte, error) {
+	pgDishes := lo.Map(dishes, func(dish utils.SharedRef[domain.Dish], _ int) defsinternalAdminDishDb.PgDish {
+		return defsinternalAdminDishDb.PgDish{
+			UUID:           dish.Get().GetUUID(),
+			RestaurantUUID: dish.Get().GetRestaurantUUID(),
+			Name:           dish.Get().GetName(),
+			Description:    dish.Get().GetDescription(),
+			PictureKey:     dish.Get().GetPictureKey(),
+			Category:       dish.Get().GetCategory(),
+			Calories:       dish.Get().GetCalories(),
+			Weight:         dish.Get().GetWeight(),
+			CreatedAt:      dish.Get().GetCreatedAt(),
+			UpdatedAt:      dish.Get().GetUpdatedAt(),
+		}
+	})
+
+	return json.Marshal(pgDishes)
+}
+
 func ConvertPgUserToModel(pgResult []byte) (utils.SharedRef[domain.User], error) {
 	pgUser := defsInternalAdminUserDb.PgUser{}
 	err := json.Unmarshal(pgResult, &pgUser)
@@ -42,24 +148,13 @@ func ConvertPgUserToModel(pgResult []byte) (utils.SharedRef[domain.User], error)
 		return utils.SharedRef[domain.User]{}, err
 	}
 
-	return domain.RestoreUser(
-		pgUser.UUID,
-		pgUser.Login,
-		pgUser.TgID,
-		pgUser.TgLogin,
-		pgUser.ChatID,
-		pgUser.FirstName,
-		pgUser.LastName,
-		pgUser.PasswordHash,
-		pgUser.CreatedAt,
-		pgUser.UpdatedAt,
-	), nil
+	return restoreUser(&pgUser), nil
 }
 
 func ConvertToPgRestaurant(restaurant utils.SharedRef[domain.Restaurant]) ([]byte, error) {
 	pgRestaurant := defsInternalAdminRestaurantDb.PgRestaurant{
 		UUID:      restaurant.Get().GetUUID(),
-		OwnerUUID: restaurant.Get().GetOwnerUUID(),
+		OwnerUUID: restaurant.Get().GetOwner().Get().GetUUID(),
 		Name:      restaurant.Get().GetName(),
 		CreatedAt: restaurant.Get().GetCreatedAt(),
 		UpdatedAt: restaurant.Get().GetUpdatedAt(),
@@ -75,26 +170,35 @@ func ConvertToPgRestaurant(restaurant utils.SharedRef[domain.Restaurant]) ([]byt
 }
 
 func ConvertPgRestaurantToModel(pgResult []byte) (utils.SharedRef[domain.Restaurant], error) {
-	pgRestaurant := defsInternalAdminRestaurantDb.PgRestaurant{}
-	err := json.Unmarshal(pgResult, &pgRestaurant)
+	pgRestaurantAggregate := PgRestaurantAggregate{}
+	err := json.Unmarshal(pgResult, &pgRestaurantAggregate)
 
 	if err != nil {
 		return utils.SharedRef[domain.Restaurant]{}, err
 	}
 
-	return domain.RestoreRestaurant(
-		pgRestaurant.UUID,
-		pgRestaurant.OwnerUUID,
-		pgRestaurant.Name,
-		pgRestaurant.CreatedAt,
-		pgRestaurant.UpdatedAt,
-	), nil
+	return restoreFromPgRestaurantAggregate(&pgRestaurantAggregate), nil
+}
+
+func ConvertPgRestaurantsToModel(pgResults [][]byte) ([]utils.SharedRef[domain.Restaurant], error) {
+	restaurants := make([]utils.SharedRef[domain.Restaurant], 0, len(pgResults))
+
+	for _, pgResult := range pgResults {
+		restaurant, err := ConvertPgRestaurantToModel(pgResult)
+		if err != nil {
+			return nil, err
+		}
+
+		restaurants = append(restaurants, restaurant)
+	}
+
+	return restaurants, nil
 }
 
 func ConvertToPgPlace(place utils.SharedRef[domain.Place]) ([]byte, error) {
 	pgPlace := defsInternalAdminPlaceDb.PgPlace{
 		UUID:           place.Get().GetUUID(),
-		RestaurantUUID: place.Get().GetRestauranUUID(),
+		RestaurantUUID: place.Get().GetRestaurant().Get().GetUUID(),
 		Address:        place.Get().GetAddress(),
 		TableCount:     place.Get().GetTableCount(),
 		OpeningTime:    place.Get().GetOpeningTime().Format("15:04"),
@@ -112,32 +216,40 @@ func ConvertToPgPlace(place utils.SharedRef[domain.Place]) ([]byte, error) {
 	return jsonBytes, nil
 }
 
-func ConvertPgPlaceToModel(pgResult []byte) (utils.SharedRef[domain.Place], error) {
-	pgPlace := defsInternalAdminPlaceDb.PgPlace{}
-	err := json.Unmarshal(pgResult, &pgPlace)
+func ConvertPgPlaceToModel(pgPlaceAggregateResult []byte) (utils.SharedRef[domain.Place], error) {
+	pgPlaceAggregate := PgPlaceAggregate{}
+	err := json.Unmarshal(pgPlaceAggregateResult, &pgPlaceAggregate)
 
 	if err != nil {
 		return utils.SharedRef[domain.Place]{}, err
 	}
 
-	openingTime, err := time.Parse("15:04:05", pgPlace.OpeningTime)
+	openingTime, err := time.Parse("15:04:05", pgPlaceAggregate.Place.OpeningTime)
 	if err != nil {
 		return utils.SharedRef[domain.Place]{}, err
 	}
 
-	closingTime, err := time.Parse("15:04:05", pgPlace.ClosingTime)
+	closingTime, err := time.Parse("15:04:05", pgPlaceAggregate.Place.ClosingTime)
 	if err != nil {
 		return utils.SharedRef[domain.Place]{}, err
 	}
 
-	return domain.RestorePlace(
-		pgPlace.UUID,
-		pgPlace.RestaurantUUID,
-		pgPlace.Address,
-		pgPlace.TableCount,
-		openingTime,
-		closingTime,
-		pgPlace.CreatedAt,
-		pgPlace.UpdatedAt,
-	), nil
+	restaurant := restoreFromPgRestaurantAggregate(&pgPlaceAggregate.RestaurantAggregate)
+
+	return restorePlace(&pgPlaceAggregate.Place, restaurant, openingTime, closingTime), nil
+}
+
+func ConvertPgPlacesToModel(pgPlacesAggregateResult [][]byte) ([]utils.SharedRef[domain.Place], error) {
+	places := make([]utils.SharedRef[domain.Place], 0, len(pgPlacesAggregateResult))
+
+	for _, pgPlace := range pgPlacesAggregateResult {
+		place, err := ConvertPgPlaceToModel(pgPlace)
+		if err != nil {
+			return nil, err
+		}
+
+		places = append(places, place)
+	}
+
+	return places, nil
 }

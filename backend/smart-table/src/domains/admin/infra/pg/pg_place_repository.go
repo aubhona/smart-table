@@ -2,9 +2,13 @@ package pg
 
 import (
 	"context"
+	"errors"
+
+	"github.com/jackc/pgx/v5"
+	domainErrors "github.com/smart-table/src/domains/admin/domain/errors"
+	"github.com/thoas/go-funk"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/smart-table/src/domains/admin/domain"
 	db "github.com/smart-table/src/domains/admin/infra/pg/codegen"
@@ -20,16 +24,29 @@ func NewPlaceRepository(pool *pgxpool.Pool) *PlaceRepository {
 	return &PlaceRepository{pool}
 }
 
-func (p *PlaceRepository) Begin(ctx context.Context) (pgx.Tx, error) {
-	return p.coonPool.Begin(ctx)
+func (p *PlaceRepository) Begin() (domain.Transaction, error) {
+	ctx := context.Background()
+	tx, err := p.coonPool.Begin(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pgTx{tx: tx, ctx: ctx}, nil
 }
 
-func (p *PlaceRepository) Commit(ctx context.Context, tx pgx.Tx) error {
-	return tx.Commit(ctx)
+func (p *PlaceRepository) Commit(tx domain.Transaction) error {
+	return tx.Commit()
 }
 
-func (p *PlaceRepository) Save(ctx context.Context, tx pgx.Tx, place utils.SharedRef[domain.Place]) error {
-	queries := db.New(p.coonPool).WithTx(tx)
+func (p *PlaceRepository) Rollback(tx domain.Transaction) error {
+	return tx.Rollback()
+}
+
+func (p *PlaceRepository) Save(tx domain.Transaction, place utils.SharedRef[domain.Place]) error {
+	ctx := context.Background()
+	trx := tx.(*pgTx)
+	queries := db.New(p.coonPool).WithTx(trx.tx)
 
 	pgPlace, err := mapper.ConvertToPgPlace(place)
 	if err != nil {
@@ -41,43 +58,77 @@ func (p *PlaceRepository) Save(ctx context.Context, tx pgx.Tx, place utils.Share
 	return err
 }
 
-func (p *PlaceRepository) CheckAddressExist(ctx context.Context, address string, restaurantUUID uuid.UUID) (bool, error) {
-	queries := db.New(p.coonPool)
-
-	params := db.CheckPlaceAddressExistParams{
-		Column1: address,
-		Column2: restaurantUUID,
-	}
-
-	placeExists, err := queries.CheckPlaceAddressExist(ctx, params)
+func (p *PlaceRepository) FindPlace(id uuid.UUID) (utils.SharedRef[domain.Place], error) {
+	places, err := p.FindPlaces([]uuid.UUID{id})
 	if err != nil {
-		return false, err
+		return utils.SharedRef[domain.Place]{}, err
 	}
 
-	return placeExists, nil
+	return places[0], nil
 }
 
-func (p *PlaceRepository) FindPlaceListByRestaurantUUID(
-	ctx context.Context,
-	restaurantUUID uuid.UUID,
-) ([]utils.SharedRef[domain.Place], error) {
+func (p *PlaceRepository) FindPlaces(uuids []uuid.UUID) ([]utils.SharedRef[domain.Place], error) {
+	ctx := context.Background()
 	queries := db.New(p.coonPool)
 
-	pgResult, err := queries.FetchPlaceListByRestaurantUUID(ctx, restaurantUUID)
-	if err != nil || pgResult == nil {
-		return []utils.SharedRef[domain.Place]{}, err
+	pgResults, err := queries.FetchPlacesByUUID(ctx, uuids)
+	if err != nil {
+		return nil, err
 	}
 
-	placeList := make([]utils.SharedRef[domain.Place], 0, len(pgResult))
+	places, err := mapper.ConvertPgPlacesToModel(pgResults)
+	if err != nil {
+		return nil, err
+	}
 
-	for i := range pgResult {
-		place, err := mapper.ConvertPgPlaceToModel(pgResult[i])
-		if err != nil {
-			return []utils.SharedRef[domain.Place]{}, err
+	if len(places) == len(uuids) {
+		return places, nil
+	}
+
+	return nil, getPlaceNotFoundError(uuids, places)
+}
+
+func (p *PlaceRepository) FindPlaceByAddress(address string, restaurantUUID uuid.UUID) (utils.SharedRef[domain.Place], error) {
+	ctx := context.Background()
+	queries := db.New(p.coonPool)
+
+	placeUUID, err := queries.GetPlaceUUIDByAddress(ctx, db.GetPlaceUUIDByAddressParams{
+		Column1: address,
+		Column2: restaurantUUID,
+	})
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return utils.SharedRef[domain.Place]{}, domainErrors.PlaceNotFoundByAddress{Address: address, RestaurantUUID: restaurantUUID}
 		}
 
-		placeList = append(placeList, place)
+		return utils.SharedRef[domain.Place]{}, err
 	}
 
-	return placeList, nil
+	return p.FindPlace(placeUUID)
+}
+
+func getPlaceNotFoundError(placeUUIDs []uuid.UUID, places []utils.SharedRef[domain.Place]) error {
+	placeUUIDSet := funk.Map(places, func(place utils.SharedRef[domain.Place]) (uuid.UUID, interface{}) {
+		return place.Get().GetUUID(), nil
+	}).(map[uuid.UUID]interface{})
+
+	for _, placeUUID := range placeUUIDs {
+		if _, found := placeUUIDSet[placeUUID]; !found {
+			return domainErrors.PlaceNotFound{UUID: placeUUID}
+		}
+	}
+
+	return nil
+}
+
+func (p *PlaceRepository) FindPlacesByRestaurantUUID(uuid uuid.UUID) ([]utils.SharedRef[domain.Place], error) {
+	ctx := context.Background()
+	queries := db.New(p.coonPool)
+
+	placeUUIDs, err := queries.GetPlaceUUIDsByRestaurantUUID(ctx, uuid)
+	if err != nil {
+		return nil, err
+	}
+
+	return p.FindPlaces(placeUUIDs)
 }

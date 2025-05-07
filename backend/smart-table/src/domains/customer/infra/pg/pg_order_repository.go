@@ -23,8 +23,11 @@ func NewOrderRepository(pool *pgxpool.Pool) *OrderRepository {
 	return &OrderRepository{pool}
 }
 
-func (o *OrderRepository) Save(ctx context.Context, tx pgx.Tx, order utils.SharedRef[domain.Order]) error {
-	queries := db.New(o.coonPool).WithTx(tx)
+func (o *OrderRepository) Save(tx domain.Transaction, order utils.SharedRef[domain.Order]) error {
+	ctx := context.Background()
+	trx := tx.(*pgTx)
+
+	queries := db.New(o.coonPool).WithTx(trx.tx)
 
 	pgOrder, err := mapper.ConvertToPgOrder(order)
 	if err != nil {
@@ -46,15 +49,27 @@ func (o *OrderRepository) Save(ctx context.Context, tx pgx.Tx, order utils.Share
 	return err
 }
 
-func (o *OrderRepository) Begin(ctx context.Context) (pgx.Tx, error) {
-	return o.coonPool.Begin(ctx)
+func (o *OrderRepository) Begin() (domain.Transaction, error) {
+	ctx := context.Background()
+	tx, err := o.coonPool.Begin(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &pgTx{tx: tx, ctx: ctx}, nil
 }
 
-func (o *OrderRepository) Commit(ctx context.Context, tx pgx.Tx) error {
-	return tx.Commit(ctx)
+func (o *OrderRepository) Commit(tx domain.Transaction) error {
+	return tx.Commit()
 }
 
-func (o *OrderRepository) FindOrders(ctx context.Context, orderUuids []uuid.UUID) ([]utils.SharedRef[domain.Order], error) {
+func (o *OrderRepository) Rollback(tx domain.Transaction) error {
+	return tx.Rollback()
+}
+
+func (o *OrderRepository) FindOrders(orderUuids []uuid.UUID) ([]utils.SharedRef[domain.Order], error) {
+	ctx := context.Background()
 	queries := db.New(o.coonPool)
 
 	pgResult, err := queries.FetchOrders(ctx, orderUuids)
@@ -74,13 +89,14 @@ func (o *OrderRepository) FindOrders(ctx context.Context, orderUuids []uuid.UUID
 	return nil, getNotFoundError(orderUuids, orders)
 }
 
-func (o *OrderRepository) FindOrder(ctx context.Context, orderUUID uuid.UUID) (utils.SharedRef[domain.Order], error) {
-	orders, err := o.FindOrders(ctx, []uuid.UUID{orderUUID})
+func (o *OrderRepository) FindOrder(orderUUID uuid.UUID) (utils.SharedRef[domain.Order], error) {
+	orders, err := o.FindOrders([]uuid.UUID{orderUUID})
 
 	return orders[0], err
 }
 
-func (o *OrderRepository) FindActiveOrderByTableID(ctx context.Context, tableID string) (utils.SharedRef[domain.Order], error) {
+func (o *OrderRepository) FindActiveOrderByTableID(tableID string) (utils.SharedRef[domain.Order], error) {
+	ctx := context.Background()
 	queries := db.New(o.coonPool)
 
 	pgResult, err := queries.GetActiveOrderUuidByTableId(ctx, tableID)
@@ -92,7 +108,7 @@ func (o *OrderRepository) FindActiveOrderByTableID(ctx context.Context, tableID 
 		return utils.SharedRef[domain.Order]{}, err
 	}
 
-	return o.FindOrder(ctx, pgResult)
+	return o.FindOrder(pgResult)
 }
 
 func getNotFoundError(orderUuids []uuid.UUID, orders []utils.SharedRef[domain.Order]) error {

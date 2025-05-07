@@ -6,10 +6,10 @@ import (
 	"github.com/google/uuid"
 )
 
-type RestaurantNotFoundByUUID struct {
+type RestaurantNotFound struct {
 	UUID uuid.UUID
 }
 
-func (e RestaurantNotFoundByUUID) Error() string {
+func (e RestaurantNotFound) Error() string {
 	return fmt.Sprintf("Restaurant not found by uuid: %s", e.UUID)
 }

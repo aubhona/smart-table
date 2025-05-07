@@ -2,6 +2,7 @@ package di
 
 import (
 	"github.com/smart-table/src/dependencies"
+	appQueries "github.com/smart-table/src/domains/admin/app/queries"
 	appServices "github.com/smart-table/src/domains/admin/app/services"
 	app "github.com/smart-table/src/domains/admin/app/use_cases"
 	"github.com/smart-table/src/domains/admin/domain"
@@ -73,6 +74,16 @@ func AddDeps(container *dig.Container) error {
 	}
 
 	err = container.Provide(app.NewPlaceListCommandHandler)
+	if err != nil {
+		return err
+	}
+
+	err = container.Provide(appQueries.NewS3QueryService)
+	if err != nil {
+		return err
+	}
+
+	err = container.Provide(app.NewDishCreateCommandHandler)
 	if err != nil {
 		return err
 	}
