@@ -129,7 +129,25 @@ ErrorResponse['CodeEnum'] = {
      * value: "user_not_found"
      * @const
      */
-    "user_not_found": "user_not_found"
+    "user_not_found": "user_not_found",
+
+    /**
+     * value: "invalid_request"
+     * @const
+     */
+    "invalid_request": "invalid_request",
+
+    /**
+     * value: "restaurant_not_found"
+     * @const
+     */
+    "restaurant_not_found": "restaurant_not_found",
+
+    /**
+     * value: "access_denied"
+     * @const
+     */
+    "access_denied": "access_denied"
 };
 
 

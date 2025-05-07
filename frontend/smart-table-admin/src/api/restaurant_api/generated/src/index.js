@@ -15,9 +15,10 @@
 import ApiClient from './ApiClient';
 import AdminV1RestaurantCreateRequest from './model/AdminV1RestaurantCreateRequest';
 import AdminV1RestaurantCreateResponse from './model/AdminV1RestaurantCreateResponse';
+import AdminV1RestaurantDishCreateResponse from './model/AdminV1RestaurantDishCreateResponse';
 import AdminV1RestaurantListResponse from './model/AdminV1RestaurantListResponse';
 import ErrorResponse from './model/ErrorResponse';
-import Restaurant from './model/Restaurant';
+import RestaurantInfo from './model/RestaurantInfo';
 import DefaultApi from './api/DefaultApi';
 
 
@@ -72,6 +73,12 @@ export {
     AdminV1RestaurantCreateResponse,
 
     /**
+     * The AdminV1RestaurantDishCreateResponse model constructor.
+     * @property {module:model/AdminV1RestaurantDishCreateResponse}
+     */
+    AdminV1RestaurantDishCreateResponse,
+
+    /**
      * The AdminV1RestaurantListResponse model constructor.
      * @property {module:model/AdminV1RestaurantListResponse}
      */
@@ -84,10 +91,10 @@ export {
     ErrorResponse,
 
     /**
-     * The Restaurant model constructor.
-     * @property {module:model/Restaurant}
+     * The RestaurantInfo model constructor.
+     * @property {module:model/RestaurantInfo}
      */
-    Restaurant,
+    RestaurantInfo,
 
     /**
     * The DefaultApi service constructor.

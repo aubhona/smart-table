@@ -81,7 +81,7 @@
 }
 
 .rest-item {
-  border: 1px solid #8f8e8e;
+  border: 1px solid #7d7575;
   border-radius: 999px;
   padding: 0.75rem 1rem;
   background: transparent;
@@ -91,11 +91,11 @@
   text-align: center;
   transition: border-color 0.2s;
   background: 0.2s;
+  background-color: #7d7575;
 }
 
 .rest-item:hover {
-  border-color: #1976d2;
-  background: rgba(25, 118, 210, 0.1);
+  background-color: #666060;
 }
 
 .modal-backdrop {

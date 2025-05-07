@@ -9,47 +9,51 @@ export default function RestaurantsList() {
   const [newName, setNewName] = useState("");
 
   const userUuid = localStorage.getItem("user_uuid");
+  const jwtToken = localStorage.getItem("jwt_token");
   const api = new DefaultApi();
-  api.apiClient.basePath = "https://d193-2a12-5940-8a19-00-2.ngrok-free.app";
+  api.apiClient.basePath = "https://2663-2a01-4f9-c010-ecd2-00-1.ngrok-free.app";
 
   useEffect(() => {
-    if (userUuid) {
-      api.adminV1RestaurantListGet(userUuid, (err, data) => {
-        if (err) {
-          console.error("Ошибка получения списка ресторанов:", err);
-        } else {
-          setRestaurants(Array.isArray(data) ? data : []);
-        }
-      });
-    }
+    if (!userUuid) return;
+    api.adminV1RestaurantListGet(userUuid, (err, data) => {
+      if (err) console.error(err);
+      else     setRestaurants(Array.isArray(data) ? data : []);
+    });
   }, [userUuid]);
 
   const handleCreate = async () => {
-    if (!newName.trim()) return alert("Введите название ресторана");
-    
-    const req = AdminV1RestaurantCreateRequest.constructFromObject({
-      name: newName.trim(),
-    });
-
-    const jwt = localStorage.getItem("jwt");
-
-    console.log("jwt: ", jwt);
-
-    if (jwt) {
-      api.apiClient.defaultHeaders['Authorization'] = `Bearer ${jwt}`;
+    const name = newName.trim();
+    if (!name) {
+      alert("Введите название ресторана");
+      return;
     }
 
-    api.adminV1RestaurantCreatePost(userUuid, req, { withCredentials: true })
-    .end((err, response) => {
-      if (err) {
-        alert("Не удалось создать ресторан");
-        console.error(err);
-      } else {
-        setRestaurants((prev) => [...prev, response]);
-        setNewName("");
-        setShowModal(false);
-      }
+    const req = AdminV1RestaurantCreateRequest.constructFromObject({
+      restaurant_name: name,
     });
+
+    try {
+      const created = await new Promise((resolve, reject) => {
+        api.apiClient.defaultHeaders["JWT-Token"] = jwtToken;
+        api.adminV1RestaurantCreatePost(
+          userUuid,
+          req,
+          (err, data) => err ? reject(err) : resolve(data)
+        );
+      });
+
+      const newRest = {
+        restaurant_uuid: created.restaurant_uuid,
+        restaurant_name: name
+      };
+
+      setRestaurants((prev) => [...prev, newRest]);
+      setNewName("");
+      setShowModal(false);
+    } catch (err) {
+      console.error("Не удалось создать ресторан", err);
+      alert(err.message || "Ошибка создания");
+    }
   };
 
   return (
@@ -76,7 +80,7 @@ export default function RestaurantsList() {
               className="rest-item"
               onClick={() => alert("Откроем плейсы")}
             >
-              {r.name}
+              {r.restaurant_name}
             </button>
           ))
         )}

@@ -129,6 +129,7 @@ All URIs are relative to *http://localhost*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *SmartTableMobileApi.DefaultApi* | [**adminV1RestaurantCreatePost**](docs/DefaultApi.md#adminV1RestaurantCreatePost) | **POST** /admin/v1/restaurant/create | Создание ресторана
+*SmartTableMobileApi.DefaultApi* | [**adminV1RestaurantDishCreatePost**](docs/DefaultApi.md#adminV1RestaurantDishCreatePost) | **POST** /admin/v1/restaurant/dish/create | Создание блюда ресторана
 *SmartTableMobileApi.DefaultApi* | [**adminV1RestaurantListGet**](docs/DefaultApi.md#adminV1RestaurantListGet) | **GET** /admin/v1/restaurant/list | Получение списка ресторанов пользователя
 
 
@@ -136,9 +137,10 @@ Class | Method | HTTP request | Description
 
  - [SmartTableMobileApi.AdminV1RestaurantCreateRequest](docs/AdminV1RestaurantCreateRequest.md)
  - [SmartTableMobileApi.AdminV1RestaurantCreateResponse](docs/AdminV1RestaurantCreateResponse.md)
+ - [SmartTableMobileApi.AdminV1RestaurantDishCreateResponse](docs/AdminV1RestaurantDishCreateResponse.md)
  - [SmartTableMobileApi.AdminV1RestaurantListResponse](docs/AdminV1RestaurantListResponse.md)
  - [SmartTableMobileApi.ErrorResponse](docs/ErrorResponse.md)
- - [SmartTableMobileApi.Restaurant](docs/Restaurant.md)
+ - [SmartTableMobileApi.RestaurantInfo](docs/RestaurantInfo.md)
 
 
 ## Documentation for Authorization
