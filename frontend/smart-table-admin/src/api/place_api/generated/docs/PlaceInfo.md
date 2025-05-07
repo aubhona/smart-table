@@ -1,10 +1,10 @@
-# SmartTableMobileApi.AdminV1PlaceCreateRequest
+# SmartTableMobileApi.PlaceInfo
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**restaurantUuid** | **String** | Уникальный идентификатор ресторана | 
+**uuid** | **String** | Уникальный идентификатор плейса | 
 **address** | **String** |  | 
 **tableCount** | **Number** |  | 
 **openingTime** | **String** |  | 

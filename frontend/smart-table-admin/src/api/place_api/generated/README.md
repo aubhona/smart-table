@@ -129,13 +129,17 @@ All URIs are relative to *http://localhost*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *SmartTableMobileApi.DefaultApi* | [**adminV1PlaceCreatePost**](docs/DefaultApi.md#adminV1PlaceCreatePost) | **POST** /admin/v1/place/create | Создание плейса
+*SmartTableMobileApi.DefaultApi* | [**adminV1PlaceListPost**](docs/DefaultApi.md#adminV1PlaceListPost) | **POST** /admin/v1/place/list | Получение списка плейсов пользователя
 
 
 ## Documentation for Models
 
  - [SmartTableMobileApi.AdminV1PlaceCreateRequest](docs/AdminV1PlaceCreateRequest.md)
  - [SmartTableMobileApi.AdminV1PlaceCreateResponse](docs/AdminV1PlaceCreateResponse.md)
+ - [SmartTableMobileApi.AdminV1PlaceListRequest](docs/AdminV1PlaceListRequest.md)
+ - [SmartTableMobileApi.AdminV1PlaceListResponse](docs/AdminV1PlaceListResponse.md)
  - [SmartTableMobileApi.ErrorResponse](docs/ErrorResponse.md)
+ - [SmartTableMobileApi.PlaceInfo](docs/PlaceInfo.md)
 
 
 ## Documentation for Authorization

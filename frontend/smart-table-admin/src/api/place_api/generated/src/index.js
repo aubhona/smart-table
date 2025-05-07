@@ -15,7 +15,10 @@
 import ApiClient from './ApiClient';
 import AdminV1PlaceCreateRequest from './model/AdminV1PlaceCreateRequest';
 import AdminV1PlaceCreateResponse from './model/AdminV1PlaceCreateResponse';
+import AdminV1PlaceListRequest from './model/AdminV1PlaceListRequest';
+import AdminV1PlaceListResponse from './model/AdminV1PlaceListResponse';
 import ErrorResponse from './model/ErrorResponse';
+import PlaceInfo from './model/PlaceInfo';
 import DefaultApi from './api/DefaultApi';
 
 
@@ -70,10 +73,28 @@ export {
     AdminV1PlaceCreateResponse,
 
     /**
+     * The AdminV1PlaceListRequest model constructor.
+     * @property {module:model/AdminV1PlaceListRequest}
+     */
+    AdminV1PlaceListRequest,
+
+    /**
+     * The AdminV1PlaceListResponse model constructor.
+     * @property {module:model/AdminV1PlaceListResponse}
+     */
+    AdminV1PlaceListResponse,
+
+    /**
      * The ErrorResponse model constructor.
      * @property {module:model/ErrorResponse}
      */
     ErrorResponse,
+
+    /**
+     * The PlaceInfo model constructor.
+     * @property {module:model/PlaceInfo}
+     */
+    PlaceInfo,
 
     /**
     * The DefaultApi service constructor.

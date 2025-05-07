@@ -4,6 +4,6 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**restaurantList** | [**[Restaurant]**](Restaurant.md) |  | 
+**restaurantList** | [**[RestaurantInfo]**](RestaurantInfo.md) |  | 
 
 

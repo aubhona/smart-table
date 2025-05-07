@@ -14,23 +14,23 @@
 import ApiClient from '../ApiClient';
 
 /**
- * The AdminV1PlaceCreateRequest model module.
- * @module model/AdminV1PlaceCreateRequest
+ * The PlaceInfo model module.
+ * @module model/PlaceInfo
  * @version 1.0.0
  */
-class AdminV1PlaceCreateRequest {
+class PlaceInfo {
     /**
-     * Constructs a new <code>AdminV1PlaceCreateRequest</code>.
-     * @alias module:model/AdminV1PlaceCreateRequest
-     * @param restaurantUuid {String} Уникальный идентификатор ресторана
+     * Constructs a new <code>PlaceInfo</code>.
+     * @alias module:model/PlaceInfo
+     * @param uuid {String} Уникальный идентификатор плейса
      * @param address {String} 
      * @param tableCount {Number} 
      * @param openingTime {String} 
      * @param closingTime {String} 
      */
-    constructor(restaurantUuid, address, tableCount, openingTime, closingTime) { 
+    constructor(uuid, address, tableCount, openingTime, closingTime) { 
         
-        AdminV1PlaceCreateRequest.initialize(this, restaurantUuid, address, tableCount, openingTime, closingTime);
+        PlaceInfo.initialize(this, uuid, address, tableCount, openingTime, closingTime);
     }
 
     /**
@@ -38,8 +38,8 @@ class AdminV1PlaceCreateRequest {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj, restaurantUuid, address, tableCount, openingTime, closingTime) { 
-        obj['restaurant_uuid'] = restaurantUuid;
+    static initialize(obj, uuid, address, tableCount, openingTime, closingTime) { 
+        obj['uuid'] = uuid;
         obj['address'] = address;
         obj['table_count'] = tableCount;
         obj['opening_time'] = openingTime;
@@ -47,18 +47,18 @@ class AdminV1PlaceCreateRequest {
     }
 
     /**
-     * Constructs a <code>AdminV1PlaceCreateRequest</code> from a plain JavaScript object, optionally creating a new instance.
+     * Constructs a <code>PlaceInfo</code> from a plain JavaScript object, optionally creating a new instance.
      * Copies all relevant properties from <code>data</code> to <code>obj</code> if supplied or a new instance if not.
      * @param {Object} data The plain JavaScript object bearing properties of interest.
-     * @param {module:model/AdminV1PlaceCreateRequest} obj Optional instance to populate.
-     * @return {module:model/AdminV1PlaceCreateRequest} The populated <code>AdminV1PlaceCreateRequest</code> instance.
+     * @param {module:model/PlaceInfo} obj Optional instance to populate.
+     * @return {module:model/PlaceInfo} The populated <code>PlaceInfo</code> instance.
      */
     static constructFromObject(data, obj) {
         if (data) {
-            obj = obj || new AdminV1PlaceCreateRequest();
+            obj = obj || new PlaceInfo();
 
-            if (data.hasOwnProperty('restaurant_uuid')) {
-                obj['restaurant_uuid'] = ApiClient.convertToType(data['restaurant_uuid'], 'String');
+            if (data.hasOwnProperty('uuid')) {
+                obj['uuid'] = ApiClient.convertToType(data['uuid'], 'String');
             }
             if (data.hasOwnProperty('address')) {
                 obj['address'] = ApiClient.convertToType(data['address'], 'String');
@@ -77,20 +77,20 @@ class AdminV1PlaceCreateRequest {
     }
 
     /**
-     * Validates the JSON data with respect to <code>AdminV1PlaceCreateRequest</code>.
+     * Validates the JSON data with respect to <code>PlaceInfo</code>.
      * @param {Object} data The plain JavaScript object bearing properties of interest.
-     * @return {boolean} to indicate whether the JSON data is valid with respect to <code>AdminV1PlaceCreateRequest</code>.
+     * @return {boolean} to indicate whether the JSON data is valid with respect to <code>PlaceInfo</code>.
      */
     static validateJSON(data) {
         // check to make sure all required properties are present in the JSON string
-        for (const property of AdminV1PlaceCreateRequest.RequiredProperties) {
+        for (const property of PlaceInfo.RequiredProperties) {
             if (!data.hasOwnProperty(property)) {
                 throw new Error("The required field `" + property + "` is not found in the JSON data: " + JSON.stringify(data));
             }
         }
         // ensure the json data is a string
-        if (data['restaurant_uuid'] && !(typeof data['restaurant_uuid'] === 'string' || data['restaurant_uuid'] instanceof String)) {
-            throw new Error("Expected the field `restaurant_uuid` to be a primitive type in the JSON string but got " + data['restaurant_uuid']);
+        if (data['uuid'] && !(typeof data['uuid'] === 'string' || data['uuid'] instanceof String)) {
+            throw new Error("Expected the field `uuid` to be a primitive type in the JSON string but got " + data['uuid']);
         }
         // ensure the json data is a string
         if (data['address'] && !(typeof data['address'] === 'string' || data['address'] instanceof String)) {
@@ -111,38 +111,38 @@ class AdminV1PlaceCreateRequest {
 
 }
 
-AdminV1PlaceCreateRequest.RequiredProperties = ["restaurant_uuid", "address", "table_count", "opening_time", "closing_time"];
+PlaceInfo.RequiredProperties = ["uuid", "address", "table_count", "opening_time", "closing_time"];
 
 /**
- * Уникальный идентификатор ресторана
- * @member {String} restaurant_uuid
+ * Уникальный идентификатор плейса
+ * @member {String} uuid
  */
-AdminV1PlaceCreateRequest.prototype['restaurant_uuid'] = undefined;
+PlaceInfo.prototype['uuid'] = undefined;
 
 /**
  * @member {String} address
  */
-AdminV1PlaceCreateRequest.prototype['address'] = undefined;
+PlaceInfo.prototype['address'] = undefined;
 
 /**
  * @member {Number} table_count
  */
-AdminV1PlaceCreateRequest.prototype['table_count'] = undefined;
+PlaceInfo.prototype['table_count'] = undefined;
 
 /**
  * @member {String} opening_time
  */
-AdminV1PlaceCreateRequest.prototype['opening_time'] = undefined;
+PlaceInfo.prototype['opening_time'] = undefined;
 
 /**
  * @member {String} closing_time
  */
-AdminV1PlaceCreateRequest.prototype['closing_time'] = undefined;
+PlaceInfo.prototype['closing_time'] = undefined;
 
 
 
 
 
 
-export default AdminV1PlaceCreateRequest;
+export default PlaceInfo;
 
