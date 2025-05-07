@@ -9,10 +9,9 @@ paths:
         post:
             summary: Создание ресторана
             description: Создание ресторана
-            security:
-                - CookieAuth: []
             parameters:
                 - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
             requestBody:
                 required: true
                 content:
@@ -49,10 +48,9 @@ paths:
         get:
             summary: Получение списка ресторанов пользователя
             description: Получение списка ресторанов пользователя
-            security:
-                - CookieAuth: []
             parameters:
                 - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
             responses:
                 '200':
                     description: Список ресторанов пользователя
@@ -77,10 +75,9 @@ paths:
         post:
             summary: Создание блюда ресторана
             description: Создание блюда ресторана
-            security:
-                - CookieAuth: [ ]
             parameters:
                 - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
             requestBody:
                 required: true
                 content:
@@ -123,12 +120,6 @@ paths:
                                 $ref: '#/components/schemas/ErrorResponse'
 
 components:
-    securitySchemes:
-        CookieAuth:
-            name: jwt
-            type: apiKey
-            in: cookie
-        
     parameters:
         user_uuid:
             in: header
@@ -138,6 +129,14 @@ components:
             schema:
                 type: string
                 format: uuid
+
+        jwt_token:
+            in: header
+            name: JWT-Token
+            description: jwt токен пользователя
+            required: true
+            schema:
+                type: string
 
     schemas:
         # /admin/v1/restaurant/create_POST
