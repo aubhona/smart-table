@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS smart_table_admin.restaurants (
      "updated_at" TIMESTAMPTZ NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS smart_table_admin.staff (
+CREATE TABLE IF NOT EXISTS smart_table_admin.employees (
    "user_uuid" UUID PRIMARY KEY NOT NULL,
    "place_uuid" UUID NOT NULL,
    "role" TEXT NOT NULL,
@@ -76,16 +76,16 @@ ALTER TABLE smart_table_admin.menu_dishes DROP CONSTRAINT IF EXISTS fk_menu_dish
 ALTER TABLE smart_table_admin.menu_dishes DROP CONSTRAINT IF EXISTS fk_menu_places;
 ALTER TABLE smart_table_admin.places DROP CONSTRAINT IF EXISTS fk_places_restaurants;
 ALTER TABLE smart_table_admin.restaurants DROP CONSTRAINT IF EXISTS fk_restaurants_users;
-ALTER TABLE smart_table_admin.staff DROP CONSTRAINT IF EXISTS fk_staff_users;
-ALTER TABLE smart_table_admin.staff DROP CONSTRAINT IF EXISTS fk_staff_places;
+ALTER TABLE smart_table_admin.employees DROP CONSTRAINT IF EXISTS fk_employees_users;
+ALTER TABLE smart_table_admin.employees DROP CONSTRAINT IF EXISTS fk_employees_places;
 
 ALTER TABLE smart_table_admin.dishes ADD CONSTRAINT fk_dishes_restaurants FOREIGN KEY ("restaurant_uuid") REFERENCES smart_table_admin.restaurants ("uuid");
 ALTER TABLE smart_table_admin.menu_dishes ADD CONSTRAINT fk_menu_dishes FOREIGN KEY ("dish_uuid") REFERENCES smart_table_admin.dishes ("uuid");
 ALTER TABLE smart_table_admin.menu_dishes ADD CONSTRAINT fk_menu_places FOREIGN KEY ("place_uuid") REFERENCES smart_table_admin.places ("uuid");
 ALTER TABLE smart_table_admin.places ADD CONSTRAINT fk_places_restaurants FOREIGN KEY ("restaurant_uuid") REFERENCES smart_table_admin.restaurants ("uuid");
 ALTER TABLE smart_table_admin.restaurants ADD CONSTRAINT fk_restaurants_users FOREIGN KEY ("owner_uuid") REFERENCES smart_table_admin.users ("uuid");
-ALTER TABLE smart_table_admin.staff ADD CONSTRAINT fk_staff_users FOREIGN KEY ("user_uuid") REFERENCES smart_table_admin.users ("uuid");
-ALTER TABLE smart_table_admin.staff ADD CONSTRAINT fk_staff_places FOREIGN KEY ("place_uuid") REFERENCES smart_table_admin.places ("uuid");
+ALTER TABLE smart_table_admin.employees ADD CONSTRAINT fk_employees_users FOREIGN KEY ("user_uuid") REFERENCES smart_table_admin.users ("uuid");
+ALTER TABLE smart_table_admin.employees ADD CONSTRAINT fk_employees_places FOREIGN KEY ("place_uuid") REFERENCES smart_table_admin.places ("uuid");
 
 COMMIT;
 -- +goose StatementEnd

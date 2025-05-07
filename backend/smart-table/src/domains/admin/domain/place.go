@@ -12,6 +12,7 @@ import (
 type Place struct {
 	uuid        uuid.UUID
 	restaurant  utils.SharedRef[Restaurant]
+	employees   []utils.SharedRef[Employee]
 	address     string
 	tableCount  int
 	openingTime time.Time
@@ -53,6 +54,7 @@ func NewPlace(
 func RestorePlace(
 	id uuid.UUID,
 	restaurant utils.SharedRef[Restaurant],
+	employees []utils.SharedRef[Employee],
 	address string,
 	tableCount int,
 	openingTime,
@@ -63,6 +65,7 @@ func RestorePlace(
 	place := Place{
 		uuid:        id,
 		restaurant:  restaurant,
+		employees:   employees,
 		address:     address,
 		tableCount:  tableCount,
 		openingTime: openingTime,
@@ -76,8 +79,17 @@ func RestorePlace(
 	return placeRef
 }
 
+func (p *Place) AddEmployee(
+	user utils.SharedRef[User],
+	role string,
+) {
+	employee := NewEmployee(user, p.uuid, role)
+	p.employees = append(p.employees, employee)
+}
+
 func (p *Place) GetUUID() uuid.UUID                         { return p.uuid }
 func (p *Place) GetRestaurant() utils.SharedRef[Restaurant] { return p.restaurant }
+func (p *Place) GetEmployees() []utils.SharedRef[Employee]  { return p.employees }
 func (p *Place) GetAddress() string                         { return p.address }
 func (p *Place) GetTableCount() int                         { return p.tableCount }
 func (p *Place) GetOpeningTime() time.Time                  { return p.openingTime }

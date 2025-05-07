@@ -6,11 +6,11 @@ import (
 	"github.com/google/uuid"
 )
 
-type PlaceAddressExists struct {
+type PlaceAddressAlreadyExists struct {
 	Address        string
 	RestaurantUUID uuid.UUID
 }
 
-func (e PlaceAddressExists) Error() string {
+func (e PlaceAddressAlreadyExists) Error() string {
 	return fmt.Sprintf("Place with address '%s' already exists, restaurant_uuid='%s'", e.Address, e.RestaurantUUID)
 }

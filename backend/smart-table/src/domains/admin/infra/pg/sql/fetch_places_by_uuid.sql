@@ -24,6 +24,23 @@
         )
         FROM smart_table_admin.restaurants r
         WHERE r.uuid = p.restaurant_uuid
+    ),
+    'employees', (
+        SELECT COALESCE(
+            jsonb_agg(
+                jsonb_build_object(
+                    'employee', to_jsonb(e),
+                    'user', (
+                        SELECT to_jsonb(u)
+                        FROM smart_table_admin.users u
+                        WHERE u.uuid = e.user_uuid
+                    )
+                )
+            ),
+            '[]'::jsonb
+        )
+        FROM smart_table_admin.employees e
+        WHERE e.place_uuid = p.uuid
     )
 ) AS place_data
 FROM smart_table_admin.places p

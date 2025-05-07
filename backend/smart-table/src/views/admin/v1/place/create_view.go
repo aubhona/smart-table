@@ -64,7 +64,7 @@ func (h *AdminV1PlaceHandler) PostAdminV1PlaceCreate(
 				Code:    viewsAdminPlace.AccessDenied,
 				Message: err.Error(),
 			}, nil
-		case utils.IsTheSameErrorType[appErrors.PlaceAddressExists](err):
+		case utils.IsTheSameErrorType[appErrors.PlaceAddressAlreadyExists](err):
 			return viewsAdminPlace.PostAdminV1PlaceCreate403JSONResponse{
 				Code:    viewsAdminPlace.AlreadyExist,
 				Message: err.Error(),

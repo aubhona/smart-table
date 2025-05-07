@@ -11,6 +11,7 @@ type PlaceRepository interface {
 	Rollback(tx Transaction) error
 
 	Save(tx Transaction, place utils.SharedRef[Place]) error
+	Update(tx Transaction, place utils.SharedRef[Place]) error
 
 	FindPlace(uuid uuid.UUID) (utils.SharedRef[Place], error)
 	FindPlaces(uuids []uuid.UUID) ([]utils.SharedRef[Place], error)

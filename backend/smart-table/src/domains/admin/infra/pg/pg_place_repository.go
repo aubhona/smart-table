@@ -58,6 +58,19 @@ func (p *PlaceRepository) Save(tx domain.Transaction, place utils.SharedRef[doma
 	return err
 }
 
+func (p *PlaceRepository) Update(tx domain.Transaction, place utils.SharedRef[domain.Place]) error {
+	ctx := context.Background()
+	trx := tx.(*pgTx)
+	queries := db.New(p.coonPool).WithTx(trx.tx)
+
+	pgEmployees, err := mapper.ConvertToPgEmployees(place.Get().GetEmployees())
+	if err != nil {
+		return err
+	}
+
+	return queries.UpsertEmployees(ctx, pgEmployees)
+}
+
 func (p *PlaceRepository) FindPlace(id uuid.UUID) (utils.SharedRef[domain.Place], error) {
 	places, err := p.FindPlaces([]uuid.UUID{id})
 	if err != nil {

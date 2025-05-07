@@ -60,7 +60,7 @@ func (handler *PlaceCreateCommandHandler) Handle(
 			zap.String("address", placeCreateCommand.Address),
 			zap.String("restaurant_uuid", placeCreateCommand.RestaurantUUID.String()))
 
-		return PlaceCreateCommandHandlerResult{}, appErrors.PlaceAddressExists{
+		return PlaceCreateCommandHandlerResult{}, appErrors.PlaceAddressAlreadyExists{
 			Address:        placeCreateCommand.Address,
 			RestaurantUUID: placeCreateCommand.RestaurantUUID,
 		}

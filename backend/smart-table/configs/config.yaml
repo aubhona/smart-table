@@ -19,7 +19,7 @@ app:
         allow_headers:
             - Authorization
             - User-Uuid
-            - Set-Cookie
+            - JWT-Token
             - content-type
         allow_credentials: true
     max_input_file_size_mb: 1000
