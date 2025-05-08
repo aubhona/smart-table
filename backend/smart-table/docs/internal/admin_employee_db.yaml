@@ -12,6 +12,10 @@ components:
                     format: uuid
                 role:
                     type: string
+                    description: Роль сотрудника
+                    enum: 
+                        - admin
+                        - waiter
                 active:
                     type: boolean
                 created_at:

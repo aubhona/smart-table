@@ -45,6 +45,11 @@ func (h *AdminV1PlaceHandler) PostAdminV1PlaceEmployeeAdd(
 				Code:    viewsAdminPlace.UserNotFound,
 				Message: err.Error(),
 			}, nil
+		case utils.IsTheSameErrorType[appErrors.EmployeeAlreadyExists](err):
+			return viewsAdminPlace.PostAdminV1PlaceEmployeeAdd403JSONResponse{
+				Code:    viewsAdminPlace.AlreadyExist,
+				Message: err.Error(),
+			}, nil
 		}
 
 		logging.GetLogger().Error(fmt.Sprintf("Error while getting result from command handler: %v", err))
