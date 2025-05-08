@@ -2,18 +2,21 @@ package smarttable_test
 
 import (
 	"errors"
+	"net/http"
 	"testing"
 
 	"github.com/google/uuid"
-	viewsAdmin "github.com/smart-table/src/views/admin/v1/place"
-	viewsCodegenAdmin "github.com/smart-table/src/views/codegen/admin_place"
+	viewsCodegenAdminPlace "github.com/smart-table/src/views/codegen/admin_place"
 	"github.com/stretchr/testify/assert"
 )
 
-func CreateDefaultPlace(userUUID, restaurantUUID uuid.UUID) (uuid.UUID, error) {
+var viewsCodegenAdminPlaceClient, _ = viewsCodegenAdminPlace.NewClientWithResponses(GetBasePath())
+
+func CreateDefaultPlace(token string, userUUID, restaurantUUID uuid.UUID) (uuid.UUID, error) {
 	return CreatePlace(
 		userUUID,
 		restaurantUUID,
+		token,
 		"testAddress",
 		"12:00",
 		"13:00",
@@ -21,31 +24,31 @@ func CreateDefaultPlace(userUUID, restaurantUUID uuid.UUID) (uuid.UUID, error) {
 	)
 }
 
-func CreatePlace(userUUID, restaurantUUID uuid.UUID, address, openingTime, closingTime string, tableCount int) (uuid.UUID, error) {
-	handler := viewsAdmin.AdminV1PlaceHandler{}
-	response, err := handler.PostAdminV1PlaceCreate(GetCtx(), viewsCodegenAdmin.PostAdminV1PlaceCreateRequestObject{
-		Params: viewsCodegenAdmin.PostAdminV1PlaceCreateParams{
+func CreatePlace(userUUID, restaurantUUID uuid.UUID, token, address, openingTime, closingTime string, tableCount int) (uuid.UUID, error) {
+	response, err := viewsCodegenAdminPlaceClient.PostAdminV1PlaceCreateWithResponse(
+		GetCtx(),
+		&viewsCodegenAdminPlace.PostAdminV1PlaceCreateParams{
 			UserUUID: userUUID,
+			JWTToken: token,
 		},
-		Body: &viewsCodegenAdmin.AdminV1PlaceCreateRequest{
+		viewsCodegenAdminPlace.PostAdminV1PlaceCreateJSONRequestBody{
 			RestaurantUUID: restaurantUUID,
 			Address:        address,
 			TableCount:     tableCount,
 			OpeningTime:    openingTime,
 			ClosingTime:    closingTime,
 		},
-	})
+	)
 
 	if err != nil {
 		return uuid.Nil, err
 	}
 
-	responseObj, ok := response.(viewsCodegenAdmin.PostAdminV1PlaceCreate200JSONResponse)
-	if !ok {
-		return uuid.Nil, errors.New("response is not a PosPostAdminV1PlaceCreate200JSONResponsetAdminV1UserSignUp200JSONResponse")
+	if response.JSON200 == nil || response.StatusCode() != http.StatusOK {
+		return uuid.Nil, errors.New("response is not a 200")
 	}
 
-	return responseObj.PlaceUUID, nil
+	return response.JSON200.PlaceUUID, nil
 }
 
 func TestAdminPlaceCreateHappyPath(t *testing.T) {
@@ -53,30 +56,28 @@ func TestAdminPlaceCreateHappyPath(t *testing.T) {
 	defer GetTestMutex().Unlock()
 	defer CleanTest()
 
-	userUUID, err := CreateDefaultUser()
+	userUUID, token, err := CreateDefaultUser()
 	assert.Nil(t, err)
 
-	restaurantUUID, err := CreateDefaultRestaurant(userUUID)
+	restaurantUUID, err := CreateDefaultRestaurant(token, userUUID)
 	assert.Nil(t, err)
 
-	handler := viewsAdmin.AdminV1PlaceHandler{}
-
-	response, err := handler.PostAdminV1PlaceCreate(GetCtx(), viewsCodegenAdmin.PostAdminV1PlaceCreateRequestObject{
-		Params: viewsCodegenAdmin.PostAdminV1PlaceCreateParams{
+	response, err := viewsCodegenAdminPlaceClient.PostAdminV1PlaceCreateWithResponse(
+		GetCtx(),
+		&viewsCodegenAdminPlace.PostAdminV1PlaceCreateParams{
 			UserUUID: userUUID,
+			JWTToken: token,
 		},
-		Body: &viewsCodegenAdmin.AdminV1PlaceCreateRequest{
+		viewsCodegenAdminPlace.PostAdminV1PlaceCreateJSONRequestBody{
 			RestaurantUUID: restaurantUUID,
 			Address:        "testAddress",
 			TableCount:     1,
 			OpeningTime:    "13:00",
 			ClosingTime:    "14:00",
 		},
-	})
+	)
 
 	assert.NoError(t, err)
-	assert.NotNil(t, response)
-
-	_, ok := response.(viewsCodegenAdmin.PostAdminV1PlaceCreate200JSONResponse)
-	assert.True(t, ok)
+	assert.Equal(t, http.StatusOK, response.StatusCode())
+	assert.NotNil(t, response.JSON200)
 }

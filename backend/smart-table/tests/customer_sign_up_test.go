@@ -1,15 +1,9 @@
 package smarttable_test
 
 import (
-	"context"
 	"encoding/json"
 	"strconv"
 
-	"github.com/smart-table/src/utils"
-
-	views "github.com/smart-table/src/views/bot"
-	"github.com/smart-table/tests/mocks"
-	"github.com/stretchr/testify/mock"
 	"gopkg.in/telebot.v4"
 
 	"testing"
@@ -22,7 +16,7 @@ import (
 func FindCustomerByTgID(tgID string) (defsInternalCustomerDb.PgCustomer, error) {
 	customer := defsInternalCustomerDb.PgCustomer{}
 
-	customerJSON, err := GetCustomerQueries().FetchCustomerByTgId(context.Background(), tgID)
+	customerJSON, err := GetCustomerQueries().FetchCustomerByTgId(GetCtx(), tgID)
 	if err != nil {
 		return customer, err
 	}
@@ -41,23 +35,18 @@ func CreateCustomer(tgLogin string, tgID, chatID int64) (uuid.UUID, error) {
 		ID: chatID,
 	}
 
-	handler := views.BotUpdatesHandler{}
-	mockContext := new(mocks.Context)
+	bot.ProcessUpdate(telebot.Update{
+		Message: &telebot.Message{
+			Text:   "/start",
+			Chat:   chat,
+			Sender: user,
+		},
+	})
 
-	mockContext.On("Text", mock.Anything, mock.Anything).Return("/start")
-	mockContext.On("Sender", mock.Anything, mock.Anything).Return(user)
-	mockContext.On("Chat", mock.Anything, mock.Anything).Return(chat)
-	mockContext.On("Send", mock.Anything, mock.Anything).Return(nil)
-	mockContext.On("Get", utils.DiContainerName).Return(GetContainer())
-	mockContext.On("Get", utils.DependenciesName).Return(GetDeps())
-
-	err := handler.HandleOnTextUpdates(mockContext)
-
+	customerPg, err := FindCustomerByTgID(strconv.FormatInt(tgID, 10))
 	if err != nil {
 		return uuid.Nil, err
 	}
-
-	customerPg, err := FindCustomerByTgID(strconv.FormatInt(tgID, 10))
 
 	return customerPg.UUID, err
 }
@@ -72,27 +61,21 @@ func TestCustomerRegisterHappyPath(t *testing.T) {
 		Username: "test_login",
 	}
 	chat := &telebot.Chat{
-		ID: 123,
+		ID: 1169524813,
 	}
 
-	handler := views.BotUpdatesHandler{}
-
-	mockContext := new(mocks.Context)
-
-	mockContext.On("Text", mock.Anything).Return("/start")
-	mockContext.On("Sender", mock.Anything).Return(user)
-	mockContext.On("Chat", mock.Anything).Return(chat)
-	mockContext.On("Get", utils.DiContainerName).Return(GetContainer())
-	mockContext.On("Get", utils.DependenciesName).Return(GetDeps())
-	mockContext.On("Send", mock.Anything, mock.Anything).Return(nil)
-
-	err := handler.HandleOnTextUpdates(mockContext)
-	assert.NoError(t, err)
+	bot.ProcessUpdate(telebot.Update{
+		Message: &telebot.Message{
+			Text:   "/start",
+			Chat:   chat,
+			Sender: user,
+		},
+	})
 
 	customerPg, err := FindCustomerByTgID("123")
 	assert.NoError(t, err)
 
 	assert.Equal(t, "test_login", customerPg.TgLogin)
 	assert.Equal(t, "123", customerPg.TgID)
-	assert.Equal(t, "123", customerPg.ChatID)
+	assert.Equal(t, "1169524813", customerPg.ChatID)
 }

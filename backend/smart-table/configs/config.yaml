@@ -3,7 +3,7 @@ app:
     env: development
     admin:
         jwt:
-            enable: false
+            enable: true
             secret_key: APP_ADMIN_JWT_SECRET_KEY
             expiration: 24h
     cors:
@@ -50,11 +50,14 @@ logging:
     server:
         request_sym_limit: 100
         response_sym_limit: 100
+    bot:
+        enable: false
 
 bot:
     token: BOT_TOKEN
     poller_timeout: 10s
     web_app_url: https://5910-213-183-51-117.ngrok-free.app
+    test_mode: false
 
 s3:
     access_key: S3_ACCESS_KEY

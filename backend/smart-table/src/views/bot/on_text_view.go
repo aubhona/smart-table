@@ -40,7 +40,9 @@ func (b *BotUpdatesHandler) HandleOnTextUpdates(context telebot.Context) error {
 		TgLogin: context.Sender().Username,
 		ChatID:  strconv.FormatInt(context.Chat().ID, 10),
 	})
-	if err != nil && !utils.IsTheSameErrorType[appErrors.CustomerAlreadyExist](err) {
+	if err != nil && !utils.IsTheSameErrorType[*appErrors.CustomerAlreadyExist](err) {
+		logging.GetLogger().Error(fmt.Sprintf("Error while handling customer register: %v", err))
+
 		ctxErr := context.Send(presentation.UnknownError)
 		if ctxErr != nil {
 			return ctxErr
