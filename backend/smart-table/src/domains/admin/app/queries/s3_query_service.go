@@ -39,6 +39,8 @@ func (s *S3QueryService) GetImage(imageKey string) (io.ReadCloser, error) {
 	ctx := context.Background()
 	object, err := s.client.GetObject(ctx, s.bucket, imageKey, minio.GetObjectOptions{})
 
+	logging.GetLogger().Debug(fmt.Sprintf("get image for key = %s", imageKey), zap.Any("info", object))
+
 	if err != nil {
 		return nil, err
 	}

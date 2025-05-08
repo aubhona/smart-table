@@ -15,6 +15,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func CreateDefaultRestaurantDish(
+	restaurantUUID uuid.UUID,
+	userUUID uuid.UUID,
+	token string,
+) (uuid.UUID, error) {
+	dishFile, err := os.Open("data/dish.png")
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	return CreateRestaurantDish(restaurantUUID, "test_dish", "some_desc", "some_cat", 100, 100,
+		"dish_file_name", dishFile, userUUID, token)
+}
+
 func CreateRestaurantDish(
 	restaurantUUID uuid.UUID,
 	name, description, category string,
