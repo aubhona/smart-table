@@ -67,17 +67,11 @@ components:
                     description: Логин пользователя в Telegram
                     $ref: '#/components/schemas/Login'
                 first_name:
-                    type: string
                     description: Имя пользователя на латинице
-                    minLength: 1
-                    maxLength: 50
-                    pattern: "^[A-Za-z \\-]+$"
+                    $ref: '#/components/schemas/Name'
                 last_name:
-                    type: string
                     description: Фамилия пользователя на латинице
-                    minLength: 1
-                    maxLength: 50
-                    pattern: "^[A-Za-z \\-]+$"
+                    $ref: '#/components/schemas/Name'
                 password: 
                     $ref: '#/components/schemas/Password'
             required:
@@ -161,3 +155,9 @@ components:
             minLength: 8
             maxLength: 24
             pattern: "^[A-Za-z0-9!@#\\$\\^%&*()_+=\\-]+$"
+        
+        Name:
+            type: string
+            minLength: 1
+            maxLength: 50
+            pattern: "^[A-Za-z \\-]+$"
