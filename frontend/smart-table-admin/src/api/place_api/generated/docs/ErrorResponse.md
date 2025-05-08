@@ -26,6 +26,8 @@ Name | Type | Description | Notes
 
 * `restaurant_not_found` (value: `"restaurant_not_found"`)
 
+* `place_not_found` (value: `"place_not_found"`)
+
 
 
 

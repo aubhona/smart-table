@@ -50,15 +50,20 @@ export default class DefaultApi {
      * Создание ресторана
      * Создание ресторана
      * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
      * @param {module:model/AdminV1RestaurantCreateRequest} adminV1RestaurantCreateRequest 
      * @param {module:api/DefaultApi~adminV1RestaurantCreatePostCallback} callback The callback function, accepting three arguments: error, data, response
      * data is of type: {@link module:model/AdminV1RestaurantCreateResponse}
      */
-    adminV1RestaurantCreatePost(userUUID, adminV1RestaurantCreateRequest, callback) {
+    adminV1RestaurantCreatePost(userUUID, jWTToken, adminV1RestaurantCreateRequest, callback) {
       let postBody = adminV1RestaurantCreateRequest;
       // verify the required parameter 'userUUID' is set
       if (userUUID === undefined || userUUID === null) {
         throw new Error("Missing the required parameter 'userUUID' when calling adminV1RestaurantCreatePost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1RestaurantCreatePost");
       }
       // verify the required parameter 'adminV1RestaurantCreateRequest' is set
       if (adminV1RestaurantCreateRequest === undefined || adminV1RestaurantCreateRequest === null) {
@@ -70,12 +75,13 @@ export default class DefaultApi {
       let queryParams = {
       };
       let headerParams = {
-        'User-UUID': userUUID
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
       };
       let formParams = {
       };
 
-      let authNames = ['CookieAuth'];
+      let authNames = [];
       let contentTypes = ['application/json'];
       let accepts = ['application/json'];
       let returnType = AdminV1RestaurantCreateResponse;
@@ -98,6 +104,7 @@ export default class DefaultApi {
      * Создание блюда ресторана
      * Создание блюда ресторана
      * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
      * @param {String} restaurantUuid Уникальный идентификатор ресторана
      * @param {String} dishName 
      * @param {String} description 
@@ -108,11 +115,15 @@ export default class DefaultApi {
      * @param {module:api/DefaultApi~adminV1RestaurantDishCreatePostCallback} callback The callback function, accepting three arguments: error, data, response
      * data is of type: {@link module:model/AdminV1RestaurantDishCreateResponse}
      */
-    adminV1RestaurantDishCreatePost(userUUID, restaurantUuid, dishName, description, category, calories, weight, dishPictureFile, callback) {
+    adminV1RestaurantDishCreatePost(userUUID, jWTToken, restaurantUuid, dishName, description, category, calories, weight, dishPictureFile, callback) {
       let postBody = null;
       // verify the required parameter 'userUUID' is set
       if (userUUID === undefined || userUUID === null) {
         throw new Error("Missing the required parameter 'userUUID' when calling adminV1RestaurantDishCreatePost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1RestaurantDishCreatePost");
       }
       // verify the required parameter 'restaurantUuid' is set
       if (restaurantUuid === undefined || restaurantUuid === null) {
@@ -148,7 +159,8 @@ export default class DefaultApi {
       let queryParams = {
       };
       let headerParams = {
-        'User-UUID': userUUID
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
       };
       let formParams = {
         'restaurant_uuid': restaurantUuid,
@@ -160,7 +172,7 @@ export default class DefaultApi {
         'dish_picture_file': dishPictureFile
       };
 
-      let authNames = ['CookieAuth'];
+      let authNames = [];
       let contentTypes = ['multipart/form-data'];
       let accepts = ['application/json'];
       let returnType = AdminV1RestaurantDishCreateResponse;
@@ -183,14 +195,19 @@ export default class DefaultApi {
      * Получение списка ресторанов пользователя
      * Получение списка ресторанов пользователя
      * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
      * @param {module:api/DefaultApi~adminV1RestaurantListGetCallback} callback The callback function, accepting three arguments: error, data, response
      * data is of type: {@link module:model/AdminV1RestaurantListResponse}
      */
-    adminV1RestaurantListGet(userUUID, callback) {
+    adminV1RestaurantListGet(userUUID, jWTToken, callback) {
       let postBody = null;
       // verify the required parameter 'userUUID' is set
       if (userUUID === undefined || userUUID === null) {
         throw new Error("Missing the required parameter 'userUUID' when calling adminV1RestaurantListGet");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1RestaurantListGet");
       }
 
       let pathParams = {
@@ -198,12 +215,13 @@ export default class DefaultApi {
       let queryParams = {
       };
       let headerParams = {
-        'User-UUID': userUUID
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
       };
       let formParams = {
       };
 
-      let authNames = ['CookieAuth'];
+      let authNames = [];
       let contentTypes = [];
       let accepts = ['application/json'];
       let returnType = AdminV1RestaurantListResponse;

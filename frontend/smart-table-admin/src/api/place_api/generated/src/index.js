@@ -17,6 +17,7 @@ import AdminV1PlaceCreateRequest from './model/AdminV1PlaceCreateRequest';
 import AdminV1PlaceCreateResponse from './model/AdminV1PlaceCreateResponse';
 import AdminV1PlaceListRequest from './model/AdminV1PlaceListRequest';
 import AdminV1PlaceListResponse from './model/AdminV1PlaceListResponse';
+import AdminV1StaffAddRequest from './model/AdminV1StaffAddRequest';
 import ErrorResponse from './model/ErrorResponse';
 import PlaceInfo from './model/PlaceInfo';
 import DefaultApi from './api/DefaultApi';
@@ -83,6 +84,12 @@ export {
      * @property {module:model/AdminV1PlaceListResponse}
      */
     AdminV1PlaceListResponse,
+
+    /**
+     * The AdminV1StaffAddRequest model constructor.
+     * @property {module:model/AdminV1StaffAddRequest}
+     */
+    AdminV1StaffAddRequest,
 
     /**
      * The ErrorResponse model constructor.
