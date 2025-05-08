@@ -32,7 +32,7 @@ func (h *AdminV1RestaurantHandler) PostAdminV1RestaurantCreate(
 				Code:    viewsAdminRestaurant.UserNotFound,
 				Message: err.Error(),
 			}, nil
-		} else if utils.IsTheSameErrorType[appErrors.RestaurantNameExists](err) {
+		} else if utils.IsTheSameErrorType[appErrors.RestaurantNameAlreadyExists](err) {
 			return viewsAdminRestaurant.PostAdminV1RestaurantCreate403JSONResponse{
 				Code:    viewsAdminRestaurant.AlreadyExist,
 				Message: err.Error(),

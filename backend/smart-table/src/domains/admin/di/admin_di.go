@@ -11,7 +11,7 @@ import (
 	"go.uber.org/dig"
 )
 
-func AddDeps(container *dig.Container) error {
+func addRepositories(container *dig.Container) error {
 	err := container.Provide(func(deps *dependencies.Dependencies) domain.UserRepository {
 		return pg.NewUserRepository(deps.DBConnPool)
 	})
@@ -33,6 +33,15 @@ func AddDeps(container *dig.Container) error {
 		return err
 	}
 
+	return nil
+}
+
+func addServices(container *dig.Container) error {
+	err := container.Provide(appQueries.NewS3QueryService)
+	if err != nil {
+		return err
+	}
+
 	err = container.Provide(appServices.NewHashService)
 	if err != nil {
 		return err
@@ -43,12 +52,11 @@ func AddDeps(container *dig.Container) error {
 		return err
 	}
 
-	err = container.Provide(domainServices.NewUUIDGenerator)
-	if err != nil {
-		return err
-	}
+	return nil
+}
 
-	err = container.Provide(app.NewUserSingUpCommandHandler)
+func addHandlers(container *dig.Container) error {
+	err := container.Provide(app.NewUserSingUpCommandHandler)
 	if err != nil {
 		return err
 	}
@@ -78,12 +86,36 @@ func AddDeps(container *dig.Container) error {
 		return err
 	}
 
-	err = container.Provide(appQueries.NewS3QueryService)
+	err = container.Provide(app.NewDishCreateCommandHandler)
 	if err != nil {
 		return err
 	}
 
-	err = container.Provide(app.NewDishCreateCommandHandler)
+	err = container.Provide(app.NewEmployeeAddCommandHandler)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func AddDeps(container *dig.Container) error {
+	err := container.Provide(domainServices.NewUUIDGenerator)
+	if err != nil {
+		return err
+	}
+
+	err = addRepositories(container)
+	if err != nil {
+		return err
+	}
+
+	err = addServices(container)
+	if err != nil {
+		return err
+	}
+
+	err = addHandlers(container)
 	if err != nil {
 		return err
 	}

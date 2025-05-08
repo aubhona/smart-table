@@ -29,7 +29,7 @@ func (h *AdminV1UserHandler) PostAdminV1UserSignIn(
 	if err != nil {
 		if utils.IsTheSameErrorType[domainErrors.UserNotFoundByLogin](err) {
 			return viewsAdminUser.PostAdminV1UserSignIn403JSONResponse{
-				Code:    viewsAdminUser.NotFound,
+				Code:    viewsAdminUser.UserNotFound,
 				Message: err.Error(),
 			}, nil
 		} else if utils.IsTheSameErrorType[appErrors.IncorrectPassword](err) {

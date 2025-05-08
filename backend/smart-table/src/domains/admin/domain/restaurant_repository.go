@@ -13,11 +13,11 @@ type RestaurantRepository interface {
 	Save(tx Transaction, restaurant utils.SharedRef[Restaurant]) error
 	Update(tx Transaction, restaurant utils.SharedRef[Restaurant]) error
 
-	FindRestaurantForUpdate(tx Transaction, uuid uuid.UUID) (utils.SharedRef[Restaurant], error)
-	FindRestaurantsForUpdate(tx Transaction, uuids []uuid.UUID) ([]utils.SharedRef[Restaurant], error)
-
 	FindRestaurant(uuid uuid.UUID) (utils.SharedRef[Restaurant], error)
 	FindRestaurants(uuids []uuid.UUID) ([]utils.SharedRef[Restaurant], error)
+
+	FindRestaurantForUpdate(tx Transaction, uuid uuid.UUID) (utils.SharedRef[Restaurant], error)
+	FindRestaurantsForUpdate(tx Transaction, uuids []uuid.UUID) ([]utils.SharedRef[Restaurant], error)
 
 	FindRestaurantByName(name string) (utils.SharedRef[Restaurant], error)
 	FindRestaurantsByOwnerUUID(ownerUUID uuid.UUID) ([]utils.SharedRef[Restaurant], error)

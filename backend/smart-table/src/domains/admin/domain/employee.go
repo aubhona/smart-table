@@ -8,7 +8,7 @@ import (
 )
 
 type Employee struct {
-	userUUID  uuid.UUID
+	user      utils.SharedRef[User]
 	placeUUID uuid.UUID
 	role      string
 	active    bool
@@ -17,23 +17,26 @@ type Employee struct {
 }
 
 func NewEmployee(
-	userUUID uuid.UUID,
+	user utils.SharedRef[User],
 	placeUUID uuid.UUID,
 	role string,
-	active bool,
 ) utils.SharedRef[Employee] {
-	return RestoreEmployee(
-		userUUID,
-		placeUUID,
-		role,
-		active,
-		time.Now(),
-		time.Now(),
-	)
+	employee := Employee{
+		user:      user,
+		placeUUID: placeUUID,
+		role:      role,
+		active:    true,
+		createdAt: time.Now(),
+		updatedAt: time.Now(),
+	}
+
+	employeeRef, _ := utils.NewSharedRef(&employee)
+
+	return employeeRef
 }
 
 func RestoreEmployee(
-	userUUID uuid.UUID,
+	user utils.SharedRef[User],
 	placeUUID uuid.UUID,
 	role string,
 	active bool,
@@ -41,7 +44,7 @@ func RestoreEmployee(
 	updatedAt time.Time,
 ) utils.SharedRef[Employee] {
 	employee := Employee{
-		userUUID:  userUUID,
+		user:      user,
 		placeUUID: placeUUID,
 		role:      role,
 		active:    active,
@@ -54,9 +57,9 @@ func RestoreEmployee(
 	return employeeRef
 }
 
-func (e *Employee) GetUserUUID() uuid.UUID  { return e.userUUID }
-func (e *Employee) GetPlaceUUID() uuid.UUID { return e.placeUUID }
-func (e *Employee) GetRole() string         { return e.role }
-func (e *Employee) GetActive() bool         { return e.active }
-func (e *Employee) GetCreatedAt() time.Time { return e.createdAt }
-func (e *Employee) GetUpdatedAt() time.Time { return e.updatedAt }
+func (e *Employee) GetUser() utils.SharedRef[User] { return e.user }
+func (e *Employee) GetPlaceUUID() uuid.UUID        { return e.placeUUID }
+func (e *Employee) GetRole() string                { return e.role }
+func (e *Employee) GetActive() bool                { return e.active }
+func (e *Employee) GetCreatedAt() time.Time        { return e.createdAt }
+func (e *Employee) GetUpdatedAt() time.Time        { return e.updatedAt }

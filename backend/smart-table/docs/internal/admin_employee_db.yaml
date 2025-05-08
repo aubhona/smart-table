@@ -1,0 +1,30 @@
+components:
+    schemas:
+        PgEmployee:
+            type: object
+            additionalProperties: false
+            properties:
+                user_uuid:
+                    type: string
+                    format: uuid
+                place_uuid:
+                    type: string
+                    format: uuid
+                role:
+                    type: string
+                active:
+                    type: boolean
+                created_at:
+                    type: string
+                    format: date-time
+                updated_at:
+                    type: string
+                    format: date-time
+
+            required:
+                - user_uuid
+                - place_uuid
+                - role
+                - active
+                - created_at
+                - updated_at

@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-    title: SmartTable Mobile API
+    title: SmartTable Admin API
     version: 1.0.0
     description: API для управления пользователем.
 
@@ -137,7 +137,7 @@ components:
                     type: string
                     description: Код ошибки
                     enum: 
-                        - not_found
+                        - user_not_found
                         - incorrect_password
                         - already_exist
                 message:

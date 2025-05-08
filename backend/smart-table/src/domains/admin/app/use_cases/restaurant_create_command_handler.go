@@ -43,7 +43,7 @@ func (handler *RestaurantCreateCommandHandler) Handle(
 		logging.GetLogger().Error("restaurant name already exists",
 			zap.String("name", restaurantCreateCommand.Name))
 
-		return RestaurantCreateCommandHandlerResult{}, appErrors.RestaurantNameExists{
+		return RestaurantCreateCommandHandlerResult{}, appErrors.RestaurantNameAlreadyExists{
 			Name: restaurantCreateCommand.Name,
 		}
 	}

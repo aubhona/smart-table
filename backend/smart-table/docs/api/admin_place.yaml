@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-    title: SmartTable Mobile API
+    title: SmartTable Admin API
     version: 1.0.0
     description: API для управления плейсом.
 
@@ -95,7 +95,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
 
-    /admin/v1/place/staff/add:
+    /admin/v1/place/employee/add:
         post:
             summary: Добавление сотрудника в плейс
             description: Добавление сотрудника в плейс
@@ -107,7 +107,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/AdminV1StaffAddRequest'
+                            $ref: '#/components/schemas/AdminV1PlaceEmployeeAddRequest'
             responses:
                 '204':
                     description: Сотрудник успешно добавлен в плейс
@@ -208,8 +208,8 @@ components:
             required:
                 - place_list
 
-        # /admin/v1/place/staff/add_POST
-        AdminV1StaffAddRequest:
+        # /admin/v1/place/employee/add_POST
+        AdminV1PlaceEmployeeAddRequest:
             type: object
             additionalProperties: false
             properties:

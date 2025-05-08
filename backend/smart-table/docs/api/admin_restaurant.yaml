@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-    title: SmartTable Mobile API
+    title: SmartTable Admin API
     version: 1.0.0
     description: API для управления рестораном.
 
@@ -211,7 +211,7 @@ components:
             required:
                 - dish_uuid
 
-        # errors
+        # Errors
         ErrorResponse:
             type: object
             additionalProperties: false

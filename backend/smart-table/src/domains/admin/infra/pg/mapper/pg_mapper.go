@@ -6,7 +6,7 @@ import (
 
 	"github.com/samber/lo"
 	defsinternalAdminDishDb "github.com/smart-table/src/codegen/intern/admin_dish_db"
-
+	defsinternalAdminEmployeeDb "github.com/smart-table/src/codegen/intern/admin_employee_db"
 	defsInternalAdminPlaceDb "github.com/smart-table/src/codegen/intern/admin_place_db"
 	defsInternalAdminRestaurantDb "github.com/smart-table/src/codegen/intern/admin_restaurant_db"
 	defsInternalAdminUserDb "github.com/smart-table/src/codegen/intern/admin_user_db"
@@ -17,6 +17,12 @@ import (
 type PgPlaceAggregate struct {
 	RestaurantAggregate PgRestaurantAggregate            `json:"restaurant"`
 	Place               defsInternalAdminPlaceDb.PgPlace `json:"place"`
+	Employees           []PgEmployeeAggregate            `json:"employees"`
+}
+
+type PgEmployeeAggregate struct {
+	Employee defsinternalAdminEmployeeDb.PgEmployee `json:"employee"`
+	User     defsInternalAdminUserDb.PgUser         `json:"user"`
 }
 
 type PgRestaurantAggregate struct {
@@ -55,6 +61,20 @@ func restoreDish(dish *defsinternalAdminDishDb.PgDish) utils.SharedRef[domain.Di
 	)
 }
 
+func restoreEmployee(
+	employee *defsinternalAdminEmployeeDb.PgEmployee,
+	user utils.SharedRef[domain.User],
+) utils.SharedRef[domain.Employee] {
+	return domain.RestoreEmployee(
+		user,
+		employee.PlaceUUID,
+		employee.Role,
+		employee.Active,
+		employee.CreatedAt,
+		employee.UpdatedAt,
+	)
+}
+
 func restoreRestaurant(
 	restaurant *defsInternalAdminRestaurantDb.PgRestaurant,
 	owner utils.SharedRef[domain.User],
@@ -72,12 +92,14 @@ func restoreRestaurant(
 func restorePlace(
 	place *defsInternalAdminPlaceDb.PgPlace,
 	restaurant utils.SharedRef[domain.Restaurant],
+	employees []utils.SharedRef[domain.Employee],
 	openingTime,
 	closingTime time.Time,
 ) utils.SharedRef[domain.Place] {
 	return domain.RestorePlace(
 		place.UUID,
 		restaurant,
+		employees,
 		place.Address,
 		place.TableCount,
 		openingTime,
@@ -85,6 +107,14 @@ func restorePlace(
 		place.CreatedAt,
 		place.UpdatedAt,
 	)
+}
+
+func restoreFromPgEmployeeAggregate(
+	pgEmployeeAggregate *PgEmployeeAggregate,
+) utils.SharedRef[domain.Employee] {
+	user := restoreUser(&pgEmployeeAggregate.User)
+
+	return restoreEmployee(&pgEmployeeAggregate.Employee, user)
 }
 
 func restoreFromPgRestaurantAggregate(
@@ -121,6 +151,17 @@ func ConvertToPgUser(user utils.SharedRef[domain.User]) ([]byte, error) {
 	return jsonBytes, nil
 }
 
+func ConvertPgUserToModel(pgResult []byte) (utils.SharedRef[domain.User], error) {
+	pgUser := defsInternalAdminUserDb.PgUser{}
+	err := json.Unmarshal(pgResult, &pgUser)
+
+	if err != nil {
+		return utils.SharedRef[domain.User]{}, err
+	}
+
+	return restoreUser(&pgUser), nil
+}
+
 func ConvertToPgDishes(dishes []utils.SharedRef[domain.Dish]) ([]byte, error) {
 	pgDishes := lo.Map(dishes, func(dish utils.SharedRef[domain.Dish], _ int) defsinternalAdminDishDb.PgDish {
 		return defsinternalAdminDishDb.PgDish{
@@ -140,15 +181,19 @@ func ConvertToPgDishes(dishes []utils.SharedRef[domain.Dish]) ([]byte, error) {
 	return json.Marshal(pgDishes)
 }
 
-func ConvertPgUserToModel(pgResult []byte) (utils.SharedRef[domain.User], error) {
-	pgUser := defsInternalAdminUserDb.PgUser{}
-	err := json.Unmarshal(pgResult, &pgUser)
+func ConvertToPgEmployees(employees []utils.SharedRef[domain.Employee]) ([]byte, error) {
+	pgEmployees := lo.Map(employees, func(employee utils.SharedRef[domain.Employee], _ int) defsinternalAdminEmployeeDb.PgEmployee {
+		return defsinternalAdminEmployeeDb.PgEmployee{
+			UserUUID:  employee.Get().GetUser().Get().GetUUID(),
+			PlaceUUID: employee.Get().GetPlaceUUID(),
+			Role:      employee.Get().GetRole(),
+			Active:    employee.Get().GetActive(),
+			CreatedAt: employee.Get().GetCreatedAt(),
+			UpdatedAt: employee.Get().GetUpdatedAt(),
+		}
+	})
 
-	if err != nil {
-		return utils.SharedRef[domain.User]{}, err
-	}
-
-	return restoreUser(&pgUser), nil
+	return json.Marshal(pgEmployees)
 }
 
 func ConvertToPgRestaurant(restaurant utils.SharedRef[domain.Restaurant]) ([]byte, error) {
@@ -235,8 +280,11 @@ func ConvertPgPlaceToModel(pgPlaceAggregateResult []byte) (utils.SharedRef[domai
 	}
 
 	restaurant := restoreFromPgRestaurantAggregate(&pgPlaceAggregate.RestaurantAggregate)
+	employees := lo.Map(pgPlaceAggregate.Employees, func(employee PgEmployeeAggregate, _ int) utils.SharedRef[domain.Employee] {
+		return restoreFromPgEmployeeAggregate(&employee)
+	})
 
-	return restorePlace(&pgPlaceAggregate.Place, restaurant, openingTime, closingTime), nil
+	return restorePlace(&pgPlaceAggregate.Place, restaurant, employees, openingTime, closingTime), nil
 }
 
 func ConvertPgPlacesToModel(pgPlacesAggregateResult [][]byte) ([]utils.SharedRef[domain.Place], error) {
