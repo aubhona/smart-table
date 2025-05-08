@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	viewsAdmin "github.com/smart-table/src/views/admin/v1/restaurant"
-	viewsCodegenAdmin "github.com/smart-table/src/views/codegen/admin_restaurant"
+	viewsCodegenAdminRestaurant "github.com/smart-table/src/views/codegen/admin_restaurant"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,33 +18,35 @@ func TestAdminRestaurantListHappyPath(t *testing.T) {
 	defer GetTestMutex().Unlock()
 	defer CleanTest()
 
-	userUUID, err := CreateDefaultUser()
+	userUUID, token, err := CreateDefaultUser()
 	assert.Nil(t, err)
 
 	restaurantUUID1, err := CreateRestaurant(
 		testRestaurantName1,
+		token,
 		userUUID,
 	)
 	assert.Nil(t, err)
 
 	restaurantUUID2, err := CreateRestaurant(
 		testRestaurantName2,
+		token,
 		userUUID,
 	)
 	assert.Nil(t, err)
 
 	handler := viewsAdmin.AdminV1RestaurantHandler{}
 
-	response, err := handler.GetAdminV1RestaurantList(GetCtx(), viewsCodegenAdmin.GetAdminV1RestaurantListRequestObject{
-		Params: viewsCodegenAdmin.GetAdminV1RestaurantListParams{
+	response, err := handler.GetAdminV1RestaurantList(GetCtx(), viewsCodegenAdminRestaurant.GetAdminV1RestaurantListRequestObject{
+		Params: viewsCodegenAdminRestaurant.GetAdminV1RestaurantListParams{
 			UserUUID: userUUID,
 		},
 	})
 
 	assert.NoError(t, err)
 
-	expectedResponse := viewsCodegenAdmin.GetAdminV1RestaurantList200JSONResponse{
-		RestaurantList: []viewsCodegenAdmin.RestaurantInfo{
+	expectedResponse := viewsCodegenAdminRestaurant.GetAdminV1RestaurantList200JSONResponse{
+		RestaurantList: []viewsCodegenAdminRestaurant.RestaurantInfo{
 			{
 				Name: testRestaurantName1,
 				UUID: restaurantUUID1,
@@ -58,6 +60,6 @@ func TestAdminRestaurantListHappyPath(t *testing.T) {
 
 	assert.Equal(t, response, expectedResponse)
 
-	_, ok := response.(viewsCodegenAdmin.GetAdminV1RestaurantList200JSONResponse)
+	_, ok := response.(viewsCodegenAdminRestaurant.GetAdminV1RestaurantList200JSONResponse)
 	assert.True(t, ok)
 }

@@ -1,9 +1,9 @@
 package smarttable_test
 
 import (
+	"net/http"
 	"testing"
 
-	viewsAdmin "github.com/smart-table/src/views/admin/v1/user"
 	viewsCodegenAdmin "github.com/smart-table/src/views/codegen/admin_user"
 	"github.com/stretchr/testify/assert"
 )
@@ -13,22 +13,18 @@ func TestAdminUserSignInHappyPath(t *testing.T) {
 	defer GetTestMutex().Unlock()
 	defer CleanTest()
 
-	id, err := CreateDefaultUser()
-	assert.Nil(t, err)
+	userUUID, _, err := CreateDefaultUser()
+	assert.NoError(t, err)
 
-	handler := viewsAdmin.AdminV1UserHandler{}
-
-	response, err := handler.PostAdminV1UserSignIn(GetCtx(), viewsCodegenAdmin.PostAdminV1UserSignInRequestObject{
-		Body: &viewsCodegenAdmin.AdminV1UserSignInRequest{
+	resp, err := viewsCodegenAdminClient.PostAdminV1UserSignInWithResponse(
+		GetCtx(),
+		viewsCodegenAdmin.PostAdminV1UserSignInJSONRequestBody{
 			Login:    "testLogin",
 			Password: "testPassword",
 		},
-	})
-
+	)
 	assert.NoError(t, err)
-	assert.NotNil(t, response)
-
-	responseObj, ok := response.(viewsCodegenAdmin.PostAdminV1UserSignIn200JSONResponse)
-	assert.True(t, ok)
-	assert.Equal(t, responseObj.UserUUID, id)
+	assert.Equal(t, http.StatusOK, resp.StatusCode())
+	assert.NotNil(t, resp.JSON200)
+	assert.Equal(t, resp.JSON200.UserUUID, userUUID)
 }

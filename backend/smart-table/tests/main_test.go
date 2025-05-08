@@ -10,6 +10,9 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/smart-table/src/servers"
+	"gopkg.in/telebot.v4"
+
 	"github.com/gin-gonic/gin"
 	dbAdmin "github.com/smart-table/src/domains/admin/infra/pg/codegen"
 	dbCustomer "github.com/smart-table/src/domains/customer/infra/pg/codegen"
@@ -32,6 +35,8 @@ var container = dig.New()
 var responseRecorder = httptest.NewRecorder()
 var ginCtx, _ = gin.CreateTestContext(responseRecorder)
 var deps = &dependencies.Dependencies{}
+var bot *telebot.Bot
+var router *gin.Engine
 
 func GetAdminQueries() *dbAdmin.Queries {
 	return dbAdmin.New(deps.DBConnPool)
@@ -55,6 +60,14 @@ func GetContainer() *dig.Container {
 
 func GetDeps() *dependencies.Dependencies {
 	return deps
+}
+
+func GetBasePath() string {
+	return "http://localhost:12345"
+}
+
+func GetBot() *telebot.Bot {
+	return bot
 }
 
 func SetupOnceTest() {
@@ -162,6 +175,10 @@ func TestMain(m *testing.M) {
 
 	cfg.Database.Host = host
 	cfg.Database.Port = port.Port()
+	cfg.Database.User = "test_user"
+	cfg.Database.Password = "test_password"
+	cfg.Database.Name = "test_db"
+	cfg.App.Admin.Jwt.SecretKey = "test_key"
 
 	deps = dependencies.InitDependencies(cfg)
 	logger := deps.Logger
@@ -186,6 +203,22 @@ func TestMain(m *testing.M) {
 	}
 
 	ginCtx.Set(utils.DiContainerName, container)
+
+	router = servers.NewGinRouter(container, deps)
+
+	bot, err = servers.NewBot(container, deps)
+	if err != nil {
+		logger.Fatal(err.Error())
+	}
+
+	go bot.Start()
+
+	go func() {
+		err := router.Run(fmt.Sprintf(":%d", deps.Config.App.Port))
+		if err != nil {
+			logger.Fatal(err.Error())
+		}
+	}()
 
 	code := m.Run()
 
