@@ -101,15 +101,10 @@ Please follow the [installation](#installation) instruction and execute the foll
 ```javascript
 var SmartTableMobileApi = require('smart_table_mobile_api');
 
-var defaultClient = SmartTableMobileApi.ApiClient.instance;
-// Configure API key authorization: CookieAuth
-var CookieAuth = defaultClient.authentications['CookieAuth'];
-CookieAuth.apiKey = "YOUR API KEY"
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//CookieAuth.apiKeyPrefix['jwt'] = "Token"
 
 var api = new SmartTableMobileApi.DefaultApi()
 var userUUID = "userUUID_example"; // {String} Уникальный идентификатор пользователя
+var jWTToken = "jWTToken_example"; // {String} jwt токен пользователя
 var adminV1RestaurantCreateRequest = new SmartTableMobileApi.AdminV1RestaurantCreateRequest(); // {AdminV1RestaurantCreateRequest} 
 var callback = function(error, data, response) {
   if (error) {
@@ -118,7 +113,7 @@ var callback = function(error, data, response) {
     console.log('API called successfully. Returned data: ' + data);
   }
 };
-api.adminV1RestaurantCreatePost(userUUID, adminV1RestaurantCreateRequest, callback);
+api.adminV1RestaurantCreatePost(userUUID, jWTToken, adminV1RestaurantCreateRequest, callback);
 
 ```
 
@@ -145,12 +140,5 @@ Class | Method | HTTP request | Description
 
 ## Documentation for Authorization
 
-
-Authentication schemes defined for the API:
-### CookieAuth
-
-
-- **Type**: API key
-- **API key parameter name**: jwt
-- **Location**: 
+Endpoints do not require authorization.
 

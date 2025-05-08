@@ -45,7 +45,6 @@ class ApiClient {
          * @type {Array.<String>}
          */
         this.authentications = {
-            'CookieAuth': {type: 'apiKey', 'in': 'query', name: 'jwt'}
         }
 
 	/**

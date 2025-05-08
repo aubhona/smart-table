@@ -6,12 +6,13 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**adminV1PlaceCreatePost**](DefaultApi.md#adminV1PlaceCreatePost) | **POST** /admin/v1/place/create | Создание плейса
 [**adminV1PlaceListPost**](DefaultApi.md#adminV1PlaceListPost) | **POST** /admin/v1/place/list | Получение списка плейсов пользователя
+[**adminV1PlaceStaffAddPost**](DefaultApi.md#adminV1PlaceStaffAddPost) | **POST** /admin/v1/place/staff/add | Добавление сотрудника в плейс
 
 
 
 ## adminV1PlaceCreatePost
 
-> AdminV1PlaceCreateResponse adminV1PlaceCreatePost(userUUID, adminV1PlaceCreateRequest)
+> AdminV1PlaceCreateResponse adminV1PlaceCreatePost(userUUID, jWTToken, adminV1PlaceCreateRequest)
 
 Создание плейса
 
@@ -21,17 +22,12 @@ Method | HTTP request | Description
 
 ```javascript
 import SmartTableMobileApi from 'smart_table_mobile_api';
-let defaultClient = SmartTableMobileApi.ApiClient.instance;
-// Configure API key authorization: CookieAuth
-let CookieAuth = defaultClient.authentications['CookieAuth'];
-CookieAuth.apiKey = 'YOUR API KEY';
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//CookieAuth.apiKeyPrefix = 'Token';
 
 let apiInstance = new SmartTableMobileApi.DefaultApi();
 let userUUID = "userUUID_example"; // String | Уникальный идентификатор пользователя
+let jWTToken = "jWTToken_example"; // String | jwt токен пользователя
 let adminV1PlaceCreateRequest = new SmartTableMobileApi.AdminV1PlaceCreateRequest(); // AdminV1PlaceCreateRequest | 
-apiInstance.adminV1PlaceCreatePost(userUUID, adminV1PlaceCreateRequest, (error, data, response) => {
+apiInstance.adminV1PlaceCreatePost(userUUID, jWTToken, adminV1PlaceCreateRequest, (error, data, response) => {
   if (error) {
     console.error(error);
   } else {
@@ -46,6 +42,7 @@ apiInstance.adminV1PlaceCreatePost(userUUID, adminV1PlaceCreateRequest, (error, 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **userUUID** | **String**| Уникальный идентификатор пользователя | 
+ **jWTToken** | **String**| jwt токен пользователя | 
  **adminV1PlaceCreateRequest** | [**AdminV1PlaceCreateRequest**](AdminV1PlaceCreateRequest.md)|  | 
 
 ### Return type
@@ -54,7 +51,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[CookieAuth](../README.md#CookieAuth)
+No authorization required
 
 ### HTTP request headers
 
@@ -64,7 +61,7 @@ Name | Type | Description  | Notes
 
 ## adminV1PlaceListPost
 
-> AdminV1PlaceListResponse adminV1PlaceListPost(userUUID, adminV1PlaceListRequest)
+> AdminV1PlaceListResponse adminV1PlaceListPost(userUUID, jWTToken, adminV1PlaceListRequest)
 
 Получение списка плейсов пользователя
 
@@ -74,17 +71,12 @@ Name | Type | Description  | Notes
 
 ```javascript
 import SmartTableMobileApi from 'smart_table_mobile_api';
-let defaultClient = SmartTableMobileApi.ApiClient.instance;
-// Configure API key authorization: CookieAuth
-let CookieAuth = defaultClient.authentications['CookieAuth'];
-CookieAuth.apiKey = 'YOUR API KEY';
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//CookieAuth.apiKeyPrefix = 'Token';
 
 let apiInstance = new SmartTableMobileApi.DefaultApi();
 let userUUID = "userUUID_example"; // String | Уникальный идентификатор пользователя
+let jWTToken = "jWTToken_example"; // String | jwt токен пользователя
 let adminV1PlaceListRequest = new SmartTableMobileApi.AdminV1PlaceListRequest(); // AdminV1PlaceListRequest | 
-apiInstance.adminV1PlaceListPost(userUUID, adminV1PlaceListRequest, (error, data, response) => {
+apiInstance.adminV1PlaceListPost(userUUID, jWTToken, adminV1PlaceListRequest, (error, data, response) => {
   if (error) {
     console.error(error);
   } else {
@@ -99,6 +91,7 @@ apiInstance.adminV1PlaceListPost(userUUID, adminV1PlaceListRequest, (error, data
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **userUUID** | **String**| Уникальный идентификатор пользователя | 
+ **jWTToken** | **String**| jwt токен пользователя | 
  **adminV1PlaceListRequest** | [**AdminV1PlaceListRequest**](AdminV1PlaceListRequest.md)|  | 
 
 ### Return type
@@ -107,7 +100,56 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[CookieAuth](../README.md#CookieAuth)
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
+
+
+## adminV1PlaceStaffAddPost
+
+> adminV1PlaceStaffAddPost(userUUID, jWTToken, adminV1StaffAddRequest)
+
+Добавление сотрудника в плейс
+
+Добавление сотрудника в плейс
+
+### Example
+
+```javascript
+import SmartTableMobileApi from 'smart_table_mobile_api';
+
+let apiInstance = new SmartTableMobileApi.DefaultApi();
+let userUUID = "userUUID_example"; // String | Уникальный идентификатор пользователя
+let jWTToken = "jWTToken_example"; // String | jwt токен пользователя
+let adminV1StaffAddRequest = new SmartTableMobileApi.AdminV1StaffAddRequest(); // AdminV1StaffAddRequest | 
+apiInstance.adminV1PlaceStaffAddPost(userUUID, jWTToken, adminV1StaffAddRequest, (error, data, response) => {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully.');
+  }
+});
+```
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **userUUID** | **String**| Уникальный идентификатор пользователя | 
+ **jWTToken** | **String**| jwt токен пользователя | 
+ **adminV1StaffAddRequest** | [**AdminV1StaffAddRequest**](AdminV1StaffAddRequest.md)|  | 
+
+### Return type
+
+null (empty response body)
+
+### Authorization
+
+No authorization required
 
 ### HTTP request headers
 

@@ -17,6 +17,7 @@ import AdminV1PlaceCreateRequest from '../model/AdminV1PlaceCreateRequest';
 import AdminV1PlaceCreateResponse from '../model/AdminV1PlaceCreateResponse';
 import AdminV1PlaceListRequest from '../model/AdminV1PlaceListRequest';
 import AdminV1PlaceListResponse from '../model/AdminV1PlaceListResponse';
+import AdminV1StaffAddRequest from '../model/AdminV1StaffAddRequest';
 import ErrorResponse from '../model/ErrorResponse';
 
 /**
@@ -50,15 +51,20 @@ export default class DefaultApi {
      * Создание плейса
      * Создание плейса
      * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
      * @param {module:model/AdminV1PlaceCreateRequest} adminV1PlaceCreateRequest 
      * @param {module:api/DefaultApi~adminV1PlaceCreatePostCallback} callback The callback function, accepting three arguments: error, data, response
      * data is of type: {@link module:model/AdminV1PlaceCreateResponse}
      */
-    adminV1PlaceCreatePost(userUUID, adminV1PlaceCreateRequest, callback) {
+    adminV1PlaceCreatePost(userUUID, jWTToken, adminV1PlaceCreateRequest, callback) {
       let postBody = adminV1PlaceCreateRequest;
       // verify the required parameter 'userUUID' is set
       if (userUUID === undefined || userUUID === null) {
         throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceCreatePost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceCreatePost");
       }
       // verify the required parameter 'adminV1PlaceCreateRequest' is set
       if (adminV1PlaceCreateRequest === undefined || adminV1PlaceCreateRequest === null) {
@@ -70,12 +76,13 @@ export default class DefaultApi {
       let queryParams = {
       };
       let headerParams = {
-        'User-UUID': userUUID
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
       };
       let formParams = {
       };
 
-      let authNames = ['CookieAuth'];
+      let authNames = [];
       let contentTypes = ['application/json'];
       let accepts = ['application/json'];
       let returnType = AdminV1PlaceCreateResponse;
@@ -98,15 +105,20 @@ export default class DefaultApi {
      * Получение списка плейсов пользователя
      * Получение списка плейсов пользователя
      * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
      * @param {module:model/AdminV1PlaceListRequest} adminV1PlaceListRequest 
      * @param {module:api/DefaultApi~adminV1PlaceListPostCallback} callback The callback function, accepting three arguments: error, data, response
      * data is of type: {@link module:model/AdminV1PlaceListResponse}
      */
-    adminV1PlaceListPost(userUUID, adminV1PlaceListRequest, callback) {
+    adminV1PlaceListPost(userUUID, jWTToken, adminV1PlaceListRequest, callback) {
       let postBody = adminV1PlaceListRequest;
       // verify the required parameter 'userUUID' is set
       if (userUUID === undefined || userUUID === null) {
         throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceListPost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceListPost");
       }
       // verify the required parameter 'adminV1PlaceListRequest' is set
       if (adminV1PlaceListRequest === undefined || adminV1PlaceListRequest === null) {
@@ -118,17 +130,71 @@ export default class DefaultApi {
       let queryParams = {
       };
       let headerParams = {
-        'User-UUID': userUUID
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
       };
       let formParams = {
       };
 
-      let authNames = ['CookieAuth'];
+      let authNames = [];
       let contentTypes = ['application/json'];
       let accepts = ['application/json'];
       let returnType = AdminV1PlaceListResponse;
       return this.apiClient.callApi(
         '/admin/v1/place/list', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1PlaceStaffAddPost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceStaffAddPostCallback
+     * @param {String} error Error message, if any.
+     * @param data This operation does not return a value.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Добавление сотрудника в плейс
+     * Добавление сотрудника в плейс
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1StaffAddRequest} adminV1StaffAddRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceStaffAddPostCallback} callback The callback function, accepting three arguments: error, data, response
+     */
+    adminV1PlaceStaffAddPost(userUUID, jWTToken, adminV1StaffAddRequest, callback) {
+      let postBody = adminV1StaffAddRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceStaffAddPost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceStaffAddPost");
+      }
+      // verify the required parameter 'adminV1StaffAddRequest' is set
+      if (adminV1StaffAddRequest === undefined || adminV1StaffAddRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1StaffAddRequest' when calling adminV1PlaceStaffAddPost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/admin/v1/place/staff/add', 'POST',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, null, callback
       );

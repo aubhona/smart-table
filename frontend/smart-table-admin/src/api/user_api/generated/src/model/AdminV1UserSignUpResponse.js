@@ -23,10 +23,11 @@ class AdminV1UserSignUpResponse {
      * Constructs a new <code>AdminV1UserSignUpResponse</code>.
      * @alias module:model/AdminV1UserSignUpResponse
      * @param userUuid {String} Уникальный идентификатор пользователя
+     * @param jwtToken {String} 
      */
-    constructor(userUuid) { 
+    constructor(userUuid, jwtToken) { 
         
-        AdminV1UserSignUpResponse.initialize(this, userUuid);
+        AdminV1UserSignUpResponse.initialize(this, userUuid, jwtToken);
     }
 
     /**
@@ -34,8 +35,9 @@ class AdminV1UserSignUpResponse {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj, userUuid) { 
+    static initialize(obj, userUuid, jwtToken) { 
         obj['user_uuid'] = userUuid;
+        obj['jwt_token'] = jwtToken;
     }
 
     /**
@@ -51,6 +53,9 @@ class AdminV1UserSignUpResponse {
 
             if (data.hasOwnProperty('user_uuid')) {
                 obj['user_uuid'] = ApiClient.convertToType(data['user_uuid'], 'String');
+            }
+            if (data.hasOwnProperty('jwt_token')) {
+                obj['jwt_token'] = ApiClient.convertToType(data['jwt_token'], 'String');
             }
         }
         return obj;
@@ -72,6 +77,10 @@ class AdminV1UserSignUpResponse {
         if (data['user_uuid'] && !(typeof data['user_uuid'] === 'string' || data['user_uuid'] instanceof String)) {
             throw new Error("Expected the field `user_uuid` to be a primitive type in the JSON string but got " + data['user_uuid']);
         }
+        // ensure the json data is a string
+        if (data['jwt_token'] && !(typeof data['jwt_token'] === 'string' || data['jwt_token'] instanceof String)) {
+            throw new Error("Expected the field `jwt_token` to be a primitive type in the JSON string but got " + data['jwt_token']);
+        }
 
         return true;
     }
@@ -79,13 +88,18 @@ class AdminV1UserSignUpResponse {
 
 }
 
-AdminV1UserSignUpResponse.RequiredProperties = ["user_uuid"];
+AdminV1UserSignUpResponse.RequiredProperties = ["user_uuid", "jwt_token"];
 
 /**
  * Уникальный идентификатор пользователя
  * @member {String} user_uuid
  */
 AdminV1UserSignUpResponse.prototype['user_uuid'] = undefined;
+
+/**
+ * @member {String} jwt_token
+ */
+AdminV1UserSignUpResponse.prototype['jwt_token'] = undefined;
 
 
 

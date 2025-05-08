@@ -101,15 +101,10 @@ Please follow the [installation](#installation) instruction and execute the foll
 ```javascript
 var SmartTableMobileApi = require('smart_table_mobile_api');
 
-var defaultClient = SmartTableMobileApi.ApiClient.instance;
-// Configure API key authorization: CookieAuth
-var CookieAuth = defaultClient.authentications['CookieAuth'];
-CookieAuth.apiKey = "YOUR API KEY"
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//CookieAuth.apiKeyPrefix['jwt'] = "Token"
 
 var api = new SmartTableMobileApi.DefaultApi()
 var userUUID = "userUUID_example"; // {String} Уникальный идентификатор пользователя
+var jWTToken = "jWTToken_example"; // {String} jwt токен пользователя
 var adminV1PlaceCreateRequest = new SmartTableMobileApi.AdminV1PlaceCreateRequest(); // {AdminV1PlaceCreateRequest} 
 var callback = function(error, data, response) {
   if (error) {
@@ -118,7 +113,7 @@ var callback = function(error, data, response) {
     console.log('API called successfully. Returned data: ' + data);
   }
 };
-api.adminV1PlaceCreatePost(userUUID, adminV1PlaceCreateRequest, callback);
+api.adminV1PlaceCreatePost(userUUID, jWTToken, adminV1PlaceCreateRequest, callback);
 
 ```
 
@@ -130,6 +125,7 @@ Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *SmartTableMobileApi.DefaultApi* | [**adminV1PlaceCreatePost**](docs/DefaultApi.md#adminV1PlaceCreatePost) | **POST** /admin/v1/place/create | Создание плейса
 *SmartTableMobileApi.DefaultApi* | [**adminV1PlaceListPost**](docs/DefaultApi.md#adminV1PlaceListPost) | **POST** /admin/v1/place/list | Получение списка плейсов пользователя
+*SmartTableMobileApi.DefaultApi* | [**adminV1PlaceStaffAddPost**](docs/DefaultApi.md#adminV1PlaceStaffAddPost) | **POST** /admin/v1/place/staff/add | Добавление сотрудника в плейс
 
 
 ## Documentation for Models
@@ -138,18 +134,12 @@ Class | Method | HTTP request | Description
  - [SmartTableMobileApi.AdminV1PlaceCreateResponse](docs/AdminV1PlaceCreateResponse.md)
  - [SmartTableMobileApi.AdminV1PlaceListRequest](docs/AdminV1PlaceListRequest.md)
  - [SmartTableMobileApi.AdminV1PlaceListResponse](docs/AdminV1PlaceListResponse.md)
+ - [SmartTableMobileApi.AdminV1StaffAddRequest](docs/AdminV1StaffAddRequest.md)
  - [SmartTableMobileApi.ErrorResponse](docs/ErrorResponse.md)
  - [SmartTableMobileApi.PlaceInfo](docs/PlaceInfo.md)
 
 
 ## Documentation for Authorization
 
-
-Authentication schemes defined for the API:
-### CookieAuth
-
-
-- **Type**: API key
-- **API key parameter name**: jwt
-- **Location**: 
+Endpoints do not require authorization.
 

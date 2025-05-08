@@ -12,30 +12,31 @@ export default function LoginForm() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    
+
     const payload = AdminV1UserSignInRequest.constructFromObject({ login, password });
     const api = new DefaultApi();
-    api.apiClient.basePath = "https://2663-2a01-4f9-c010-ecd2-00-1.ngrok-free.app";
-    
-    try {
-      const { user_uuid, jwt_token } = await new Promise((resolve, reject) => {
-        api.adminV1UserSignInPost(
-          payload,
-          (err, data, response) => {
-            if (err) return reject(err);
+    api.apiClient.basePath = "https://5506-135-181-37-249.ngrok-free.app";
 
-            const body = JSON.parse(response.text);
+    try {
+      const response = await new Promise((resolve, reject) => {
+        api.adminV1UserSignInPost(payload, (err, data, response) => {
+          if (err) {
+            reject(err);
+          } else {
             resolve({
-              user_uuid: body.user_uuid,
-              jwt_token: body.jwt_token
+              user_uuid: data.user_uuid,
+              jwt_token: data.jwt_token
             });
           }
-        );
+        });
       });
+
+      const { user_uuid, jwt_token } = response;
+
       localStorage.setItem("user_uuid", user_uuid);
       localStorage.setItem("jwt_token", jwt_token);
 
-      setRedirect(true);  
+      setRedirect(true); 
     } catch (err) {
       const code = err.response?.body?.code;
       if (code === "not_found") {

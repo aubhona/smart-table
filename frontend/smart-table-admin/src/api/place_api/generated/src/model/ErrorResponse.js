@@ -153,7 +153,13 @@ ErrorResponse['CodeEnum'] = {
      * value: "restaurant_not_found"
      * @const
      */
-    "restaurant_not_found": "restaurant_not_found"
+    "restaurant_not_found": "restaurant_not_found",
+
+    /**
+     * value: "place_not_found"
+     * @const
+     */
+    "place_not_found": "place_not_found"
 };
 
 

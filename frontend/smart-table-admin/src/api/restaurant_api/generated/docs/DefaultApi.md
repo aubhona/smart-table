@@ -12,7 +12,7 @@ Method | HTTP request | Description
 
 ## adminV1RestaurantCreatePost
 
-> AdminV1RestaurantCreateResponse adminV1RestaurantCreatePost(userUUID, adminV1RestaurantCreateRequest)
+> AdminV1RestaurantCreateResponse adminV1RestaurantCreatePost(userUUID, jWTToken, adminV1RestaurantCreateRequest)
 
 Создание ресторана
 
@@ -22,17 +22,12 @@ Method | HTTP request | Description
 
 ```javascript
 import SmartTableMobileApi from 'smart_table_mobile_api';
-let defaultClient = SmartTableMobileApi.ApiClient.instance;
-// Configure API key authorization: CookieAuth
-let CookieAuth = defaultClient.authentications['CookieAuth'];
-CookieAuth.apiKey = 'YOUR API KEY';
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//CookieAuth.apiKeyPrefix = 'Token';
 
 let apiInstance = new SmartTableMobileApi.DefaultApi();
 let userUUID = "userUUID_example"; // String | Уникальный идентификатор пользователя
+let jWTToken = "jWTToken_example"; // String | jwt токен пользователя
 let adminV1RestaurantCreateRequest = new SmartTableMobileApi.AdminV1RestaurantCreateRequest(); // AdminV1RestaurantCreateRequest | 
-apiInstance.adminV1RestaurantCreatePost(userUUID, adminV1RestaurantCreateRequest, (error, data, response) => {
+apiInstance.adminV1RestaurantCreatePost(userUUID, jWTToken, adminV1RestaurantCreateRequest, (error, data, response) => {
   if (error) {
     console.error(error);
   } else {
@@ -47,6 +42,7 @@ apiInstance.adminV1RestaurantCreatePost(userUUID, adminV1RestaurantCreateRequest
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **userUUID** | **String**| Уникальный идентификатор пользователя | 
+ **jWTToken** | **String**| jwt токен пользователя | 
  **adminV1RestaurantCreateRequest** | [**AdminV1RestaurantCreateRequest**](AdminV1RestaurantCreateRequest.md)|  | 
 
 ### Return type
@@ -55,7 +51,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[CookieAuth](../README.md#CookieAuth)
+No authorization required
 
 ### HTTP request headers
 
@@ -65,7 +61,7 @@ Name | Type | Description  | Notes
 
 ## adminV1RestaurantDishCreatePost
 
-> AdminV1RestaurantDishCreateResponse adminV1RestaurantDishCreatePost(userUUID, restaurantUuid, dishName, description, category, calories, weight, dishPictureFile)
+> AdminV1RestaurantDishCreateResponse adminV1RestaurantDishCreatePost(userUUID, jWTToken, restaurantUuid, dishName, description, category, calories, weight, dishPictureFile)
 
 Создание блюда ресторана
 
@@ -75,15 +71,10 @@ Name | Type | Description  | Notes
 
 ```javascript
 import SmartTableMobileApi from 'smart_table_mobile_api';
-let defaultClient = SmartTableMobileApi.ApiClient.instance;
-// Configure API key authorization: CookieAuth
-let CookieAuth = defaultClient.authentications['CookieAuth'];
-CookieAuth.apiKey = 'YOUR API KEY';
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//CookieAuth.apiKeyPrefix = 'Token';
 
 let apiInstance = new SmartTableMobileApi.DefaultApi();
 let userUUID = "userUUID_example"; // String | Уникальный идентификатор пользователя
+let jWTToken = "jWTToken_example"; // String | jwt токен пользователя
 let restaurantUuid = "restaurantUuid_example"; // String | Уникальный идентификатор ресторана
 let dishName = "dishName_example"; // String | 
 let description = "description_example"; // String | 
@@ -91,7 +82,7 @@ let category = "category_example"; // String |
 let calories = 56; // Number | 
 let weight = 56; // Number | 
 let dishPictureFile = "/path/to/file"; // File | 
-apiInstance.adminV1RestaurantDishCreatePost(userUUID, restaurantUuid, dishName, description, category, calories, weight, dishPictureFile, (error, data, response) => {
+apiInstance.adminV1RestaurantDishCreatePost(userUUID, jWTToken, restaurantUuid, dishName, description, category, calories, weight, dishPictureFile, (error, data, response) => {
   if (error) {
     console.error(error);
   } else {
@@ -106,6 +97,7 @@ apiInstance.adminV1RestaurantDishCreatePost(userUUID, restaurantUuid, dishName, 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **userUUID** | **String**| Уникальный идентификатор пользователя | 
+ **jWTToken** | **String**| jwt токен пользователя | 
  **restaurantUuid** | **String**| Уникальный идентификатор ресторана | 
  **dishName** | **String**|  | 
  **description** | **String**|  | 
@@ -120,7 +112,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[CookieAuth](../README.md#CookieAuth)
+No authorization required
 
 ### HTTP request headers
 
@@ -130,7 +122,7 @@ Name | Type | Description  | Notes
 
 ## adminV1RestaurantListGet
 
-> AdminV1RestaurantListResponse adminV1RestaurantListGet(userUUID)
+> AdminV1RestaurantListResponse adminV1RestaurantListGet(userUUID, jWTToken)
 
 Получение списка ресторанов пользователя
 
@@ -140,16 +132,11 @@ Name | Type | Description  | Notes
 
 ```javascript
 import SmartTableMobileApi from 'smart_table_mobile_api';
-let defaultClient = SmartTableMobileApi.ApiClient.instance;
-// Configure API key authorization: CookieAuth
-let CookieAuth = defaultClient.authentications['CookieAuth'];
-CookieAuth.apiKey = 'YOUR API KEY';
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//CookieAuth.apiKeyPrefix = 'Token';
 
 let apiInstance = new SmartTableMobileApi.DefaultApi();
 let userUUID = "userUUID_example"; // String | Уникальный идентификатор пользователя
-apiInstance.adminV1RestaurantListGet(userUUID, (error, data, response) => {
+let jWTToken = "jWTToken_example"; // String | jwt токен пользователя
+apiInstance.adminV1RestaurantListGet(userUUID, jWTToken, (error, data, response) => {
   if (error) {
     console.error(error);
   } else {
@@ -164,6 +151,7 @@ apiInstance.adminV1RestaurantListGet(userUUID, (error, data, response) => {
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **userUUID** | **String**| Уникальный идентификатор пользователя | 
+ **jWTToken** | **String**| jwt токен пользователя | 
 
 ### Return type
 
@@ -171,7 +159,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[CookieAuth](../README.md#CookieAuth)
+No authorization required
 
 ### HTTP request headers
 
