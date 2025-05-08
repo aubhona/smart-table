@@ -1,5 +1,5 @@
 /**
- * SmartTable Mobile API
+ * SmartTable Admin API
  * API для управления плейсом.
  *
  * The version of the OpenAPI document: 1.0.0
@@ -15,9 +15,9 @@
 import ApiClient from "../ApiClient";
 import AdminV1PlaceCreateRequest from '../model/AdminV1PlaceCreateRequest';
 import AdminV1PlaceCreateResponse from '../model/AdminV1PlaceCreateResponse';
+import AdminV1PlaceEmployeeAddRequest from '../model/AdminV1PlaceEmployeeAddRequest';
 import AdminV1PlaceListRequest from '../model/AdminV1PlaceListRequest';
 import AdminV1PlaceListResponse from '../model/AdminV1PlaceListResponse';
-import AdminV1StaffAddRequest from '../model/AdminV1StaffAddRequest';
 import ErrorResponse from '../model/ErrorResponse';
 
 /**
@@ -94,6 +94,59 @@ export default class DefaultApi {
     }
 
     /**
+     * Callback function to receive the result of the adminV1PlaceEmployeeAddPost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceEmployeeAddPostCallback
+     * @param {String} error Error message, if any.
+     * @param data This operation does not return a value.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Добавление сотрудника в плейс
+     * Добавление сотрудника в плейс
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1PlaceEmployeeAddRequest} adminV1PlaceEmployeeAddRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceEmployeeAddPostCallback} callback The callback function, accepting three arguments: error, data, response
+     */
+    adminV1PlaceEmployeeAddPost(userUUID, jWTToken, adminV1PlaceEmployeeAddRequest, callback) {
+      let postBody = adminV1PlaceEmployeeAddRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceEmployeeAddPost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceEmployeeAddPost");
+      }
+      // verify the required parameter 'adminV1PlaceEmployeeAddRequest' is set
+      if (adminV1PlaceEmployeeAddRequest === undefined || adminV1PlaceEmployeeAddRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1PlaceEmployeeAddRequest' when calling adminV1PlaceEmployeeAddPost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/admin/v1/place/employee/add', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
      * Callback function to receive the result of the adminV1PlaceListPost operation.
      * @callback module:api/DefaultApi~adminV1PlaceListPostCallback
      * @param {String} error Error message, if any.
@@ -142,59 +195,6 @@ export default class DefaultApi {
       let returnType = AdminV1PlaceListResponse;
       return this.apiClient.callApi(
         '/admin/v1/place/list', 'POST',
-        pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
-      );
-    }
-
-    /**
-     * Callback function to receive the result of the adminV1PlaceStaffAddPost operation.
-     * @callback module:api/DefaultApi~adminV1PlaceStaffAddPostCallback
-     * @param {String} error Error message, if any.
-     * @param data This operation does not return a value.
-     * @param {String} response The complete HTTP response.
-     */
-
-    /**
-     * Добавление сотрудника в плейс
-     * Добавление сотрудника в плейс
-     * @param {String} userUUID Уникальный идентификатор пользователя
-     * @param {String} jWTToken jwt токен пользователя
-     * @param {module:model/AdminV1StaffAddRequest} adminV1StaffAddRequest 
-     * @param {module:api/DefaultApi~adminV1PlaceStaffAddPostCallback} callback The callback function, accepting three arguments: error, data, response
-     */
-    adminV1PlaceStaffAddPost(userUUID, jWTToken, adminV1StaffAddRequest, callback) {
-      let postBody = adminV1StaffAddRequest;
-      // verify the required parameter 'userUUID' is set
-      if (userUUID === undefined || userUUID === null) {
-        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceStaffAddPost");
-      }
-      // verify the required parameter 'jWTToken' is set
-      if (jWTToken === undefined || jWTToken === null) {
-        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceStaffAddPost");
-      }
-      // verify the required parameter 'adminV1StaffAddRequest' is set
-      if (adminV1StaffAddRequest === undefined || adminV1StaffAddRequest === null) {
-        throw new Error("Missing the required parameter 'adminV1StaffAddRequest' when calling adminV1PlaceStaffAddPost");
-      }
-
-      let pathParams = {
-      };
-      let queryParams = {
-      };
-      let headerParams = {
-        'User-UUID': userUUID,
-        'JWT-Token': jWTToken
-      };
-      let formParams = {
-      };
-
-      let authNames = [];
-      let contentTypes = ['application/json'];
-      let accepts = ['application/json'];
-      let returnType = null;
-      return this.apiClient.callApi(
-        '/admin/v1/place/staff/add', 'POST',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, null, callback
       );

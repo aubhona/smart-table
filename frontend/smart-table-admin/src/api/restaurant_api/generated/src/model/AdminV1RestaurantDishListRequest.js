@@ -1,6 +1,6 @@
 /**
  * SmartTable Admin API
- * API для управления плейсом.
+ * API для управления рестораном.
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -14,19 +14,19 @@
 import ApiClient from '../ApiClient';
 
 /**
- * The AdminV1PlaceListRequest model module.
- * @module model/AdminV1PlaceListRequest
+ * The AdminV1RestaurantDishListRequest model module.
+ * @module model/AdminV1RestaurantDishListRequest
  * @version 1.0.0
  */
-class AdminV1PlaceListRequest {
+class AdminV1RestaurantDishListRequest {
     /**
-     * Constructs a new <code>AdminV1PlaceListRequest</code>.
-     * @alias module:model/AdminV1PlaceListRequest
+     * Constructs a new <code>AdminV1RestaurantDishListRequest</code>.
+     * @alias module:model/AdminV1RestaurantDishListRequest
      * @param restaurantUuid {String} Уникальный идентификатор ресторана
      */
     constructor(restaurantUuid) { 
         
-        AdminV1PlaceListRequest.initialize(this, restaurantUuid);
+        AdminV1RestaurantDishListRequest.initialize(this, restaurantUuid);
     }
 
     /**
@@ -39,15 +39,15 @@ class AdminV1PlaceListRequest {
     }
 
     /**
-     * Constructs a <code>AdminV1PlaceListRequest</code> from a plain JavaScript object, optionally creating a new instance.
+     * Constructs a <code>AdminV1RestaurantDishListRequest</code> from a plain JavaScript object, optionally creating a new instance.
      * Copies all relevant properties from <code>data</code> to <code>obj</code> if supplied or a new instance if not.
      * @param {Object} data The plain JavaScript object bearing properties of interest.
-     * @param {module:model/AdminV1PlaceListRequest} obj Optional instance to populate.
-     * @return {module:model/AdminV1PlaceListRequest} The populated <code>AdminV1PlaceListRequest</code> instance.
+     * @param {module:model/AdminV1RestaurantDishListRequest} obj Optional instance to populate.
+     * @return {module:model/AdminV1RestaurantDishListRequest} The populated <code>AdminV1RestaurantDishListRequest</code> instance.
      */
     static constructFromObject(data, obj) {
         if (data) {
-            obj = obj || new AdminV1PlaceListRequest();
+            obj = obj || new AdminV1RestaurantDishListRequest();
 
             if (data.hasOwnProperty('restaurant_uuid')) {
                 obj['restaurant_uuid'] = ApiClient.convertToType(data['restaurant_uuid'], 'String');
@@ -57,13 +57,13 @@ class AdminV1PlaceListRequest {
     }
 
     /**
-     * Validates the JSON data with respect to <code>AdminV1PlaceListRequest</code>.
+     * Validates the JSON data with respect to <code>AdminV1RestaurantDishListRequest</code>.
      * @param {Object} data The plain JavaScript object bearing properties of interest.
-     * @return {boolean} to indicate whether the JSON data is valid with respect to <code>AdminV1PlaceListRequest</code>.
+     * @return {boolean} to indicate whether the JSON data is valid with respect to <code>AdminV1RestaurantDishListRequest</code>.
      */
     static validateJSON(data) {
         // check to make sure all required properties are present in the JSON string
-        for (const property of AdminV1PlaceListRequest.RequiredProperties) {
+        for (const property of AdminV1RestaurantDishListRequest.RequiredProperties) {
             if (!data.hasOwnProperty(property)) {
                 throw new Error("The required field `" + property + "` is not found in the JSON data: " + JSON.stringify(data));
             }
@@ -79,18 +79,18 @@ class AdminV1PlaceListRequest {
 
 }
 
-AdminV1PlaceListRequest.RequiredProperties = ["restaurant_uuid"];
+AdminV1RestaurantDishListRequest.RequiredProperties = ["restaurant_uuid"];
 
 /**
  * Уникальный идентификатор ресторана
  * @member {String} restaurant_uuid
  */
-AdminV1PlaceListRequest.prototype['restaurant_uuid'] = undefined;
+AdminV1RestaurantDishListRequest.prototype['restaurant_uuid'] = undefined;
 
 
 
 
 
 
-export default AdminV1PlaceListRequest;
+export default AdminV1RestaurantDishListRequest;
 

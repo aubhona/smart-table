@@ -133,9 +133,13 @@ export default function RestaurantsList() {
             <button
               key={r.restaurant_uuid}
               className="rest-item"
-              onClick={() => 
+              onClick={() => {
+                localStorage.setItem("current_restaurant", JSON.stringify({
+                  restaurant_uuid: r.restaurant_uuid,
+                  restaurant_name: r.restaurant_name
+                }));
                 window.location.href = `/restaurants/${r.restaurant_uuid}/places-dishes`
-              }
+              }}
             >
               {r.restaurant_name}
             </button>

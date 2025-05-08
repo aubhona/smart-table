@@ -1,5 +1,5 @@
 /**
- * SmartTable Mobile API
+ * SmartTable Admin API
  * API для управления плейсом.
  *
  * The version of the OpenAPI document: 1.0.0
@@ -15,9 +15,9 @@
 import ApiClient from './ApiClient';
 import AdminV1PlaceCreateRequest from './model/AdminV1PlaceCreateRequest';
 import AdminV1PlaceCreateResponse from './model/AdminV1PlaceCreateResponse';
+import AdminV1PlaceEmployeeAddRequest from './model/AdminV1PlaceEmployeeAddRequest';
 import AdminV1PlaceListRequest from './model/AdminV1PlaceListRequest';
 import AdminV1PlaceListResponse from './model/AdminV1PlaceListResponse';
-import AdminV1StaffAddRequest from './model/AdminV1StaffAddRequest';
 import ErrorResponse from './model/ErrorResponse';
 import PlaceInfo from './model/PlaceInfo';
 import DefaultApi from './api/DefaultApi';
@@ -29,9 +29,9 @@ import DefaultApi from './api/DefaultApi';
 * <p>
 * An AMD (recommended!) or CommonJS application will generally do something equivalent to the following:
 * <pre>
-* var SmartTableMobileApi = require('index'); // See note below*.
-* var xxxSvc = new SmartTableMobileApi.XxxApi(); // Allocate the API class we're going to use.
-* var yyyModel = new SmartTableMobileApi.Yyy(); // Construct a model instance.
+* var SmartTableAdminApi = require('index'); // See note below*.
+* var xxxSvc = new SmartTableAdminApi.XxxApi(); // Allocate the API class we're going to use.
+* var yyyModel = new SmartTableAdminApi.Yyy(); // Construct a model instance.
 * yyyModel.someProperty = 'someValue';
 * ...
 * var zzz = xxxSvc.doSomething(yyyModel); // Invoke the service.
@@ -43,8 +43,8 @@ import DefaultApi from './api/DefaultApi';
 * <p>
 * A non-AMD browser application (discouraged) might do something like this:
 * <pre>
-* var xxxSvc = new SmartTableMobileApi.XxxApi(); // Allocate the API class we're going to use.
-* var yyy = new SmartTableMobileApi.Yyy(); // Construct a model instance.
+* var xxxSvc = new SmartTableAdminApi.XxxApi(); // Allocate the API class we're going to use.
+* var yyy = new SmartTableAdminApi.Yyy(); // Construct a model instance.
 * yyyModel.someProperty = 'someValue';
 * ...
 * var zzz = xxxSvc.doSomething(yyyModel); // Invoke the service.
@@ -74,6 +74,12 @@ export {
     AdminV1PlaceCreateResponse,
 
     /**
+     * The AdminV1PlaceEmployeeAddRequest model constructor.
+     * @property {module:model/AdminV1PlaceEmployeeAddRequest}
+     */
+    AdminV1PlaceEmployeeAddRequest,
+
+    /**
      * The AdminV1PlaceListRequest model constructor.
      * @property {module:model/AdminV1PlaceListRequest}
      */
@@ -84,12 +90,6 @@ export {
      * @property {module:model/AdminV1PlaceListResponse}
      */
     AdminV1PlaceListResponse,
-
-    /**
-     * The AdminV1StaffAddRequest model constructor.
-     * @property {module:model/AdminV1StaffAddRequest}
-     */
-    AdminV1StaffAddRequest,
 
     /**
      * The ErrorResponse model constructor.

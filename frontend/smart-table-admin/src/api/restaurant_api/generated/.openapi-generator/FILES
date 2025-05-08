@@ -5,8 +5,10 @@ README.md
 docs/AdminV1RestaurantCreateRequest.md
 docs/AdminV1RestaurantCreateResponse.md
 docs/AdminV1RestaurantDishCreateResponse.md
+docs/AdminV1RestaurantDishListRequest.md
 docs/AdminV1RestaurantListResponse.md
 docs/DefaultApi.md
+docs/DishInfo.md
 docs/ErrorResponse.md
 docs/RestaurantInfo.md
 git_push.sh
@@ -18,6 +20,10 @@ src/index.js
 src/model/AdminV1RestaurantCreateRequest.js
 src/model/AdminV1RestaurantCreateResponse.js
 src/model/AdminV1RestaurantDishCreateResponse.js
+src/model/AdminV1RestaurantDishListRequest.js
 src/model/AdminV1RestaurantListResponse.js
+src/model/DishInfo.js
 src/model/ErrorResponse.js
 src/model/RestaurantInfo.js
+test/model/AdminV1RestaurantDishListRequest.spec.js
+test/model/DishInfo.spec.js

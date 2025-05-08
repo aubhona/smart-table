@@ -4,9 +4,9 @@
 README.md
 docs/AdminV1PlaceCreateRequest.md
 docs/AdminV1PlaceCreateResponse.md
+docs/AdminV1PlaceEmployeeAddRequest.md
 docs/AdminV1PlaceListRequest.md
 docs/AdminV1PlaceListResponse.md
-docs/AdminV1StaffAddRequest.md
 docs/DefaultApi.md
 docs/ErrorResponse.md
 docs/PlaceInfo.md
@@ -18,9 +18,8 @@ src/api/DefaultApi.js
 src/index.js
 src/model/AdminV1PlaceCreateRequest.js
 src/model/AdminV1PlaceCreateResponse.js
+src/model/AdminV1PlaceEmployeeAddRequest.js
 src/model/AdminV1PlaceListRequest.js
 src/model/AdminV1PlaceListResponse.js
-src/model/AdminV1StaffAddRequest.js
 src/model/ErrorResponse.js
 src/model/PlaceInfo.js
-test/model/AdminV1StaffAddRequest.spec.js

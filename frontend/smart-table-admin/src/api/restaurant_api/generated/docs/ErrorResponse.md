@@ -1,4 +1,4 @@
-# SmartTableMobileApi.ErrorResponse
+# SmartTableAdminApi.ErrorResponse
 
 ## Properties
 

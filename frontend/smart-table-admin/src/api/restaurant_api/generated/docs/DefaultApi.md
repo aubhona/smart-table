@@ -1,4 +1,4 @@
-# SmartTableMobileApi.DefaultApi
+# SmartTableAdminApi.DefaultApi
 
 All URIs are relative to *http://localhost*
 
@@ -6,6 +6,7 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**adminV1RestaurantCreatePost**](DefaultApi.md#adminV1RestaurantCreatePost) | **POST** /admin/v1/restaurant/create | Создание ресторана
 [**adminV1RestaurantDishCreatePost**](DefaultApi.md#adminV1RestaurantDishCreatePost) | **POST** /admin/v1/restaurant/dish/create | Создание блюда ресторана
+[**adminV1RestaurantDishListPost**](DefaultApi.md#adminV1RestaurantDishListPost) | **POST** /admin/v1/restaurant/dish/list | Получение списка блюд ресторана
 [**adminV1RestaurantListGet**](DefaultApi.md#adminV1RestaurantListGet) | **GET** /admin/v1/restaurant/list | Получение списка ресторанов пользователя
 
 
@@ -21,12 +22,12 @@ Method | HTTP request | Description
 ### Example
 
 ```javascript
-import SmartTableMobileApi from 'smart_table_mobile_api';
+import SmartTableAdminApi from 'smart_table_admin_api';
 
-let apiInstance = new SmartTableMobileApi.DefaultApi();
+let apiInstance = new SmartTableAdminApi.DefaultApi();
 let userUUID = "userUUID_example"; // String | Уникальный идентификатор пользователя
 let jWTToken = "jWTToken_example"; // String | jwt токен пользователя
-let adminV1RestaurantCreateRequest = new SmartTableMobileApi.AdminV1RestaurantCreateRequest(); // AdminV1RestaurantCreateRequest | 
+let adminV1RestaurantCreateRequest = new SmartTableAdminApi.AdminV1RestaurantCreateRequest(); // AdminV1RestaurantCreateRequest | 
 apiInstance.adminV1RestaurantCreatePost(userUUID, jWTToken, adminV1RestaurantCreateRequest, (error, data, response) => {
   if (error) {
     console.error(error);
@@ -70,9 +71,9 @@ No authorization required
 ### Example
 
 ```javascript
-import SmartTableMobileApi from 'smart_table_mobile_api';
+import SmartTableAdminApi from 'smart_table_admin_api';
 
-let apiInstance = new SmartTableMobileApi.DefaultApi();
+let apiInstance = new SmartTableAdminApi.DefaultApi();
 let userUUID = "userUUID_example"; // String | Уникальный идентификатор пользователя
 let jWTToken = "jWTToken_example"; // String | jwt токен пользователя
 let restaurantUuid = "restaurantUuid_example"; // String | Уникальный идентификатор ресторана
@@ -120,6 +121,55 @@ No authorization required
 - **Accept**: application/json
 
 
+## adminV1RestaurantDishListPost
+
+> File adminV1RestaurantDishListPost(userUUID, jWTToken, adminV1RestaurantDishListRequest)
+
+Получение списка блюд ресторана
+
+Получение списка блюд ресторана
+
+### Example
+
+```javascript
+import SmartTableAdminApi from 'smart_table_admin_api';
+
+let apiInstance = new SmartTableAdminApi.DefaultApi();
+let userUUID = "userUUID_example"; // String | Уникальный идентификатор пользователя
+let jWTToken = "jWTToken_example"; // String | jwt токен пользователя
+let adminV1RestaurantDishListRequest = new SmartTableAdminApi.AdminV1RestaurantDishListRequest(); // AdminV1RestaurantDishListRequest | 
+apiInstance.adminV1RestaurantDishListPost(userUUID, jWTToken, adminV1RestaurantDishListRequest, (error, data, response) => {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+});
+```
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **userUUID** | **String**| Уникальный идентификатор пользователя | 
+ **jWTToken** | **String**| jwt токен пользователя | 
+ **adminV1RestaurantDishListRequest** | [**AdminV1RestaurantDishListRequest**](AdminV1RestaurantDishListRequest.md)|  | 
+
+### Return type
+
+**File**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: multipart/mixed, application/json
+
+
 ## adminV1RestaurantListGet
 
 > AdminV1RestaurantListResponse adminV1RestaurantListGet(userUUID, jWTToken)
@@ -131,9 +181,9 @@ No authorization required
 ### Example
 
 ```javascript
-import SmartTableMobileApi from 'smart_table_mobile_api';
+import SmartTableAdminApi from 'smart_table_admin_api';
 
-let apiInstance = new SmartTableMobileApi.DefaultApi();
+let apiInstance = new SmartTableAdminApi.DefaultApi();
 let userUUID = "userUUID_example"; // String | Уникальный идентификатор пользователя
 let jWTToken = "jWTToken_example"; // String | jwt токен пользователя
 apiInstance.adminV1RestaurantListGet(userUUID, jWTToken, (error, data, response) => {

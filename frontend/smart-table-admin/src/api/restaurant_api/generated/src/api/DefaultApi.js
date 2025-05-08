@@ -1,5 +1,5 @@
 /**
- * SmartTable Mobile API
+ * SmartTable Admin API
  * API для управления рестораном.
  *
  * The version of the OpenAPI document: 1.0.0
@@ -16,6 +16,7 @@ import ApiClient from "../ApiClient";
 import AdminV1RestaurantCreateRequest from '../model/AdminV1RestaurantCreateRequest';
 import AdminV1RestaurantCreateResponse from '../model/AdminV1RestaurantCreateResponse';
 import AdminV1RestaurantDishCreateResponse from '../model/AdminV1RestaurantDishCreateResponse';
+import AdminV1RestaurantDishListRequest from '../model/AdminV1RestaurantDishListRequest';
 import AdminV1RestaurantListResponse from '../model/AdminV1RestaurantListResponse';
 import ErrorResponse from '../model/ErrorResponse';
 
@@ -178,6 +179,60 @@ export default class DefaultApi {
       let returnType = AdminV1RestaurantDishCreateResponse;
       return this.apiClient.callApi(
         '/admin/v1/restaurant/dish/create', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1RestaurantDishListPost operation.
+     * @callback module:api/DefaultApi~adminV1RestaurantDishListPostCallback
+     * @param {String} error Error message, if any.
+     * @param {File} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Получение списка блюд ресторана
+     * Получение списка блюд ресторана
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1RestaurantDishListRequest} adminV1RestaurantDishListRequest 
+     * @param {module:api/DefaultApi~adminV1RestaurantDishListPostCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link File}
+     */
+    adminV1RestaurantDishListPost(userUUID, jWTToken, adminV1RestaurantDishListRequest, callback) {
+      let postBody = adminV1RestaurantDishListRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1RestaurantDishListPost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1RestaurantDishListPost");
+      }
+      // verify the required parameter 'adminV1RestaurantDishListRequest' is set
+      if (adminV1RestaurantDishListRequest === undefined || adminV1RestaurantDishListRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1RestaurantDishListRequest' when calling adminV1RestaurantDishListPost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['multipart/mixed', 'application/json'];
+      let returnType = File;
+      return this.apiClient.callApi(
+        '/admin/v1/restaurant/dish/list', 'POST',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, null, callback
       );

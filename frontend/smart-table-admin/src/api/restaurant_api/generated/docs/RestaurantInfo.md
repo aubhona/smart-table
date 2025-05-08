@@ -1,4 +1,4 @@
-# SmartTableMobileApi.RestaurantInfo
+# SmartTableAdminApi.RestaurantInfo
 
 ## Properties
 

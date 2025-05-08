@@ -1,4 +1,4 @@
-# SmartTableMobileApi.PlaceInfo
+# SmartTableAdminApi.PlaceInfo
 
 ## Properties
 
