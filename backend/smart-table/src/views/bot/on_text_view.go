@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
+	"go.uber.org/zap"
+
 	"github.com/smart-table/src/dependencies"
 
 	"github.com/smart-table/src/domains/bot/presentation"
@@ -40,8 +42,8 @@ func (b *BotUpdatesHandler) HandleOnTextUpdates(context telebot.Context) error {
 		TgLogin: context.Sender().Username,
 		ChatID:  strconv.FormatInt(context.Chat().ID, 10),
 	})
-	if err != nil && !utils.IsTheSameErrorType[*appErrors.CustomerAlreadyExist](err) {
-		logging.GetLogger().Error(fmt.Sprintf("Error while handling customer register: %v", err))
+	if err != nil && !utils.IsTheSameErrorType[appErrors.CustomerAlreadyExist](err) {
+		logging.GetLogger().Error("Error while handling customer register", zap.Error(err))
 
 		ctxErr := context.Send(presentation.UnknownError)
 		if ctxErr != nil {

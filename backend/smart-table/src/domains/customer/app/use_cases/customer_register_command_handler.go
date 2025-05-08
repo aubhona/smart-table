@@ -1,7 +1,9 @@
 package app
 
 import (
+	"github.com/smart-table/src/logging"
 	"github.com/smart-table/src/utils"
+	"go.uber.org/zap"
 
 	"github.com/google/uuid"
 	apperrors "github.com/smart-table/src/domains/customer/app/use_cases/errors"
@@ -34,14 +36,20 @@ func (handler *CustomerRegisterCommandHandler) Handle(
 	customer, err := handler.customerRepository.FindCustomerByTgID(createCommand.TgID)
 
 	if err == nil {
+		logging.GetLogger().Debug("Customer already registered", zap.String("tg_id", createCommand.TgID))
+
 		return CustomerRegisterCommandHandlerResult{
 			CustomerUUID: customer.Get().GetUUID(),
-		}, &apperrors.CustomerAlreadyExist{TgID: createCommand.TgID}
+		}, apperrors.CustomerAlreadyExist{TgID: createCommand.TgID}
 	}
 
 	if !utils.IsTheSameErrorType[domainerrors.CustomerNotFoundByTgID](err) {
+		logging.GetLogger().Error("error while handling customer register", zap.String("tg_id", createCommand.TgID))
+
 		return CustomerRegisterCommandHandlerResult{}, err
 	}
+
+	logging.GetLogger().Debug("Try to create customer", zap.String("tg_id", createCommand.TgID))
 
 	customer = domain.NewCustomer(
 		createCommand.TgID, createCommand.TgLogin, "TODO", createCommand.ChatID, *handler.uuidGenerator)
