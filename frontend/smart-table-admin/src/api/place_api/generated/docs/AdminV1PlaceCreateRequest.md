@@ -1,4 +1,4 @@
-# SmartTableMobileApi.AdminV1PlaceCreateRequest
+# SmartTableAdminApi.AdminV1PlaceCreateRequest
 
 ## Properties
 

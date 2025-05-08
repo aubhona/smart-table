@@ -1,4 +1,4 @@
-# SmartTableMobileApi.AdminV1PlaceListResponse
+# SmartTableAdminApi.AdminV1PlaceListResponse
 
 ## Properties
 

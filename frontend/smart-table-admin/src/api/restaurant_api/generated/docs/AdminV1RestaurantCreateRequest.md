@@ -1,4 +1,4 @@
-# SmartTableMobileApi.AdminV1RestaurantCreateRequest
+# SmartTableAdminApi.AdminV1RestaurantCreateRequest
 
 ## Properties
 
