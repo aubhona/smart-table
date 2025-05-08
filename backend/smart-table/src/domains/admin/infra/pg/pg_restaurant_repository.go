@@ -170,13 +170,17 @@ func (r *RestaurantRepository) FindRestaurantsByOwnerUUID(
 }
 
 func getRestaurantNotFoundError(restaurantUUIDs []uuid.UUID, restaurants []utils.SharedRef[domain.Restaurant]) error {
+	if len(restaurants) == 0 {
+		return domainErrors.RestaurantNotFound{UUID: restaurantUUIDs[0]}
+	}
+
 	restaurantUUIDSet := funk.Map(restaurants, func(restaurant utils.SharedRef[domain.Place]) (uuid.UUID, interface{}) {
 		return restaurant.Get().GetUUID(), nil
 	}).(map[uuid.UUID]interface{})
 
 	for _, restaurantUUID := range restaurantUUIDs {
 		if _, found := restaurantUUIDSet[restaurantUUID]; !found {
-			return domainErrors.PlaceNotFound{UUID: restaurantUUID}
+			return domainErrors.RestaurantNotFound{UUID: restaurantUUID}
 		}
 	}
 

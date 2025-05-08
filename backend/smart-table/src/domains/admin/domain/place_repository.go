@@ -16,6 +16,7 @@ type PlaceRepository interface {
 	FindPlace(uuid uuid.UUID) (utils.SharedRef[Place], error)
 	FindPlaces(uuids []uuid.UUID) ([]utils.SharedRef[Place], error)
 
-	FindPlacesByRestaurantUUID(uuid uuid.UUID) ([]utils.SharedRef[Place], error)
+	FindPlacesByRestaurantUUID(restaurantUUID uuid.UUID) ([]utils.SharedRef[Place], error)
+	FindPlacesByEmployeeUserUUID(userUUID uuid.UUID) ([]utils.SharedRef[Place], error)
 	FindPlaceByAddress(address string, restaurantUUID uuid.UUID) (utils.SharedRef[Place], error)
 }

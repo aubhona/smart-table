@@ -5,6 +5,6 @@ import (
 )
 
 type PlaceListCommand struct {
-	OwnerUUID      uuid.UUID
+	UserUUID       uuid.UUID
 	RestaurantUUID uuid.UUID
 }

@@ -12,6 +12,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	userDefaultFirstName = "testFisrtName"
+	userDefaultLastName  = "testLastName"
+	userDefaultLogin     = "testLogin"
+	userDefaultPassword  = "testPassword"
+	userDefaultTgLogin   = "testTgLogin"
+)
+
 var viewsCodegenAdminClient, _ = viewsCodegenAdmin.NewClientWithResponses(GetBasePath())
 
 func FindUserByLogin(login string) (defsInternalAdminDb.PgUser, error) {
@@ -29,11 +37,11 @@ func FindUserByLogin(login string) (defsInternalAdminDb.PgUser, error) {
 
 func CreateDefaultUser() (uuid.UUID, string, error) {
 	return CreateUser(
-		"testFisrtName",
-		"testLastName",
-		"testLogin",
-		"testPassword",
-		"testTgLogin",
+		userDefaultFirstName,
+		userDefaultLastName,
+		userDefaultLogin,
+		userDefaultPassword,
+		userDefaultTgLogin,
 	)
 }
 

@@ -1,9 +1,9 @@
 package smarttable_test
 
 import (
+	"net/http"
 	"testing"
 
-	viewsAdmin "github.com/smart-table/src/views/admin/v1/restaurant"
 	viewsCodegenAdminRestaurant "github.com/smart-table/src/views/codegen/admin_restaurant"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,48 +18,64 @@ func TestAdminRestaurantListHappyPath(t *testing.T) {
 	defer GetTestMutex().Unlock()
 	defer CleanTest()
 
-	userUUID, token, err := CreateDefaultUser()
+	userUUID, userToken, err := CreateDefaultUser()
+	assert.Nil(t, err)
+
+	employeeUserUUID, employeeToken, err := CreateUser(
+		userDefaultFirstName,
+		userDefaultLastName,
+		employeeDefaultLogin,
+		userDefaultPassword,
+		employeeDefaultTgLogin,
+	)
 	assert.Nil(t, err)
 
 	restaurantUUID1, err := CreateRestaurant(
 		testRestaurantName1,
-		token,
+		userToken,
 		userUUID,
+	)
+	assert.Nil(t, err)
+
+	placeUUID, err := CreateDefaultPlace(userToken, userUUID, restaurantUUID1)
+	assert.Nil(t, err)
+
+	err = AddEmployee(
+		employeeDefaultLogin,
+		"admin",
+		userToken,
+		userUUID,
+		placeUUID,
 	)
 	assert.Nil(t, err)
 
 	restaurantUUID2, err := CreateRestaurant(
 		testRestaurantName2,
-		token,
-		userUUID,
+		employeeToken,
+		employeeUserUUID,
 	)
 	assert.Nil(t, err)
 
-	handler := viewsAdmin.AdminV1RestaurantHandler{}
-
-	response, err := handler.GetAdminV1RestaurantList(GetCtx(), viewsCodegenAdminRestaurant.GetAdminV1RestaurantListRequestObject{
-		Params: viewsCodegenAdminRestaurant.GetAdminV1RestaurantListParams{
-			UserUUID: userUUID,
+	response, err := viewsCodegenAdminRestaurantClient.GetAdminV1RestaurantListWithResponse(
+		GetCtx(), 
+		&viewsCodegenAdminRestaurant.GetAdminV1RestaurantListParams{
+			UserUUID: employeeUserUUID,
+			JWTToken: employeeToken,
 		},
-	})
+	)
 
-	assert.NoError(t, err)
-
-	expectedResponse := viewsCodegenAdminRestaurant.GetAdminV1RestaurantList200JSONResponse{
-		RestaurantList: []viewsCodegenAdminRestaurant.RestaurantInfo{
-			{
-				Name: testRestaurantName1,
-				UUID: restaurantUUID1,
-			},
-			{
-				Name: testRestaurantName2,
-				UUID: restaurantUUID2,
-			},
+	expectedRestaurantList := []viewsCodegenAdminRestaurant.RestaurantInfo{
+		{
+			Name: testRestaurantName2,
+			UUID: restaurantUUID2,
+		},
+		{
+			Name: testRestaurantName1,
+			UUID: restaurantUUID1,
 		},
 	}
 
-	assert.Equal(t, response, expectedResponse)
-
-	_, ok := response.(viewsCodegenAdminRestaurant.GetAdminV1RestaurantList200JSONResponse)
-	assert.True(t, ok)
+	assert.NoError(t, err)
+	assert.Equal(t, response.JSON200.RestaurantList, expectedRestaurantList)
+	assert.Equal(t, response.StatusCode(), http.StatusOK)
 }
