@@ -16,7 +16,6 @@ SELECT
     input.place_uuid,
     input.role,
     input.active,
-    input.calories,
     input.created_at,
     input.updated_at
 FROM jsonb_to_recordset($1::jsonb) AS input(
@@ -27,5 +26,5 @@ FROM jsonb_to_recordset($1::jsonb) AS input(
     created_at      TIMESTAMPTZ,
     updated_at      TIMESTAMPTZ
 )
-ON CONFLICT (user_uuid, place_uuid) DO NOTHING
+ON CONFLICT ON CONSTRAINT uniq_employee_place  DO NOTHING
     RETURNING user_uuid;

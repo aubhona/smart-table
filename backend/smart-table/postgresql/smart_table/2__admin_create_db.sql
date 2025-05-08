@@ -63,12 +63,13 @@ CREATE TABLE IF NOT EXISTS smart_table_admin.restaurants (
 );
 
 CREATE TABLE IF NOT EXISTS smart_table_admin.employees (
-   "user_uuid" UUID PRIMARY KEY NOT NULL,
+   "user_uuid" UUID NOT NULL,
    "place_uuid" UUID NOT NULL,
    "role" TEXT NOT NULL,
    "active" BOOLEAN DEFAULT TRUE NOT NULL,
    "created_at" TIMESTAMPTZ NOT NULL,
-   "updated_at" TIMESTAMPTZ NOT NULL
+   "updated_at" TIMESTAMPTZ NOT NULL,
+   CONSTRAINT uniq_employee_place UNIQUE (user_uuid, place_uuid)
 );
 
 ALTER TABLE smart_table_admin.dishes DROP CONSTRAINT IF EXISTS fk_dishes_restaurants;

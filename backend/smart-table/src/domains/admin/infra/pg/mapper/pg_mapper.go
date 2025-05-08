@@ -68,7 +68,7 @@ func restoreEmployee(
 	return domain.RestoreEmployee(
 		user,
 		employee.PlaceUUID,
-		employee.Role,
+		string(employee.Role),
 		employee.Active,
 		employee.CreatedAt,
 		employee.UpdatedAt,
@@ -186,7 +186,7 @@ func ConvertToPgEmployees(employees []utils.SharedRef[domain.Employee]) ([]byte,
 		return defsinternalAdminEmployeeDb.PgEmployee{
 			UserUUID:  employee.Get().GetUser().Get().GetUUID(),
 			PlaceUUID: employee.Get().GetPlaceUUID(),
-			Role:      employee.Get().GetRole(),
+			Role:      defsinternalAdminEmployeeDb.PgEmployeeRole(employee.Get().GetRole()),
 			Active:    employee.Get().GetActive(),
 			CreatedAt: employee.Get().GetCreatedAt(),
 			UpdatedAt: employee.Get().GetUpdatedAt(),
