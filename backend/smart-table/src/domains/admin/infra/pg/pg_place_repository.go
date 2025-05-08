@@ -121,6 +121,10 @@ func (p *PlaceRepository) FindPlaceByAddress(address string, restaurantUUID uuid
 }
 
 func getPlaceNotFoundError(placeUUIDs []uuid.UUID, places []utils.SharedRef[domain.Place]) error {
+	if len(places) == 0 {
+		return domainErrors.PlaceNotFound{UUID: placeUUIDs[0]}
+	}
+
 	placeUUIDSet := funk.Map(places, func(place utils.SharedRef[domain.Place]) (uuid.UUID, interface{}) {
 		return place.Get().GetUUID(), nil
 	}).(map[uuid.UUID]interface{})
@@ -134,11 +138,23 @@ func getPlaceNotFoundError(placeUUIDs []uuid.UUID, places []utils.SharedRef[doma
 	return nil
 }
 
-func (p *PlaceRepository) FindPlacesByRestaurantUUID(uuid uuid.UUID) ([]utils.SharedRef[domain.Place], error) {
+func (p *PlaceRepository) FindPlacesByRestaurantUUID(restaurantUUID uuid.UUID) ([]utils.SharedRef[domain.Place], error) {
 	ctx := context.Background()
 	queries := db.New(p.coonPool)
 
-	placeUUIDs, err := queries.GetPlaceUUIDsByRestaurantUUID(ctx, uuid)
+	placeUUIDs, err := queries.GetPlaceUUIDsByRestaurantUUID(ctx, restaurantUUID)
+	if err != nil {
+		return nil, err
+	}
+
+	return p.FindPlaces(placeUUIDs)
+}
+
+func (p *PlaceRepository) FindPlacesByEmployeeUserUUID(userUUID uuid.UUID) ([]utils.SharedRef[domain.Place], error) {
+	ctx := context.Background()
+	queries := db.New(p.coonPool)
+
+	placeUUIDs, err := queries.GetPlaceUUIDsByEmployeeUserUUID(ctx, userUUID)
 	if err != nil {
 		return nil, err
 	}

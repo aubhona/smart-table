@@ -45,18 +45,33 @@ func (handler *PlaceListCommandHandler) Handle(
 		return PlaceListCommandHandlerResult{}, err
 	}
 
-	if restaurant.Get().GetOwner().Get().GetUUID() != placeListCommand.OwnerUUID {
-		return PlaceListCommandHandlerResult{}, appErrors.RestaurantAccessDenied{
-			UserUUID:       placeListCommand.OwnerUUID,
-			RestaurantUUID: placeListCommand.RestaurantUUID,
+	if restaurant.Get().GetOwner().Get().GetUUID() == placeListCommand.UserUUID {
+		placeList, err := handler.placeRepository.FindPlacesByRestaurantUUID(placeListCommand.RestaurantUUID)
+		if err != nil {
+			logging.GetLogger().Error("error while finding places by restaurant uuid",
+				zap.String("user_uuid", placeListCommand.UserUUID.String()),
+				zap.Error(err))
+
+			return PlaceListCommandHandlerResult{}, err
 		}
+
+		return PlaceListCommandHandlerResult{placeList}, nil
 	}
 
-	placeList, err := handler.placeRepository.FindPlacesByRestaurantUUID(placeListCommand.RestaurantUUID)
+	placeList, err := handler.placeRepository.FindPlacesByEmployeeUserUUID(placeListCommand.UserUUID)
 	if err != nil {
-		logging.GetLogger().Error("error while finding places", zap.Error(err))
+		logging.GetLogger().Error("error while finding places by employee uuid",
+			zap.String("user_uuid", placeListCommand.UserUUID.String()),
+			zap.Error(err))
 
 		return PlaceListCommandHandlerResult{}, err
+	}
+
+	if len(placeList) == 0 {
+		return PlaceListCommandHandlerResult{}, appErrors.RestaurantAccessDenied{
+			UserUUID:       placeListCommand.UserUUID,
+			RestaurantUUID: placeListCommand.RestaurantUUID,
+		}
 	}
 
 	return PlaceListCommandHandlerResult{placeList}, nil

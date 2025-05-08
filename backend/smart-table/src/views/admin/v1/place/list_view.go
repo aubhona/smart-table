@@ -36,7 +36,7 @@ func (h *AdminV1PlaceHandler) PostAdminV1PlaceList(
 	}
 
 	result, err := handler.Handle(&app.PlaceListCommand{
-		OwnerUUID:      request.Params.UserUUID,
+		UserUUID:       request.Params.UserUUID,
 		RestaurantUUID: request.Body.RestaurantUUID,
 	})
 	if err != nil {
