@@ -1,4 +1,4 @@
-# SmartTableAdminApi.AdminV1PlaceListRequest
+# SmartTableAdminApi.AdminV1RestaurantDishListRequest
 
 ## Properties
 

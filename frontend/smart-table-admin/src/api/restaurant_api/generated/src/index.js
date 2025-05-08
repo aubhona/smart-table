@@ -1,5 +1,5 @@
 /**
- * SmartTable Mobile API
+ * SmartTable Admin API
  * API для управления рестораном.
  *
  * The version of the OpenAPI document: 1.0.0
@@ -16,7 +16,9 @@ import ApiClient from './ApiClient';
 import AdminV1RestaurantCreateRequest from './model/AdminV1RestaurantCreateRequest';
 import AdminV1RestaurantCreateResponse from './model/AdminV1RestaurantCreateResponse';
 import AdminV1RestaurantDishCreateResponse from './model/AdminV1RestaurantDishCreateResponse';
+import AdminV1RestaurantDishListRequest from './model/AdminV1RestaurantDishListRequest';
 import AdminV1RestaurantListResponse from './model/AdminV1RestaurantListResponse';
+import DishInfo from './model/DishInfo';
 import ErrorResponse from './model/ErrorResponse';
 import RestaurantInfo from './model/RestaurantInfo';
 import DefaultApi from './api/DefaultApi';
@@ -28,9 +30,9 @@ import DefaultApi from './api/DefaultApi';
 * <p>
 * An AMD (recommended!) or CommonJS application will generally do something equivalent to the following:
 * <pre>
-* var SmartTableMobileApi = require('index'); // See note below*.
-* var xxxSvc = new SmartTableMobileApi.XxxApi(); // Allocate the API class we're going to use.
-* var yyyModel = new SmartTableMobileApi.Yyy(); // Construct a model instance.
+* var SmartTableAdminApi = require('index'); // See note below*.
+* var xxxSvc = new SmartTableAdminApi.XxxApi(); // Allocate the API class we're going to use.
+* var yyyModel = new SmartTableAdminApi.Yyy(); // Construct a model instance.
 * yyyModel.someProperty = 'someValue';
 * ...
 * var zzz = xxxSvc.doSomething(yyyModel); // Invoke the service.
@@ -42,8 +44,8 @@ import DefaultApi from './api/DefaultApi';
 * <p>
 * A non-AMD browser application (discouraged) might do something like this:
 * <pre>
-* var xxxSvc = new SmartTableMobileApi.XxxApi(); // Allocate the API class we're going to use.
-* var yyy = new SmartTableMobileApi.Yyy(); // Construct a model instance.
+* var xxxSvc = new SmartTableAdminApi.XxxApi(); // Allocate the API class we're going to use.
+* var yyy = new SmartTableAdminApi.Yyy(); // Construct a model instance.
 * yyyModel.someProperty = 'someValue';
 * ...
 * var zzz = xxxSvc.doSomething(yyyModel); // Invoke the service.
@@ -79,10 +81,22 @@ export {
     AdminV1RestaurantDishCreateResponse,
 
     /**
+     * The AdminV1RestaurantDishListRequest model constructor.
+     * @property {module:model/AdminV1RestaurantDishListRequest}
+     */
+    AdminV1RestaurantDishListRequest,
+
+    /**
      * The AdminV1RestaurantListResponse model constructor.
      * @property {module:model/AdminV1RestaurantListResponse}
      */
     AdminV1RestaurantListResponse,
+
+    /**
+     * The DishInfo model constructor.
+     * @property {module:model/DishInfo}
+     */
+    DishInfo,
 
     /**
      * The ErrorResponse model constructor.
