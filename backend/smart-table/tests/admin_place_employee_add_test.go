@@ -24,7 +24,7 @@ func AddEmployee(employeeLogin, employeeRole, token string, userUUID, placeUUID 
 		},
 		viewsCodegenAdmin.PostAdminV1PlaceEmployeeAddJSONRequestBody{
 			EmployeeLogin: employeeLogin,
-			EmployeeRole:  viewsCodegenAdmin.AdminV1PlaceEmployeeAddRequestEmployeeRole(employeeRole),
+			EmployeeRole:  viewsCodegenAdmin.Role(employeeRole),
 			PlaceUUID:     placeUUID,
 		},
 	)

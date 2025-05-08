@@ -25,7 +25,7 @@ func convertPlaceToPlaceInfo(
 	}
 }
 
-func (h *AdminV1PlaceHandler) PostAdminV1PlaceList(
+func (h *AdminV1PlaceHandler) PostAdminV1PlaceList( //nolint
 	ctx context.Context,
 	request viewsAdminPlace.PostAdminV1PlaceListRequestObject,
 ) (viewsAdminPlace.PostAdminV1PlaceListResponseObject, error) {

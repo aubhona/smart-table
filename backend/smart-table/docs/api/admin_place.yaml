@@ -136,6 +136,51 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'  
 
+    /admin/v1/place/employee/list:
+        post:
+            summary: Получение списка сотрудников в плейса
+            description: Получение списка сотрудников в плейса
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1PlaceEmployeeListRequest'
+            responses:
+                '200':
+                    description: Список сотрудников плейса
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1PlaceEmployeeListResponse'
+                '400':
+                    description: Ошибка получения списка сотрудников плейса, некорректный формат данных
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'              
+                '401':
+                    description: Ошибка получения списка сотрудников плейса, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка получения списка сотрудников плейса, отказано в доступе, некорретные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка получения списка сотрудников плейса, плейс не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'  
+
 components:
     parameters:
         user_uuid:
@@ -162,7 +207,9 @@ components:
             additionalProperties: false
             properties:
                 restaurant_uuid:
-                    $ref: '#/components/schemas/RestaurantUUID'
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор ресторана
                 address:
                     $ref: '#/components/schemas/Address'
                 table_count:
@@ -183,7 +230,9 @@ components:
             additionalProperties: false
             properties:
                 place_uuid:
-                    $ref: '#/components/schemas/PlaceUUID'
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
             required:
                 - place_uuid
 
@@ -193,7 +242,9 @@ components:
             additionalProperties: false
             properties:
                 restaurant_uuid:
-                    $ref: '#/components/schemas/RestaurantUUID'
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор ресторана
             required:
                 - restaurant_uuid
 
@@ -214,19 +265,40 @@ components:
             additionalProperties: false
             properties:
                 place_uuid:
-                    $ref: '#/components/schemas/PlaceUUID'
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
                 employee_login:
                     $ref: '#/components/schemas/Login'
                 employee_role:
-                    type: string
-                    description: Роль сотрудника
-                    enum: 
-                        - admin
-                        - waiter
+                    $ref: '#/components/schemas/Role'
             required:
                 - place_uuid
                 - employee_login
                 - employee_role
+
+        # /admin/v1/place/employee/list_POST
+        AdminV1PlaceEmployeeListRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                place_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
+            required:
+                - place_uuid
+        
+        AdminV1PlaceEmployeeListResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                employee_list:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/EmployeeInfo'
+            required:
+                - employee_list
 
         ErrorResponse:
             type: object
@@ -257,7 +329,9 @@ components:
             additionalProperties: false
             properties:
                 uuid:
-                    $ref: '#/components/schemas/PlaceUUID'
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
                 address:
                     $ref: '#/components/schemas/Address'
                 table_count:
@@ -273,15 +347,35 @@ components:
                 - opening_time
                 - closing_time
 
-        RestaurantUUID:
-            type: string
-            format: uuid
-            description: Уникальный идентификатор ресторана
-
-        PlaceUUID:
-            type: string
-            format: uuid
-            description: Уникальный идентификатор плейса
+        EmployeeInfo:
+            type: object
+            additionalProperties: false
+            properties:
+                uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор пользователя
+                login:
+                    description: Логин пользователя, используемый для входа
+                    $ref: '#/components/schemas/Login'
+                tg_login:
+                    description: Логин пользователя в Telegram
+                    $ref: '#/components/schemas/Login'
+                first_name:
+                    description: Имя пользователя на латинице
+                    $ref: '#/components/schemas/Name'
+                last_name:
+                    description: Фамилия пользователя на латинице
+                    $ref: '#/components/schemas/Name'
+                employee_role:
+                    $ref: '#/components/schemas/Role'
+            required:
+                - uuid
+                - login
+                - tg_login
+                - first_name
+                - last_name
+                - employee_role
         
         Address:
             type: string
@@ -304,3 +398,16 @@ components:
             pattern: "^[a-zA-Z][a-zA-Z0-9_]{4,31}$"
             minLength: 4
             maxLength: 31
+
+        Role:
+            type: string
+            description: Роль сотрудника
+            enum: 
+                - admin
+                - waiter
+
+        Name:
+            type: string
+            minLength: 1
+            maxLength: 50
+            pattern: "^[A-Za-z \\-]+$"
