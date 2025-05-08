@@ -21,5 +21,3 @@ src/model/AdminV1RestaurantDishCreateResponse.js
 src/model/AdminV1RestaurantListResponse.js
 src/model/ErrorResponse.js
 src/model/RestaurantInfo.js
-test/model/AdminV1RestaurantDishCreateResponse.spec.js
-test/model/RestaurantInfo.spec.js

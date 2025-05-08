@@ -7,59 +7,114 @@ export default function RestaurantsList() {
   const [restaurants, setRestaurants] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [newName, setNewName] = useState("");
+  const [, setError] = useState("");
+  const [, setLoading] = useState(true);
 
-  const userUuid = localStorage.getItem("user_uuid");
-  const jwtToken = localStorage.getItem("jwt_token");
+  const userUUID = localStorage.getItem("user_uuid");
+  const jWTToken = localStorage.getItem("jwt_token");
   const api = new DefaultApi();
-  api.apiClient.basePath = "https://2663-2a01-4f9-c010-ecd2-00-1.ngrok-free.app";
+  api.apiClient.basePath = "https://5506-135-181-37-249.ngrok-free.app";
 
+  async function fetchRestaurants() {
+    const resp = await fetch(
+      `${api.apiClient.basePath}/admin/v1/restaurant/list`,
+      {
+        method: "GET",
+        headers: {
+          "User-UUID": userUUID,
+          "JWT-Token": jWTToken,
+          "ngrok-skip-browser-warning": "true"
+        },
+      }
+    );
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    return data.restaurant_list;
+  }
+  
   useEffect(() => {
-    if (!userUuid) return;
-    api.adminV1RestaurantListGet(userUuid, (err, data) => {
-      if (err) console.error(err);
-      else     setRestaurants(Array.isArray(data) ? data : []);
-    });
-  }, [userUuid]);
+    (async () => {
+      try {
+        const list = await fetchRestaurants();
+        setRestaurants(list.map(r => ({
+          restaurant_uuid: r.uuid,
+          restaurant_name: r.name,
+        })));
+      } catch (e) {
+        console.error(e);
+        setError("Ошибка загрузки списка ресторанов");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   const handleCreate = async () => {
     const name = newName.trim();
     if (!name) {
-      alert("Введите название ресторана");
+      setError("Введите название ресторана");
       return;
     }
-
-    const req = AdminV1RestaurantCreateRequest.constructFromObject({
-      restaurant_name: name,
-    });
-
+  
     try {
-      const created = await new Promise((resolve, reject) => {
-        api.apiClient.defaultHeaders["JWT-Token"] = jwtToken;
+      const request = AdminV1RestaurantCreateRequest.constructFromObject({
+        restaurant_name: name
+      });
+  
+      api.apiClient.defaultHeaders = {
+        ...api.apiClient.defaultHeaders,
+        "User-UUID": userUUID,
+        "JWT-Token": jWTToken,
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true"
+      };
+  
+      const data = await new Promise((resolve, reject) => {
         api.adminV1RestaurantCreatePost(
-          userUuid,
-          req,
-          (err, data) => err ? reject(err) : resolve(data)
+          userUUID,
+          jWTToken,
+          request,
+          (err, data, res) => {
+            if (err) return reject(err);
+            resolve(data);   
+          }
         );
       });
-
-      const newRest = {
-        restaurant_uuid: created.restaurant_uuid,
-        restaurant_name: name
-      };
-
-      setRestaurants((prev) => [...prev, newRest]);
-      setNewName("");
-      setShowModal(false);
+  
+      if (data.restaurant_uuid) {
+        setRestaurants(prev => [
+          ...prev,
+          {
+            restaurant_uuid: data.restaurant_uuid,
+            restaurant_name: name, 
+          },
+        ]);
+        setNewName("");
+        setShowModal(false);
+        setError("");
+      }
+  
     } catch (err) {
-      console.error("Не удалось создать ресторан", err);
-      alert(err.message || "Ошибка создания");
+      console.error("Ошибка создания:", err);
+      const errorMsg = err.body?.message || err.message || "Ошибка при создании ресторана";
+      setError(errorMsg);
+  
+      if (err.body?.code === "already_exist") {
+        setNewName("");
+      }
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user_uuid");
+    localStorage.removeItem("jwt_token");
+    window.location.href = "/";
+  };
+  
   return (
     <div className="rest-container">
       <div className="rest-header-bar">
-        <button className="back-button">Выйти из аккаунта</button>
+        <button className="back-button" onClick={handleLogout}>Выйти из аккаунта</button>
         <h1 className="header-title">Мои рестораны</h1>
         <button
           className="create-rest-button"
@@ -78,7 +133,9 @@ export default function RestaurantsList() {
             <button
               key={r.restaurant_uuid}
               className="rest-item"
-              onClick={() => alert("Откроем плейсы")}
+              onClick={() => 
+                window.location.href = `/restaurants/${r.restaurant_uuid}/places-dishes`
+              }
             >
               {r.restaurant_name}
             </button>
