@@ -27,7 +27,7 @@ go.work.sum
 # env file
 *.env
 !config.env
-!tests/configs/.env
+tests/configs/.env
 !configs/example.env
 
 **/codegen*

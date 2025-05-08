@@ -1,10 +1,10 @@
 package smarttable_test
 
 import (
+	"net/http"
 	"testing"
 
-	viewsAdmin "github.com/smart-table/src/views/admin/v1/place"
-	viewsCodegenAdmin "github.com/smart-table/src/views/codegen/admin_place"
+	viewsCodegenAdminPlace "github.com/smart-table/src/views/codegen/admin_place"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,49 +23,54 @@ func TestAdminPlaceListHappyPath(t *testing.T) {
 	defer GetTestMutex().Unlock()
 	defer CleanTest()
 
-	userUUID, err := CreateDefaultUser()
-	assert.Nil(t, err)
+	userUUID, token, err := CreateDefaultUser()
+	assert.NoError(t, err)
 
 	restaurantUUID, err := CreateDefaultRestaurant(
+		token,
 		userUUID,
 	)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 
 	placeUUID1, err := CreatePlace(
 		userUUID,
 		restaurantUUID,
+		token,
 		testPlaceAddress1,
 		testOpeningTime,
 		testClosingTime,
 		testTableCount,
 	)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 
 	placeUUID2, err := CreatePlace(
 		userUUID,
 		restaurantUUID,
+		token,
 		testPlaceAddress2,
 		testOpeningTime,
 		testClosingTime,
 		testTableCount,
 	)
-	assert.Nil(t, err)
-
-	handler := viewsAdmin.AdminV1PlaceHandler{}
-
-	response, err := handler.PostAdminV1PlaceList(GetCtx(), viewsCodegenAdmin.PostAdminV1PlaceListRequestObject{
-		Params: viewsCodegenAdmin.PostAdminV1PlaceListParams{
-			UserUUID: userUUID,
-		},
-		Body: &viewsCodegenAdmin.AdminV1PlaceListRequest{
-			RestaurantUUID: restaurantUUID,
-		},
-	})
-
 	assert.NoError(t, err)
 
-	expectedResponse := viewsCodegenAdmin.PostAdminV1PlaceList200JSONResponse{
-		PlaceList: []viewsCodegenAdmin.PlaceInfo{
+	response, err := viewsCodegenAdminPlaceClient.PostAdminV1PlaceListWithResponse(
+		GetCtx(),
+		&viewsCodegenAdminPlace.PostAdminV1PlaceListParams{
+			UserUUID: userUUID,
+			JWTToken: token,
+		},
+		viewsCodegenAdminPlace.PostAdminV1PlaceListJSONRequestBody{
+			RestaurantUUID: restaurantUUID,
+		},
+	)
+
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, response.StatusCode())
+	assert.NotNil(t, response.JSON200)
+
+	expectedResponse := viewsCodegenAdminPlace.PostAdminV1PlaceList200JSONResponse{
+		PlaceList: []viewsCodegenAdminPlace.PlaceInfo{
 			{
 				Address:     testPlaceAddress1,
 				OpeningTime: testOpeningTime,
@@ -83,8 +88,5 @@ func TestAdminPlaceListHappyPath(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, response, expectedResponse)
-
-	_, ok := response.(viewsCodegenAdmin.PostAdminV1PlaceList200JSONResponse)
-	assert.True(t, ok)
+	assert.Equal(t, expectedResponse.PlaceList, response.JSON200.PlaceList)
 }

@@ -60,7 +60,15 @@ func (r *responseRecorder) Write(b []byte) (int, error) {
 func botLogger(logger *zap.Logger) telebot.MiddlewareFunc {
 	return func(next telebot.HandlerFunc) telebot.HandlerFunc {
 		return func(c telebot.Context) error {
-			logger.Info("Get update from telegram bot", zap.Any("update", c.Update()))
+			info := make(map[string]interface{})
+			if c.Update().Message != nil {
+				info["message_text"] = c.Update().Message.Text
+				info["message_chat"] = c.Update().Message.Chat
+				info["message_sender"] = c.Update().Message.Sender
+			}
+
+			logger.Info("Get update from telegram bot", zap.Any("update_info", info))
+
 			return next(c)
 		}
 	}

@@ -11,9 +11,12 @@ import (
 
 func NewBot(container *dig.Container, deps *dependencies.Dependencies) (*telebot.Bot, error) {
 	bot, err := telebot.NewBot(telebot.Settings{
-		Token:     deps.Config.Bot.Token,
-		Poller:    &telebot.LongPoller{Timeout: deps.Config.Bot.PollerTimeout},
-		ParseMode: telebot.ModeMarkdown,
+		Token:       deps.Config.Bot.Token,
+		Poller:      &telebot.LongPoller{Timeout: deps.Config.Bot.PollerTimeout},
+		ParseMode:   telebot.ModeMarkdown,
+		Verbose:     deps.Config.Logging.Bot.Enable,
+		Synchronous: deps.Config.Bot.TestMode,
+		Offline:     deps.Config.Bot.TestMode,
 	})
 
 	if err != nil {

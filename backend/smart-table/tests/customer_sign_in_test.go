@@ -1,12 +1,14 @@
 package smarttable_test
 
 import (
+	"net/http"
 	"testing"
 
 	viewsCodegenCustomer "github.com/smart-table/src/views/codegen/customer"
-	viewsCustomer "github.com/smart-table/src/views/customer/v1"
 	"github.com/stretchr/testify/assert"
 )
+
+var viewsCodegenCustomerClient, _ = viewsCodegenCustomer.NewClientWithResponses(GetBasePath())
 
 func TestCustomerAuthHappyPath(t *testing.T) {
 	GetTestMutex().Lock()
@@ -16,20 +18,19 @@ func TestCustomerAuthHappyPath(t *testing.T) {
 	id, err := CreateCustomer("test_login", 123, 1234)
 	assert.Nil(t, err)
 
-	handler := viewsCustomer.CustomerV1Handler{}
-	response, err := handler.PostCustomerV1SignIn(GetCtx(), viewsCodegenCustomer.PostCustomerV1SignInRequestObject{
-		Body: &viewsCodegenCustomer.PostCustomerV1SignInJSONRequestBody{
+	response, err := viewsCodegenCustomerClient.PostCustomerV1SignInWithResponse(
+		GetCtx(),
+		viewsCodegenCustomer.PostCustomerV1SignInJSONRequestBody{
 			TgLogin: "test_login",
 			TgID:    "123",
 		},
-	})
-
+	)
 	assert.NoError(t, err)
 	assert.NotNil(t, response)
 
-	responseObj, ok := response.(viewsCodegenCustomer.PostCustomerV1SignIn200JSONResponse)
-	assert.True(t, ok)
-	assert.Equal(t, responseObj.CustomerUUID, id)
+	assert.Equal(t, http.StatusOK, response.StatusCode())
+	assert.NotNil(t, response.JSON200)
+	assert.Equal(t, response.JSON200.CustomerUUID, id)
 
 	customerPg, err := FindCustomerByTgID("123")
 	assert.NoError(t, err)
