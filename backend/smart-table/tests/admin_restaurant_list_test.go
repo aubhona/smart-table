@@ -57,7 +57,7 @@ func TestAdminRestaurantListHappyPath(t *testing.T) {
 	assert.Nil(t, err)
 
 	response, err := viewsCodegenAdminRestaurantClient.GetAdminV1RestaurantListWithResponse(
-		GetCtx(), 
+		GetCtx(),
 		&viewsCodegenAdminRestaurant.GetAdminV1RestaurantListParams{
 			UserUUID: employeeUserUUID,
 			JWTToken: employeeToken,

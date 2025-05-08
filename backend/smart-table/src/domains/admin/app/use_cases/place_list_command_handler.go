@@ -51,7 +51,7 @@ func (handler *PlaceListCommandHandler) Handle(
 			logging.GetLogger().Error("error while finding places by restaurant uuid",
 				zap.String("user_uuid", placeListCommand.UserUUID.String()),
 				zap.Error(err))
-	
+
 			return PlaceListCommandHandlerResult{}, err
 		}
 
@@ -67,7 +67,7 @@ func (handler *PlaceListCommandHandler) Handle(
 		return PlaceListCommandHandlerResult{}, err
 	}
 
-	if (len(placeList) == 0) {
+	if len(placeList) == 0 {
 		return PlaceListCommandHandlerResult{}, appErrors.RestaurantAccessDenied{
 			UserUUID:       placeListCommand.UserUUID,
 			RestaurantUUID: placeListCommand.RestaurantUUID,
