@@ -32,7 +32,7 @@ func (h *AdminV1RestaurantHandler) GetAdminV1RestaurantList(
 	}
 
 	result, err := handler.Handle(&app.RestaurantListCommand{
-		OwnerUUID: request.Params.UserUUID,
+		UserUUID: request.Params.UserUUID,
 	})
 	if err != nil {
 		if utils.IsTheSameErrorType[domainErrors.UserNotFoundByUUID](err) {
@@ -47,9 +47,9 @@ func (h *AdminV1RestaurantHandler) GetAdminV1RestaurantList(
 		return nil, err
 	}
 
-	restaurantList := make([]viewsAdminRestaurant.RestaurantInfo, 0, len(result.DomainRestaurantList))
+	restaurantList := make([]viewsAdminRestaurant.RestaurantInfo, 0, len(result.RestaurantList))
 
-	for _, domainRestaurant := range result.DomainRestaurantList {
+	for _, domainRestaurant := range result.RestaurantList {
 		restaurantList = append(restaurantList, convertDomainRestaurantToGenRestaurant(domainRestaurant))
 	}
 

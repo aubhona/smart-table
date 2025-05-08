@@ -1,14 +1,44 @@
 package smarttable_test
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 
+	"github.com/google/uuid"
 	viewsCodegenAdmin "github.com/smart-table/src/views/codegen/admin_place"
 	"github.com/stretchr/testify/assert"
 )
 
-const testEmployeeLogin = "testEmployeeLogin"
+const (
+	employeeDefaultLogin   = "testEmployeeLogin"
+	employeeDefaultTgLogin = "testEmployeeTgLogin"
+)
+
+func AddEmployee(employeeLogin, employeeRole, token string, userUUID, placeUUID uuid.UUID) error {
+	resp, err := viewsCodegenAdminPlaceClient.PostAdminV1PlaceEmployeeAddWithResponse(
+		GetCtx(),
+		&viewsCodegenAdmin.PostAdminV1PlaceEmployeeAddParams{
+			UserUUID: userUUID,
+			JWTToken: token,
+		},
+		viewsCodegenAdmin.PostAdminV1PlaceEmployeeAddJSONRequestBody{
+			EmployeeLogin: employeeLogin,
+			EmployeeRole:  viewsCodegenAdmin.AdminV1PlaceEmployeeAddRequestEmployeeRole(employeeRole),
+			PlaceUUID:     placeUUID,
+		},
+	)
+
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode() != http.StatusNoContent {
+		return fmt.Errorf("unexpected response status: %d", resp.StatusCode())
+	}
+
+	return nil
+}
 
 func TestAdminEmployeeAddHappyPath(t *testing.T) {
 	GetTestMutex().Lock()
@@ -25,11 +55,11 @@ func TestAdminEmployeeAddHappyPath(t *testing.T) {
 	assert.Nil(t, err)
 
 	_, _, err = CreateUser(
-		"testFisrtName",
-		"testLastName",
-		testEmployeeLogin,
-		"testPassword",
-		"testEmployeeTgLogin",
+		userDefaultFirstName,
+		userDefaultLastName,
+		employeeDefaultLogin,
+		userDefaultPassword,
+		employeeDefaultTgLogin,
 	)
 	assert.Nil(t, err)
 
@@ -40,7 +70,7 @@ func TestAdminEmployeeAddHappyPath(t *testing.T) {
 			JWTToken: token,
 		},
 		viewsCodegenAdmin.PostAdminV1PlaceEmployeeAddJSONRequestBody{
-			EmployeeLogin: testEmployeeLogin,
+			EmployeeLogin: employeeDefaultLogin,
 			EmployeeRole:  "admin",
 			PlaceUUID:     placeUUID,
 		},

@@ -5,5 +5,5 @@ import (
 )
 
 type RestaurantListCommand struct {
-	OwnerUUID uuid.UUID
+	UserUUID uuid.UUID
 }

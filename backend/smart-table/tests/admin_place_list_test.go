@@ -23,19 +23,29 @@ func TestAdminPlaceListHappyPath(t *testing.T) {
 	defer GetTestMutex().Unlock()
 	defer CleanTest()
 
-	userUUID, token, err := CreateDefaultUser()
+	userUUID, userToken, err := CreateDefaultUser()
 	assert.NoError(t, err)
 
-	restaurantUUID, err := CreateDefaultRestaurant(
-		token,
+	employeeUserUUID, employeeToken, err := CreateUser(
+		userDefaultFirstName,
+		userDefaultLastName,
+		employeeDefaultLogin,
+		userDefaultPassword,
+		employeeDefaultTgLogin,
+	)
+	assert.Nil(t, err)
+
+	restaurantUUID, err := CreateRestaurant(
+		testRestaurantName1,
+		userToken,
 		userUUID,
 	)
-	assert.NoError(t, err)
+	assert.Nil(t, err)
 
 	placeUUID1, err := CreatePlace(
 		userUUID,
 		restaurantUUID,
-		token,
+		userToken,
 		testPlaceAddress1,
 		testOpeningTime,
 		testClosingTime,
@@ -46,7 +56,7 @@ func TestAdminPlaceListHappyPath(t *testing.T) {
 	placeUUID2, err := CreatePlace(
 		userUUID,
 		restaurantUUID,
-		token,
+		userToken,
 		testPlaceAddress2,
 		testOpeningTime,
 		testClosingTime,
@@ -54,39 +64,69 @@ func TestAdminPlaceListHappyPath(t *testing.T) {
 	)
 	assert.NoError(t, err)
 
+	err = AddEmployee(
+		employeeDefaultLogin,
+		"admin",
+		userToken,
+		userUUID,
+		placeUUID1,
+	)
+	assert.Nil(t, err)
+
 	response, err := viewsCodegenAdminPlaceClient.PostAdminV1PlaceListWithResponse(
 		GetCtx(),
 		&viewsCodegenAdminPlace.PostAdminV1PlaceListParams{
 			UserUUID: userUUID,
-			JWTToken: token,
+			JWTToken: userToken,
 		},
 		viewsCodegenAdminPlace.PostAdminV1PlaceListJSONRequestBody{
 			RestaurantUUID: restaurantUUID,
 		},
 	)
 
-	assert.NoError(t, err)
-	assert.Equal(t, http.StatusOK, response.StatusCode())
-	assert.NotNil(t, response.JSON200)
-
-	expectedResponse := viewsCodegenAdminPlace.PostAdminV1PlaceList200JSONResponse{
-		PlaceList: []viewsCodegenAdminPlace.PlaceInfo{
-			{
-				Address:     testPlaceAddress1,
-				OpeningTime: testOpeningTime,
-				ClosingTime: testClosingTime,
-				TableCount:  testTableCount,
-				UUID:        placeUUID1,
-			},
-			{
-				Address:     testPlaceAddress2,
-				OpeningTime: testOpeningTime,
-				ClosingTime: testClosingTime,
-				TableCount:  testTableCount,
-				UUID:        placeUUID2,
-			},
+	expectedPlaceList := []viewsCodegenAdminPlace.PlaceInfo{
+		{
+			Address:     testPlaceAddress1,
+			OpeningTime: testOpeningTime,
+			ClosingTime: testClosingTime,
+			TableCount:  testTableCount,
+			UUID:        placeUUID1,
+		},
+		{
+			Address:     testPlaceAddress2,
+			OpeningTime: testOpeningTime,
+			ClosingTime: testClosingTime,
+			TableCount:  testTableCount,
+			UUID:        placeUUID2,
 		},
 	}
 
-	assert.Equal(t, expectedResponse.PlaceList, response.JSON200.PlaceList)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, response.StatusCode())
+	assert.Equal(t, expectedPlaceList, response.JSON200.PlaceList)
+
+	response, err = viewsCodegenAdminPlaceClient.PostAdminV1PlaceListWithResponse(
+		GetCtx(),
+		&viewsCodegenAdminPlace.PostAdminV1PlaceListParams{
+			UserUUID: employeeUserUUID,
+			JWTToken: employeeToken,
+		},
+		viewsCodegenAdminPlace.PostAdminV1PlaceListJSONRequestBody{
+			RestaurantUUID: restaurantUUID,
+		},
+	)
+
+	expectedPlaceList = []viewsCodegenAdminPlace.PlaceInfo{
+		{
+			Address:     testPlaceAddress1,
+			OpeningTime: testOpeningTime,
+			ClosingTime: testClosingTime,
+			TableCount:  testTableCount,
+			UUID:        placeUUID1,
+		},
+	}
+
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, response.StatusCode())
+	assert.Equal(t, expectedPlaceList, response.JSON200.PlaceList)
 }

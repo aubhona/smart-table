@@ -17,6 +17,7 @@ app:
             - DELETE
             - OPTIONS
         allow_headers:
+            - ngrok-skip-browser-warning
             - Authorization
             - User-Uuid
             - JWT-Token
