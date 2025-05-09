@@ -12,7 +12,9 @@ type OrderRepository interface {
 
 	Save(tx Transaction, order utils.SharedRef[Order]) error
 
-	FindOrders(orderUUIDs []uuid.UUID) ([]utils.SharedRef[Order], error)
 	FindOrder(orderUUID uuid.UUID) (utils.SharedRef[Order], error)
+	FindOrders(orderUUIDs []uuid.UUID) ([]utils.SharedRef[Order], error)
+
 	FindActiveOrderByTableID(tableID string) (utils.SharedRef[Order], error)
+	FindActiveOrderByCutomerUUID(customerUUID uuid.UUID) (utils.SharedRef[Order], error)
 }
