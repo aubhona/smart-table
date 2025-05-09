@@ -60,9 +60,7 @@ func (b *BotUpdatesHandler) HandleOnTextUpdates(context telebot.Context) error {
 					telebot.InlineButton{
 						Unique: result.CustomerUUID.String(),
 						Text:   presentation.OpenWebApp,
-						WebApp: &telebot.WebApp{
-							URL: deps.Config.Bot.WebAppURL,
-						},
+						URL:    deps.Config.Bot.WebAppURL,
 					},
 				},
 			},
