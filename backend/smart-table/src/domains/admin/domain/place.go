@@ -122,6 +122,10 @@ func (p *Place) ContainsEmployee(employeeUserUUID uuid.UUID) bool {
 		})
 }
 
+func (p *Place) ValidateTableNumber(tableNumber int) bool {
+	return 0 < tableNumber && tableNumber <= p.GetTableCount()
+}
+
 func (p *Place) GetUUID() uuid.UUID                         { return p.uuid }
 func (p *Place) GetRestaurant() utils.SharedRef[Restaurant] { return p.restaurant }
 func (p *Place) GetEmployees() []utils.SharedRef[Employee]  { return p.employees }

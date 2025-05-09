@@ -32,7 +32,7 @@ func (handler *EmployeeListCommandHandler) Handle(
 ) (EmployeeListCommandHandlerResult, error) {
 	place, err := handler.placeRepository.FindPlace(employeeListCommand.PlaceUUID)
 	if err != nil {
-		logging.GetLogger().Error("error while place by uuid", zap.Error(err))
+		logging.GetLogger().Error("error while finding place by uuid", zap.Error(err))
 		return EmployeeListCommandHandlerResult{}, err
 	}
 

@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/google/uuid"
@@ -37,6 +38,15 @@ func (p *PlaceTableService) GetPlaceUUIDFromTableID(tableID string) (uuid.UUID, 
 	}
 
 	return uuid.Parse(parts[0])
+}
+
+func (p *PlaceTableService) GetTableNumberFromTableID(tableID string) (int, error) {
+	parts := strings.Split(tableID, "_")
+	if len(parts) != 2 {
+		return 0, appErrors.InvalidTableID{TableID: tableID}
+	}
+
+	return strconv.Atoi(parts[1])
 }
 
 func (p *PlaceTableService) GetTableDeepLinkForQR(place utils.SharedRef[domain.Place]) []string {
