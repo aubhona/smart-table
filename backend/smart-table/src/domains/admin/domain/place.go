@@ -10,6 +10,7 @@ import (
 	domainErrors "github.com/smart-table/src/domains/admin/domain/errors"
 	domainServices "github.com/smart-table/src/domains/admin/domain/services"
 	"github.com/smart-table/src/utils"
+	"golang.org/x/exp/slices"
 )
 
 type Place struct {
@@ -112,6 +113,13 @@ func (p *Place) AddMenuDish(
 	p.menuDishes = append(p.menuDishes, menuDish)
 
 	return menuDish, nil
+}
+
+func (p *Place) ContainsEmployee(employeeUserUUID uuid.UUID) bool {
+	return employeeUserUUID == p.GetRestaurant().Get().GetOwner().Get().GetUUID() ||
+		slices.ContainsFunc(p.GetEmployees(), func(employee utils.SharedRef[Employee]) bool {
+			return employee.Get().GetUser().Get().GetUUID() == employeeUserUUID
+		})
 }
 
 func (p *Place) GetUUID() uuid.UUID                         { return p.uuid }

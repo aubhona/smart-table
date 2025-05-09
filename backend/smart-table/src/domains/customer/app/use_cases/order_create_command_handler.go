@@ -94,5 +94,9 @@ func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateComma
 		return OrderCreateCommandHandlerResult{}, appErrors.IncorrectRoomCodeError{RoomCode: createCommand.RoomCode}
 	}
 
+	if !order.Get().ContainsCustomer(user.Get().GetUUID()) {
+		order.Get().AddCustomer(user)
+	}
+
 	return OrderCreateCommandHandlerResult{order.Get().GetUUID()}, nil
 }

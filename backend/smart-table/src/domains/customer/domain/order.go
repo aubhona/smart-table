@@ -11,6 +11,7 @@ import (
 	defsInternalOrder "github.com/smart-table/src/codegen/intern/order"
 	domain "github.com/smart-table/src/domains/customer/domain/services"
 	"github.com/smart-table/src/utils"
+	"golang.org/x/exp/slices"
 )
 
 type Order struct {
@@ -82,6 +83,17 @@ func RestoreOrder(
 	orderRef, _ := utils.NewSharedRef(&order)
 
 	return orderRef
+}
+
+func (o *Order) AddCustomer(customer utils.SharedRef[Customer]) {
+	o.customers = append(o.customers, customer)
+}
+
+func (o *Order) ContainsCustomer(customerUUID uuid.UUID) bool {
+	return customerUUID == o.GetHostUserUUID() ||
+		slices.ContainsFunc(o.GetCustomers(), func(customer utils.SharedRef[Customer]) bool {
+			return customer.Get().GetUUID() == customerUUID
+		})
 }
 
 func (o *Order) GetUUID() uuid.UUID                       { return o.uuid }
