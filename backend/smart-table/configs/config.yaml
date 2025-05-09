@@ -57,7 +57,7 @@ logging:
 bot:
     token: BOT_TOKEN
     poller_timeout: 10s
-    web_app_url: https://5910-213-183-51-117.ngrok-free.app
+    web_app_url: https://t.me/TableSmart_bot?startapp
     test_mode: false
 
 s3:
