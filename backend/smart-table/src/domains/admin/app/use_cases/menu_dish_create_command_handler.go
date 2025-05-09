@@ -41,7 +41,7 @@ func (handler *MenuDishCreateCommandHandler) Handle(
 
 	place, err := handler.placeRepository.FindPlaceForUpdate(tx, command.PlaceUUID)
 	if err != nil {
-		logging.GetLogger().Error("error while place by uuid", zap.Error(err))
+		logging.GetLogger().Error("error while finding place by uuid", zap.Error(err))
 		return MenuDishCreateCommandHandlerResult{}, err
 	}
 

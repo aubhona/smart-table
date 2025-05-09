@@ -4,7 +4,8 @@ import (
 	"github.com/smart-table/src/utils"
 
 	"github.com/google/uuid"
-	app "github.com/smart-table/src/domains/customer/app/services"
+	appQueries "github.com/smart-table/src/domains/customer/app/queries"
+	appServices "github.com/smart-table/src/domains/customer/app/services"
 	appErrors "github.com/smart-table/src/domains/customer/app/use_cases/errors"
 	"github.com/smart-table/src/domains/customer/domain"
 	domainErrors "github.com/smart-table/src/domains/customer/domain/errors"
@@ -19,29 +20,44 @@ type OrderCreateCommandHandler struct {
 	orderRepository    domain.OrderRepository
 	customerRepository domain.CustomerRepository
 	uuidGenerator      *domainServices.UUIDGenerator
-	roomCodeService    *app.RoomCodeService
+	roomCodeService    *appServices.RoomCodeService
+	appAdminQueries    appQueries.SmartTableAdminQueryService
 }
 
 func NewOrderCreateCommandHandler(
 	orderRepository domain.OrderRepository,
 	customerRepository domain.CustomerRepository,
 	uuidGenerator *domainServices.UUIDGenerator,
-	roomCodeService *app.RoomCodeService,
+	roomCodeService *appServices.RoomCodeService,
+	appAdminQueries appQueries.SmartTableAdminQueryService,
 ) *OrderCreateCommandHandler {
 	return &OrderCreateCommandHandler{
 		orderRepository,
 		customerRepository,
 		uuidGenerator,
 		roomCodeService,
+		appAdminQueries,
 	}
 }
 
 func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateCommand) (OrderCreateCommandHandlerResult, error) {
 	user, err := handler.customerRepository.FindCustomer(createCommand.CustomerUUID)
-
 	if err != nil {
 		return OrderCreateCommandHandlerResult{}, err
 	}
+
+	//nolint
+	// isValid, err := handler.appAdminQueries.TableIDValidate(createCommand.TableID)
+	// if err != nil {
+	// 	return OrderCreateCommandHandlerResult{}, err
+	// }
+
+	//nolint
+	// if !isValid {
+	// 	return OrderCreateCommandHandlerResult{}, appErrors.InvalidTableID{
+	// 		TableID: createCommand.TableID,
+	// 	}
+	// }
 
 	order, err := handler.orderRepository.FindActiveOrderByTableID(createCommand.TableID)
 	isNewOrder := false
