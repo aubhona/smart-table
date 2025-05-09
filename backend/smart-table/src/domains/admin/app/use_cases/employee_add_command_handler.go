@@ -40,12 +40,10 @@ func (handler *EmployeeAddCommandHandler) Handle(
 		return err
 	}
 
-	ownerUUID := place.Get().GetRestaurant().Get().GetOwner().Get().GetUUID()
-
-	if ownerUUID != employeeAddCommand.UserUUID {
-		return appErrors.RestaurantAccessDenied{
-			UserUUID:       employeeAddCommand.UserUUID,
-			RestaurantUUID: employeeAddCommand.PlaceUUID,
+	if !domain.IsHasAccess(employeeAddCommand.UserUUID, place, domain.OwnerAndAdmin) {
+		return appErrors.PlaceAccessDenied{
+			UserUUID:  employeeAddCommand.UserUUID,
+			PlaceUUID: employeeAddCommand.PlaceUUID,
 		}
 	}
 
@@ -58,9 +56,10 @@ func (handler *EmployeeAddCommandHandler) Handle(
 	employeeProfileUUID := employeeProfile.Get().GetUUID()
 	placeEmployees := place.Get().GetEmployees()
 
-	isExist := employeeProfileUUID == ownerUUID || slices.ContainsFunc(placeEmployees, func(employee utils.SharedRef[domain.Employee]) bool {
-		return employee.Get().GetUser().Get().GetUUID() == employeeProfileUUID
-	})
+	isExist := employeeProfileUUID == place.Get().GetRestaurant().Get().GetOwner().Get().GetUUID() ||
+		slices.ContainsFunc(placeEmployees, func(employee utils.SharedRef[domain.Employee]) bool {
+			return employee.Get().GetUser().Get().GetUUID() == employeeProfileUUID
+		})
 	if isExist {
 		logging.GetLogger().Error("employee already exists in this place",
 			zap.String("employee_login", employeeAddCommand.EmployeeLogin),
