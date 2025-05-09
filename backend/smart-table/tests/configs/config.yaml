@@ -8,8 +8,8 @@ app:
             expiration: 24h
     cors:
         allow_origins:
-            - http://localhost:3001
-            - https://8bb9-138-124-99-156.ngrok-free.app
+            - http://localhost:3002
+            - https://aba3-213-183-51-117.ngrok-free.app
         allow_methods:
             - GET
             - POST
@@ -17,7 +17,10 @@ app:
             - DELETE
             - OPTIONS
         allow_headers:
-            - Set-Cookie
+            - ngrok-skip-browser-warning
+            - Authorization
+            - User-Uuid
+            - JWT-Token
             - content-type
         allow_credentials: true
     max_input_file_size_mb: 1000
@@ -48,11 +51,13 @@ logging:
     server:
         request_sym_limit: 100
         response_sym_limit: 100
+    bot:
+        enable: false
 
 bot:
     token: BOT_TOKEN
     poller_timeout: 10s
-    web_app_url: https://5910-213-183-51-117.ngrok-free.app
+    web_app_url: https://t.me/TableSmart_bot?startapp
     test_mode: true
 
 s3:
@@ -61,4 +66,3 @@ s3:
     endpoint: storage.yandexcloud.net
     region: ru-central1
     bucket: smart-table
-

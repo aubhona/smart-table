@@ -1,0 +1,48 @@
+package app
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/google/uuid"
+	"github.com/samber/lo"
+	"github.com/smart-table/src/dependencies"
+	appErrors "github.com/smart-table/src/domains/admin/app/services/errors"
+	"github.com/smart-table/src/domains/admin/domain"
+	"github.com/smart-table/src/utils"
+)
+
+type PlaceTableService struct {
+	webAppURL string
+}
+
+func NewPlaceTableService(dependencies *dependencies.Dependencies) *PlaceTableService {
+	return &PlaceTableService{webAppURL: dependencies.Config.Bot.WebAppURL}
+}
+
+func (p *PlaceTableService) GetTableIDs(place utils.SharedRef[domain.Place]) []string {
+	tableIDs := make([]string, 0, place.Get().GetTableCount())
+
+	for i := 1; i <= place.Get().GetTableCount(); i++ {
+		tableIDs = append(tableIDs, fmt.Sprintf("%s_%d", place.Get().GetUUID(), i))
+	}
+
+	return tableIDs
+}
+
+func (p *PlaceTableService) GetPlaceUUIDFromTableID(tableID string) (uuid.UUID, error) {
+	parts := strings.Split(tableID, "_")
+	if len(parts) != 2 {
+		return uuid.Nil, appErrors.InvalidTableID{TableID: tableID}
+	}
+
+	return uuid.Parse(parts[0])
+}
+
+func (p *PlaceTableService) GetTableDeepLinkForQR(place utils.SharedRef[domain.Place]) []string {
+	tableIDs := p.GetTableIDs(place)
+
+	return lo.Map(tableIDs, func(tableID string, _ int) string {
+		return fmt.Sprintf("%s=%s", p.webAppURL, tableID)
+	})
+}
