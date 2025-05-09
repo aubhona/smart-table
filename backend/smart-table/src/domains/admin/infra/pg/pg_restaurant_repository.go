@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"github.com/samber/lo"
+
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -12,7 +14,6 @@ import (
 	db "github.com/smart-table/src/domains/admin/infra/pg/codegen"
 	"github.com/smart-table/src/domains/admin/infra/pg/mapper"
 	"github.com/smart-table/src/utils"
-	"github.com/thoas/go-funk"
 )
 
 type RestaurantRepository struct {
@@ -67,7 +68,7 @@ func (r *RestaurantRepository) Update(tx domain.Transaction, restaurant utils.Sh
 		return err
 	}
 
-	_, err = queries.UpsertDishes(ctx, pgDishes)
+	err = queries.UpsertDishes(ctx, pgDishes)
 	if err != nil {
 		return err
 	}
@@ -170,13 +171,9 @@ func (r *RestaurantRepository) FindRestaurantsByOwnerUUID(
 }
 
 func getRestaurantNotFoundError(restaurantUUIDs []uuid.UUID, restaurants []utils.SharedRef[domain.Restaurant]) error {
-	if len(restaurants) == 0 {
-		return domainErrors.RestaurantNotFound{UUID: restaurantUUIDs[0]}
-	}
-
-	restaurantUUIDSet := funk.Map(restaurants, func(restaurant utils.SharedRef[domain.Place]) (uuid.UUID, interface{}) {
+	restaurantUUIDSet := lo.SliceToMap(restaurants, func(restaurant utils.SharedRef[domain.Restaurant]) (uuid.UUID, interface{}) {
 		return restaurant.Get().GetUUID(), nil
-	}).(map[uuid.UUID]interface{})
+	})
 
 	for _, restaurantUUID := range restaurantUUIDs {
 		if _, found := restaurantUUIDSet[restaurantUUID]; !found {

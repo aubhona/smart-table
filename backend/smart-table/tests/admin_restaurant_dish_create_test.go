@@ -16,27 +16,37 @@ import (
 )
 
 func CreateDefaultRestaurantDish(
-	restaurantUUID uuid.UUID,
-	userUUID uuid.UUID,
 	token string,
+	userUUID,
+	restaurantUUID uuid.UUID,
 ) (uuid.UUID, error) {
 	dishFile, err := os.Open("data/dish.png")
 	if err != nil {
 		return uuid.Nil, err
 	}
 
-	return CreateRestaurantDish(restaurantUUID, "test_dish", "some_desc", "some_cat", 100, 100,
-		"dish_file_name", dishFile, userUUID, token)
+	return CreateRestaurantDish(
+		token,
+		userUUID,
+		restaurantUUID,
+		"test_dish",
+		"some_desc",
+		"some_cat",
+		100,
+		100,
+		"dish_file_name",
+		dishFile,
+	)
 }
 
 func CreateRestaurantDish(
+	token string,
+	userUUID,
 	restaurantUUID uuid.UUID,
 	name, description, category string,
 	calories, weight int,
 	pictureFileName string,
 	picture io.Reader,
-	userUUID uuid.UUID,
-	token string,
 ) (uuid.UUID, error) {
 	var buf bytes.Buffer
 
@@ -98,8 +108,18 @@ func TestAdminRestaurantDishCreateHappyPath(t *testing.T) {
 	dishFile, err := os.Open("data/dish.png")
 	assert.NoError(t, err)
 
-	response, err := CreateRestaurantDish(restaurantUUID, "test_dish", "some_desc", "some_cat", 100, 100,
-		"dish_file_name", dishFile, userUUID, token)
+	response, err := CreateRestaurantDish(
+		token,
+		userUUID,
+		restaurantUUID,
+		"test_dish",
+		"some_desc",
+		"some_cat",
+		100,
+		100,
+		"dish_file_name",
+		dishFile,
+	)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, response)

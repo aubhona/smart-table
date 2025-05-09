@@ -1,4 +1,4 @@
--- name: UpsertDishes :many
+-- name: UpsertDishes :exec
 --
 -- args:
 -- $1 - JSONB ([]PgDish)
@@ -38,5 +38,4 @@ FROM jsonb_to_recordset($1::jsonb) AS input(
     created_at      TIMESTAMPTZ,
     updated_at      TIMESTAMPTZ
 )
-ON CONFLICT (uuid) DO NOTHING
-    RETURNING uuid;
+ON CONFLICT (uuid) DO NOTHING;

@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/samber/lo"
+
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 	defsInternalOrder "github.com/smart-table/src/codegen/intern/order"
 	domain "github.com/smart-table/src/domains/customer/domain/services"
 	"github.com/smart-table/src/utils"
-	"github.com/thoas/go-funk"
 )
 
 type Order struct {
@@ -129,9 +130,9 @@ func (o *Order) DraftItem(
 }
 
 func (o *Order) CommitItem(itemUUID uuid.UUID) (utils.Optional[utils.SharedRef[Item]], error) {
-	item, found := funk.Find(o.items, func(item utils.SharedRef[Item]) bool {
+	item, found := lo.Find(o.items, func(item utils.SharedRef[Item]) bool {
 		return item.Get().uuid == itemUUID
-	}).(utils.SharedRef[Item])
+	})
 
 	if !found {
 		return utils.EmptyOptional[utils.SharedRef[Item]](), fmt.Errorf("item not found, item_uuid=%v", itemUUID)

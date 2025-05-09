@@ -26,5 +26,4 @@ FROM jsonb_to_recordset($1::jsonb) AS input(
     created_at      TIMESTAMPTZ,
     updated_at      TIMESTAMPTZ
 )
-ON CONFLICT ON CONSTRAINT uniq_employee_place  DO NOTHING
-    RETURNING user_uuid;
+ON CONFLICT ON CONSTRAINT uniq_employee_place  DO NOTHING;

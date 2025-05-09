@@ -81,3 +81,31 @@ func TestAdminPlaceCreateHappyPath(t *testing.T) {
 	assert.Equal(t, http.StatusOK, response.StatusCode())
 	assert.NotNil(t, response.JSON200)
 }
+
+func TestAdminPlaceCreateRestaurantNotFound(t *testing.T) {
+	GetTestMutex().Lock()
+	defer GetTestMutex().Unlock()
+	defer CleanTest()
+
+	userUUID, token, err := CreateDefaultUser()
+	assert.Nil(t, err)
+
+	response, err := viewsCodegenAdminPlaceClient.PostAdminV1PlaceCreateWithResponse(
+		GetCtx(),
+		&viewsCodegenAdminPlace.PostAdminV1PlaceCreateParams{
+			UserUUID: userUUID,
+			JWTToken: token,
+		},
+		viewsCodegenAdminPlace.PostAdminV1PlaceCreateJSONRequestBody{
+			RestaurantUUID: uuid.New(),
+			Address:        "testAddress",
+			TableCount:     1,
+			OpeningTime:    "13:00",
+			ClosingTime:    "14:00",
+		},
+	)
+
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusNotFound, response.StatusCode())
+	assert.NotNil(t, response.JSON404)
+}
