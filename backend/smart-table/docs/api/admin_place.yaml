@@ -38,7 +38,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
                 '403':
-                    description: Ошибка создания плейса, отказано в доступе, некорретные данные
+                    description: Ошибка создания плейса, отказано в доступе, некорректные данные
                     content:
                         application/json:
                             schema:
@@ -83,7 +83,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
                 '403':
-                    description: Ошибка получения списка плейсов ресторана, отказано в доступе, некорретные данные
+                    description: Ошибка получения списка плейсов ресторана, отказано в доступе, некорректные данные
                     content:
                         application/json:
                             schema:
@@ -128,7 +128,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
                 '403':
-                    description: Ошибка создания блюда в меню плейса, отказано в доступе, некорретные данные
+                    description: Ошибка создания блюда в меню плейса, отказано в доступе, некорректные данные
                     content:
                         application/json:
                             schema:
@@ -169,7 +169,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
                 '403':
-                    description: Ошибка добавления сотрудника в плейс, отказано в доступе, некорретные данные
+                    description: Ошибка добавления сотрудника в плейс, отказано в доступе, некорректные данные
                     content:
                         application/json:
                             schema:
@@ -214,13 +214,52 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
                 '403':
-                    description: Ошибка получения списка сотрудников плейса, отказано в доступе, некорретные данные
+                    description: Ошибка получения списка сотрудников плейса, отказано в доступе, некорректные данные
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
                 '404':
                     description: Ошибка получения списка сотрудников плейса, плейс не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /admin/v1/place/table_deeplinks/list:
+        post:
+            summary: Получение списка ссылок на столы для генерации QR
+            description: Получение списка ссылок на столы для генерации QR
+            parameters:
+                -   $ref: '#/components/parameters/user_uuid'
+                -   $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1PlaceTableDeepLinksListRequest'
+            responses:
+                '200':
+                    description: Список ссылок
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1PlaceTableDeepLinksListResponse'
+                '401':
+                    description: Ошибка получения списка сотрудников плейса, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка получения списка, отказано в доступе, некорректные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка получения списка, плейс не найден
                     content:
                         application/json:
                             schema:
@@ -391,6 +430,30 @@ components:
                     format: uuid
             required:
                 - menu_dish_uuid
+
+        # /admin/v1/place/table_deeplinks/list_POST
+        AdminV1PlaceTableDeepLinksListRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                place_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
+            required:
+                - place_uuid
+
+        AdminV1PlaceTableDeepLinksListResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                deeplinks:
+                    type: array
+                    items:
+                        type: string
+                        format: uri
+            required:
+                - deeplinks
 
         # /admin/v1/place/employee/list_POST
         AdminV1PlaceEmployeeListRequest:

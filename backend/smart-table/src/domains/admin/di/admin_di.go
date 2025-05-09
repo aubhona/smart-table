@@ -52,6 +52,11 @@ func addServices(container *dig.Container) error {
 		return err
 	}
 
+	err = container.Provide(appServices.NewPlaceTableService)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -112,6 +117,11 @@ func addHandlers(container *dig.Container) error {
 	}
 
 	err = container.Provide(app.NewMenuDishListCommandHandler)
+	if err != nil {
+		return err
+	}
+
+	err = container.Provide(app.NewTableDeepLinksListCommandHandler)
 	if err != nil {
 		return err
 	}
