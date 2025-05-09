@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS smart_table_admin.menu_dishes (
     "uuid" UUID PRIMARY KEY NOT NULL,
     "dish_uuid" UUID NOT NULL,
     "place_uuid" UUID NOT NULL,
-    "price" DECIMAL NOT NULL,
+    "price" TEXT NOT NULL,
     "exist" BOOLEAN DEFAULT TRUE NOT NULL,
     "created_at" TIMESTAMPTZ NOT NULL,
     "updated_at" TIMESTAMPTZ NOT NULL

@@ -55,6 +55,8 @@ func (handler *DishListCommandHandler) Handle(
 		return DishListCommandHandlerResult{}, err
 	}
 
+	//nolint
+	// TODO: Add role checking
 	if restaurant.Get().GetOwner().Get().GetUUID() != command.OwnerUUID {
 		logging.GetLogger().Error("restaurant access denied",
 			zap.String("user_uuid", command.OwnerUUID.String()),
