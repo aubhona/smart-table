@@ -34,7 +34,7 @@ func (handler *EmployeeAddCommandHandler) Handle(
 
 	defer utils.Rollback(handler.placeRepository, tx)
 
-	place, err := handler.placeRepository.FindPlace(employeeAddCommand.PlaceUUID)
+	place, err := handler.placeRepository.FindPlaceForUpdate(tx, employeeAddCommand.PlaceUUID)
 	if err != nil {
 		logging.GetLogger().Error("error while place by uuid", zap.Error(err))
 		return err

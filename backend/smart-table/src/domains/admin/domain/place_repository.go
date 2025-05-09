@@ -13,6 +13,9 @@ type PlaceRepository interface {
 	Save(tx Transaction, place utils.SharedRef[Place]) error
 	Update(tx Transaction, place utils.SharedRef[Place]) error
 
+	FindPlaceForUpdate(tx Transaction, uuid uuid.UUID) (utils.SharedRef[Place], error)
+	FindPlacesForUpdate(tx Transaction, uuids []uuid.UUID) ([]utils.SharedRef[Place], error)
+
 	FindPlace(uuid uuid.UUID) (utils.SharedRef[Place], error)
 	FindPlaces(uuids []uuid.UUID) ([]utils.SharedRef[Place], error)
 

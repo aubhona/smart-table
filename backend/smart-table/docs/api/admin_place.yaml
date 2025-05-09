@@ -95,6 +95,51 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
 
+    /admin/v1/place/menu/dish/create:
+        post:
+            summary: Создание блюда в меню плейса
+            description: Создание блюда в меню плейса
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1PlaceMenuDishCreateRequest'
+            responses:
+                '200':
+                    description: Идентификатор созданного блюда
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1PlaceMenuDishCreateResponse'
+                '400':
+                    description: Ошибка создания блюда в меню плейса, некорректный формат данных
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '401':
+                    description: Ошибка создания блюда в меню плейса, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка создания блюда в меню плейса, отказано в доступе, некорретные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка создания блюда в меню плейса, плейс не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
     /admin/v1/place/employee/add:
         post:
             summary: Добавление сотрудника в плейс
@@ -179,7 +224,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/ErrorResponse'  
+                                $ref: '#/components/schemas/ErrorResponse'
 
 components:
     parameters:
@@ -277,6 +322,36 @@ components:
                 - employee_login
                 - employee_role
 
+      # /admin/v1/place/menu/dish/create_POST
+        AdminV1PlaceMenuDishCreateRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                place_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
+                dish_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор блюда ресторана
+                price:
+                    type: string
+            required:
+                - place_uuid
+                - dish_uuid
+                - price
+
+        AdminV1PlaceMenuDishCreateResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                menu_dish_uuid:
+                    type: string
+                    format: uuid
+            required:
+                - menu_dish_uuid
+
         # /admin/v1/place/employee/list_POST
         AdminV1PlaceEmployeeListRequest:
             type: object
@@ -310,12 +385,14 @@ components:
                     enum: 
                         - incorrect_time_format
                         - incorrect_table_count
+                        - incorrect_price
                         - not_authorized
                         - already_exist
                         - access_denied
                         - user_not_found
                         - restaurant_not_found
                         - place_not_found
+                        - dish_not_found
                 message:
                     type: string
                     description: Описание ошибки

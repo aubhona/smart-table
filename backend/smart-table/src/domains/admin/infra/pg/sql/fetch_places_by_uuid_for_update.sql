@@ -1,4 +1,4 @@
--- name: FetchPlacesByUUID :many
+-- name: FetchPlacesByUUIDForUpdate :many
 --
 -- args:
 -- $1 - UUID[] (place_uuids)
@@ -61,4 +61,5 @@
     )
 ) AS place_data
 FROM smart_table_admin.places p
-WHERE p.uuid = ANY($1::UUID[]);
+WHERE p.uuid = ANY($1::UUID[])
+FOR UPDATE;

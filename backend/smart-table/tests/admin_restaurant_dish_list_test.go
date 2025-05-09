@@ -27,7 +27,7 @@ func TestAdminRestaurantDishListHappyPath(t *testing.T) {
 	restaurantUUID, err := CreateDefaultRestaurant(token, userUUID)
 	assert.NoError(t, err)
 
-	dishUUID, err := CreateDefaultRestaurantDish(restaurantUUID, userUUID, token)
+	dishUUID, err := CreateDefaultRestaurantDish(token, userUUID, restaurantUUID)
 	assert.NoError(t, err)
 
 	response, err := viewsCodegenAdminRestaurantClient.PostAdminV1RestaurantDishListWithResponse(

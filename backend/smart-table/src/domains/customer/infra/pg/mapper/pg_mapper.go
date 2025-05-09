@@ -3,12 +3,12 @@ package mapper
 import (
 	"encoding/json"
 
+	"github.com/samber/lo"
+
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 	defsInternalItem "github.com/smart-table/src/codegen/intern/item"
 	defsInternalOrder "github.com/smart-table/src/codegen/intern/order"
-
-	"github.com/thoas/go-funk"
 
 	openapiTypes "github.com/oapi-codegen/runtime/types"
 	defsInternalCustomerDb "github.com/smart-table/src/codegen/intern/customer_db"
@@ -237,7 +237,7 @@ func ConvertPgOrderAggregateToModel(pgResult []byte) (utils.SharedRef[domain.Ord
 		pgOrderAggregate.PgOrder.HostUserUUID,
 		defsInternalOrder.OrderStatus(pgOrderAggregate.PgOrder.Status),
 		resolution,
-		funk.Values(uuidToCustomer).([]utils.SharedRef[domain.Customer]),
+		lo.Values(uuidToCustomer),
 		items,
 		pgOrderAggregate.PgOrder.CreatedAt,
 		pgOrderAggregate.PgOrder.UpdatedAt,

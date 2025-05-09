@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"github.com/samber/lo"
+
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -12,7 +14,6 @@ import (
 	db "github.com/smart-table/src/domains/customer/infra/pg/codegen"
 	"github.com/smart-table/src/domains/customer/infra/pg/mapper"
 	"github.com/smart-table/src/utils"
-	"github.com/thoas/go-funk"
 )
 
 type OrderRepository struct {
@@ -112,9 +113,9 @@ func (o *OrderRepository) FindActiveOrderByTableID(tableID string) (utils.Shared
 }
 
 func getNotFoundError(orderUuids []uuid.UUID, orders []utils.SharedRef[domain.Order]) error {
-	orderUUIDSet := funk.Map(orders, func(order utils.SharedRef[domain.Order]) (uuid.UUID, interface{}) {
+	orderUUIDSet := lo.SliceToMap(orders, func(order utils.SharedRef[domain.Order]) (uuid.UUID, interface{}) {
 		return order.Get().GetUUID(), nil
-	}).(map[uuid.UUID]interface{})
+	})
 
 	for _, orderUUID := range orderUuids {
 		if _, found := orderUUIDSet[orderUUID]; !found {

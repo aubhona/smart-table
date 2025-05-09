@@ -22,7 +22,6 @@ require (
 	github.com/sqlc-dev/sqlc v1.29.0
 	github.com/stretchr/testify v1.10.0
 	github.com/testcontainers/testcontainers-go v0.35.0
-	github.com/thoas/go-funk v0.9.3
 	github.com/vektra/mockery/v2 v2.53.3
 	go.uber.org/dig v1.18.0
 	go.uber.org/zap v1.27.0
