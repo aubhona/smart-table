@@ -16,8 +16,15 @@ import ApiClient from "../ApiClient";
 import AdminV1PlaceCreateRequest from '../model/AdminV1PlaceCreateRequest';
 import AdminV1PlaceCreateResponse from '../model/AdminV1PlaceCreateResponse';
 import AdminV1PlaceEmployeeAddRequest from '../model/AdminV1PlaceEmployeeAddRequest';
+import AdminV1PlaceEmployeeListRequest from '../model/AdminV1PlaceEmployeeListRequest';
+import AdminV1PlaceEmployeeListResponse from '../model/AdminV1PlaceEmployeeListResponse';
 import AdminV1PlaceListRequest from '../model/AdminV1PlaceListRequest';
 import AdminV1PlaceListResponse from '../model/AdminV1PlaceListResponse';
+import AdminV1PlaceMenuDishCreateRequest from '../model/AdminV1PlaceMenuDishCreateRequest';
+import AdminV1PlaceMenuDishCreateResponse from '../model/AdminV1PlaceMenuDishCreateResponse';
+import AdminV1PlaceMenuDishListRequest from '../model/AdminV1PlaceMenuDishListRequest';
+import AdminV1PlaceTableDeepLinksListRequest from '../model/AdminV1PlaceTableDeepLinksListRequest';
+import AdminV1PlaceTableDeepLinksListResponse from '../model/AdminV1PlaceTableDeepLinksListResponse';
 import ErrorResponse from '../model/ErrorResponse';
 
 /**
@@ -147,6 +154,60 @@ export default class DefaultApi {
     }
 
     /**
+     * Callback function to receive the result of the adminV1PlaceEmployeeListPost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceEmployeeListPostCallback
+     * @param {String} error Error message, if any.
+     * @param {module:model/AdminV1PlaceEmployeeListResponse} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Получение списка сотрудников в плейса
+     * Получение списка сотрудников в плейса
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1PlaceEmployeeListRequest} adminV1PlaceEmployeeListRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceEmployeeListPostCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link module:model/AdminV1PlaceEmployeeListResponse}
+     */
+    adminV1PlaceEmployeeListPost(userUUID, jWTToken, adminV1PlaceEmployeeListRequest, callback) {
+      let postBody = adminV1PlaceEmployeeListRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceEmployeeListPost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceEmployeeListPost");
+      }
+      // verify the required parameter 'adminV1PlaceEmployeeListRequest' is set
+      if (adminV1PlaceEmployeeListRequest === undefined || adminV1PlaceEmployeeListRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1PlaceEmployeeListRequest' when calling adminV1PlaceEmployeeListPost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = AdminV1PlaceEmployeeListResponse;
+      return this.apiClient.callApi(
+        '/admin/v1/place/employee/list', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
      * Callback function to receive the result of the adminV1PlaceListPost operation.
      * @callback module:api/DefaultApi~adminV1PlaceListPostCallback
      * @param {String} error Error message, if any.
@@ -195,6 +256,168 @@ export default class DefaultApi {
       let returnType = AdminV1PlaceListResponse;
       return this.apiClient.callApi(
         '/admin/v1/place/list', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1PlaceMenuDishCreatePost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceMenuDishCreatePostCallback
+     * @param {String} error Error message, if any.
+     * @param {module:model/AdminV1PlaceMenuDishCreateResponse} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Создание блюда в меню плейса
+     * Создание блюда в меню плейса
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1PlaceMenuDishCreateRequest} adminV1PlaceMenuDishCreateRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceMenuDishCreatePostCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link module:model/AdminV1PlaceMenuDishCreateResponse}
+     */
+    adminV1PlaceMenuDishCreatePost(userUUID, jWTToken, adminV1PlaceMenuDishCreateRequest, callback) {
+      let postBody = adminV1PlaceMenuDishCreateRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceMenuDishCreatePost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceMenuDishCreatePost");
+      }
+      // verify the required parameter 'adminV1PlaceMenuDishCreateRequest' is set
+      if (adminV1PlaceMenuDishCreateRequest === undefined || adminV1PlaceMenuDishCreateRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1PlaceMenuDishCreateRequest' when calling adminV1PlaceMenuDishCreatePost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = AdminV1PlaceMenuDishCreateResponse;
+      return this.apiClient.callApi(
+        '/admin/v1/place/menu/dish/create', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1PlaceMenuDishListPost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceMenuDishListPostCallback
+     * @param {String} error Error message, if any.
+     * @param {File} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Получение списка позиций в меню плейса
+     * Получение списка позиций в меню плейса
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1PlaceMenuDishListRequest} adminV1PlaceMenuDishListRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceMenuDishListPostCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link File}
+     */
+    adminV1PlaceMenuDishListPost(userUUID, jWTToken, adminV1PlaceMenuDishListRequest, callback) {
+      let postBody = adminV1PlaceMenuDishListRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceMenuDishListPost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceMenuDishListPost");
+      }
+      // verify the required parameter 'adminV1PlaceMenuDishListRequest' is set
+      if (adminV1PlaceMenuDishListRequest === undefined || adminV1PlaceMenuDishListRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1PlaceMenuDishListRequest' when calling adminV1PlaceMenuDishListPost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['multipart/mixed', 'application/json'];
+      let returnType = File;
+      return this.apiClient.callApi(
+        '/admin/v1/place/menu/dish/list', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1PlaceTableDeeplinksListPost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceTableDeeplinksListPostCallback
+     * @param {String} error Error message, if any.
+     * @param {module:model/AdminV1PlaceTableDeepLinksListResponse} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Получение списка ссылок на столы для генерации QR
+     * Получение списка ссылок на столы для генерации QR
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1PlaceTableDeepLinksListRequest} adminV1PlaceTableDeepLinksListRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceTableDeeplinksListPostCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link module:model/AdminV1PlaceTableDeepLinksListResponse}
+     */
+    adminV1PlaceTableDeeplinksListPost(userUUID, jWTToken, adminV1PlaceTableDeepLinksListRequest, callback) {
+      let postBody = adminV1PlaceTableDeepLinksListRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceTableDeeplinksListPost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceTableDeeplinksListPost");
+      }
+      // verify the required parameter 'adminV1PlaceTableDeepLinksListRequest' is set
+      if (adminV1PlaceTableDeepLinksListRequest === undefined || adminV1PlaceTableDeepLinksListRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1PlaceTableDeepLinksListRequest' when calling adminV1PlaceTableDeeplinksListPost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = AdminV1PlaceTableDeepLinksListResponse;
+      return this.apiClient.callApi(
+        '/admin/v1/place/table_deeplinks/list', 'POST',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, null, callback
       );
