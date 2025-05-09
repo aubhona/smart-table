@@ -13,7 +13,7 @@ export default function RestaurantsList() {
   const userUUID = localStorage.getItem("user_uuid");
   const jWTToken = localStorage.getItem("jwt_token");
   const api = new DefaultApi();
-  api.apiClient.basePath = "https://5506-135-181-37-249.ngrok-free.app";
+  api.apiClient.basePath = "https://b04d-2a01-4f9-c010-ecd2-00-1.ngrok-free.app";
 
   async function fetchRestaurants() {
     const resp = await fetch(
@@ -151,7 +151,7 @@ export default function RestaurantsList() {
         <div className="modal-backdrop">
           <div className="modal">
             <h3>Название ресторана</h3>
-            <div class="input-container">
+            <div className="input-container">
               <input
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
