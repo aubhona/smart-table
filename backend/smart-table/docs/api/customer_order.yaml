@@ -71,6 +71,7 @@ components:
                     description: Код ошибки
                     enum:
                         - invalid_room_code
+                        - invalid_table_id
                 message:
                     type: string
                     description: Описание ошибки

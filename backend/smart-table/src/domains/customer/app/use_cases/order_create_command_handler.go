@@ -46,18 +46,16 @@ func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateComma
 		return OrderCreateCommandHandlerResult{}, err
 	}
 
-	//nolint
-	// isValid, err := handler.appAdminQueries.TableIDValidate(createCommand.TableID)
-	// if err != nil {
-	// 	return OrderCreateCommandHandlerResult{}, err
-	// }
+	isValid, err := handler.appAdminQueries.TableIDValidate(createCommand.TableID)
+	if err != nil {
+		return OrderCreateCommandHandlerResult{}, err
+	}
 
-	//nolint
-	// if !isValid {
-	// 	return OrderCreateCommandHandlerResult{}, appErrors.InvalidTableID{
-	// 		TableID: createCommand.TableID,
-	// 	}
-	// }
+	if !isValid {
+		return OrderCreateCommandHandlerResult{}, appErrors.InvalidTableID{
+			TableID: createCommand.TableID,
+		}
+	}
 
 	order, err := handler.orderRepository.FindActiveOrderByTableID(createCommand.TableID)
 	isNewOrder := false
