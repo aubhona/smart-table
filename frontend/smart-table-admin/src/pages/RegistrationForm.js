@@ -4,7 +4,7 @@ import AdminV1UserSignUpRequest from "../api/user_api/generated/src/model/AdminV
 import "../styles/AuthScreens.css";
 
 const api = new DefaultApi();
-api.apiClient.basePath = "https://5506-135-181-37-249.ngrok-free.app";
+api.apiClient.basePath = "https://b04d-2a01-4f9-c010-ecd2-00-1.ngrok-free.app";
 
 export default function RegistrationForm() {
   const [form, setForm] = useState({

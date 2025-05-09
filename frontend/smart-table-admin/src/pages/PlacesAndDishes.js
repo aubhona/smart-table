@@ -1,17 +1,79 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import PlaceApi from "../api/place_api/generated/src/api/DefaultApi";
 import AdminV1PlaceListRequest from "../api/place_api/generated/src/model/AdminV1PlaceListRequest";
 import AdminV1PlaceCreateRequest from "../api/place_api/generated/src/model/AdminV1PlaceCreateRequest";
 
 import RestaurantApi from "../api/restaurant_api/generated/src/api/DefaultApi";
-import AdminV1RestaurantDishListRequest from "../api/restaurant_api/generated/src/model/AdminV1RestaurantDishListRequest";
 
 import "../styles/PlacesDishesScreen.css";  
 
+function indexOf(buf, sub, from = 0) {
+  for (let i = from; i <= buf.length - sub.length; i++) {
+    let ok = true;
+    for (let j = 0; j < sub.length; j++) {
+      if (buf[i + j] !== sub[j]) { ok = false; break; }
+    }
+    if (ok) return i;
+  }
+  return -1;
+}
+
+function parseMixed(bodyBuf, boundary) {
+  const enc = new TextEncoder();
+  const bnd = enc.encode(`--${boundary}`);
+  let pos = indexOf(bodyBuf, bnd);
+  if (pos < 0) return [];
+  pos += bnd.length;
+  const parts = [];
+
+  while (true) {
+    if (bodyBuf[pos] === 45 && bodyBuf[pos+1] === 45) break;
+    if (bodyBuf[pos] === 13 && bodyBuf[pos+1] === 10) pos += 2;
+
+    const next = indexOf(bodyBuf, bnd, pos);
+    if (next < 0) break;
+
+    let chunk = bodyBuf.subarray(pos, next);
+    if (chunk[chunk.length-2] === 13 && chunk[chunk.length-1] === 10) {
+      chunk = chunk.subarray(0, chunk.length - 2);
+    }
+
+    const sep = indexOf(chunk, enc.encode('\r\n\r\n'));
+    const headBuf = chunk.subarray(0, sep);
+    const dataBuf = chunk.subarray(sep + 4);
+
+    const headText = new TextDecoder().decode(headBuf);
+    const headers = {};
+    headText
+      .split('\r\n')
+      .filter(line => line.includes(':'))
+      .forEach(line => {
+        const [k, ...rest] = line.split(':');
+        headers[k.trim().toLowerCase()] = rest.join(':').trim();
+      });
+
+    const cd = headers['content-disposition'] || '';
+    const nameMatch = cd.match(/name="([^"]+)"/i);
+    const fileMatch = cd.match(/filename="([^"]+)"/i);
+
+    parts.push({
+      name:     nameMatch?.[1]  || null,        
+      filename: fileMatch?.[1]  || null,
+      type:     headers['content-type'] || null,
+      data:     dataBuf
+    });
+
+    pos = next + bnd.length;
+  }
+
+  return parts;
+}
+
 export default function PlacesAndDishes() {
   const { restaurant_uuid } = useParams();
+  const navigate = useNavigate();
 
   const saved = JSON.parse(localStorage.getItem("current_restaurant") || "{}");
   const restaurantName = saved.restaurant_name || "Ресторан";
@@ -24,23 +86,25 @@ export default function PlacesAndDishes() {
 
   const [address, setAddress] = useState("");
   const [tableCount, setTableCount] = useState(1);
+  const [tableCountError, setTableCountError] = useState("");
   const [openingTime, setOpeningTime] = useState("08:00");
   const [closingTime, setClosingTime] = useState("23:00");
 
   const [dishes, setDishes] = useState([]);
-
   const [dishName, setDishName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
-  const [calories, setCalories] = useState(0);
-  const [weight, setWeight] = useState(0);
+  const [calories, setCalories] = useState(1);
+  const [caloriesError, setCaloriesError] = useState("");
+  const [weight, setWeight] = useState(1);
+  const [weightError, setWeightError] = useState("");
   const [pictureFile, setPictureFile] = useState(null);
 
   const userUUID = localStorage.getItem("user_uuid");
   const jWTToken = localStorage.getItem("jwt_token");
 
   const placeApi = new PlaceApi();
-  placeApi.apiClient.basePath = "https://5506-135-181-37-249.ngrok-free.app";
+  placeApi.apiClient.basePath = "https://b04d-2a01-4f9-c010-ecd2-00-1.ngrok-free.app";
   placeApi.apiClient.defaultHeaders = {
     "User-UUID": userUUID,
     "JWT-Token": jWTToken,
@@ -48,100 +112,99 @@ export default function PlacesAndDishes() {
   };
 
   const restApi = new RestaurantApi();
-  restApi.apiClient.basePath = "https://5506-135-181-37-249.ngrok-free.app";
+  restApi.apiClient.basePath = "https://b04d-2a01-4f9-c010-ecd2-00-1.ngrok-free.app";
   restApi.apiClient.defaultHeaders = {
     "User-UUID": userUUID,
     "JWT-Token": jWTToken,
     "ngrok-skip-browser-warning": "true",
   };
 
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        const req = AdminV1PlaceListRequest.constructFromObject({
-          restaurant_uuid: restaurant_uuid,
-        });
-        const list = await new Promise((res, rej) =>
-            placeApi.adminV1PlaceListPost(userUUID, jWTToken, req, (err, data) =>
-            err ? rej(err) : res(data.place_list)
-          )
-        );
-        setPlaces(list);
-      } catch (e) {
-        console.error("Ошибка загрузки плейсов:", e);
-      } finally {
-        setLoading(false);
-      }
-    })();
+  async function loadPlaces() {
+    setLoading(true);
+    try {
+      const req = AdminV1PlaceListRequest.constructFromObject({ restaurant_uuid });
+      const list = await new Promise((res, rej) =>
+        placeApi.adminV1PlaceListPost(userUUID, jWTToken, req, (e,d) => e ? rej(e) : res(d.place_list))
+      );
+      setPlaces(list);
+    } catch (e) {
+      console.error("Ошибка загрузки плейсов:", e);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function loadDishes() {
+    setLoading(true);
+    try {
+      const resp = await fetch("https://b04d-2a01-4f9-c010-ecd2-00-1.ngrok-free.app/admin/v1/restaurant/dish/list", {
+        method: "POST",
+        headers: {
+          Accept: "multipart/mixed, application/json",
+          "Content-Type": "application/json",
+          "User-UUID": userUUID,
+          "JWT-Token": jWTToken,
+          "ngrok-skip-browser-warning": "true",
+        },
+        body: JSON.stringify({ restaurant_uuid }),
+      });
+
+      const ct = resp.headers.get("Content-Type") || "";
+      const [, boundary] = ct.match(/boundary="?([^";]+)"?/) || [];
+      if (!boundary) throw new Error("Не удалось вытащить boundary");
+
+      const buf = new Uint8Array(await resp.arrayBuffer());
+      const parts = parseMixed(buf, boundary);
+
+      const jsonPart = parts.find(p => p.type === "application/json");
+      if (!jsonPart) throw new Error("JSON часть не найдена");
+      const json = JSON.parse(new TextDecoder().decode(jsonPart.data));
+      const list = Array.isArray(json) ? json : json.dish_list || [];
+
+      const imagesMap = {};
+      parts.filter(p => p.filename).forEach(p => {
+        const blob = new Blob([p.data], { type: p.type });
+        const url = URL.createObjectURL(blob);
+        const key = p.name.replace(/\.\w+$/, "");
+        imagesMap[key] = url;
+      });
+
+      setDishes(list.map(d => ({
+        ...d,
+        imageUrl: imagesMap[d.picture_key] || null
+      })));
+    } catch (e) {
+      console.error("Ошибка загрузки блюд:", e);
+      setDishes([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+   useEffect(() => {
+    loadPlaces();
   }, [restaurant_uuid]);
 
-  useEffect(() => {
-    if (tab !== "dishes") return;
-  
-    (async () => {
-      setLoading(true);
-      try {
-        const resp = await fetch(
-          "https://5506-135-181-37-249.ngrok-free.app/admin/v1/restaurant/dish/list",
-          {
-            method: "POST",
-            headers: {
-              "Accept": "multipart/mixed, application/json",
-              "Content-Type": "application/json",
-              "User-UUID": userUUID,
-              "JWT-Token": jWTToken,
-              "ngrok-skip-browser-warning": "true",
-            },
-            body: JSON.stringify({ restaurant_uuid: restaurant_uuid }),
-          }
-        );
-        
-        const ct = resp.headers.get("Content-Type") || "";
-        const m = ct.match(/boundary="?([^";]+)"?/i);
-        if (!m) throw new Error("Не найдена граница в Content-Type");
-
-        const boundary = m[1];
-
-        const buf = await resp.arrayBuffer();
-        const text = new TextDecoder().decode(buf);
-
-        const parts = text.split(`--${boundary}`);
-
-        const jsonPart = parts.find((p) =>
-            p.includes("Content-Type: application/json")
-        );
-        if (!jsonPart) throw new Error("Часть с JSON не найдена");
-
-        const idx = jsonPart.indexOf("\r\n\r\n");
-        const jsonText = jsonPart.slice(idx + 4).trim();
-        const json = JSON.parse(jsonText);
-
-        console.log(json);
-
-        const list = Array.isArray(json)
-        ? json
-        : Array.isArray(json.dish_list)
-        ? json.dish_list
-        : [];
-
-        setDishes(list);
-      } catch (e) {
-        console.error("Ошибка загрузки блюд:", e);
-        setDishes([]);
-      } finally {
-        setLoading(false);
-      }
-    })();
+   useEffect(() => {
+    if (tab === "dishes") {
+      loadDishes();
+    }
   }, [restaurant_uuid, tab]);
 
   const handleCreatePlace = async () => {
+    const tc = Number(tableCount);
+    if (!Number.isFinite(tc) || tc <= 0) {
+      setTableCountError("Введите целое число большее или равное 1");
+      return;
+    }
+
     if (!address.trim()) return alert("Введите адрес плейса");
+
     try {
       const req = AdminV1PlaceCreateRequest.constructFromObject({
         restaurant_uuid: restaurant_uuid,
         address: address.trim(),
-        table_count: tableCount,
+        table_count: tc,
         opening_time: openingTime,
         closing_time: closingTime,
       });
@@ -150,18 +213,13 @@ export default function PlacesAndDishes() {
           err ? rej(err) : res(d)
         )
       );
-      setPlaces((prev) => [...prev, 
-        { 
-            uuid: data.place_uuid,
-            address: req.address,
-            table_count: req.table_count,
-            opening_time: req.opening_time,
-            closing_time: req.closing_time,
-        }]);
+      await loadPlaces();
+
       setAddress("");
       setTableCount(1);
       setOpeningTime("09:00");
       setClosingTime("21:00");
+      setTableCountError("");
       setShowModal(false);
     } catch (e) {
       console.error("Ошибка создания плейса:", e);
@@ -170,6 +228,20 @@ export default function PlacesAndDishes() {
   };
 
   const handleCreateDish = async () => {
+    let ok = true;
+
+    const cal = Number(calories);
+    if (!Number.isFinite(cal) || cal <= 0) {
+      setCaloriesError("Введите число большее или равное 1");
+      ok = false;
+    }
+
+    const wt = Number(weight);
+    if (!Number.isFinite(wt) || wt <= 0) {
+      setWeightError("Введите число большее или равное 1");
+      ok = false;
+    }
+
     if (
       !dishName.trim() ||
       !description.trim() ||
@@ -178,8 +250,14 @@ export default function PlacesAndDishes() {
       weight <= 0 ||
       !pictureFile
     ) {
-      return alert("Заполните все поля и выберите фото");
+      alert("Заполните все поля и выберите фото");
+      ok = true;
     }
+
+    if(!ok) {
+      return;
+    }
+
     try {
       const data = await new Promise((res, rej) =>
         restApi.adminV1RestaurantDishCreatePost(
@@ -189,28 +267,32 @@ export default function PlacesAndDishes() {
           dishName.trim(),
           description.trim(),
           category.trim(),
-          calories,
-          weight,
+          cal,
+          wt,
           pictureFile,
-          (err, d) => (err ? rej(err) : res(d))
+          (err, d) => {
+            (err ? rej(err) : res(d))
+          }
         )
       );
-      setDishes((prev) => [
-        ...prev,
-        {
-          id: data.dish_uuid,
-          name: dishName.trim(),
-          description: description.trim(),
-          calories,
-          weight,
-          category: category.trim(),
-          picture_key: data.dish_uuid,
-        },
-      ]);
+
+      await loadDishes();
+
+      setDishName("");
+      setDescription("");
+      setCategory("");
+      setCalories(1);
+      setWeight(1);
+      setPictureFile(null);
+      setCaloriesError("");
+      setWeightError("");
       setShowModal(false);
     } catch (e) {
       console.error("Ошибка создания блюда:", e);
-      alert(e.body?.message || e.message);
+      const msg = e.body?.message || e.message;
+
+      setCaloriesError(msg);
+      setWeightError(msg);
     }
   };
 
@@ -238,13 +320,13 @@ export default function PlacesAndDishes() {
           className={`tab ${tab === "places" ? "active" : ""}`}
           onClick={() => setTab("places")}
         >
-          places
+          Плейсы
         </div>
         <div
           className={`tab ${tab === "dishes" ? "active" : ""}`}
           onClick={() => setTab("dishes")}
         >
-          dishes
+          Блюда
         </div>
       </div>
   
@@ -255,7 +337,11 @@ export default function PlacesAndDishes() {
           <p className="pd-empty">Нет плейсов</p>
         )}
         {!loading && tab === "places" && places.map((p) => (
-            <div key={p.uuid} className="pd-item">
+            <div key={p.uuid} className="pd-item" onClick={() =>
+              navigate(
+                `/restaurant/${restaurant_uuid}/place/${p.uuid}`
+              )
+            }>
               <strong>{p.address}</strong>
               <br />
               столов: {p.table_count}, {p.opening_time}–{p.closing_time}
@@ -268,11 +354,11 @@ export default function PlacesAndDishes() {
         {!loading && tab === "dishes" && dishes.map((d) => (
             <div key={d.id} className="pd-item pd-dish-card">
                  <div className="pd-dish-image">
-                    <img
-                        src={`https://5506-135-181-37-249.ngrok-free.app/files/${d.picture_key}`}
-                    />
+                  {d.imageUrl
+                    ? <img src={d.imageUrl} alt={d.name} />
+                    : <div className="pd-no-image">нет фото</div>}
                 </div>
-                <div classname="pd-dish-info">
+                <div className="pd-dish-info">
                     {d.name}
                 </div>
             </div>
@@ -293,11 +379,16 @@ export default function PlacesAndDishes() {
   
             <label>Количество столов</label>
             <input
-              type="number"
-              min="1"
+              type="text"
+              inputMode="numeric"
               value={tableCount}
-              onChange={(e) => setTableCount(Number(e.target.value))}
+              onChange={(e) => {
+                  setTableCount(e.target.value);
+                  setTableCountError("");
+                }}
+                placeholder="Введите число"
             />
+            {tableCountError && <div className="pd-error-text">{tableCountError}</div>}
   
             <label>Время открытия</label>
             <input
@@ -349,20 +440,30 @@ export default function PlacesAndDishes() {
   
             <label>Калории</label>
             <input
-              type="number"
-              min="0"
+              type="text"
+              inputMode="numeric"
               value={calories}
-              onChange={(e) => setCalories(+e.target.value)}
+              onChange={(e) => {
+                setCalories(e.target.value);
+                setCaloriesError("");
+              }}
+              placeholder="Введите калории"
             />
-  
+            {caloriesError && <div className="pd-error-text">{caloriesError}</div>}
+            
             <label>Вес</label>
             <input
-              type="number"
-              min="0"
+              type="text"
+              inputMode="numeric"
               value={weight}
-              onChange={(e) => setWeight(+e.target.value)}
+              onChange={(e) => {
+                setWeight(e.target.value);
+                setWeightError("");
+              }}
+              placeholder="Введите вес (граммы)"
             />
-  
+            {weightError && <div className="pd-error-text">{weightError}</div>}
+
             <label>Фото</label>
             <input
               type="file"
