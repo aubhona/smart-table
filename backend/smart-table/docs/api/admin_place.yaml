@@ -226,6 +226,46 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
 
+    /admin/v1/place/menu/dish/list:
+        post:
+            summary: Получение списка позиций в меню плейса
+            description: Получение списка позиций в меню плейса
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1PlaceMenuDishListRequest'
+            responses:
+                '200':
+                    description: Список позиций в меню плейса блюд (JSON + binary images)
+                    content:
+                        multipart/mixed:
+                            schema:
+                                type: string
+                                format: binary
+                '401':
+                    description: Ошибка получения списка, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка получения списка, отказано в доступе, некорректные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка получения списка, плейс не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
 components:
     parameters:
         user_uuid:
@@ -375,6 +415,18 @@ components:
             required:
                 - employee_list
 
+        # /admin/v1/place/menu/dish/list_POST
+        AdminV1PlaceMenuDishListRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                place_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
+            required:
+                - place_uuid
+
         ErrorResponse:
             type: object
             additionalProperties: false
@@ -488,3 +540,37 @@ components:
             minLength: 1
             maxLength: 50
             pattern: "^[A-Za-z \\-]+$"
+
+        MenuDishInfo:
+            type: object
+            additionalProperties: false
+            properties:
+                id:
+                    type: string
+                    format: uuid
+                name:
+                    type: string
+                description:
+                    type: string
+                calories:
+                    type: integer
+                weight:
+                    type: integer
+                category:
+                    type: string
+                picture_key:
+                    type: string
+                price:
+                    type: string
+                exist:
+                    type: boolean
+            required:
+                - id
+                - name
+                - description
+                - calories
+                - weight
+                - category
+                - picture_key
+                - price
+                - exist

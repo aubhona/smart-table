@@ -111,6 +111,11 @@ func addHandlers(container *dig.Container) error {
 		return err
 	}
 
+	err = container.Provide(app.NewMenuDishListCommandHandler)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
