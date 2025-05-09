@@ -13,6 +13,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	defaultCustomerLogin  = "testLogin"
+	defaultCustomerTgID   = 123
+	defaultCustomerChatID = 1169524813
+)
+
 func FindCustomerByTgID(tgID string) (defsInternalCustomerDb.PgCustomer, error) {
 	customer := defsInternalCustomerDb.PgCustomer{}
 
@@ -24,6 +30,14 @@ func FindCustomerByTgID(tgID string) (defsInternalCustomerDb.PgCustomer, error) 
 	err = json.Unmarshal(customerJSON, &customer)
 
 	return customer, err
+}
+
+func CreateDefaultCustomer() (uuid.UUID, error) {
+	return CreateCustomer(
+		defaultCustomerLogin,
+		defaultCustomerTgID,
+		defaultCustomerChatID,
+	)
 }
 
 func CreateCustomer(tgLogin string, tgID, chatID int64) (uuid.UUID, error) {
@@ -57,11 +71,11 @@ func TestCustomerRegisterHappyPath(t *testing.T) {
 	defer CleanTest()
 
 	user := &telebot.User{
-		ID:       123,
-		Username: "test_login",
+		ID:       defaultCustomerTgID,
+		Username: defaultCustomerLogin,
 	}
 	chat := &telebot.Chat{
-		ID: 1169524813,
+		ID: defaultCustomerChatID,
 	}
 
 	bot.ProcessUpdate(telebot.Update{
@@ -72,10 +86,10 @@ func TestCustomerRegisterHappyPath(t *testing.T) {
 		},
 	})
 
-	customerPg, err := FindCustomerByTgID("123")
+	customerPg, err := FindCustomerByTgID(strconv.Itoa(defaultCustomerTgID))
 	assert.NoError(t, err)
 
-	assert.Equal(t, "test_login", customerPg.TgLogin)
-	assert.Equal(t, "123", customerPg.TgID)
-	assert.Equal(t, "1169524813", customerPg.ChatID)
+	assert.Equal(t, defaultCustomerLogin, customerPg.TgLogin)
+	assert.Equal(t, strconv.Itoa(defaultCustomerTgID), customerPg.TgID)
+	assert.Equal(t, strconv.Itoa(defaultCustomerChatID), customerPg.ChatID)
 }
