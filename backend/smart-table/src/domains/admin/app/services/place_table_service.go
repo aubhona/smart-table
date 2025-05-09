@@ -21,16 +21,6 @@ func NewPlaceTableService(dependencies *dependencies.Dependencies) *PlaceTableSe
 	return &PlaceTableService{webAppURL: dependencies.Config.Bot.WebAppURL}
 }
 
-func (p *PlaceTableService) GetTableIDs(place utils.SharedRef[domain.Place]) []string {
-	tableIDs := make([]string, 0, place.Get().GetTableCount())
-
-	for i := 1; i <= place.Get().GetTableCount(); i++ {
-		tableIDs = append(tableIDs, fmt.Sprintf("%s_%d", place.Get().GetUUID(), i))
-	}
-
-	return tableIDs
-}
-
 func (p *PlaceTableService) GetPlaceUUIDFromTableID(tableID string) (uuid.UUID, error) {
 	parts := strings.Split(tableID, "_")
 	if len(parts) != 2 {
@@ -50,7 +40,7 @@ func (p *PlaceTableService) GetTableNumberFromTableID(tableID string) (int, erro
 }
 
 func (p *PlaceTableService) GetTableDeepLinkForQR(place utils.SharedRef[domain.Place]) []string {
-	tableIDs := p.GetTableIDs(place)
+	tableIDs := place.Get().GetTableIDs()
 
 	return lo.Map(tableIDs, func(tableID string, _ int) string {
 		return fmt.Sprintf("%s=%s", p.webAppURL, tableID)

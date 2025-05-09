@@ -3,7 +3,8 @@ package viewscustomerorder
 import (
 	"context"
 
-	appErrors "github.com/smart-table/src/domains/customer/app/use_cases/errors"
+	appQueriesErrors "github.com/smart-table/src/domains/customer/app/queries/errors"
+	appUseCasesErrors "github.com/smart-table/src/domains/customer/app/use_cases/errors"
 
 	app "github.com/smart-table/src/domains/customer/app/use_cases"
 	"github.com/smart-table/src/utils"
@@ -26,9 +27,17 @@ func (h *CustomerV1OrderHandler) PostCustomerV1OrderCreate(
 	})
 
 	if err != nil {
-		if utils.IsTheSameErrorType[appErrors.IncorrectRoomCodeError](err) {
+		switch {
+		case utils.IsTheSameErrorType[appUseCasesErrors.IncorrectRoomCodeError](err):
 			return viewsCustomerOrder.PostCustomerV1OrderCreate403JSONResponse{
 				Code:    viewsCustomerOrder.InvalidRoomCode,
+				Message: err.Error(),
+			}, nil
+		case utils.IsTheSameErrorType[appQueriesErrors.PlaceNotFound](err):
+		case utils.IsTheSameErrorType[appQueriesErrors.InvalidTableNumber](err):
+		case utils.IsTheSameErrorType[appUseCasesErrors.InvalidTableID](err):
+			return viewsCustomerOrder.PostCustomerV1OrderCreate403JSONResponse{
+				Code:    viewsCustomerOrder.InvalidTableID,
 				Message: err.Error(),
 			}, nil
 		}

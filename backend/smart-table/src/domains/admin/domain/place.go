@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/samber/lo"
@@ -124,6 +125,16 @@ func (p *Place) ContainsEmployee(employeeUserUUID uuid.UUID) bool {
 
 func (p *Place) ValidateTableNumber(tableNumber int) bool {
 	return 0 < tableNumber && tableNumber <= p.GetTableCount()
+}
+
+func (p *Place) GetTableIDs() []string {
+	tableIDs := make([]string, 0, p.GetTableCount())
+
+	for i := 1; i <= p.GetTableCount(); i++ {
+		tableIDs = append(tableIDs, fmt.Sprintf("%s_%d", p.GetUUID(), i))
+	}
+
+	return tableIDs
 }
 
 func (p *Place) GetUUID() uuid.UUID                         { return p.uuid }

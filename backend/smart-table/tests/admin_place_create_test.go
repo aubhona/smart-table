@@ -10,6 +10,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	defaultAddress     = "testAddress"
+	defaultOpeningTime = "12:00"
+	defaultClosingTime = "13:00"
+	defaultTableCount  = 10
+)
+
 var viewsCodegenAdminPlaceClient, _ = viewsCodegenAdminPlace.NewClientWithResponses(GetBasePath())
 
 func CreateDefaultPlace(token string, userUUID, restaurantUUID uuid.UUID) (uuid.UUID, error) {
@@ -17,10 +24,10 @@ func CreateDefaultPlace(token string, userUUID, restaurantUUID uuid.UUID) (uuid.
 		userUUID,
 		restaurantUUID,
 		token,
-		"testAddress",
-		"12:00",
-		"13:00",
-		10,
+		defaultAddress,
+		defaultOpeningTime,
+		defaultClosingTime,
+		defaultTableCount,
 	)
 }
 
@@ -70,10 +77,10 @@ func TestAdminPlaceCreateHappyPath(t *testing.T) {
 		},
 		viewsCodegenAdminPlace.PostAdminV1PlaceCreateJSONRequestBody{
 			RestaurantUUID: restaurantUUID,
-			Address:        "testAddress",
-			TableCount:     1,
-			OpeningTime:    "13:00",
-			ClosingTime:    "14:00",
+			Address:        defaultAddress,
+			TableCount:     defaultTableCount,
+			OpeningTime:    defaultOpeningTime,
+			ClosingTime:    defaultClosingTime,
 		},
 	)
 
@@ -98,10 +105,10 @@ func TestAdminPlaceCreateRestaurantNotFound(t *testing.T) {
 		},
 		viewsCodegenAdminPlace.PostAdminV1PlaceCreateJSONRequestBody{
 			RestaurantUUID: uuid.New(),
-			Address:        "testAddress",
-			TableCount:     1,
-			OpeningTime:    "13:00",
-			ClosingTime:    "14:00",
+			Address:        defaultAddress,
+			TableCount:     defaultTableCount,
+			OpeningTime:    defaultOpeningTime,
+			ClosingTime:    defaultClosingTime,
 		},
 	)
 
