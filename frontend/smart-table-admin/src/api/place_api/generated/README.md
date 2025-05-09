@@ -125,7 +125,11 @@ Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *SmartTableAdminApi.DefaultApi* | [**adminV1PlaceCreatePost**](docs/DefaultApi.md#adminV1PlaceCreatePost) | **POST** /admin/v1/place/create | Создание плейса
 *SmartTableAdminApi.DefaultApi* | [**adminV1PlaceEmployeeAddPost**](docs/DefaultApi.md#adminV1PlaceEmployeeAddPost) | **POST** /admin/v1/place/employee/add | Добавление сотрудника в плейс
+*SmartTableAdminApi.DefaultApi* | [**adminV1PlaceEmployeeListPost**](docs/DefaultApi.md#adminV1PlaceEmployeeListPost) | **POST** /admin/v1/place/employee/list | Получение списка сотрудников в плейса
 *SmartTableAdminApi.DefaultApi* | [**adminV1PlaceListPost**](docs/DefaultApi.md#adminV1PlaceListPost) | **POST** /admin/v1/place/list | Получение списка плейсов пользователя
+*SmartTableAdminApi.DefaultApi* | [**adminV1PlaceMenuDishCreatePost**](docs/DefaultApi.md#adminV1PlaceMenuDishCreatePost) | **POST** /admin/v1/place/menu/dish/create | Создание блюда в меню плейса
+*SmartTableAdminApi.DefaultApi* | [**adminV1PlaceMenuDishListPost**](docs/DefaultApi.md#adminV1PlaceMenuDishListPost) | **POST** /admin/v1/place/menu/dish/list | Получение списка позиций в меню плейса
+*SmartTableAdminApi.DefaultApi* | [**adminV1PlaceTableDeeplinksListPost**](docs/DefaultApi.md#adminV1PlaceTableDeeplinksListPost) | **POST** /admin/v1/place/table_deeplinks/list | Получение списка ссылок на столы для генерации QR
 
 
 ## Documentation for Models
@@ -133,10 +137,20 @@ Class | Method | HTTP request | Description
  - [SmartTableAdminApi.AdminV1PlaceCreateRequest](docs/AdminV1PlaceCreateRequest.md)
  - [SmartTableAdminApi.AdminV1PlaceCreateResponse](docs/AdminV1PlaceCreateResponse.md)
  - [SmartTableAdminApi.AdminV1PlaceEmployeeAddRequest](docs/AdminV1PlaceEmployeeAddRequest.md)
+ - [SmartTableAdminApi.AdminV1PlaceEmployeeListRequest](docs/AdminV1PlaceEmployeeListRequest.md)
+ - [SmartTableAdminApi.AdminV1PlaceEmployeeListResponse](docs/AdminV1PlaceEmployeeListResponse.md)
  - [SmartTableAdminApi.AdminV1PlaceListRequest](docs/AdminV1PlaceListRequest.md)
  - [SmartTableAdminApi.AdminV1PlaceListResponse](docs/AdminV1PlaceListResponse.md)
+ - [SmartTableAdminApi.AdminV1PlaceMenuDishCreateRequest](docs/AdminV1PlaceMenuDishCreateRequest.md)
+ - [SmartTableAdminApi.AdminV1PlaceMenuDishCreateResponse](docs/AdminV1PlaceMenuDishCreateResponse.md)
+ - [SmartTableAdminApi.AdminV1PlaceMenuDishListRequest](docs/AdminV1PlaceMenuDishListRequest.md)
+ - [SmartTableAdminApi.AdminV1PlaceTableDeepLinksListRequest](docs/AdminV1PlaceTableDeepLinksListRequest.md)
+ - [SmartTableAdminApi.AdminV1PlaceTableDeepLinksListResponse](docs/AdminV1PlaceTableDeepLinksListResponse.md)
+ - [SmartTableAdminApi.EmployeeInfo](docs/EmployeeInfo.md)
  - [SmartTableAdminApi.ErrorResponse](docs/ErrorResponse.md)
+ - [SmartTableAdminApi.MenuDishInfo](docs/MenuDishInfo.md)
  - [SmartTableAdminApi.PlaceInfo](docs/PlaceInfo.md)
+ - [SmartTableAdminApi.Role](docs/Role.md)
 
 
 ## Documentation for Authorization

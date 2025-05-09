@@ -337,11 +337,13 @@ export default function PlacesAndDishes() {
           <p className="pd-empty">Нет плейсов</p>
         )}
         {!loading && tab === "places" && places.map((p) => (
-            <div key={p.uuid} className="pd-item" onClick={() =>
-              navigate(
-                `/restaurant/${restaurant_uuid}/place/${p.uuid}`
-              )
-            }>
+            <div key={p.uuid} className="pd-item" onClick={() => {
+              localStorage.setItem("current_place", JSON.stringify({
+                  place_uuid: p.uuid,
+                  place_name: p.address
+                }));
+                window.location.href =`/restaurants/${restaurant_uuid}/places-dishes/${p.uuid}`
+                }}>
               <strong>{p.address}</strong>
               <br />
               столов: {p.table_count}, {p.opening_time}–{p.closing_time}

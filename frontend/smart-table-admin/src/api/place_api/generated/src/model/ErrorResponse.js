@@ -126,6 +126,12 @@ ErrorResponse['CodeEnum'] = {
     "incorrect_table_count": "incorrect_table_count",
 
     /**
+     * value: "incorrect_price"
+     * @const
+     */
+    "incorrect_price": "incorrect_price",
+
+    /**
      * value: "not_authorized"
      * @const
      */
@@ -159,7 +165,13 @@ ErrorResponse['CodeEnum'] = {
      * value: "place_not_found"
      * @const
      */
-    "place_not_found": "place_not_found"
+    "place_not_found": "place_not_found",
+
+    /**
+     * value: "dish_not_found"
+     * @const
+     */
+    "dish_not_found": "dish_not_found"
 };
 
 

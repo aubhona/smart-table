@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import RegistrationForm from "./pages/RegistrationForm";
 import LoginForm from "./pages/LoginForm";
-import RestaurantsList from "./pages/RestaurantsList.js"
-import PlacesAndDishes from "./pages/PlacesAndDishes.js"
+import RestaurantsList from "./pages/RestaurantsList.js";
+import PlacesAndDishes from "./pages/PlacesAndDishes.js";
 import PlaceDetail from "./pages/PlaceDetail.js";
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
         <Route path="/login" element={<LoginForm />} />
         <Route path="/restaurants" element={<RestaurantsList />} />
         <Route path="/restaurants/:restaurant_uuid/places-dishes" element={<PlacesAndDishes />} />
-        <Route path="/restaurants/:restaurant_uuid/:place_uuid" element={<PlaceDetail />} />
+        <Route path="/restaurants/:restaurant_uuid/places-dishes/:place_uuid" element={<PlaceDetail />} />
       </Routes>
     </Router>
   );

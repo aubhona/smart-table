@@ -16,10 +16,20 @@ import ApiClient from './ApiClient';
 import AdminV1PlaceCreateRequest from './model/AdminV1PlaceCreateRequest';
 import AdminV1PlaceCreateResponse from './model/AdminV1PlaceCreateResponse';
 import AdminV1PlaceEmployeeAddRequest from './model/AdminV1PlaceEmployeeAddRequest';
+import AdminV1PlaceEmployeeListRequest from './model/AdminV1PlaceEmployeeListRequest';
+import AdminV1PlaceEmployeeListResponse from './model/AdminV1PlaceEmployeeListResponse';
 import AdminV1PlaceListRequest from './model/AdminV1PlaceListRequest';
 import AdminV1PlaceListResponse from './model/AdminV1PlaceListResponse';
+import AdminV1PlaceMenuDishCreateRequest from './model/AdminV1PlaceMenuDishCreateRequest';
+import AdminV1PlaceMenuDishCreateResponse from './model/AdminV1PlaceMenuDishCreateResponse';
+import AdminV1PlaceMenuDishListRequest from './model/AdminV1PlaceMenuDishListRequest';
+import AdminV1PlaceTableDeepLinksListRequest from './model/AdminV1PlaceTableDeepLinksListRequest';
+import AdminV1PlaceTableDeepLinksListResponse from './model/AdminV1PlaceTableDeepLinksListResponse';
+import EmployeeInfo from './model/EmployeeInfo';
 import ErrorResponse from './model/ErrorResponse';
+import MenuDishInfo from './model/MenuDishInfo';
 import PlaceInfo from './model/PlaceInfo';
+import Role from './model/Role';
 import DefaultApi from './api/DefaultApi';
 
 
@@ -80,6 +90,18 @@ export {
     AdminV1PlaceEmployeeAddRequest,
 
     /**
+     * The AdminV1PlaceEmployeeListRequest model constructor.
+     * @property {module:model/AdminV1PlaceEmployeeListRequest}
+     */
+    AdminV1PlaceEmployeeListRequest,
+
+    /**
+     * The AdminV1PlaceEmployeeListResponse model constructor.
+     * @property {module:model/AdminV1PlaceEmployeeListResponse}
+     */
+    AdminV1PlaceEmployeeListResponse,
+
+    /**
      * The AdminV1PlaceListRequest model constructor.
      * @property {module:model/AdminV1PlaceListRequest}
      */
@@ -92,16 +114,64 @@ export {
     AdminV1PlaceListResponse,
 
     /**
+     * The AdminV1PlaceMenuDishCreateRequest model constructor.
+     * @property {module:model/AdminV1PlaceMenuDishCreateRequest}
+     */
+    AdminV1PlaceMenuDishCreateRequest,
+
+    /**
+     * The AdminV1PlaceMenuDishCreateResponse model constructor.
+     * @property {module:model/AdminV1PlaceMenuDishCreateResponse}
+     */
+    AdminV1PlaceMenuDishCreateResponse,
+
+    /**
+     * The AdminV1PlaceMenuDishListRequest model constructor.
+     * @property {module:model/AdminV1PlaceMenuDishListRequest}
+     */
+    AdminV1PlaceMenuDishListRequest,
+
+    /**
+     * The AdminV1PlaceTableDeepLinksListRequest model constructor.
+     * @property {module:model/AdminV1PlaceTableDeepLinksListRequest}
+     */
+    AdminV1PlaceTableDeepLinksListRequest,
+
+    /**
+     * The AdminV1PlaceTableDeepLinksListResponse model constructor.
+     * @property {module:model/AdminV1PlaceTableDeepLinksListResponse}
+     */
+    AdminV1PlaceTableDeepLinksListResponse,
+
+    /**
+     * The EmployeeInfo model constructor.
+     * @property {module:model/EmployeeInfo}
+     */
+    EmployeeInfo,
+
+    /**
      * The ErrorResponse model constructor.
      * @property {module:model/ErrorResponse}
      */
     ErrorResponse,
 
     /**
+     * The MenuDishInfo model constructor.
+     * @property {module:model/MenuDishInfo}
+     */
+    MenuDishInfo,
+
+    /**
      * The PlaceInfo model constructor.
      * @property {module:model/PlaceInfo}
      */
     PlaceInfo,
+
+    /**
+     * The Role model constructor.
+     * @property {module:model/Role}
+     */
+    Role,
 
     /**
     * The DefaultApi service constructor.

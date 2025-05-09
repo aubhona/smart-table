@@ -12,6 +12,7 @@
  */
 
 import ApiClient from '../ApiClient';
+import Role from './Role';
 
 /**
  * The AdminV1PlaceEmployeeAddRequest model module.
@@ -24,7 +25,7 @@ class AdminV1PlaceEmployeeAddRequest {
      * @alias module:model/AdminV1PlaceEmployeeAddRequest
      * @param placeUuid {String} Уникальный идентификатор плейса
      * @param employeeLogin {String} Логин пользователя, используемый для входа
-     * @param employeeRole {module:model/AdminV1PlaceEmployeeAddRequest.EmployeeRoleEnum} Роль сотрудника
+     * @param employeeRole {module:model/Role} 
      */
     constructor(placeUuid, employeeLogin, employeeRole) { 
         
@@ -60,7 +61,7 @@ class AdminV1PlaceEmployeeAddRequest {
                 obj['employee_login'] = ApiClient.convertToType(data['employee_login'], 'String');
             }
             if (data.hasOwnProperty('employee_role')) {
-                obj['employee_role'] = ApiClient.convertToType(data['employee_role'], 'String');
+                obj['employee_role'] = Role.constructFromObject(data['employee_role']);
             }
         }
         return obj;
@@ -86,10 +87,6 @@ class AdminV1PlaceEmployeeAddRequest {
         if (data['employee_login'] && !(typeof data['employee_login'] === 'string' || data['employee_login'] instanceof String)) {
             throw new Error("Expected the field `employee_login` to be a primitive type in the JSON string but got " + data['employee_login']);
         }
-        // ensure the json data is a string
-        if (data['employee_role'] && !(typeof data['employee_role'] === 'string' || data['employee_role'] instanceof String)) {
-            throw new Error("Expected the field `employee_role` to be a primitive type in the JSON string but got " + data['employee_role']);
-        }
 
         return true;
     }
@@ -112,34 +109,12 @@ AdminV1PlaceEmployeeAddRequest.prototype['place_uuid'] = undefined;
 AdminV1PlaceEmployeeAddRequest.prototype['employee_login'] = undefined;
 
 /**
- * Роль сотрудника
- * @member {module:model/AdminV1PlaceEmployeeAddRequest.EmployeeRoleEnum} employee_role
+ * @member {module:model/Role} employee_role
  */
 AdminV1PlaceEmployeeAddRequest.prototype['employee_role'] = undefined;
 
 
 
-
-
-/**
- * Allowed values for the <code>employee_role</code> property.
- * @enum {String}
- * @readonly
- */
-AdminV1PlaceEmployeeAddRequest['EmployeeRoleEnum'] = {
-
-    /**
-     * value: "admin"
-     * @const
-     */
-    "admin": "admin",
-
-    /**
-     * value: "waiter"
-     * @const
-     */
-    "waiter": "waiter"
-};
 
 
 
