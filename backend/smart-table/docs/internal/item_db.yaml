@@ -24,10 +24,12 @@ components:
                     type: string
                 weight:
                     type: integer
+                calories:
+                    type: integer
                 category:
                     type: string
                 price:
-                    type: number
+                    type: string
                 customer_uuid:
                     type: string
                     format: uuid
@@ -50,6 +52,7 @@ components:
                 - description
                 - picture_link
                 - weight
+                - calories
                 - category
                 - price
                 - customer_uuid

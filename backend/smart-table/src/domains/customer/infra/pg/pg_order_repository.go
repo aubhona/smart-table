@@ -46,7 +46,6 @@ func (o *OrderRepository) Rollback(tx domain.Transaction) error {
 func (o *OrderRepository) Save(tx domain.Transaction, order utils.SharedRef[domain.Order]) error {
 	ctx := context.Background()
 	trx := tx.(*pgTx)
-
 	queries := db.New(o.coonPool).WithTx(trx.tx)
 
 	pgOrder, err := mapper.ConvertToPgOrder(order)
@@ -54,7 +53,7 @@ func (o *OrderRepository) Save(tx domain.Transaction, order utils.SharedRef[doma
 		return err
 	}
 
-	_, err = queries.InsertOrder(ctx, pgOrder)
+	err = queries.InsertOrder(ctx, pgOrder)
 	if err != nil {
 		return err
 	}
@@ -64,9 +63,40 @@ func (o *OrderRepository) Save(tx domain.Transaction, order utils.SharedRef[doma
 		return err
 	}
 
-	_, err = queries.UpsertItems(ctx, pgItems)
+	err = queries.UpsertItems(ctx, pgItems)
+	if err != nil {
+		return err
+	}
 
-	return err
+	return nil
+}
+
+func (o *OrderRepository) Update(tx domain.Transaction, order utils.SharedRef[domain.Order]) error {
+	ctx := context.Background()
+	trx := tx.(*pgTx)
+	queries := db.New(o.coonPool).WithTx(trx.tx)
+
+	pgOrder, err := mapper.ConvertToPgOrder(order)
+	if err != nil {
+		return err
+	}
+
+	pgItems, err := mapper.ConvertToPgItems(order.Get().GetItems())
+	if err != nil {
+		return err
+	}
+
+	err = queries.UpdateOrder(ctx, pgOrder)
+	if err != nil {
+		return err
+	}
+
+	err = queries.UpsertItems(ctx, pgItems)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func getNotFoundError(orderUuids []uuid.UUID, orders []utils.SharedRef[domain.Order]) error {
@@ -126,7 +156,7 @@ func (o *OrderRepository) FindActiveOrderByTableID(tableID string) (utils.Shared
 	return o.FindOrder(pgResult)
 }
 
-func (o *OrderRepository) FindActiveOrderByCutomerUUID(customerUUID uuid.UUID) (utils.SharedRef[domain.Order], error) {
+func (o *OrderRepository) FindActiveOrderByCustomerUUID(customerUUID uuid.UUID) (utils.SharedRef[domain.Order], error) {
 	ctx := context.Background()
 	queries := db.New(o.coonPool)
 

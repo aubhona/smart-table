@@ -1,7 +1,7 @@
--- name: InsertOrder :one
+-- name: InsertOrder :exec
 --
 -- args:
--- $1 - JSONB
+-- $1 - JSONB (PgOrder)
 
 INSERT INTO smart_table_customer.orders (
     uuid,
@@ -34,5 +34,4 @@ FROM jsonb_to_record($1::jsonb) AS input(
   resolution      TEXT,
   created_at      TIMESTAMPTZ,
   updated_at      TIMESTAMPTZ
-)
-RETURNING uuid;
+);

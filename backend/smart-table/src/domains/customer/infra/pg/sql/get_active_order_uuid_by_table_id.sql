@@ -1,7 +1,7 @@
 -- name: GetActiveOrderUUIDdByTableID :one
 --
 -- args:
--- $1 - TEXT
+-- $1 - TEXT (table_id)
 
 SELECT
     uuid

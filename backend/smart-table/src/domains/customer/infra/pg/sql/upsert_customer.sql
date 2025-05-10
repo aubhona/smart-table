@@ -1,7 +1,7 @@
--- name: UpsertCustomer :one
+-- name: UpsertCustomer :exec
 --
 -- args:
--- $1 - JSONB
+-- $1 - JSONB (PgCustomer)
 
 INSERT INTO smart_table_customer.customers (
     uuid,
@@ -31,5 +31,4 @@ FROM jsonb_to_record($1::jsonb) AS input(
 ) ON CONFLICT (uuid) DO UPDATE
 SET
     chat_id = EXCLUDED.chat_id,
-    tg_login = EXCLUDED.tg_login
-RETURNING uuid;
+    tg_login = EXCLUDED.tg_login;

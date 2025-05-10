@@ -1,7 +1,7 @@
 -- name: GetPlaceUUIDsByRestaurantUUID :many
 --
 -- args:
--- $1 - UUID
+-- $1 - UUID (restaurant_uuid)
 
 SELECT
     p.uuid

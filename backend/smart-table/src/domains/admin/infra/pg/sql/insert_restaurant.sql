@@ -1,7 +1,7 @@
 -- name: InsertRestaurant :one
 --
 -- args:
--- $1 - JSONB
+-- $1 - JSONB (PgRestaurant)
 
 INSERT INTO smart_table_admin.restaurants (
     uuid,

@@ -3,6 +3,9 @@ package viewscustomerorder
 import (
 	"context"
 
+	"github.com/smart-table/src/logging"
+	"go.uber.org/zap"
+
 	appQueriesErrors "github.com/smart-table/src/domains/customer/app/queries/errors"
 	appUseCasesErrors "github.com/smart-table/src/domains/customer/app/use_cases/errors"
 
@@ -22,7 +25,7 @@ func (h *CustomerV1OrderHandler) PostCustomerV1OrderCreate(
 
 	result, err := handler.Handle(&app.OrderCreateCommand{
 		TableID:      request.Body.TableID,
-		CustomerUUID: request.Body.CustomerUUID,
+		CustomerUUID: request.Params.CustomerUUID,
 		RoomCode:     utils.OptionalFromPointer(request.Body.RoomCode),
 	})
 
@@ -46,6 +49,8 @@ func (h *CustomerV1OrderHandler) PostCustomerV1OrderCreate(
 				Message: err.Error(),
 			}, nil
 		}
+
+		logging.GetLogger().Error("Get unexpected error", zap.Any("error", err))
 
 		return nil, err
 	}

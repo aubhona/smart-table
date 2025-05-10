@@ -1,7 +1,7 @@
--- name: UpsertItems :many
+-- name: UpsertItems :exec
 --
 -- args:
--- $1 - JSONB
+-- $1 - JSONB ([]PgItem)
 
 INSERT INTO smart_table_customer.items (
     uuid,
@@ -62,5 +62,4 @@ SET
     comment = EXCLUDED.comment,
     status = EXCLUDED.status,
     resolution = EXCLUDED.resolution,
-    is_draft = EXCLUDED.is_draft
-RETURNING uuid;
+    is_draft = EXCLUDED.is_draft;

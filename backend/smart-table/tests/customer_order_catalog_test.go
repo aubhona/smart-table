@@ -11,23 +11,17 @@ import (
 	"strings"
 	"testing"
 
-	viewsCodegenAdminPlace "github.com/smart-table/src/views/codegen/admin_place"
+	viewsCodegenCustomer "github.com/smart-table/src/views/codegen/customer_order"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAdminPlaceMenuDishListHappyPath(t *testing.T) {
+func TestCustomerOrderCatalogHappyPath(t *testing.T) {
 	GetTestMutex().Lock()
 	defer GetTestMutex().Unlock()
 	defer CleanTest()
 
-	userUUID, token, err := CreateDefaultUser()
-	assert.NoError(t, err)
-
-	restaurantUUID, err := CreateDefaultRestaurant(token, userUUID)
-	assert.NoError(t, err)
-
-	placeUUID, err := CreateDefaultPlace(token, userUUID, restaurantUUID)
+	userUUID, restaurantUUID, placeUUID, hostCustomerUUID, orderUUID, token, err := CreateDefaultOrder()
 	assert.NoError(t, err)
 
 	dishUUID, err := CreateDefaultRestaurantDish(token, userUUID, restaurantUUID)
@@ -36,14 +30,11 @@ func TestAdminPlaceMenuDishListHappyPath(t *testing.T) {
 	menuDishUUID, err := CreateDefaultPlaceMenuDish(token, userUUID, placeUUID, dishUUID)
 	assert.NoError(t, err)
 
-	response, err := viewsCodegenAdminPlaceClient.PostAdminV1PlaceMenuDishListWithResponse(
+	response, err := viewsCodegenCustomerOrderClient.GetCustomerV1OrderCatalogWithResponse(
 		GetCtx(),
-		&viewsCodegenAdminPlace.PostAdminV1PlaceMenuDishListParams{
-			JWTToken: token,
-			UserUUID: userUUID,
-		},
-		viewsCodegenAdminPlace.PostAdminV1PlaceMenuDishListJSONRequestBody{
-			PlaceUUID: placeUUID,
+		&viewsCodegenCustomer.GetCustomerV1OrderCatalogParams{
+			CustomerUUID: hostCustomerUUID,
+			OrderUUID:    orderUUID,
 		},
 	)
 
@@ -55,7 +46,7 @@ func TestAdminPlaceMenuDishListHappyPath(t *testing.T) {
 		t.Fatalf("cannot parse media type: %v", err)
 	}
 
-	if mediaType != "multipart/mixed" { //nolint
+	if mediaType != "multipart/mixed" {
 		t.Fatalf("unexpected media type: %s", mediaType)
 	}
 
@@ -67,7 +58,7 @@ func TestAdminPlaceMenuDishListHappyPath(t *testing.T) {
 		t.Fatalf("failed to read first part: %v", err)
 	}
 
-	if part.Header.Get("Content-Type") != "application/json" { //nolint
+	if part.Header.Get("Content-Type") != "application/json" {
 		t.Fatalf("expected first part to be JSON, got: %s", part.Header.Get("Content-Type"))
 	}
 
@@ -77,17 +68,17 @@ func TestAdminPlaceMenuDishListHappyPath(t *testing.T) {
 		t.Fatalf("failed to read JSON part: %v", err)
 	}
 
-	var metadata []viewsCodegenAdminPlace.MenuDishInfo
+	var metadata viewsCodegenCustomer.Catalog
 
 	if err := json.Unmarshal(jsonBytes, &metadata); err != nil {
 		t.Fatalf("failed to unmarshal JSON: %v", err)
 	}
 
-	t.Logf("parsed %d menu dishes", len(metadata))
+	t.Logf("parsed %d menu dishes", len(metadata.Menu))
 
-	assert.Equal(t, 1, len(metadata))
-
-	assert.Equal(t, metadata[0].ID, menuDishUUID)
+	assert.Equal(t, 1, len(metadata.Menu))
+	assert.Equal(t, metadata.Menu[0].ID, menuDishUUID)
+	assert.Equal(t, metadata.TotalPrice, "0")
 
 	imageCount := 0
 
@@ -116,7 +107,7 @@ func TestAdminPlaceMenuDishListHappyPath(t *testing.T) {
 		imageCount++
 	}
 
-	if imageCount != len(metadata) {
-		t.Errorf("expected %d images, got %d", len(metadata), imageCount)
+	if imageCount != len(metadata.Menu) {
+		t.Errorf("expected %d images, got %d", len(metadata.Menu), imageCount)
 	}
 }

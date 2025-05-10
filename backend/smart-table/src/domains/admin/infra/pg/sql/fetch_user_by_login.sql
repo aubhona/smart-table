@@ -1,7 +1,7 @@
 -- name: FetchUserByLogin :one
 --
 -- args:
--- $1 - TEXT
+-- $1 - TEXT (login)
 
 SELECT
     to_jsonb(u)
