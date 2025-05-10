@@ -1,7 +1,7 @@
 -- name: InsertUser :one
 --
 -- args:
--- $1 - JSONB
+-- $1 - JSONB (PgUser)
 
 INSERT INTO smart_table_admin.users (
     uuid,

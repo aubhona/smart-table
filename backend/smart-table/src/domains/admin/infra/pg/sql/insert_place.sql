@@ -1,7 +1,7 @@
 -- name: InsertPlace :one
 -- 
 -- args:
--- $1 - JSONB
+-- $1 - JSONB (PgPlace)
 
 INSERT INTO smart_table_admin.places (
     uuid,

@@ -27,8 +27,10 @@ func (h *AdminV1PlaceHandler) PostAdminV1PlaceMenuDishList( //nolint
 	}
 
 	result, err := handler.Handle(&app.MenuDishListCommand{
-		UserUUID:  request.Params.UserUUID,
-		PlaceUUID: request.Body.PlaceUUID,
+		AdminCall: utils.NewOptional(app.MenuDishListCommandAdminCall{
+			UserUUID:  request.Params.UserUUID,
+			PlaceUUID: request.Body.PlaceUUID,
+		}),
 	})
 	if err != nil {
 		switch {

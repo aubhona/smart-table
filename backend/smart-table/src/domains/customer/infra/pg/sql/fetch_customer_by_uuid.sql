@@ -1,7 +1,7 @@
 -- name: FetchCustomer :one
 --
 -- args:
--- $1 - UUID
+-- $1 - UUID (customer_uuid)
 
 SELECT
     to_jsonb(c)

@@ -1,4 +1,4 @@
--- name: FetchOrders :many
+-- name: FetchOrdersForUpdate :many
 --
 -- args:
 -- $1 - UUID[] (order_uuids)
@@ -36,4 +36,5 @@ SELECT
 FROM
   smart_table_customer.orders AS o
 WHERE
-  o.uuid = ANY($1::UUID[]);
+  o.uuid = ANY($1::UUID[])
+FOR UPDATE;

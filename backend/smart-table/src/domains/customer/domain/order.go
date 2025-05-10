@@ -113,10 +113,11 @@ func (o *Order) DraftItem(
 	dishUUID uuid.UUID,
 	customer utils.SharedRef[Customer],
 	comment utils.Optional[string],
-	name string,
-	description string,
+	name,
+	description,
 	pictureLink string,
-	weight int,
+	weight,
+	calories int,
 	category string,
 	price decimal.Decimal,
 	uuidGenerator domain.UUIDGenerator,
@@ -131,6 +132,7 @@ func (o *Order) DraftItem(
 		description,
 		pictureLink,
 		weight,
+		calories,
 		category,
 		price,
 		true,
@@ -153,4 +155,18 @@ func (o *Order) CommitItem(itemUUID uuid.UUID) (utils.Optional[utils.SharedRef[I
 	item.Get().Commit()
 
 	return utils.NewOptional(item), nil
+}
+
+func (o *Order) GetDraftItemsTotalPrice() decimal.Decimal {
+	result := decimal.Zero
+
+	for _, item := range o.items {
+		if !item.Get().isDraft {
+			continue
+		}
+
+		result = result.Add(item.Get().price)
+	}
+
+	return result
 }

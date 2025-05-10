@@ -85,7 +85,7 @@ func ConvertToPgItem(item utils.SharedRef[domain.Item]) ([]byte, error) {
 		PictureLink:  item.Get().GetPictureLink(),
 		Weight:       item.Get().GetWeight(),
 		Category:     item.Get().GetCategory(),
-		Price:        float32(item.Get().GetPrice().InexactFloat64()),
+		Price:        item.Get().GetPrice().String(),
 		Comment:      comment,
 		Status:       string(item.Get().GetStatus()),
 		Resolution:   resolution,
@@ -165,7 +165,7 @@ func ConvertPgCustomerToModel(pgResult []byte) (utils.SharedRef[domain.Customer]
 	), nil
 }
 
-func ConvertPgOrderAggregateToModel(pgResult []byte) (utils.SharedRef[domain.Order], error) {
+func ConvertPgOrderAggregateToModel(pgResult []byte) (utils.SharedRef[domain.Order], error) { //nolint
 	pgOrderAggregate := PgOrderAggregate{}
 	err := json.Unmarshal(pgResult, &pgOrderAggregate)
 
@@ -205,6 +205,11 @@ func ConvertPgOrderAggregateToModel(pgResult []byte) (utils.SharedRef[domain.Ord
 			resolution = utils.NewOptional(defsInternalItem.ItemResolution(*pgItem.Resolution))
 		}
 
+		price, err := decimal.NewFromString(pgItem.Price)
+		if err != nil {
+			return utils.SharedRef[domain.Order]{}, err
+		}
+
 		items[i] = domain.RestoreItem(
 			pgItem.UUID,
 			pgItem.OrderUUID,
@@ -217,8 +222,9 @@ func ConvertPgOrderAggregateToModel(pgResult []byte) (utils.SharedRef[domain.Ord
 			pgItem.Description,
 			pgItem.PictureLink,
 			pgItem.Weight,
+			pgItem.Calories,
 			pgItem.Category,
-			decimal.NewFromFloat(float64(pgItem.Price)),
+			price,
 			pgItem.IsDraft,
 			pgItem.CreatedAt,
 			pgItem.UpdatedAt,

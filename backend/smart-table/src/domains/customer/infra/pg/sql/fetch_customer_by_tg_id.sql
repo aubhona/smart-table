@@ -1,7 +1,7 @@
 -- name: FetchCustomerByTgId :one
 --
 -- args:
--- $1 - TEXT
+-- $1 - TEXT (tg_id)
 
 SELECT
     to_jsonb(c)

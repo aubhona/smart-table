@@ -3,7 +3,7 @@
 -- args:
 -- $1 - UUID[] (place_uuids)
 
- SELECT jsonb_build_object(
+SELECT jsonb_build_object(
     'place', to_jsonb(p),
     'restaurant', (
         SELECT jsonb_build_object(

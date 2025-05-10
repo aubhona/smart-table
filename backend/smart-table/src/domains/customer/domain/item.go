@@ -21,6 +21,7 @@ type Item struct {
 	description string
 	pictureLink string
 	weight      int
+	calories    int
 	category    string
 	price       decimal.Decimal
 	createdAt   time.Time
@@ -38,6 +39,7 @@ func NewItem(
 	description string,
 	pictureLink string,
 	weight int,
+	calories int,
 	category string,
 	price decimal.Decimal,
 	isDraft bool,
@@ -54,6 +56,7 @@ func NewItem(
 		description: description,
 		pictureLink: pictureLink,
 		weight:      weight,
+		calories:    calories,
 		category:    category,
 		price:       price,
 		createdAt:   time.Now(),
@@ -78,6 +81,7 @@ func RestoreItem(
 	description string,
 	pictureLink string,
 	weight int,
+	calories int,
 	category string,
 	price decimal.Decimal,
 	isDraft bool,
@@ -96,6 +100,7 @@ func RestoreItem(
 		description: description,
 		pictureLink: pictureLink,
 		weight:      weight,
+		calories:    calories,
 		category:    category,
 		price:       price,
 		createdAt:   createdAt,
@@ -124,6 +129,7 @@ func (i *Item) GetPrice() decimal.Decimal                                      {
 func (i *Item) GetCreatedAt() time.Time                                        { return i.createdAt }
 func (i *Item) GetUpdatedAt() time.Time                                        { return i.updatedAt }
 func (i *Item) GetIsDraft() bool                                               { return i.isDraft }
+func (i *Item) GetCalories() int                                               { return i.calories }
 
 func (i *Item) Commit() {
 	i.isDraft = false

@@ -78,9 +78,12 @@ func (c *CustomerRepository) SaveAndUpdate(tx domain.Transaction, customer utils
 		return err
 	}
 
-	_, err = queries.UpsertCustomer(ctx, pgCustomer)
+	err = queries.UpsertCustomer(ctx, pgCustomer)
+	if err != nil {
+		return err
+	}
 
-	return err
+	return nil
 }
 
 func (c *CustomerRepository) FindCustomerByTgID(customerTgID string) (utils.SharedRef[domain.Customer], error) {

@@ -1,7 +1,7 @@
 -- name: GetPlaceUUIDsByEmployeeUserUUID :many
 --
 -- args:
--- $1 - UUID
+-- $1 - UUID (user_uuid)
 
 SELECT
     e.place_uuid

@@ -48,7 +48,7 @@ func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateComma
 		return OrderCreateCommandHandlerResult{}, err
 	}
 
-	order, err := handler.orderRepository.FindActiveOrderByCutomerUUID(createCommand.CustomerUUID)
+	order, err := handler.orderRepository.FindActiveOrderByCustomerUUID(createCommand.CustomerUUID)
 
 	if err == nil {
 		logging.GetLogger().Error("customer already has active order",
@@ -89,8 +89,6 @@ func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateComma
 	}
 
 	if isNewOrder {
-		//nolint: godox, gocritic
-		// TODO: Check table id existence, check active order id on user
 		roomCode, err := handler.roomCodeService.CreateRoomCode(createCommand.TableID, createCommand.CustomerUUID)
 
 		if err != nil {
@@ -128,8 +126,27 @@ func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateComma
 		return OrderCreateCommandHandlerResult{}, appErrors.IncorrectRoomCodeError{RoomCode: createCommand.RoomCode}
 	}
 
-	if !order.Get().ContainsCustomer(user.Get().GetUUID()) {
-		order.Get().AddCustomer(user)
+	if order.Get().ContainsCustomer(user.Get().GetUUID()) {
+		return OrderCreateCommandHandlerResult{order.Get().GetUUID()}, nil
+	}
+
+	order.Get().AddCustomer(user)
+
+	tx, err := handler.orderRepository.Begin()
+	if err != nil {
+		return OrderCreateCommandHandlerResult{}, err
+	}
+
+	defer utils.Rollback(handler.orderRepository, tx)
+
+	err = handler.orderRepository.Update(tx, order)
+	if err != nil {
+		return OrderCreateCommandHandlerResult{}, err
+	}
+
+	err = handler.orderRepository.Commit(tx)
+	if err != nil {
+		return OrderCreateCommandHandlerResult{}, err
 	}
 
 	return OrderCreateCommandHandlerResult{order.Get().GetUUID()}, nil

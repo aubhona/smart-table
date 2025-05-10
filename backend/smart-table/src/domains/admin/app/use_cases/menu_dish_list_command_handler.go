@@ -1,8 +1,12 @@
 package app
 
 import (
+	"errors"
 	"io"
 	"sync"
+
+	appServices "github.com/smart-table/src/domains/admin/app/services"
+	appErrors "github.com/smart-table/src/domains/admin/app/use_cases/errors"
 
 	"github.com/shopspring/decimal"
 
@@ -12,7 +16,6 @@ import (
 	"github.com/smart-table/src/utils"
 	"go.uber.org/zap"
 
-	appErrors "github.com/smart-table/src/domains/admin/app/use_cases/errors"
 	"github.com/smart-table/src/domains/admin/domain"
 	"github.com/smart-table/src/logging"
 )
@@ -35,34 +38,59 @@ type MenuDishListCommandHandlerResult struct {
 }
 
 type MenuDishListCommandHandler struct {
-	placeRepository domain.PlaceRepository
-	s3QueryService  *app.S3QueryService
+	placeRepository   domain.PlaceRepository
+	s3QueryService    *app.S3QueryService
+	placeTableService *appServices.PlaceTableService
 }
 
 func NewMenuDishListCommandHandler(
 	placeRepository domain.PlaceRepository,
 	s3QueryService *app.S3QueryService,
+	placeTableService *appServices.PlaceTableService,
 ) *MenuDishListCommandHandler {
 	return &MenuDishListCommandHandler{
 		placeRepository,
 		s3QueryService,
+		placeTableService,
 	}
 }
 
 func (handler *MenuDishListCommandHandler) Handle(
 	command *MenuDishListCommand,
 ) (MenuDishListCommandHandlerResult, error) {
-	place, err := handler.placeRepository.FindPlace(command.PlaceUUID)
-	if err != nil {
-		logging.GetLogger().Error("error while finding restaurant by uuid", zap.Error(err))
+	var place utils.SharedRef[domain.Place]
 
-		return MenuDishListCommandHandlerResult{}, err
+	var err error
+
+	if !command.InternalCall.HasValue() && !command.AdminCall.HasValue() {
+		return MenuDishListCommandHandlerResult{}, errors.New("invalid command")
 	}
 
-	if !domain.IsHasAccess(command.UserUUID, place, domain.All) {
-		return MenuDishListCommandHandlerResult{}, appErrors.PlaceAccessDenied{
-			UserUUID:  command.UserUUID,
-			PlaceUUID: command.PlaceUUID,
+	if command.AdminCall.HasValue() {
+		place, err = handler.placeRepository.FindPlace(command.AdminCall.Value().PlaceUUID)
+		if err != nil {
+			logging.GetLogger().Error("error while finding restaurant by uuid", zap.Error(err))
+
+			return MenuDishListCommandHandlerResult{}, err
+		}
+
+		if !domain.IsHasAccess(command.AdminCall.Value().UserUUID, place, domain.All) {
+			return MenuDishListCommandHandlerResult{}, appErrors.PlaceAccessDenied{
+				UserUUID:  command.AdminCall.Value().UserUUID,
+				PlaceUUID: command.AdminCall.Value().PlaceUUID,
+			}
+		}
+	} else {
+		placeUUID, err := handler.placeTableService.GetPlaceUUIDFromTableID(command.InternalCall.Value().TabledID)
+		if err != nil {
+			return MenuDishListCommandHandlerResult{}, err
+		}
+
+		place, err = handler.placeRepository.FindPlace(placeUUID)
+		if err != nil {
+			logging.GetLogger().Error("error while finding restaurant by uuid", zap.Error(err))
+
+			return MenuDishListCommandHandlerResult{}, err
 		}
 	}
 
