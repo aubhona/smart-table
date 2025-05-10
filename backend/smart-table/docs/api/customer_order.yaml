@@ -72,6 +72,7 @@ components:
                     enum:
                         - invalid_room_code
                         - invalid_table_id
+                        - already_exist
                 message:
                     type: string
                     description: Описание ошибки

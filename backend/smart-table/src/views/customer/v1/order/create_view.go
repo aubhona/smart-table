@@ -33,6 +33,11 @@ func (h *CustomerV1OrderHandler) PostCustomerV1OrderCreate(
 				Code:    viewsCustomerOrder.InvalidRoomCode,
 				Message: err.Error(),
 			}, nil
+		case utils.IsTheSameErrorType[appUseCasesErrors.CustomerAlreadyHasActiveOrder](err):
+			return viewsCustomerOrder.PostCustomerV1OrderCreate403JSONResponse{
+				Code:    viewsCustomerOrder.AlreadyExist,
+				Message: err.Error(),
+			}, nil
 		case utils.IsTheSameErrorType[appQueriesErrors.PlaceNotFound](err):
 		case utils.IsTheSameErrorType[appQueriesErrors.InvalidTableNumber](err):
 		case utils.IsTheSameErrorType[appUseCasesErrors.InvalidTableID](err):

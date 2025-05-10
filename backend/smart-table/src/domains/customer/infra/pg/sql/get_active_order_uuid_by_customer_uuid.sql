@@ -1,12 +1,12 @@
--- name: GetActiveOrderUUIDdByTableID :one
+-- name: GetActiveOrderUUIDByCustomerUUID :one
 --
 -- args:
--- $1 - TEXT
+-- $1 - UUID
 
 SELECT
     uuid
 FROM
     smart_table_customer.orders
 WHERE
-    table_id = $1::TEXT
+    $1::UUID = ANY (customers_uuid)
     AND resolution IS NULL;

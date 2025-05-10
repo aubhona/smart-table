@@ -85,6 +85,20 @@ func (p *PlaceRepository) Update(tx domain.Transaction, place utils.SharedRef[do
 	return nil
 }
 
+func getPlaceNotFoundError(placeUUIDs []uuid.UUID, places []utils.SharedRef[domain.Place]) error {
+	placeUUIDSet := lo.SliceToMap(places, func(place utils.SharedRef[domain.Place]) (uuid.UUID, interface{}) {
+		return place.Get().GetUUID(), nil
+	})
+
+	for _, placeUUID := range placeUUIDs {
+		if _, found := placeUUIDSet[placeUUID]; !found {
+			return domainErrors.PlaceNotFound{UUID: placeUUID}
+		}
+	}
+
+	return nil
+}
+
 func (p *PlaceRepository) FindPlace(id uuid.UUID) (utils.SharedRef[domain.Place], error) {
 	places, err := p.FindPlaces([]uuid.UUID{id})
 	if err != nil {
@@ -187,18 +201,4 @@ func (p *PlaceRepository) FindPlacesByEmployeeUserUUID(userUUID uuid.UUID) ([]ut
 	}
 
 	return p.FindPlaces(placeUUIDs)
-}
-
-func getPlaceNotFoundError(placeUUIDs []uuid.UUID, places []utils.SharedRef[domain.Place]) error {
-	placeUUIDSet := lo.SliceToMap(places, func(place utils.SharedRef[domain.Place]) (uuid.UUID, interface{}) {
-		return place.Get().GetUUID(), nil
-	})
-
-	for _, placeUUID := range placeUUIDs {
-		if _, found := placeUUIDSet[placeUUID]; !found {
-			return domainErrors.PlaceNotFound{UUID: placeUUID}
-		}
-	}
-
-	return nil
 }

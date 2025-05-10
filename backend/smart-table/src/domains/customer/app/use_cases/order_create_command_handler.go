@@ -10,6 +10,8 @@ import (
 	"github.com/smart-table/src/domains/customer/domain"
 	domainErrors "github.com/smart-table/src/domains/customer/domain/errors"
 	domainServices "github.com/smart-table/src/domains/customer/domain/services"
+	"github.com/smart-table/src/logging"
+	"go.uber.org/zap"
 )
 
 type OrderCreateCommandHandlerResult struct {
@@ -40,10 +42,24 @@ func NewOrderCreateCommandHandler(
 	}
 }
 
-func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateCommand) (OrderCreateCommandHandlerResult, error) {
+func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateCommand) (OrderCreateCommandHandlerResult, error) { //nolint
 	user, err := handler.customerRepository.FindCustomer(createCommand.CustomerUUID)
 	if err != nil {
 		return OrderCreateCommandHandlerResult{}, err
+	}
+
+	order, err := handler.orderRepository.FindActiveOrderByCutomerUUID(createCommand.CustomerUUID)
+
+	if err == nil {
+		logging.GetLogger().Error("customer already has active order",
+			zap.String("customer_uuid", createCommand.CustomerUUID.String()),
+			zap.String("order_uuid", order.Get().GetUUID().String()),
+		)
+
+		return OrderCreateCommandHandlerResult{}, appErrors.CustomerAlreadyHasActiveOrder{
+			UserUUID:  createCommand.CustomerUUID,
+			OrderUUID: order.Get().GetUUID(),
+		}
 	}
 
 	isValid, err := handler.appAdminQueries.TableIDValidate(createCommand.TableID)
@@ -52,12 +68,16 @@ func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateComma
 	}
 
 	if !isValid {
+		logging.GetLogger().Error("invalid table_id",
+			zap.String("table_id", createCommand.TableID),
+		)
+
 		return OrderCreateCommandHandlerResult{}, appErrors.InvalidTableID{
 			TableID: createCommand.TableID,
 		}
 	}
 
-	order, err := handler.orderRepository.FindActiveOrderByTableID(createCommand.TableID)
+	order, err = handler.orderRepository.FindActiveOrderByTableID(createCommand.TableID)
 	isNewOrder := false
 
 	if err != nil {
