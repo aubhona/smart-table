@@ -15,6 +15,7 @@ if (!window.Telegram || !window.Telegram.WebApp) {
   console.log("Telegram WebApp загружен:", window.Telegram.WebApp);
   window.Telegram.WebApp.ready();
   window.Telegram.WebApp.expand();
+  console.log(window.Telegram.WebApp.startParam);
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
