@@ -50,7 +50,7 @@
 
   .pd-list {
     display: flex;
-    flex-direction: column;
+    grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
   }
 
@@ -153,22 +153,24 @@
   }
 
   .pd-list.dishes .pd-item {
-    flex: 0 1 calc(25% - 1rem);
-    max-width: calc(25% - 1rem);
-    margin: 0.5rem;
-    display: flex;
-    flex-direction: column;
-    border-radius: 0 0 12px 12px;
-    overflow: hidden;
+    width: 100%;
+    max-width: 372px; 
+    border: 1px solid #7d7575;
+    border-radius: 8px;
+    padding: 1rem;
     background-color: #7d7575;
+    text-align: center;
   }
 
   .pd-dish-card {
-    padding: 0.5rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+    border: 1px solid #7d7575;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #7d7575;
+    width: 100%;
+    max-width: 370px;
+    margin: 0.5rem;
+}
 
   .pd-dish-image img {
     width: 100%;
@@ -213,4 +215,30 @@
   margin-top: -0.5rem;
   margin-bottom: 0.8rem;
   text-align: left;
+}
+
+.pd-category-select {
+  width: 105.4%;
+  padding: 0.5rem;
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  margin-left: -0.5rem;
+  font-size: 1rem;
+}
+
+.pd-category-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pd-category-container::after {
+  content: '\2193'; 
+  position: absolute;
+  right: 1rem;
+  font-size: 1.2rem;
+  color: #000;
 }

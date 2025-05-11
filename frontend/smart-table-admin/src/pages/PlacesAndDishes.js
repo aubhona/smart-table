@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { handleMultipartResponse } from './multipartUtils';
 
 import PlaceApi from "../api/place_api/generated/src/api/DefaultApi";
 import AdminV1PlaceListRequest from "../api/place_api/generated/src/model/AdminV1PlaceListRequest";
@@ -8,68 +9,6 @@ import AdminV1PlaceCreateRequest from "../api/place_api/generated/src/model/Admi
 import RestaurantApi from "../api/restaurant_api/generated/src/api/DefaultApi";
 
 import "../styles/PlacesDishesScreen.css";  
-
-function indexOf(buf, sub, from = 0) {
-  for (let i = from; i <= buf.length - sub.length; i++) {
-    let ok = true;
-    for (let j = 0; j < sub.length; j++) {
-      if (buf[i + j] !== sub[j]) { ok = false; break; }
-    }
-    if (ok) return i;
-  }
-  return -1;
-}
-
-function parseMixed(bodyBuf, boundary) {
-  const enc = new TextEncoder();
-  const bnd = enc.encode(`--${boundary}`);
-  let pos = indexOf(bodyBuf, bnd);
-  if (pos < 0) return [];
-  pos += bnd.length;
-  const parts = [];
-
-  while (true) {
-    if (bodyBuf[pos] === 45 && bodyBuf[pos+1] === 45) break;
-    if (bodyBuf[pos] === 13 && bodyBuf[pos+1] === 10) pos += 2;
-
-    const next = indexOf(bodyBuf, bnd, pos);
-    if (next < 0) break;
-
-    let chunk = bodyBuf.subarray(pos, next);
-    if (chunk[chunk.length-2] === 13 && chunk[chunk.length-1] === 10) {
-      chunk = chunk.subarray(0, chunk.length - 2);
-    }
-
-    const sep = indexOf(chunk, enc.encode('\r\n\r\n'));
-    const headBuf = chunk.subarray(0, sep);
-    const dataBuf = chunk.subarray(sep + 4);
-
-    const headText = new TextDecoder().decode(headBuf);
-    const headers = {};
-    headText
-      .split('\r\n')
-      .filter(line => line.includes(':'))
-      .forEach(line => {
-        const [k, ...rest] = line.split(':');
-        headers[k.trim().toLowerCase()] = rest.join(':').trim();
-      });
-
-    const cd = headers['content-disposition'] || '';
-    const nameMatch = cd.match(/name="([^"]+)"/i);
-    const fileMatch = cd.match(/filename="([^"]+)"/i);
-
-    parts.push({
-      name:     nameMatch?.[1]  || null,        
-      filename: fileMatch?.[1]  || null,
-      type:     headers['content-type'] || null,
-      data:     dataBuf
-    });
-
-    pos = next + bnd.length;
-  }
-
-  return parts;
-}
 
 export default function PlacesAndDishes() {
   const { restaurant_uuid } = useParams();
@@ -103,8 +42,17 @@ export default function PlacesAndDishes() {
   const userUUID = localStorage.getItem("user_uuid");
   const jWTToken = localStorage.getItem("jwt_token");
 
+   const categories = [
+    "Завтрак",
+    "Супы",
+    "Второе",
+    "Салаты",
+    "Десерты",
+    "Напитки"
+  ];
+
   const placeApi = new PlaceApi();
-  placeApi.apiClient.basePath = "https://b04d-2a01-4f9-c010-ecd2-00-1.ngrok-free.app";
+  placeApi.apiClient.basePath = "https://87d6-2a01-4f9-c010-ecd2-00-1.ngrok-free.app";
   placeApi.apiClient.defaultHeaders = {
     "User-UUID": userUUID,
     "JWT-Token": jWTToken,
@@ -112,7 +60,7 @@ export default function PlacesAndDishes() {
   };
 
   const restApi = new RestaurantApi();
-  restApi.apiClient.basePath = "https://b04d-2a01-4f9-c010-ecd2-00-1.ngrok-free.app";
+  restApi.apiClient.basePath = "https://87d6-2a01-4f9-c010-ecd2-00-1.ngrok-free.app";
   restApi.apiClient.defaultHeaders = {
     "User-UUID": userUUID,
     "JWT-Token": jWTToken,
@@ -137,7 +85,7 @@ export default function PlacesAndDishes() {
   async function loadDishes() {
     setLoading(true);
     try {
-      const resp = await fetch("https://b04d-2a01-4f9-c010-ecd2-00-1.ngrok-free.app/admin/v1/restaurant/dish/list", {
+      const resp = await fetch("https://87d6-2a01-4f9-c010-ecd2-00-1.ngrok-free.app/admin/v1/restaurant/dish/list", {
         method: "POST",
         headers: {
           Accept: "multipart/mixed, application/json",
@@ -149,30 +97,12 @@ export default function PlacesAndDishes() {
         body: JSON.stringify({ restaurant_uuid }),
       });
 
-      const ct = resp.headers.get("Content-Type") || "";
-      const [, boundary] = ct.match(/boundary="?([^";]+)"?/) || [];
-      if (!boundary) throw new Error("Не удалось вытащить boundary");
-
-      const buf = new Uint8Array(await resp.arrayBuffer());
-      const parts = parseMixed(buf, boundary);
-
-      const jsonPart = parts.find(p => p.type === "application/json");
-      if (!jsonPart) throw new Error("JSON часть не найдена");
-      const json = JSON.parse(new TextDecoder().decode(jsonPart.data));
-      const list = Array.isArray(json) ? json : json.dish_list || [];
-
-      const imagesMap = {};
-      parts.filter(p => p.filename).forEach(p => {
-        const blob = new Blob([p.data], { type: p.type });
-        const url = URL.createObjectURL(blob);
-        const key = p.name.replace(/\.\w+$/, "");
-        imagesMap[key] = url;
-      });
-
-      setDishes(list.map(d => ({
-        ...d,
-        imageUrl: imagesMap[d.picture_key] || null
-      })));
+    const { list, imagesMap } = await handleMultipartResponse(resp, 'dish_list');
+    
+    setDishes(list.map(d => ({
+      ...d,
+      imageUrl: imagesMap[d.picture_key] || null
+    })));
     } catch (e) {
       console.error("Ошибка загрузки блюд:", e);
       setDishes([]);
@@ -257,7 +187,7 @@ export default function PlacesAndDishes() {
     if(!ok) {
       return;
     }
-
+    
     try {
       const data = await new Promise((res, rej) =>
         restApi.adminV1RestaurantDishCreatePost(
@@ -354,7 +284,7 @@ export default function PlacesAndDishes() {
           <p className="pd-empty">Нет блюд</p>
         )}
         {!loading && tab === "dishes" && dishes.map((d) => (
-            <div key={d.id} className="pd-item pd-dish-card">
+            <div key={d.id} className="pd-dish-card">
                  <div className="pd-dish-image">
                   {d.imageUrl
                     ? <img src={d.imageUrl} alt={d.name} />
@@ -434,11 +364,19 @@ export default function PlacesAndDishes() {
             />
   
             <label>Категория</label>
-            <input
+            <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              placeholder="Введите категорию"
-            />
+              className="pd-category-select"
+            >
+              <option value="">Выберите категорию</option> {
+                categories.map((category) => (
+                  <option key={category} value={category}> {
+                    category
+                  }
+                </option>
+              ))}
+            </select>
   
             <label>Калории</label>
             <input
