@@ -60,6 +60,33 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
 
+    /customer/v1/order/customer/list:
+        get:
+            summary: Получение списка пользователей заказа
+            description: Получение списка пользователей заказа
+            parameters:
+                - $ref: '#/components/parameters/CustomerUUID'
+                - $ref: '#/components/parameters/OrderUUID'
+            responses:
+                '200':
+                    description: Список пользователей заказа
+                    content:
+                        application/json:
+                                schema:
+                                    $ref: '#/components/schemas/CustomerV1OrderCustomerListResponse'
+                '403':
+                    description: Ошибка авторизации или доступа
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка поиска заказа или клиента
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
 components:
     parameters:
         CustomerUUID:
@@ -81,6 +108,7 @@ components:
                 format: uuid
 
     schemas:
+        # /customer/v1/order/create_POST
         CustomerV1OrderCreateRequest:
             type: object
             additionalProperties: false
@@ -105,6 +133,43 @@ components:
             required:
                 - order_uuid
 
+        # /customer/v1/order/customer/list_GET
+        CustomerV1OrderCustomerListResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                room_code:
+                    type: string
+                customer_list:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/CustomerInfo'
+            required:
+                - room_code
+                - customer_list
+
+        ErrorResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                code:
+                    type: string
+                    description: Код ошибки
+                    enum:
+                        - invalid_room_code
+                        - invalid_table_id
+                        - already_exist
+                        - order_not_found
+                        - customer_not_found
+                        - access_denied
+                message:
+                    type: string
+                    description: Описание ошибки
+            required:
+                - code
+                - message
+
+        #Objects
         Catalog:
             type: object
             additionalProperties: false
@@ -145,24 +210,81 @@ components:
                 - name
                 - calories
                 - count
-
-        ErrorResponse:
+        
+        CustomerInfo:
             type: object
             additionalProperties: false
             properties:
-                code:
+                uuid:
                     type: string
-                    description: Код ошибки
-                    enum:
-                        - invalid_room_code
-                        - invalid_table_id
-                        - already_exist
-                        - order_not_found
-                        - customer_not_found
-                        - access_denied
-                message:
+                    format: uuid
+                    description: Уникальный идентификатор пользователя
+                tg_login:
+                    description: Логин пользователя в Telegram
+                    $ref: '#/components/schemas/Login'
+                tg_id:
                     type: string
-                    description: Описание ошибки
+                is_active:
+                    description: Заказал ли пользователь хотя бы что-то
+                    type: boolean
+                total_price:
+                    type: string
+                item_list:
+                    description: Список позиций в заказе пользователя
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ItemInfo'
             required:
-                - code
-                - message
+                - uuid
+                - tg_login
+                - tg_id
+                - total_price
+                - items
+
+        ItemInfo:
+            type: object
+            additionalProperties: false
+            properties:
+                uuid:
+                    type: string
+                    format: uuid
+                comment:
+                    type: string
+                status:
+                    type: string
+                resolution:
+                    type: string
+                name:
+                    type: string
+                description:
+                    type: string
+                weight:
+                    type: integer
+                calories:
+                    type: integer
+                category:
+                    type: string
+                price:
+                    type: string
+                count: 
+                    type: integer
+                result_price:
+                    type: string
+            required:
+                - uuid
+                - status
+                - name
+                - description
+                - weight
+                - calories
+                - category
+                - price
+                - count
+                - result_price
+        
+        Login:
+            type: string
+            description: Логин пользователя
+            pattern: "^[a-zA-Z][a-zA-Z0-9_]{4,31}$"
+            minLength: 4
+            maxLength: 31

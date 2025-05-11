@@ -25,6 +25,14 @@ func (o Optional[T]) HasValue() bool {
 	return o.valid
 }
 
+func (o Optional[T]) ValueOr(fallbackValue T) T {
+	if o.HasValue() {
+		return o.Value()
+	}
+
+	return fallbackValue
+}
+
 func (o Optional[T]) ToPointer() *T {
 	if o.valid {
 		return &o.value

@@ -52,6 +52,11 @@ func AddDeps(container *dig.Container) error {
 		return err
 	}
 
+	err = container.Provide(app.NewCustomerListCommandHandler)
+	if err != nil {
+		return err
+	}
+
 	err = container.Provide(infraQueries.NewSmartTableQueryServiceImpl)
 	if err != nil {
 		return err
