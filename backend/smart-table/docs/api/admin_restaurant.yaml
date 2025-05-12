@@ -44,6 +44,76 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
 
+    /admin/v1/restaurant/edit:
+        post:
+            summary: Редактирование ресторана
+            description: Редактирование ресторана
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1RestaurantEditRequest'
+            responses:
+                '204':
+                    description: Успешное редактирование ресторана
+                '401':
+                    description: Ошибка редактирования ресторана, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка редактирование ресторана, отказано в доступе, некорретные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка редактирование ресторана, пользователь или ресторан не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /admin/v1/restaurant/delete:
+        post:
+            summary: Удаление ресторана
+            description: Удаление ресторана
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1RestaurantDeleteRequest'
+            responses:
+                '204':
+                    description: Успешное удаление ресторана
+                '401':
+                    description: Ошибка удаления ресторана, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка удаления ресторана, отказано в доступе, некорретные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка удаления ресторана, пользователь или ресторан не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
     /admin/v1/restaurant/list:
         get:
             summary: Получение списка ресторанов пользователя
@@ -89,7 +159,7 @@ paths:
                                 contentType: image/png
             responses:
                 '200':
-                    description: ID созданного блюда
+                    description: Успешное создание блюда
                     content:
                         application/json:
                             schema:
@@ -114,6 +184,94 @@ paths:
                                 $ref: '#/components/schemas/ErrorResponse'
                 '404':
                     description: Ошибка создания, пользователь не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /admin/v1/restaurant/dish/edit:
+        post:
+            summary: Редактирование блюда ресторана
+            description: Редактирование блюда ресторана
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1RestaurantDishEditRequest'
+                        encoding:
+                            dish_picture_file:
+                                contentType: image/png
+            responses:
+                '204':
+                    description: Успешное редактирование блюда
+                '400':
+                    description: Некорректный запрос редактирования
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '401':
+                    description: Ошибка редактирования, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка редактирования, отказано в доступе, некорретные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка редактирования, пользователь или блюдо не найдены
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /admin/v1/restaurant/dish/delete:
+        post:
+            summary: Удаление блюда ресторана
+            description: Удаление блюда ресторана
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1RestaurantDishDeleteRequest'
+                        encoding:
+                            dish_picture_file:
+                                contentType: image/png
+            responses:
+                '204':
+                    description: Успешное удаление блюда
+                '400':
+                    description: Некорректный запрос удаления
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '401':
+                    description: Ошибка удаления, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка удаления, отказано в доступе, некорретные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка удаления, пользователь или блюдо не найдены
                     content:
                         application/json:
                             schema:
@@ -198,6 +356,29 @@ components:
             required:
                 - restaurant_uuid
 
+        # /admin/v1/restaurant/edit_POST
+        AdminV1RestaurantEditRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                restaurant_name:
+                    $ref: '#/components/schemas/RestaurantName'
+                restaurant_uuid:
+                    $ref: '#/components/schemas/RestaurantUUID'
+            required:
+                - restaurant_uuid
+                - restaurant_name
+
+        # /admin/v1/restaurant/delete_POST
+        AdminV1RestaurantDeleteRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                restaurant_uuid:
+                    $ref: '#/components/schemas/RestaurantUUID'
+            required:
+                - restaurant_uuid
+
         # /admin/v1/restaurant/list_GET
         AdminV1RestaurantListResponse:
             type: object
@@ -251,6 +432,48 @@ components:
             required:
                 - dish_uuid
 
+        # /admin/v1/restaurant/dish/edit_POST
+        AdminV1RestaurantDishEditRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                dish_uuid:
+                    $ref: '#/components/schemas/DishUUID'
+                dish_name:
+                    type: string
+                description:
+                    type: string
+                category:
+                    type: string
+                calories:
+                    type: integer
+                    minimum: 0
+                weight:
+                    type: integer
+                    minimum: 0
+                dish_picture_file:
+                    type: string
+                    format: binary
+            required:
+                - dish_uuid
+                - restaurant_uuid
+                - dish_name
+                - description
+                - category
+                - calories
+                - weight
+                - dish_picture_file
+            
+        # /admin/v1/restaurant/dish/delete_POST
+        AdminV1RestaurantDishDeleteRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                dish_uuid:
+                    $ref: '#/components/schemas/DishUUID'
+            required:
+                - dish_uuid
+
         # /admin/v1/restaurant/dish/list_POST
         AdminV1RestaurantDishListRequest:
             type: object
@@ -300,6 +523,11 @@ components:
             type: string
             format: uuid
             description: Уникальный идентификатор ресторана
+
+        DishUUID:
+            type: string
+            format: uuid
+            description: Уникальный идентификатор блюда
         
         RestaurantName:
             type: string
