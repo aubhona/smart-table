@@ -50,6 +50,88 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
 
+    /admin/v1/place/edit:
+        post:
+            summary: Редактирование плейса
+            description: Редактирование плейса
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1PlaceEditRequest'
+            responses:
+                '204':
+                    description: Успешное редактирование плейса
+                '400':
+                    description: Ошибка редактирования плейса, некорректный формат данных
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'              
+                '401':
+                    description: Ошибка редактирования плейса, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка редактирования плейса, отказано в доступе, некорректные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка редактирования плейса, пользователь или плейс не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /admin/v1/place/delete:
+        post:
+            summary: Удаление плейса
+            description: Удаление плейса
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1PlaceDeleteRequest'
+            responses:
+                '204':
+                    description: Успешное удаление плейса
+                '400':
+                    description: Ошибка удаления плейса, некорректный формат данных
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'              
+                '401':
+                    description: Ошибка удаления плейса, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка удаления плейса, отказано в доступе, некорректные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка удаления плейса, пользователь или плейс не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
     /admin/v1/place/list:
         post:
             summary: Получение списка плейсов пользователя
@@ -134,7 +216,129 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
                 '404':
-                    description: Ошибка создания блюда в меню плейса, плейс не найден
+                    description: Ошибка создания блюда в меню плейса, плейс или пользователь не найдены
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /admin/v1/place/menu/dish/edit:
+        post:
+            summary: Редактирование блюда в меню плейса
+            description: Редактирование блюда в меню плейса
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1PlaceMenuDishDeleteRequest'
+            responses:
+                '204':
+                    description: Успешное редактирование блюда
+                '400':
+                    description: Ошибка редактирования блюда в меню плейса, некорректный формат данных
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '401':
+                    description: Ошибка редактирования блюда в меню плейса, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка редактирования блюда в меню плейса, отказано в доступе, некорректные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка редактирования блюда в меню плейса, пользователь или блюдо в меню не найдены
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /admin/v1/place/menu/dish/delete:
+        post:
+            summary: Удаление блюда в меню плейса
+            description: Удаление блюда в меню плейса
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1PlaceMenuDishCreateRequest'
+            responses:
+                '204':
+                    description: Успешное удаление блюда
+                '400':
+                    description: Ошибка удаления блюда в меню плейса, некорректный формат данных
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '401':
+                    description: Ошибка удаления блюда в меню плейса, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка удаления блюда в меню плейса, отказано в доступе, некорректные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка удаления блюда в меню плейса, пользователь или блюдо в меню не найдены
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /admin/v1/place/menu/dish/list:
+        post:
+            summary: Получение списка позиций в меню плейса
+            description: Получение списка позиций в меню плейса
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1PlaceMenuDishListRequest'
+            responses:
+                '200':
+                    description: Список позиций в меню плейса блюд (JSON + binary images)
+                    content:
+                        multipart/mixed:
+                            schema:
+                                type: string
+                                format: binary
+                '401':
+                    description: Ошибка получения списка, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка получения списка, отказано в доступе, некорректные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка получения списка, плейс не найден
                     content:
                         application/json:
                             schema:
@@ -180,6 +384,88 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'  
+
+    /admin/v1/place/employee/edit:
+        post:
+            summary: Редактирование роли сотрудника плейса
+            description: Редактирование роли сотрудника плейса
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1PlaceEmployeeEditRequest'
+            responses:
+                '204':
+                    description: Роль сотрудника успешно отредактирована
+                '400':
+                    description: Ошибка редактирования роли сотрудника плейса, некорректный формат данных
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'              
+                '401':
+                    description: Ошибка редактирования роли сотрудника плейса, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка редактирования роли сотрудника плейса, отказано в доступе, некорректные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка редактирования роли сотрудника плейса, сотрудник или пользователь не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /admin/v1/place/employee/delete:
+        post:
+            summary: Удаление сотрудника из плейса
+            description: Удаление сотрудника из плейса
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1PlaceEmployeeDeleteRequest'
+            responses:
+                '204':
+                    description: Успешное удаление сотрудника из плейса
+                '400':
+                    description: Ошибка удаления сотрудника из плейса, некорректный формат данных
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'              
+                '401':
+                    description: Ошибка удаления сотрудника из плейса, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка удаления сотрудника из плейса, отказано в доступе, некорректные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка удаления сотрудника из плейса, сотрудник или пользователь не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
 
     /admin/v1/place/employee/list:
         post:
@@ -265,46 +551,6 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
 
-    /admin/v1/place/menu/dish/list:
-        post:
-            summary: Получение списка позиций в меню плейса
-            description: Получение списка позиций в меню плейса
-            parameters:
-                - $ref: '#/components/parameters/user_uuid'
-                - $ref: '#/components/parameters/jwt_token'
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/AdminV1PlaceMenuDishListRequest'
-            responses:
-                '200':
-                    description: Список позиций в меню плейса блюд (JSON + binary images)
-                    content:
-                        multipart/mixed:
-                            schema:
-                                type: string
-                                format: binary
-                '401':
-                    description: Ошибка получения списка, пользователь не авторизован
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/ErrorResponse'
-                '403':
-                    description: Ошибка получения списка, отказано в доступе, некорректные данные
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/ErrorResponse'
-                '404':
-                    description: Ошибка получения списка, плейс не найден
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/ErrorResponse'
-
 components:
     parameters:
         user_uuid:
@@ -360,6 +606,42 @@ components:
             required:
                 - place_uuid
 
+        # /admin/v1/place/edit_POST
+        AdminV1PlaceEditRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                place_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
+                address:
+                    $ref: '#/components/schemas/Address'
+                table_count:
+                    $ref: '#/components/schemas/TableCount'
+                opening_time:
+                    $ref: '#/components/schemas/Time'
+                closing_time:
+                    $ref: '#/components/schemas/Time'
+            required:
+                - address
+                - table_count
+                - opening_time
+                - closing_time
+                - place_uuid
+
+        # /admin/v1/place/delete_POST
+        AdminV1PlaceDeleteRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                place_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
+            required:
+                - place_uuid
+
         # /admin/v1/place/list_POST
         AdminV1PlaceListRequest:
             type: object
@@ -383,25 +665,7 @@ components:
             required:
                 - place_list
 
-        # /admin/v1/place/employee/add_POST
-        AdminV1PlaceEmployeeAddRequest:
-            type: object
-            additionalProperties: false
-            properties:
-                place_uuid:
-                    type: string
-                    format: uuid
-                    description: Уникальный идентификатор плейса
-                employee_login:
-                    $ref: '#/components/schemas/Login'
-                employee_role:
-                    $ref: '#/components/schemas/Role'
-            required:
-                - place_uuid
-                - employee_login
-                - employee_role
-
-      # /admin/v1/place/menu/dish/create_POST
+        # /admin/v1/place/menu/dish/create_POST
         AdminV1PlaceMenuDishCreateRequest:
             type: object
             additionalProperties: false
@@ -431,6 +695,126 @@ components:
             required:
                 - menu_dish_uuid
 
+        # /admin/v1/place/menu/dish/edit_POST
+        AdminV1PlaceMenuDishEditRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                menu_dish_uuid:
+                    type: string
+                    format: uuid
+                dish_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор блюда ресторана
+                price:
+                    type: string
+            required:
+                - menu_dish_uuid
+                - dish_uuid
+                - price
+
+        # /admin/v1/place/menu/dish/delete_POST
+        AdminV1PlaceMenuDishDeleteRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                menu_dish_uuid:
+                    type: string
+                    format: uuid
+            required:
+                - menu_dish_uuid
+
+        # /admin/v1/place/menu/dish/list_POST
+        AdminV1PlaceMenuDishListRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                place_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
+            required:
+                - place_uuid
+
+        # /admin/v1/place/employee/add_POST
+        AdminV1PlaceEmployeeAddRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                place_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
+                employee_login:
+                    $ref: '#/components/schemas/Login'
+                employee_role:
+                    $ref: '#/components/schemas/Role'
+            required:
+                - place_uuid
+                - employee_login
+                - employee_role
+
+        # /admin/v1/place/employee/edit_POST
+        AdminV1PlaceEmployeeEditRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                place_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
+                employee_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор пользователя
+                employee_role:
+                    $ref: '#/components/schemas/Role'
+            required:
+                - place_uuid
+                - employee_uuid
+                - employee_role
+            
+        # /admin/v1/place/employee/delete_POST
+        AdminV1PlaceEmployeeDeleteRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                place_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
+                employee_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор пользователя'
+            required:
+                - place_uuid
+                - employee_uuid
+
+        # /admin/v1/place/employee/list_POST
+        AdminV1PlaceEmployeeListRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                place_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
+            required:
+                - place_uuid
+
+        AdminV1PlaceEmployeeListResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                employee_list:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/EmployeeInfo'
+            required:
+                - employee_list
+
         # /admin/v1/place/table_deeplinks/list_POST
         AdminV1PlaceTableDeepLinksListRequest:
             type: object
@@ -455,41 +839,7 @@ components:
             required:
                 - deeplinks
 
-        # /admin/v1/place/employee/list_POST
-        AdminV1PlaceEmployeeListRequest:
-            type: object
-            additionalProperties: false
-            properties:
-                place_uuid:
-                    type: string
-                    format: uuid
-                    description: Уникальный идентификатор плейса
-            required:
-                - place_uuid
-        
-        AdminV1PlaceEmployeeListResponse:
-            type: object
-            additionalProperties: false
-            properties:
-                employee_list:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/EmployeeInfo'
-            required:
-                - employee_list
-
-        # /admin/v1/place/menu/dish/list_POST
-        AdminV1PlaceMenuDishListRequest:
-            type: object
-            additionalProperties: false
-            properties:
-                place_uuid:
-                    type: string
-                    format: uuid
-                    description: Уникальный идентификатор плейса
-            required:
-                - place_uuid
-
+        # Errors
         ErrorResponse:
             type: object
             additionalProperties: false
