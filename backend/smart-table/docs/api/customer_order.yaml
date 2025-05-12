@@ -24,9 +24,109 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/CustomerV1OrderCreateResponse'
-
                 '403':
                     description: Ошибка авторизации или доступа
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /customer/v1/order/finish:
+        post:
+            summary: Запрос на завершение заказа
+            description: Переводит заказ в статус ожидает оплаты
+            parameters:
+                -   $ref: '#/components/parameters/CustomerUUID'
+                -   $ref: '#/components/parameters/OrderUUID'
+            responses:
+                '204':
+                    description: Успех
+                '403':
+                    description: Ошибка авторизации или доступа
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка поиска заказа или клиента
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /customer/v1/order/tip/save:
+        post:
+            summary: Сохранение чека
+            description: Сохраняет чек заказа
+            parameters:
+                -   $ref: '#/components/parameters/CustomerUUID'
+                -   $ref: '#/components/parameters/OrderUUID'
+            responses:
+                '204':
+                    description: Успешно сохранен
+                '403':
+                    description: Ошибка авторизации или доступа
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка поиска заказа или клиента
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /customer/v1/order/cart:
+        get:
+            summary: Получить корзину
+            description: Возвращает подробную информацию по текущей корзине пользователя в заказе
+            parameters:
+                -   $ref: '#/components/parameters/CustomerUUID'
+                -   $ref: '#/components/parameters/OrderUUID'
+            responses:
+                '200':
+                    description: Список блюд (JSON + binary images)
+                    content:
+                        multipart/mixed:
+                            schema:
+                                type: string
+                                format: binary
+                '403':
+                    description: Ошибка авторизации или доступа
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка поиска заказа или клиента
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /customer/v1/order/customer/list:
+        get:
+            summary: Получение списка пользователей заказа
+            description: Получение списка пользователей заказа
+            parameters:
+                -   $ref: '#/components/parameters/CustomerUUID'
+                -   $ref: '#/components/parameters/OrderUUID'
+            responses:
+                '200':
+                    description: Список пользователей заказа
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CustomerV1OrderCustomerListResponse'
+                '403':
+                    description: Ошибка авторизации или доступа
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка поиска заказа или клиента
                     content:
                         application/json:
                             schema:
@@ -60,20 +160,101 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
 
-    /customer/v1/order/customer/list:
+    /customer/v1/order/catalog/updated-info:
         get:
-            summary: Получение списка пользователей заказа
-            description: Получение списка пользователей заказа
+            summary: Получить обновленную информацию по каталогу
+            description: Возвращает обновленную стоимость корзины, и количество блюд из меню, которые добавлены в корзину
             parameters:
-                - $ref: '#/components/parameters/CustomerUUID'
-                - $ref: '#/components/parameters/OrderUUID'
+                -   $ref: '#/components/parameters/CustomerUUID'
+                -   $ref: '#/components/parameters/OrderUUID'
             responses:
                 '200':
-                    description: Список пользователей заказа
+                    description: Обновленная информация
                     content:
                         application/json:
-                                schema:
-                                    $ref: '#/components/schemas/CustomerV1OrderCustomerListResponse'
+                            schema:
+                                $ref: '#/components/schemas/CustomerV1OrderCatalogUpdatedInfoResponse'
+                '403':
+                    description: Ошибка авторизации или доступа
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка поиска заказа или клиента
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /customer/v1/order/items/draft:
+        post:
+            summary: Добавить в корзину блюдо из меню
+            description: Добавляет в корзину заказа блюдо из меню
+            parameters:
+                -   $ref: '#/components/parameters/CustomerUUID'
+                -   $ref: '#/components/parameters/OrderUUID'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CustomerV1OrderItemsDraftRequest'
+            responses:
+                '204':
+                    description: Успешно добавлено
+                '403':
+                    description: Ошибка авторизации или доступа
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка поиска заказа или клиента
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /customer/v1/order/items/delete:
+        post:
+            summary: Удалить из корзину блюда из меню
+            description: Удаляет из корзины заказа блюда из меню
+            parameters:
+                -   $ref: '#/components/parameters/CustomerUUID'
+                -   $ref: '#/components/parameters/OrderUUID'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CustomerV1OrderItemsDeleteRequest'
+            responses:
+                '204':
+                    description: Успешно удалено
+                '403':
+                    description: Ошибка авторизации или доступа
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка поиска заказа или клиента
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /customer/v1/order/items/commit:
+        post:
+            summary: Добавить блюда к чеку
+            description: Добавляет блюда из корзины в чек текущего заказа
+            parameters:
+                -   $ref: '#/components/parameters/CustomerUUID'
+                -   $ref: '#/components/parameters/OrderUUID'
+            responses:
+                '204':
+                    description: Успешно добавлено
                 '403':
                     description: Ошибка авторизации или доступа
                     content:
@@ -148,28 +329,56 @@ components:
                 - room_code
                 - customer_list
 
-        ErrorResponse:
+        # /customer/v1/order/item/draft_POST
+        CustomerV1OrderItemsDraftRequest:
             type: object
             additionalProperties: false
             properties:
-                code:
+                menu_dish_uuid:
                     type: string
-                    description: Код ошибки
-                    enum:
-                        - invalid_room_code
-                        - invalid_table_id
-                        - already_exist
-                        - order_not_found
-                        - customer_not_found
-                        - access_denied
-                message:
-                    type: string
-                    description: Описание ошибки
+                    format: uuid
+                    description: Уникальный идентификатор блюда в меню
+                count:
+                    type: integer
+                    minimum: 1
+                    description: Добавляемое количество блюд
             required:
-                - code
-                - message
+                - menu_dish_uuid
+                - count
 
-        #Objects
+        # /customer/v1/order/item/delete_POST
+        CustomerV1OrderItemsDeleteRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                menu_dish_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор блюда в меню
+                count:
+                    type: integer
+                    minimum: 1
+                    description: Добавляемое количество блюд
+            required:
+                - menu_dish_uuid
+                - count
+
+        # /customer/v1/order/catalog/updated-info_POST
+        CustomerV1OrderCatalogUpdatedInfoResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                total_price:
+                    type: string
+                menu_updated_info:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/MenuDishItemUpdatedInfo'
+            required:
+                - total_price
+                - menu_updated_info
+
+        # Objects
         Catalog:
             type: object
             additionalProperties: false
@@ -186,6 +395,20 @@ components:
                 - room_code
                 - total_price
                 - menu
+
+        MenuDishItemUpdatedInfo:
+            type: object
+            additionalProperties: false
+            properties:
+                id:
+                    type: string
+                    format: uuid
+                count:
+                    type: integer
+                    minimum: 0
+            required:
+                - id
+                - count
 
         MenuDishItem:
             type: object
@@ -220,7 +443,6 @@ components:
                     format: uuid
                     description: Уникальный идентификатор пользователя
                 tg_login:
-                    description: Логин пользователя в Telegram
                     $ref: '#/components/schemas/Login'
                 tg_id:
                     type: string
@@ -240,6 +462,42 @@ components:
                 - tg_id
                 - total_price
                 - items
+
+        CartInfo:
+            type: object
+            additionalProperties: false
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/CartItemInfo'
+                total_price:
+                    type: string
+            required:
+                - items
+                - total_price
+
+        CartItemInfo:
+            type: object
+            additionalProperties: false
+            properties:
+                dish_uuid:
+                    type: string
+                    format: uuid
+                name:
+                    type: string
+                price:
+                    type: string
+                count:
+                    type: integer
+                result_price:
+                    type: string
+            required:
+                - dish_uuid
+                - name
+                - price
+                - count
+                - result_price
 
         ItemInfo:
             type: object
@@ -288,3 +546,24 @@ components:
             pattern: "^[a-zA-Z][a-zA-Z0-9_]{4,31}$"
             minLength: 4
             maxLength: 31
+
+        ErrorResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                code:
+                    type: string
+                    description: Код ошибки
+                    enum:
+                        - invalid_room_code
+                        - invalid_table_id
+                        - already_exist
+                        - order_not_found
+                        - customer_not_found
+                        - access_denied
+                message:
+                    type: string
+                    description: Описание ошибки
+            required:
+                - code
+                - message
