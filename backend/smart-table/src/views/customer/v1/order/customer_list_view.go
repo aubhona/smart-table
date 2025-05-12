@@ -64,7 +64,7 @@ func convertCustomerToCustomerInfoImpl(
 		TgID:        customer.Get().GetTgID(),
 		IsActive:    false,
 		TotalPrice:  decimal.Zero,
-		ItemInfoMap: map[string]viewsCustomerOrder.ItemInfo{},
+		ItemInfoMap: make(map[string]viewsCustomerOrder.ItemInfo),
 	}
 }
 
