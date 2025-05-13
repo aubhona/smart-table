@@ -461,7 +461,7 @@ components:
                 - tg_login
                 - tg_id
                 - total_price
-                - items
+                - item_list
 
         CartInfo:
             type: object
@@ -509,9 +509,9 @@ components:
                 comment:
                     type: string
                 status:
-                    type: string
+                    $ref: '#/components/schemas/ItemStatus'
                 resolution:
-                    type: string
+                    $ref: '#/components/schemas/ItemResolution'
                 name:
                     type: string
                 description:
@@ -539,6 +539,26 @@ components:
                 - price
                 - count
                 - result_price
+
+        ItemStatus:
+            type: string
+            enum:
+                - new
+                - accepted
+                - cooking
+                - cooked
+                - served
+                - payment_waiting
+                - paid
+                - cancelled_by_service
+                - cancelled_by_client
+
+        ItemResolution:
+            type: string
+            enum:
+                - paid
+                - cancelled_by_service
+                - cancelled_by_client
         
         Login:
             type: string

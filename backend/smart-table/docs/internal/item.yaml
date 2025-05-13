@@ -8,6 +8,7 @@ components:
                 - cooking
                 - cooked
                 - served
+                - payment_waiting
                 - paid
                 - cancelled_by_service
                 - cancelled_by_client
