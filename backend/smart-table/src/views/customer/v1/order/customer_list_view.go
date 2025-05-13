@@ -32,7 +32,7 @@ func convertItemToItemInfo(
 	itemInfo := viewsCustomerOrder.ItemInfo{
 		UUID:        item.Get().GetUUID(),
 		Name:        item.Get().GetName(),
-		Status:      string(item.Get().GetStatus()),
+		Status:      viewsCustomerOrder.ItemStatus(string(item.Get().GetStatus())),
 		Description: item.Get().GetDescription(),
 		Weight:      item.Get().GetWeight(),
 		Calories:    item.Get().GetCalories(),
@@ -43,7 +43,7 @@ func convertItemToItemInfo(
 	}
 
 	if item.Get().GetResolution().HasValue() {
-		resolution := string(item.Get().GetResolution().Value())
+		resolution := viewsCustomerOrder.ItemResolution(string(item.Get().GetResolution().Value()))
 		itemInfo.Resolution = &resolution
 	}
 
@@ -82,7 +82,7 @@ func convertCustomerInfoImplToCustomerInfo(
 		TgID:       customerInfoImpl.TgID,
 		IsActive:   &customerInfoImpl.IsActive,
 		TotalPrice: customerInfoImpl.TotalPrice.String(),
-		ItemList:   &itemList,
+		ItemList:   itemList,
 	}
 }
 
