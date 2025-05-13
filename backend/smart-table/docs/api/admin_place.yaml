@@ -1066,10 +1066,10 @@ components:
                     description: Уникальный идентификатор заказа
                 status:
                     description: Статус заказа
-                    $ref: '#/components/schemas/Login'
+                    $ref: '#/components/schemas/OrderStatus'
                 resolution:
                     description: Резолюция заказа
-                    $ref: '#/components/schemas/Login'
+                    $ref: '#/components/schemas/OrderResolution'
                 table_number:
                     description: Номер стола
                     type: integer
