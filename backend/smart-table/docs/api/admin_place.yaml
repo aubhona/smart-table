@@ -686,6 +686,47 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
 
+    /admin/v1/place/order/edit:
+        post:
+            summary: 
+            description: Редкатирование заказа
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1PlaceOrderEditRequest'
+            responses:
+                '204':
+                    description: Заказ успешно отредактирован
+                '400':
+                    description: Ошибка редактирования заказа, некорректный формат данных
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'              
+                '401':
+                    description: Ошибка редактирования заказа, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка редактирования заказа, отказано в доступе, некорректные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка редактирования заказа, заказ, позиция в заказе или пользователь не найдены
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
 components:
     parameters:
         user_uuid:
@@ -996,30 +1037,8 @@ components:
                         $ref: '#/components/schemas/OrderMainInfo'
             required:
                 - order_list
-
+    
         # /admin/v1/place/order/list/closed_POST
-        AdminV1PlaceOrderInfoRequest:
-            type: object
-            additionalProperties: false
-            properties:
-                order_uuid:
-                    type: string
-                    format: uuid
-                    description: Уникальный идентификатор заказа
-            required:
-                - place_uuid
-
-        AdminV1PlaceOrderInfoResponse:
-            type: object
-            additionalProperties: false
-            properties:
-                order_info:
-                    description: Подробная информация о заказе
-                    $ref: '#/components/schemas/OrderInfo'
-            required:
-                - order_info
-
-        # /admin/v1/place/order/info_POST
         AdminV1PlaceOrderListClosedRequest:
             type: object
             additionalProperties: false
@@ -1042,6 +1061,51 @@ components:
             required:
                 - order_list
 
+        # /admin/v1/place/order/info_POST
+        AdminV1PlaceOrderInfoRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                order_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор заказа
+            required:
+                - place_uuid
+
+        AdminV1PlaceOrderInfoResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                order_info:
+                    description: Подробная информация о заказе
+                    $ref: '#/components/schemas/OrderInfo'
+            required:
+                - order_info
+
+        # /admin/v1/place/order/edit_POST
+        AdminV1PlaceOrderEditRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                order_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
+                order_status:
+                    description: Статус заказа
+                    $ref: '#/components/schemas/OrderStatus'
+                item_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
+                item_status:
+                    description: Статус позиции заказа
+                    $ref: '#/components/schemas/ItemStatus'
+            required:
+                - order_uuid
+                - order_status
+
         # Errors
         ErrorResponse:
             type: object
@@ -1061,6 +1125,9 @@ components:
                         - restaurant_not_found
                         - place_not_found
                         - dish_not_found
+                        - menu_dish_not_found
+                        - order_not_found
+                        - item_not_found
                 message:
                     type: string
                     description: Описание ошибки
@@ -1150,28 +1217,25 @@ components:
                     $ref: '#/components/schemas/Login'
                 tg_id:
                     type: string
-                item_group_list:
+                item_list:
                     description: Список позиций в заказе пользователя
                     type: array
                     items:
-                        $ref: '#/components/schemas/ItemGroupInfo'
+                        $ref: '#/components/schemas/ItemInfo'
             required:
                 - uuid
                 - tg_login
                 - tg_id
                 - item_list
 
-        ItemGroupInfo:
+        ItemInfo:
             type: object
             additionalProperties: false
             properties:
-                item_uuids:
-                    description: Идентификаторы одинаковых позиций в заказе
-                    type: array
-                    items:
-                        item_uuid:
-                            type: string
-                            format: uuid
+                item_uuid:
+                    description: Идентификатор позиции в заказе
+                    type: string
+                    format: uuid
                 comment:
                     type: string
                 status:
@@ -1185,7 +1249,7 @@ components:
                 count: 
                     type: integer
             required:
-                - item_uuids
+                - item_uuid
                 - comment
                 - status
                 - name
