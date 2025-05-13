@@ -551,6 +551,97 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
 
+    /admin/v1/place/order/list/opened:
+        post:
+            summary: Получение списка открытых заказов плейса
+            description: Получение списка открытых заказов плейса
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1PlaceOrderListOpenedRequest'
+            responses:
+                '200':
+                    description: Список активных заказов плейса
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1PlaceOrderListOpenedResponse'
+                '400':
+                    description: Ошибка получения списка активных заказов плейса, некорректный формат данных
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'              
+                '401':
+                    description: Ошибка получения списка активных заказов плейса, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка получения списка активных заказов плейса, отказано в доступе, некорректные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка получения списка активных заказов плейса, плейс не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /admin/v1/place/order/list/closed:
+        post:
+            summary: Получение списка завершенных заказов плейса двухнедельной давности
+            description: Получение списка завершенных заказов плейса двухнедельной давности
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1PlaceOrderListClosedRequest'
+            responses:
+                '200':
+                    description: Список завершенных заказов плейса двухнедельной давности
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1PlaceOrderListClosedResponse'
+                '400':
+                    description: Ошибка получения списка сотрудников плейса, некорректный формат данных
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'              
+                '401':
+                    description: Ошибка получения списка сотрудников плейса, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка получения списка сотрудников плейса, отказано в доступе, некорректные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка получения списка сотрудников плейса, плейс не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                
+
 components:
     parameters:
         user_uuid:
@@ -838,6 +929,52 @@ components:
                         format: uri
             required:
                 - deeplinks
+    
+        # /admin/v1/place/order/list/opened
+        AdminV1PlaceOrderListOpenedRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                place_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
+            required:
+                - place_uuid
+
+        AdminV1PlaceOrderListOpenedResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                order_list:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/OrderMainInfo'
+            required:
+                - order_list
+
+        # /admin/v1/place/order/list/closed
+        AdminV1PlaceOrderListClosedRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                place_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
+            required:
+                - place_uuid
+
+        AdminV1PlaceOrderListClosedResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                order_list:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/OrderMainInfo'
+            required:
+                - order_list
 
         # Errors
         ErrorResponse:
@@ -918,6 +1055,58 @@ components:
                 - first_name
                 - last_name
                 - employee_role
+            
+        OrderMainInfo:
+            type: object
+            additionalProperties: false
+            properties:
+                uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор заказа
+                status:
+                    description: Статус заказа
+                    $ref: '#/components/schemas/OrderStatus'
+                resolution:
+                    description: Резолюция заказа
+                    $ref: '#/components/schemas/OrderResolution'
+                table_number:
+                    description: Номер стола
+                    type: integer
+                guests_count:
+                    description: Количество клиентов в заказе
+                    type: integer
+                total_price:
+                    description: Итоговая стоимость заказа
+                    type: string
+                created_at:
+                    description: Дата создания заказа
+                    type: string
+                    format: date-time
+            required:
+                - uuid
+                - status
+                - table_number
+                - guests_count
+                - total_price
+                - created_at
+
+        OrderStatus:
+            type: string
+            enum:
+                - new
+                - serving
+                - paid
+                - cancelled_by_service
+                - cancelled_by_client
+                - payment_waiting
+
+        OrderResolution:
+            type: string
+            enum:
+                - paid
+                - cancelled_by_service
+                - cancelled_by_client
         
         Address:
             type: string
