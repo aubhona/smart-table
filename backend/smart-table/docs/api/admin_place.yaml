@@ -688,7 +688,7 @@ paths:
 
     /admin/v1/place/order/edit:
         post:
-            summary: 
+            summary: Редкатирование заказа
             description: Редкатирование заказа
             parameters:
                 - $ref: '#/components/parameters/user_uuid'
