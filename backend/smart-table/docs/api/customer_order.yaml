@@ -387,6 +387,10 @@ components:
                     type: string
                 total_price:
                     type: string
+                categories:
+                    type: array
+                    items:
+                        type: string
                 menu:
                     type: array
                     items:
@@ -394,6 +398,7 @@ components:
             required:
                 - room_code
                 - total_price
+                - categories
                 - menu
 
         MenuDishItemUpdatedInfo:

@@ -89,6 +89,54 @@ func TestCustomerOrderCreateHappyPath(t *testing.T) {
 	assert.NotNil(t, response.JSON200)
 }
 
+func TestCustomerOrderCreateIdempotency(t *testing.T) {
+	GetTestMutex().Lock()
+	defer GetTestMutex().Unlock()
+	defer CleanTest()
+
+	userUUID, token, err := CreateDefaultUser()
+	assert.Nil(t, err)
+
+	restaurantUUID, err := CreateDefaultRestaurant(token, userUUID)
+	assert.Nil(t, err)
+
+	placeUUID, err := CreateDefaultPlace(token, userUUID, restaurantUUID)
+	assert.Nil(t, err)
+
+	tableID := fmt.Sprintf("%s_%d", placeUUID, defaultTableCount)
+
+	hostUUID, err := CreateDefaultCustomer()
+	assert.Nil(t, err)
+
+	response1, err := viewsCodegenCustomerOrderClient.PostCustomerV1OrderCreateWithResponse(
+		GetCtx(),
+		&viewsCodegenCustomer.PostCustomerV1OrderCreateParams{
+			CustomerUUID: hostUUID,
+		},
+		viewsCodegenCustomer.PostCustomerV1OrderCreateJSONRequestBody{
+			TableID: tableID,
+		},
+	)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, response1.StatusCode())
+	assert.NotNil(t, response1.JSON200)
+
+	response2, err := viewsCodegenCustomerOrderClient.PostCustomerV1OrderCreateWithResponse(
+		GetCtx(),
+		&viewsCodegenCustomer.PostCustomerV1OrderCreateParams{
+			CustomerUUID: hostUUID,
+		},
+		viewsCodegenCustomer.PostCustomerV1OrderCreateJSONRequestBody{
+			TableID: tableID,
+		},
+	)
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, response2.StatusCode())
+	assert.NotNil(t, response2.JSON200)
+
+	assert.Equal(t, response1.JSON200.OrderUUID, response2.JSON200.OrderUUID)
+}
+
 func TestCustomerOrderCreateConnectingToExistingSession(t *testing.T) {
 	GetTestMutex().Lock()
 	defer GetTestMutex().Unlock()

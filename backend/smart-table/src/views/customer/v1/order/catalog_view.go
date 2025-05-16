@@ -57,6 +57,7 @@ func (h *CustomerV1OrderHandler) GetCustomerV1OrderCatalog( //nolint
 			catalog := viewsCustomerOrder.Catalog{
 				TotalPrice: result.TotalPrice.String(),
 				RoomCode:   result.RoomCode,
+				Categories: result.Categories,
 				Menu:       make([]viewsCustomerOrder.MenuDishItem, 0, len(result.Items)),
 			}
 
