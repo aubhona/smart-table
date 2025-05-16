@@ -51,7 +51,7 @@ func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateComma
 	order, err := handler.orderRepository.FindActiveOrderByCustomerUUID(createCommand.CustomerUUID)
 
 	if err == nil {
-		logging.GetLogger().Error("customer already has active order",
+		logging.GetLogger().Info("customer already has active order",
 			zap.String("customer_uuid", createCommand.CustomerUUID.String()),
 			zap.String("order_uuid", order.Get().GetUUID().String()),
 		)

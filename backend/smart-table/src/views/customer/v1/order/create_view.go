@@ -2,6 +2,7 @@ package viewscustomerorder
 
 import (
 	"context"
+	"errors"
 
 	"github.com/smart-table/src/logging"
 	"go.uber.org/zap"
@@ -37,9 +38,12 @@ func (h *CustomerV1OrderHandler) PostCustomerV1OrderCreate(
 				Message: err.Error(),
 			}, nil
 		case utils.IsTheSameErrorType[appUseCasesErrors.CustomerAlreadyHasActiveOrder](err):
-			return viewsCustomerOrder.PostCustomerV1OrderCreate403JSONResponse{
-				Code:    viewsCustomerOrder.AlreadyExist,
-				Message: err.Error(),
+			var orderErr appUseCasesErrors.CustomerAlreadyHasActiveOrder
+
+			errors.As(err, &orderErr)
+
+			return viewsCustomerOrder.PostCustomerV1OrderCreate200JSONResponse{
+				OrderUUID: orderErr.OrderUUID,
 			}, nil
 		case utils.IsTheSameErrorType[appQueriesErrors.PlaceNotFound](err):
 		case utils.IsTheSameErrorType[appQueriesErrors.InvalidTableNumber](err):

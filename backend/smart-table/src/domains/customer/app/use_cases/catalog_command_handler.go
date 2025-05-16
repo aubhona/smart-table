@@ -3,6 +3,8 @@ package app
 import (
 	"io"
 
+	"github.com/samber/lo"
+
 	"github.com/shopspring/decimal"
 	appErrors "github.com/smart-table/src/domains/customer/app/use_cases/errors"
 	"github.com/smart-table/src/utils"
@@ -24,6 +26,7 @@ type CatalogItemDTO struct {
 
 type CatalogCommandHandlerResult struct {
 	Items      []CatalogItemDTO
+	Categories []string
 	TotalPrice decimal.Decimal
 	RoomCode   string
 }
@@ -75,6 +78,8 @@ func (handler *CatalogCommandHandler) Handle(command *CatalogCommand) (CatalogCo
 	result.TotalPrice = order.Get().GetDraftItemsTotalPrice()
 	result.Items = make([]CatalogItemDTO, 0, len(menuDishList))
 
+	uniqueCategories := make(map[string]interface{})
+
 	for i := range menuDishList {
 		menuDish := &menuDishList[i]
 
@@ -102,7 +107,11 @@ func (handler *CatalogCommandHandler) Handle(command *CatalogCommand) (CatalogCo
 			PictureKey: menuDish.PictureKey,
 			Picture:    pictureReader,
 		})
+
+		uniqueCategories[menuDish.Category] = nil
 	}
+
+	result.Categories = lo.Keys(uniqueCategories)
 
 	return result, nil
 }
