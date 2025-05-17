@@ -110,7 +110,7 @@ func (handler *CartItemsCountEditCommandHandler) Handle(command *CartItemsCountE
 		}
 	}
 
-	err = handler.orderRepository.Save(tx, order)
+	err = handler.orderRepository.Update(tx, order)
 	if err != nil {
 		return err
 	}

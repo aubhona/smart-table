@@ -220,3 +220,7 @@ func (o *Order) GetDraftItemsTotalPrice() decimal.Decimal {
 
 	return result
 }
+
+func (o *Order) GetDeletesItems() []utils.SharedRef[Item] {
+	return o.deletedItems
+}
