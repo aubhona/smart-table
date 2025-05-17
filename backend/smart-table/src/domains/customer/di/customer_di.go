@@ -77,5 +77,10 @@ func AddDeps(container *dig.Container) error {
 		return err
 	}
 
+	err = container.Provide(app.NewCartItemsCountEditCommandHandler)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	domainErrors "github.com/smart-table/src/domains/customer/domain/errors"
+
 	"github.com/samber/lo"
 
 	"github.com/google/uuid"
@@ -23,6 +25,7 @@ type Order struct {
 	resolution   utils.Optional[defsInternalOrder.OrderResolution]
 	customers    []utils.SharedRef[Customer]
 	items        []utils.SharedRef[Item]
+	deletedItems []utils.SharedRef[Item]
 	createdAt    time.Time
 	updatedAt    time.Time
 }
@@ -32,23 +35,22 @@ func NewOrder(
 	hostUser utils.SharedRef[Customer],
 	uuidGenerator *domain.UUIDGenerator,
 ) utils.SharedRef[Order] {
-	order := Order{}
-
-	order.roomCode = roomCode
-	order.tableID = tableID
-	order.hostUserUUID = hostUser.Get().uuid
-	order.status = defsInternalOrder.OrderStatusNew
-	order.resolution = utils.EmptyOptional[defsInternalOrder.OrderResolution]()
-	order.customers = make([]utils.SharedRef[Customer], 1)
-	order.customers[0] = hostUser
-	order.items = make([]utils.SharedRef[Item], 0)
-	order.createdAt = time.Now()
-	order.updatedAt = time.Now()
-
 	shardID := uuidGenerator.GetShardID()
 	orderUUID := uuidGenerator.GenerateShardedUUID(shardID)
 
-	order.uuid = orderUUID
+	order := Order{
+		uuid:         orderUUID,
+		roomCode:     roomCode,
+		tableID:      tableID,
+		hostUserUUID: hostUser.Get().uuid,
+		status:       defsInternalOrder.OrderStatusNew,
+		resolution:   utils.EmptyOptional[defsInternalOrder.OrderResolution](),
+		customers:    []utils.SharedRef[Customer]{hostUser},
+		items:        make([]utils.SharedRef[Item], 0),
+		deletedItems: make([]utils.SharedRef[Item], 0),
+		createdAt:    time.Now(),
+		updatedAt:    time.Now(),
+	}
 
 	orderRef, _ := utils.NewSharedRef(&order)
 
@@ -76,6 +78,7 @@ func RestoreOrder(
 		resolution:   resolution,
 		customers:    customers,
 		items:        items,
+		deletedItems: make([]utils.SharedRef[Item], 0),
 		createdAt:    createdAt,
 		updatedAt:    updatedAt,
 	}
@@ -120,7 +123,7 @@ func (o *Order) DraftItem(
 	calories int,
 	category string,
 	price decimal.Decimal,
-	uuidGenerator domain.UUIDGenerator,
+	uuidGenerator *domain.UUIDGenerator,
 ) utils.SharedRef[Item] {
 	itemRef := NewItem(
 		uuidGenerator.GenerateShardedUUID(uuidGenerator.GetShardID()),
@@ -155,6 +158,53 @@ func (o *Order) CommitItem(itemUUID uuid.UUID) (utils.Optional[utils.SharedRef[I
 	item.Get().Commit()
 
 	return utils.NewOptional(item), nil
+}
+
+func (o *Order) GetCustomerByUUID(uuid uuid.UUID) utils.Optional[utils.SharedRef[Customer]] {
+	customer, found := lo.Find(o.customers, func(item utils.SharedRef[Customer]) bool {
+		return item.Get().uuid == uuid
+	})
+	if !found {
+		return utils.EmptyOptional[utils.SharedRef[Customer]]()
+	}
+
+	return utils.NewOptional(customer)
+}
+
+func (o *Order) GetItemByDishUUID(dishUUID uuid.UUID) utils.Optional[utils.SharedRef[Item]] {
+	item, found := lo.Find(o.items, func(item utils.SharedRef[Item]) bool {
+		return item.Get().dishUUID == dishUUID
+	})
+	if !found {
+		return utils.EmptyOptional[utils.SharedRef[Item]]()
+	}
+
+	return utils.NewOptional(item)
+}
+
+func (o *Order) DeleteItemsByDishUUID(dishUUID uuid.UUID, count int) error {
+	items := make([]utils.SharedRef[Item], 0, len(o.items))
+	deletedItems := make([]utils.SharedRef[Item], 0, count)
+
+	for _, item := range o.items {
+		if !item.Get().isDraft || item.Get().dishUUID != dishUUID || len(deletedItems) == count {
+			items = append(items, item)
+			continue
+		}
+
+		deletedItems = append(deletedItems, item)
+	}
+
+	if len(deletedItems) != count {
+		return domainErrors.IncorrectDeleteItemsCount{
+			Count: count,
+		}
+	}
+
+	o.items = items
+	o.deletedItems = deletedItems
+
+	return nil
 }
 
 func (o *Order) GetDraftItemsTotalPrice() decimal.Decimal {

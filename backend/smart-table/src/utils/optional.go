@@ -9,6 +9,14 @@ func NewOptional[T any](v T) Optional[T] {
 	return Optional[T]{value: v, valid: true}
 }
 
+func NewOptionalFromPointer[T any](p *T) Optional[T] {
+	if p == nil {
+		return Optional[T]{valid: false}
+	}
+
+	return Optional[T]{value: *p, valid: true}
+}
+
 func EmptyOptional[T any]() Optional[T] {
 	return Optional[T]{valid: false}
 }

@@ -96,6 +96,10 @@ func getCustomerInfoList(
 	}
 
 	for _, item := range order.Get().GetItems() {
+		if item.Get().GetIsDraft() {
+			continue
+		}
+
 		key := fmt.Sprintf("{%s}_{%s}_{%s}", item.Get().GetDishUUID(), item.Get().GetStatus(), item.Get().GetComment().ValueOr(""))
 
 		customerUUID := item.Get().GetCustomer().Get().GetUUID()
@@ -130,7 +134,7 @@ func getCustomerInfoList(
 		customerInfoImplMap[customerUUID] = customerInfoImpl
 	}
 
-	customerInfoList := []viewsCustomerOrder.CustomerInfo{}
+	customerInfoList := make([]viewsCustomerOrder.CustomerInfo, 0, len(customerInfoImplMap))
 
 	for _, customerInfoImpl := range customerInfoImplMap {
 		customerInfoList = append(customerInfoList, convertCustomerInfoImplToCustomerInfo(&customerInfoImpl))

@@ -141,9 +141,21 @@ func (p *Place) GetUUID() uuid.UUID                         { return p.uuid }
 func (p *Place) GetRestaurant() utils.SharedRef[Restaurant] { return p.restaurant }
 func (p *Place) GetEmployees() []utils.SharedRef[Employee]  { return p.employees }
 func (p *Place) GetMenuDishes() []utils.SharedRef[MenuDish] { return p.menuDishes }
-func (p *Place) GetAddress() string                         { return p.address }
-func (p *Place) GetTableCount() int                         { return p.tableCount }
-func (p *Place) GetOpeningTime() time.Time                  { return p.openingTime }
-func (p *Place) GetClosingTime() time.Time                  { return p.closingTime }
-func (p *Place) GetCreatedAt() time.Time                    { return p.createdAt }
-func (p *Place) GetUpdatedAt() time.Time                    { return p.updatedAt }
+
+func (p *Place) GetMenuDishByUUID(menuDishUUID uuid.UUID) utils.Optional[utils.SharedRef[MenuDish]] {
+	menuDish, found := lo.Find(p.menuDishes, func(d utils.SharedRef[MenuDish]) bool {
+		return d.Get().uuid == menuDishUUID
+	})
+	if !found {
+		return utils.EmptyOptional[utils.SharedRef[MenuDish]]()
+	}
+
+	return utils.NewOptional(menuDish)
+}
+
+func (p *Place) GetAddress() string        { return p.address }
+func (p *Place) GetTableCount() int        { return p.tableCount }
+func (p *Place) GetOpeningTime() time.Time { return p.openingTime }
+func (p *Place) GetClosingTime() time.Time { return p.closingTime }
+func (p *Place) GetCreatedAt() time.Time   { return p.createdAt }
+func (p *Place) GetUpdatedAt() time.Time   { return p.updatedAt }

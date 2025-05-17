@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/google/uuid"
+
 	"github.com/oapi-codegen/runtime/types"
 	defsInternalAdminDTO "github.com/smart-table/src/codegen/intern/admin_dto"
 	adminApp "github.com/smart-table/src/domains/admin/app/use_cases"
@@ -14,17 +16,20 @@ import (
 )
 
 type SmartTableAdminQueryServiceImpl struct {
-	tableIDValidateHandler     *adminApp.TableIDValidateCommandHandler
-	menuDishListCommandHandler *adminApp.MenuDishListCommandHandler
+	tableIDValidateHandler      *adminApp.TableIDValidateCommandHandler
+	menuDishListCommandHandler  *adminApp.MenuDishListCommandHandler
+	menuDishStateCommandHandler *adminApp.MenuDishStateCommandHandler
 }
 
 func NewSmartTableQueryServiceImpl(
 	tableIDValidateHandler *adminApp.TableIDValidateCommandHandler,
 	menuDishListCommandHandler *adminApp.MenuDishListCommandHandler,
+	menuDishStateCommandHandler *adminApp.MenuDishStateCommandHandler,
 ) *SmartTableAdminQueryServiceImpl {
 	return &SmartTableAdminQueryServiceImpl{
-		tableIDValidateHandler:     tableIDValidateHandler,
-		menuDishListCommandHandler: menuDishListCommandHandler,
+		tableIDValidateHandler:      tableIDValidateHandler,
+		menuDishListCommandHandler:  menuDishListCommandHandler,
+		menuDishStateCommandHandler: menuDishStateCommandHandler,
 	}
 }
 
@@ -87,4 +92,42 @@ func (s *SmartTableAdminQueryServiceImpl) TableIDValidate(tableID string) (bool,
 	}
 
 	return result.IsValid, nil
+}
+
+func (s *SmartTableAdminQueryServiceImpl) GetMenuDish(
+	tableID string,
+	dishUUID uuid.UUID,
+	withPicture bool,
+) (defsInternalAdminDTO.MenuDishDTO, error) {
+	response, err := s.menuDishStateCommandHandler.Handle(&adminApp.MenuDishStateCommand{
+		InternalCall: utils.NewOptional(adminApp.MenuDishStateCommandInternalCall{
+			TabledID:     tableID,
+			MenuDishUUID: dishUUID,
+			NeedPicture:  withPicture,
+		}),
+	})
+
+	if err != nil {
+		return defsInternalAdminDTO.MenuDishDTO{}, appQueriesErrors.UnsuccessMenuDishFetch{InnerError: err}
+	}
+
+	pictureBytes, err := io.ReadAll(response.MenuDish.Picture)
+	if err != nil {
+		return defsInternalAdminDTO.MenuDishDTO{}, appQueriesErrors.UnsuccessMenuDishFetch{InnerError: err}
+	}
+
+	picture := types.File{}
+	picture.InitFromBytes(pictureBytes, fmt.Sprintf("%s.png", response.MenuDish.ID))
+
+	return defsInternalAdminDTO.MenuDishDTO{
+		ID:          response.MenuDish.ID,
+		Name:        response.MenuDish.Name,
+		Description: response.MenuDish.Description,
+		Calories:    response.MenuDish.Calories,
+		Weight:      response.MenuDish.Weight,
+		Picture:     picture,
+		Category:    response.MenuDish.Category,
+		Price:       response.MenuDish.Price.String(),
+		PictureKey:  response.MenuDish.ID.String(),
+	}, nil
 }
