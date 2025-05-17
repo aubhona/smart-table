@@ -111,13 +111,16 @@ func (s *SmartTableAdminQueryServiceImpl) GetMenuDish(
 		return defsInternalAdminDTO.MenuDishDTO{}, appQueriesErrors.UnsuccessMenuDishFetch{InnerError: err}
 	}
 
-	pictureBytes, err := io.ReadAll(response.MenuDish.Picture)
-	if err != nil {
-		return defsInternalAdminDTO.MenuDishDTO{}, appQueriesErrors.UnsuccessMenuDishFetch{InnerError: err}
-	}
-
 	picture := types.File{}
-	picture.InitFromBytes(pictureBytes, fmt.Sprintf("%s.png", response.MenuDish.ID))
+
+	if withPicture {
+		pictureBytes, err := io.ReadAll(response.MenuDish.Picture)
+		if err != nil {
+			return defsInternalAdminDTO.MenuDishDTO{}, appQueriesErrors.UnsuccessMenuDishFetch{InnerError: err}
+		}
+
+		picture.InitFromBytes(pictureBytes, fmt.Sprintf("%s.png", response.MenuDish.ID))
+	}
 
 	return defsInternalAdminDTO.MenuDishDTO{
 		ID:          response.MenuDish.ID,

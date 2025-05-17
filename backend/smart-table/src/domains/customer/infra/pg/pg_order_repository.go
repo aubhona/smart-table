@@ -81,7 +81,12 @@ func (o *OrderRepository) Update(tx domain.Transaction, order utils.SharedRef[do
 		return err
 	}
 
-	pgItems, err := mapper.ConvertToPgItems(order.Get().GetItems())
+	pgItemsToInsert, err := mapper.ConvertToPgItems(order.Get().GetItems())
+	if err != nil {
+		return err
+	}
+
+	pgItemsToDelete, err := mapper.ConvertToPgItems(order.Get().GetDeletesItems())
 	if err != nil {
 		return err
 	}
@@ -91,7 +96,12 @@ func (o *OrderRepository) Update(tx domain.Transaction, order utils.SharedRef[do
 		return err
 	}
 
-	err = queries.UpsertItems(ctx, pgItems)
+	err = queries.UpsertItems(ctx, pgItemsToInsert)
+	if err != nil {
+		return err
+	}
+
+	err = queries.DeleteItems(ctx, pgItemsToDelete)
 	if err != nil {
 		return err
 	}
