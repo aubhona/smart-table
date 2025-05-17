@@ -187,10 +187,11 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
 
-    /customer/v1/order/items/draft:
+    /customer/v1/order/items/draft/count/edit:
         post:
-            summary: Добавить в корзину блюдо из меню
-            description: Добавляет в корзину заказа блюдо из меню
+            summary: Изменяет количество блюд в корзине.
+            description: |
+                Изменяет количество блюд в корзине. Передается число в запросе. Знак числа определяет добавить или удалить блюда.s
             parameters:
                 -   $ref: '#/components/parameters/CustomerUUID'
                 -   $ref: '#/components/parameters/OrderUUID'
@@ -199,39 +200,16 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/CustomerV1OrderItemsDraftRequest'
+                            $ref: '#/components/schemas/CustomerV1OrderItemsDraftCountEditRequest'
             responses:
                 '204':
                     description: Успешно добавлено
-                '403':
-                    description: Ошибка авторизации или доступа
+                '400':
+                    description: Некорректный запрос
                     content:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
-                '404':
-                    description: Ошибка поиска заказа или клиента
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/ErrorResponse'
-
-    /customer/v1/order/items/delete:
-        post:
-            summary: Удалить из корзину блюда из меню
-            description: Удаляет из корзины заказа блюда из меню
-            parameters:
-                -   $ref: '#/components/parameters/CustomerUUID'
-                -   $ref: '#/components/parameters/OrderUUID'
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/CustomerV1OrderItemsDeleteRequest'
-            responses:
-                '204':
-                    description: Успешно удалено
                 '403':
                     description: Ошибка авторизации или доступа
                     content:
@@ -329,8 +307,8 @@ components:
                 - room_code
                 - customer_list
 
-        # /customer/v1/order/item/draft_POST
-        CustomerV1OrderItemsDraftRequest:
+        # /customer/v1/order/item/draft/count/edit_POST
+        CustomerV1OrderItemsDraftCountEditRequest:
             type: object
             additionalProperties: false
             properties:
@@ -340,24 +318,6 @@ components:
                     description: Уникальный идентификатор блюда в меню
                 count:
                     type: integer
-                    minimum: 1
-                    description: Добавляемое количество блюд
-            required:
-                - menu_dish_uuid
-                - count
-
-        # /customer/v1/order/item/delete_POST
-        CustomerV1OrderItemsDeleteRequest:
-            type: object
-            additionalProperties: false
-            properties:
-                menu_dish_uuid:
-                    type: string
-                    format: uuid
-                    description: Уникальный идентификатор блюда в меню
-                count:
-                    type: integer
-                    minimum: 1
                     description: Добавляемое количество блюд
             required:
                 - menu_dish_uuid
@@ -586,6 +546,7 @@ components:
                         - order_not_found
                         - customer_not_found
                         - access_denied
+                        - invalid_item_count
                 message:
                     type: string
                     description: Описание ошибки
