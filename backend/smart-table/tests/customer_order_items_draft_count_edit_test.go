@@ -11,7 +11,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func CreateDefaultItems() (userUUID, restaurantUUID, placeUUID, hostCustomerUUID, orderUUID, dishUUID, menuDishUUID uuid.UUID, token string, error error) {
+func CreateDefaultItems() (
+	userUUID,
+	restaurantUUID,
+	placeUUID,
+	hostCustomerUUID,
+	orderUUID,
+	dishUUID,
+	menuDishUUID uuid.UUID,
+	token string,
+	error error,
+) {
 	userUUID, restaurantUUID, placeUUID, hostCustomerUUID, orderUUID, token, error = CreateDefaultOrder()
 	if error != nil {
 		return userUUID, restaurantUUID, placeUUID, hostCustomerUUID, orderUUID, dishUUID, menuDishUUID, token, error
@@ -29,7 +39,7 @@ func CreateDefaultItems() (userUUID, restaurantUUID, placeUUID, hostCustomerUUID
 
 	comment := "comment"
 
-	response, err := viewsCodegenCustomerOrderClient.PostCustomerV1OrderItemsDraftCountEdit(
+	response, err := viewsCodegenCustomerOrderClient.PostCustomerV1OrderItemsDraftCountEditWithResponse(
 		GetCtx(),
 		&viewsCodegenCustomer.PostCustomerV1OrderItemsDraftCountEditParams{
 			CustomerUUID: hostCustomerUUID,
@@ -42,7 +52,7 @@ func CreateDefaultItems() (userUUID, restaurantUUID, placeUUID, hostCustomerUUID
 		},
 	)
 
-	if err != nil || response.StatusCode != http.StatusNoContent {
+	if err != nil || response.StatusCode() != http.StatusNoContent {
 		return userUUID, restaurantUUID, placeUUID, hostCustomerUUID, orderUUID, dishUUID, menuDishUUID, token, err
 	}
 
@@ -65,7 +75,7 @@ func TestCustomerOrderItemsCountDraftEditHappyPath(t *testing.T) {
 
 	comment := "comment"
 
-	response, err := viewsCodegenCustomerOrderClient.PostCustomerV1OrderItemsDraftCountEdit(
+	response, err := viewsCodegenCustomerOrderClient.PostCustomerV1OrderItemsDraftCountEditWithResponse(
 		GetCtx(),
 		&viewsCodegenCustomer.PostCustomerV1OrderItemsDraftCountEditParams{
 			CustomerUUID: hostCustomerUUID,
@@ -79,9 +89,9 @@ func TestCustomerOrderItemsCountDraftEditHappyPath(t *testing.T) {
 	)
 
 	assert.NoError(t, err)
-	assert.Equal(t, http.StatusNoContent, response.StatusCode)
+	assert.Equal(t, http.StatusNoContent, response.StatusCode())
 
-	response, err = viewsCodegenCustomerOrderClient.PostCustomerV1OrderItemsDraftCountEdit(
+	response, err = viewsCodegenCustomerOrderClient.PostCustomerV1OrderItemsDraftCountEditWithResponse(
 		GetCtx(),
 		&viewsCodegenCustomer.PostCustomerV1OrderItemsDraftCountEditParams{
 			CustomerUUID: hostCustomerUUID,
@@ -94,5 +104,5 @@ func TestCustomerOrderItemsCountDraftEditHappyPath(t *testing.T) {
 	)
 
 	assert.NoError(t, err)
-	assert.Equal(t, http.StatusNoContent, response.StatusCode)
+	assert.Equal(t, http.StatusNoContent, response.StatusCode())
 }
