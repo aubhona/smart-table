@@ -77,7 +77,14 @@ func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateComma
 		}
 	}
 
-	order, err = handler.orderRepository.FindActiveOrderByTableID(createCommand.TableID)
+	tx, err := handler.orderRepository.Begin()
+	if err != nil {
+		return OrderCreateCommandHandlerResult{}, err
+	}
+
+	defer utils.Rollback(handler.orderRepository, tx)
+
+	order, err = handler.orderRepository.FindActiveOrderByTableIDForUpdate(tx, createCommand.TableID)
 	isNewOrder := false
 
 	if err != nil {
@@ -96,13 +103,6 @@ func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateComma
 		}
 
 		order = domain.NewOrder(roomCode, createCommand.TableID, user, handler.uuidGenerator)
-		tx, err := handler.orderRepository.Begin()
-
-		if err != nil {
-			return OrderCreateCommandHandlerResult{}, err
-		}
-
-		defer utils.Rollback(handler.orderRepository, tx)
 
 		err = handler.orderRepository.Save(tx, order)
 
@@ -131,13 +131,6 @@ func (handler *OrderCreateCommandHandler) Handle(createCommand *OrderCreateComma
 	}
 
 	order.Get().AddCustomer(user)
-
-	tx, err := handler.orderRepository.Begin()
-	if err != nil {
-		return OrderCreateCommandHandlerResult{}, err
-	}
-
-	defer utils.Rollback(handler.orderRepository, tx)
 
 	err = handler.orderRepository.Update(tx, order)
 	if err != nil {

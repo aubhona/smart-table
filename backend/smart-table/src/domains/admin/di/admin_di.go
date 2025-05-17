@@ -60,7 +60,7 @@ func addServices(container *dig.Container) error {
 	return nil
 }
 
-func addHandlers(container *dig.Container) error {
+func addHandlers(container *dig.Container) error { //nolint
 	err := container.Provide(app.NewUserSingUpCommandHandler)
 	if err != nil {
 		return err
@@ -127,6 +127,11 @@ func addHandlers(container *dig.Container) error {
 	}
 
 	err = container.Provide(app.NewTableIDValidateCommandHandler)
+	if err != nil {
+		return err
+	}
+
+	err = container.Provide(app.NewMenuDishStateCommandHandler)
 	if err != nil {
 		return err
 	}

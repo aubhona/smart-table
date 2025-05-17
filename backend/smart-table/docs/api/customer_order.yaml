@@ -319,6 +319,8 @@ components:
                 count:
                     type: integer
                     description: Добавляемое количество блюд
+                comment:
+                    type: string
             required:
                 - menu_dish_uuid
                 - count
