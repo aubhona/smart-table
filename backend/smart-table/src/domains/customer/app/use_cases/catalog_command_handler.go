@@ -23,6 +23,7 @@ type CatalogItemDTO struct {
 	Name       string
 	Price      string
 	PictureKey string
+	Category   string
 	Picture    io.Reader
 }
 
@@ -68,7 +69,12 @@ func (handler *CatalogCommandHandler) Handle(command *CatalogCommand) (CatalogCo
 	menuDishUUIDToItemsMap := make(map[uuid.UUID][]utils.SharedRef[domain.Item])
 
 	for _, item := range order.Get().GetItems() {
+		if !item.Get().GetIsDraft() {
+			continue
+		}
+
 		_, exist := menuDishUUIDToItemsMap[item.Get().GetDishUUID()]
+
 		if !exist {
 			menuDishUUIDToItemsMap[item.Get().GetDishUUID()] = make([]utils.SharedRef[domain.Item], 0)
 		}
@@ -110,6 +116,7 @@ func (handler *CatalogCommandHandler) Handle(command *CatalogCommand) (CatalogCo
 			Name:       menuDish.Name,
 			Price:      menuDish.Price,
 			PictureKey: menuDish.PictureKey,
+			Category:   menuDish.Category,
 			Picture:    pictureReader,
 		})
 

@@ -3,6 +3,8 @@ package domain
 import (
 	"time"
 
+	defsInternalItem "github.com/smart-table/src/codegen/intern/item"
+
 	domainErrors "github.com/smart-table/src/domains/customer/domain/errors"
 
 	"github.com/samber/lo"
@@ -218,6 +220,9 @@ func (o *Order) GetDeletesItems() []utils.SharedRef[Item] {
 	return o.deletedItems
 }
 
-func (o *Order) SetStatus(status defsInternalOrder.OrderStatus) {
-	o.status = status
+func (o *Order) MarkWaitingPayment() {
+	o.status = defsInternalOrder.OrderStatusPaymentWaiting
+	for _, item := range o.items {
+		item.Get().SetStatus(defsInternalItem.ItemStatusPaymentWaiting)
+	}
 }

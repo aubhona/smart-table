@@ -408,6 +408,8 @@ components:
                     type: string
                 name:
                     type: string
+                category:
+                    type: string
                 calories:
                     type: integer
                     minimum: 0
@@ -419,6 +421,7 @@ components:
                 - price
                 - name
                 - calories
+                - category
                 - count
         
         CustomerInfo:

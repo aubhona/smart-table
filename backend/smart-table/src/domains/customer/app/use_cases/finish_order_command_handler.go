@@ -1,7 +1,6 @@
 package app //nolint
 
 import (
-	defsInternalOrder "github.com/smart-table/src/codegen/intern/order"
 	appErrors "github.com/smart-table/src/domains/customer/app/use_cases/errors"
 	"github.com/smart-table/src/domains/customer/domain"
 	"github.com/smart-table/src/utils"
@@ -34,7 +33,7 @@ func (handler *FinishOrderCommandHandler) Handle(
 		return appErrors.OrderAccessDenied{OrderUUID: command.OrderUUID, CustomerUUID: command.CustomerUUID}
 	}
 
-	order.Get().SetStatus(defsInternalOrder.OrderStatusPaymentWaiting)
+	order.Get().MarkWaitingPayment()
 
 	err = handler.orderRepository.Update(tx, order)
 	if err != nil {
