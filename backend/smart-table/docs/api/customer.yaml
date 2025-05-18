@@ -22,6 +22,12 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/CustomerV1OrderCustomerSignInResponse'
+                '403':
+                    description: Некорректные данные запроса
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
                 '404':
                     description: Не найден пользователь
                     content:
@@ -34,11 +40,14 @@ components:
             type: object
             additionalProperties: false
             properties:
+                init_data:
+                    type: string
                 tg_id:
                     type: string
                 tg_login:
                     $ref: '#/components/schemas/Login'
             required:
+                - init_data
                 - tg_id
                 - tg_login
 
@@ -49,8 +58,11 @@ components:
                 customer_uuid:
                     type: string
                     format: uuid
+                jwt_token:
+                    type: string
             required:
                 - customer_uuid
+                - jwt_token
 
         ErrorResponse:
             type: object
@@ -61,6 +73,7 @@ components:
                     description: Код ошибки
                     enum:
                         - not_found
+                        - incorrect_init_data
                         - already_exist
                 message:
                     type: string

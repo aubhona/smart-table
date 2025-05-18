@@ -12,7 +12,7 @@ import (
 	"go.uber.org/dig"
 )
 
-func AddDeps(container *dig.Container) error {
+func addRepositories(container *dig.Container) error {
 	err := container.Provide(func(deps *dependencies.Dependencies) domain.OrderRepository {
 		return pg.NewOrderRepository(deps.DBConnPool)
 	})
@@ -27,17 +27,45 @@ func AddDeps(container *dig.Container) error {
 		return err
 	}
 
+	return nil
+}
+
+func addServices(container *dig.Container) error {
+	err := container.Provide(
+		func(
+			stAdminQueryServiceImpl *infraQueries.SmartTableAdminQueryServiceImpl,
+		) appQueries.SmartTableAdminQueryService {
+			return stAdminQueryServiceImpl
+		})
+	if err != nil {
+		return err
+	}
+
 	err = container.Provide(appServices.NewRoomCodeService)
 	if err != nil {
 		return err
 	}
 
-	err = container.Provide(domainServices.NewUUIDGenerator)
+	err = container.Provide(infraQueries.NewSmartTableQueryServiceImpl)
 	if err != nil {
 		return err
 	}
 
-	err = container.Provide(app.NewCustomerAuthorizeCommandHandler)
+	err = container.Provide(appServices.NewJwtService)
+	if err != nil {
+		return err
+	}
+
+	err = container.Provide(appServices.NewInitDataService)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func addHandlers(container *dig.Container) error { //nolint
+	err := container.Provide(app.NewCustomerAuthorizeCommandHandler)
 	if err != nil {
 		return err
 	}
@@ -57,21 +85,6 @@ func AddDeps(container *dig.Container) error {
 		return err
 	}
 
-	err = container.Provide(infraQueries.NewSmartTableQueryServiceImpl)
-	if err != nil {
-		return err
-	}
-
-	err = container.Provide(
-		func(
-			stAdminQueryServiceImpl *infraQueries.SmartTableAdminQueryServiceImpl,
-		) appQueries.SmartTableAdminQueryService {
-			return stAdminQueryServiceImpl
-		})
-	if err != nil {
-		return err
-	}
-
 	err = container.Provide(app.NewCatalogCommandHandler)
 	if err != nil {
 		return err
@@ -83,6 +96,30 @@ func AddDeps(container *dig.Container) error {
 	}
 
 	err = container.Provide(app.NewCatalogUpdateInfoCommandHandler)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func AddDeps(container *dig.Container) error {
+	err := container.Provide(domainServices.NewUUIDGenerator)
+	if err != nil {
+		return err
+	}
+
+	err = addRepositories(container)
+	if err != nil {
+		return err
+	}
+
+	err = addServices(container)
+	if err != nil {
+		return err
+	}
+
+	err = addHandlers(container)
 	if err != nil {
 		return err
 	}

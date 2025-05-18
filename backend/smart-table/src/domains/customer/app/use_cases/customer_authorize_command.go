@@ -1,6 +1,7 @@
 package app
 
 type CustomerAuthorizeCommand struct {
-	TgID    string
-	TgLogin string
+	InitData string
+	TgID     string
+	TgLogin  string
 }

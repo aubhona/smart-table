@@ -24,6 +24,16 @@ type Config struct {
 				Expiration time.Duration `mapstructure:"expiration"`
 			} `mapstructure:"jwt"`
 		} `mapstructure:"admin"`
+		Customer struct {
+			Jwt struct {
+				Enable     bool          `mapstructure:"enable"`
+				SecretKey  string        `mapstructure:"secret_key"`
+				Expiration time.Duration `mapstructure:"expiration"`
+			} `mapstructure:"jwt"`
+			InitData struct {
+				Expiration time.Duration `mapstructure:"expiration"`
+			} `mapstructure:"init_data"`
+		} `mapstructure:"customer"`
 		Cors struct {
 			AllowOrigins     []string `mapstructure:"allow_origins"`
 			AllowMethods     []string `mapstructure:"allow_methods"`

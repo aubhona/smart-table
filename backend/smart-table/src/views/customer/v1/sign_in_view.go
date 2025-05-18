@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	app "github.com/smart-table/src/domains/customer/app/use_cases"
+	appUseCasesErrors "github.com/smart-table/src/domains/customer/app/use_cases/errors"
 	domainErrors "github.com/smart-table/src/domains/customer/domain/errors"
 	"github.com/smart-table/src/logging"
 	"github.com/smart-table/src/utils"
@@ -22,13 +23,20 @@ func (h *CustomerV1Handler) PostCustomerV1SignIn(
 	}
 
 	result, err := handler.Handle(&app.CustomerAuthorizeCommand{
-		TgID:    request.Body.TgID,
-		TgLogin: request.Body.TgLogin,
+		InitData: request.Body.InitData,
+		TgID:     request.Body.TgID,
+		TgLogin:  request.Body.TgLogin,
 	})
 	if err != nil {
-		if utils.IsTheSameErrorType[domainErrors.CustomerNotFoundByTgID](err) {
+		switch {
+		case utils.IsTheSameErrorType[domainErrors.CustomerNotFoundByTgID](err):
 			return viewsCustomer.PostCustomerV1SignIn404JSONResponse{
 				Code:    viewsCustomer.NotFound,
+				Message: err.Error(),
+			}, nil
+		case utils.IsTheSameErrorType[appUseCasesErrors.IncorrectInitDataError](err):
+			return viewsCustomer.PostCustomerV1SignIn403JSONResponse{
+				Code:    viewsCustomer.IncorrectInitData,
 				Message: err.Error(),
 			}, nil
 		}
@@ -38,5 +46,6 @@ func (h *CustomerV1Handler) PostCustomerV1SignIn(
 
 	return viewsCustomer.PostCustomerV1SignIn200JSONResponse{
 		CustomerUUID: result.CustomerUUID,
+		JwtToken:     result.JwtToken,
 	}, nil
 }
