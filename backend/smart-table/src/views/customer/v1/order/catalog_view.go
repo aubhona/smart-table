@@ -71,6 +71,7 @@ func (h *CustomerV1OrderHandler) GetCustomerV1OrderCatalog( //nolint
 					Count:    menuDish.Count,
 					Calories: menuDish.Calories,
 					Price:    menuDish.Price,
+					Category: menuDish.Category,
 				})
 			}
 

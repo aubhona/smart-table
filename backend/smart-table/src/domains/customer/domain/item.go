@@ -131,6 +131,10 @@ func (i *Item) GetUpdatedAt() time.Time                                        {
 func (i *Item) GetIsDraft() bool                                               { return i.isDraft }
 func (i *Item) GetCalories() int                                               { return i.calories }
 
+func (i *Item) SetStatus(status defsInternalItem.ItemStatus) {
+	i.status = status
+}
+
 func (i *Item) Commit() {
 	i.isDraft = false
 }
