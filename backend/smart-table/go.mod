@@ -21,6 +21,7 @@ require (
 	github.com/spf13/viper v1.20.0
 	github.com/sqlc-dev/sqlc v1.29.0
 	github.com/stretchr/testify v1.10.0
+	github.com/telegram-mini-apps/init-data-golang v1.5.0
 	github.com/testcontainers/testcontainers-go v0.35.0
 	github.com/vektra/mockery/v2 v2.53.3
 	go.uber.org/dig v1.18.0
