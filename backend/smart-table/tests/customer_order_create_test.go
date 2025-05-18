@@ -42,6 +42,7 @@ func CreateDefaultOrder() (userUUID, restaurantUUID, placeUUID, hostUUID, orderU
 		GetCtx(),
 		&viewsCodegenCustomer.PostCustomerV1OrderCreateParams{
 			CustomerUUID: hostUUID,
+			JWTToken:     "tipa_token_zhiest",
 		},
 		viewsCodegenCustomer.PostCustomerV1OrderCreateJSONRequestBody{
 			TableID: tableID,
@@ -79,6 +80,7 @@ func TestCustomerOrderCreateHappyPath(t *testing.T) {
 		GetCtx(),
 		&viewsCodegenCustomer.PostCustomerV1OrderCreateParams{
 			CustomerUUID: hostUUID,
+			JWTToken:     "tipa_token_zhiest",
 		},
 		viewsCodegenCustomer.PostCustomerV1OrderCreateJSONRequestBody{
 			TableID: tableID,
@@ -112,6 +114,7 @@ func TestCustomerOrderCreateIdempotency(t *testing.T) {
 		GetCtx(),
 		&viewsCodegenCustomer.PostCustomerV1OrderCreateParams{
 			CustomerUUID: hostUUID,
+			JWTToken:     "tipa_token_zhiest",
 		},
 		viewsCodegenCustomer.PostCustomerV1OrderCreateJSONRequestBody{
 			TableID: tableID,
@@ -125,6 +128,7 @@ func TestCustomerOrderCreateIdempotency(t *testing.T) {
 		GetCtx(),
 		&viewsCodegenCustomer.PostCustomerV1OrderCreateParams{
 			CustomerUUID: hostUUID,
+			JWTToken:     "tipa_token_zhiest",
 		},
 		viewsCodegenCustomer.PostCustomerV1OrderCreateJSONRequestBody{
 			TableID: tableID,
@@ -163,6 +167,7 @@ func TestCustomerOrderCreateConnectingToExistingSession(t *testing.T) {
 		GetCtx(),
 		&viewsCodegenCustomer.PostCustomerV1OrderCreateParams{
 			CustomerUUID: hostUUID,
+			JWTToken:     "tipa_token_zhiest",
 		},
 		viewsCodegenCustomer.PostCustomerV1OrderCreateJSONRequestBody{
 			TableID: tableID,
@@ -184,6 +189,7 @@ func TestCustomerOrderCreateConnectingToExistingSession(t *testing.T) {
 		GetCtx(),
 		&viewsCodegenCustomer.PostCustomerV1OrderCreateParams{
 			CustomerUUID: customerUUID,
+			JWTToken:     "tipa_token_zhiest",
 		},
 		viewsCodegenCustomer.PostCustomerV1OrderCreateJSONRequestBody{
 			TableID:  tableID,

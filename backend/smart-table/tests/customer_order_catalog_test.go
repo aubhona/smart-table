@@ -34,6 +34,7 @@ func TestCustomerOrderCatalogHappyPath(t *testing.T) {
 		GetCtx(),
 		&viewsCodegenCustomer.GetCustomerV1OrderCatalogParams{
 			CustomerUUID: hostCustomerUUID,
+			JWTToken:     "tipa_token_zhiest",
 			OrderUUID:    orderUUID,
 		},
 	)

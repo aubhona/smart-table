@@ -48,7 +48,7 @@ func (js *JwtService) GenerateJWT(userUUID uuid.UUID) (string, error) {
 	return tokenString, nil
 }
 
-func (js *JwtService) ValidateJWT(tokenString string, userUUID uuid.UUID) (*UserClaims, error) {
+func (js *JwtService) ValidateJWT(tokenString string, userUUID uuid.UUID) error {
 	claims := &UserClaims{}
 
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
@@ -59,14 +59,14 @@ func (js *JwtService) ValidateJWT(tokenString string, userUUID uuid.UUID) (*User
 
 	switch {
 	case err != nil:
-		return nil, err
+		return err
 	case claims.UserUUID != userUUID:
 		logger.Error(fmt.Sprintf("Token.user_uuid=%v mismatch with Header.user_uuid=%v", claims.UserUUID, userUUID))
-		return nil, appErrors.InvalidToken{}
+		return appErrors.InvalidToken{}
 	case !token.Valid:
 		logger.Error("Invalid token")
-		return nil, appErrors.InvalidToken{}
+		return appErrors.InvalidToken{}
 	}
 
-	return claims, nil
+	return nil
 }
