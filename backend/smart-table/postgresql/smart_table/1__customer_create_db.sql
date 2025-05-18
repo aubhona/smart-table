@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS smart_table_customer.items (
    "picture_link" TEXT NOT NULL,
    "weight" INT NOT NULL,
    "category" TEXT NOT NULL,
-   "price" DECIMAL NOT NULL,
+   "price" TEXT NOT NULL,
    "customer_uuid" UUID NOT NULL,
    "dish_uuid" UUID NOT NULL,
    "is_draft" BOOLEAN NOT NULL,

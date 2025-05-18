@@ -30,6 +30,7 @@ func (h *CustomerV1OrderHandler) PostCustomerV1OrderItemsDraftCountEdit(
 		CustomerUUID: request.Params.CustomerUUID,
 		Comment:      utils.NewOptionalFromPointer(request.Body.Comment),
 		DishUUID:     request.Body.MenuDishUUID,
+		EditCount:    request.Body.Count,
 	})
 	if err != nil {
 		switch {
