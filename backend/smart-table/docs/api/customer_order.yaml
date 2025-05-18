@@ -440,12 +440,16 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/ItemInfo'
+                is_host:
+                    type: boolean
             required:
                 - uuid
                 - tg_login
                 - tg_id
                 - total_price
                 - item_list
+                - is_active
+                - is_host
 
         CartInfo:
             type: object
@@ -487,7 +491,7 @@ components:
             type: object
             additionalProperties: false
             properties:
-                uuid:
+                dish_uuid:
                     type: string
                     format: uuid
                 comment:
@@ -513,7 +517,7 @@ components:
                 result_price:
                     type: string
             required:
-                - uuid
+                - dish_uuid
                 - status
                 - name
                 - description
