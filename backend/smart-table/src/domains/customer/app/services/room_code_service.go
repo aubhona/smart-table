@@ -31,7 +31,7 @@ func (r *RoomCodeService) CreateRoomCode(tableID string, hostUserUUID uuid.UUID)
 		return "", err
 	}
 
-	return fmt.Sprintf("%x", r.hasher.Sum64()%1000), nil
+	return fmt.Sprintf("%03d", r.hasher.Sum64()%1000), nil
 }
 
 func (r *RoomCodeService) VerifyRoomCode(order utils.SharedRef[domain.Order], roomCode string) bool {

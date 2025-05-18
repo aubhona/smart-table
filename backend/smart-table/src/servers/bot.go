@@ -38,5 +38,9 @@ func NewBot(container *dig.Container, deps *dependencies.Dependencies) (*telebot
 
 	bot.Handle(telebot.OnText, botHandler.HandleOnTextUpdates)
 
-	return bot, nil
+	err = container.Provide(func() *telebot.Bot {
+		return bot
+	})
+
+	return bot, err
 }

@@ -61,6 +61,16 @@ func addServices(container *dig.Container) error {
 		return err
 	}
 
+	err = container.Provide(appQueries.NewBotQueryService)
+	if err != nil {
+		return err
+	}
+
+	err = container.Provide(appServices.NewTipService)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -106,6 +116,11 @@ func addHandlers(container *dig.Container) error { //nolint
 	}
 
 	err = container.Provide(app.NewFinishOrderCommandHandler)
+	if err != nil {
+		return err
+	}
+
+	err = container.Provide(app.NewSaveTipCommandHandler)
 	if err != nil {
 		return err
 	}
