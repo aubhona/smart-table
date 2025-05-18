@@ -15,7 +15,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/smart-table/src/config"
 	"github.com/smart-table/src/dependencies"
-	app "github.com/smart-table/src/domains/admin/app/services"
+	appAdmin "github.com/smart-table/src/domains/admin/app/services"
+	appCustomer "github.com/smart-table/src/domains/customer/app/services"
 	"github.com/smart-table/src/utils"
 	viewsPlace "github.com/smart-table/src/views/admin/v1/place"
 	viewsRestaurant "github.com/smart-table/src/views/admin/v1/restaurant"
@@ -50,26 +51,43 @@ func NewGinRouter(container *dig.Container, deps *dependencies.Dependencies) *gi
 			c.Next()
 		}).Use(cors.New(cfg))
 
-	private := router.Group("/")
+	privateAdmin := router.Group("/")
+	privateCustomer := router.Group("/")
 
 	if deps.Config.App.Admin.Jwt.Enable {
-		private.Use(JWTAuthMiddleware(deps.Logger))
+		jwtService, err := utils.GetFromDiContainer[*appAdmin.JwtService](container)
+		if err != nil {
+			deps.Logger.Error(fmt.Sprintf("Error while getting JWT service: %v", err))
+			panic(err)
+		}
+
+		privateAdmin.Use(JWTAuthMiddleware(deps.Logger, jwtService))
+	}
+
+	if deps.Config.App.Customer.Jwt.Enable {
+		jwtService, err := utils.GetFromDiContainer[*appCustomer.JwtService](container)
+		if err != nil {
+			deps.Logger.Error(fmt.Sprintf("Error while getting JWT service: %v", err))
+			panic(err)
+		}
+
+		privateCustomer.Use(JWTAuthMiddleware(deps.Logger, jwtService))
 	}
 
 	customerStrictHandler := viewsCodegenCustomer.NewStrictHandler(&viewsCustomer.CustomerV1Handler{}, nil)
 	viewsCodegenCustomer.RegisterHandlers(router, customerStrictHandler)
 
 	customerOrderStrictHandler := viewsCodegenCustomerOrder.NewStrictHandler(&viewsCustomerOrder.CustomerV1OrderHandler{}, nil)
-	viewsCodegenCustomerOrder.RegisterHandlers(router, customerOrderStrictHandler)
+	viewsCodegenCustomerOrder.RegisterHandlers(privateCustomer, customerOrderStrictHandler)
 
 	adminUserStrictHandler := viewsCodegenAdminUser.NewStrictHandler(&viewsUser.AdminV1UserHandler{}, nil)
 	viewsCodegenAdminUser.RegisterHandlers(router, adminUserStrictHandler)
 
 	adminRestaurantStrictHandler := viewsCodegenAdminRestaurant.NewStrictHandler(&viewsRestaurant.AdminV1RestaurantHandler{}, nil)
-	viewsCodegenAdminRestaurant.RegisterHandlers(private, adminRestaurantStrictHandler)
+	viewsCodegenAdminRestaurant.RegisterHandlers(privateAdmin, adminRestaurantStrictHandler)
 
 	adminPlaceStrictHandler := viewsCodegenAdminPlace.NewStrictHandler(&viewsPlace.AdminV1PlaceHandler{}, nil)
-	viewsCodegenAdminPlace.RegisterHandlers(private, adminPlaceStrictHandler)
+	viewsCodegenAdminPlace.RegisterHandlers(privateAdmin, adminPlaceStrictHandler)
 
 	return router
 }
@@ -141,7 +159,7 @@ func GinZapResponseLogger(logger *zap.Logger, cfg *config.Config) gin.HandlerFun
 	}
 }
 
-func JWTAuthMiddleware(logger *zap.Logger) gin.HandlerFunc {
+func JWTAuthMiddleware(logger *zap.Logger, jwtService utils.JwtService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("JWT-Token")
 
@@ -156,15 +174,7 @@ func JWTAuthMiddleware(logger *zap.Logger) gin.HandlerFunc {
 			return
 		}
 
-		jwtService, err := utils.GetFromContainer[*app.JwtService](c)
-		if err != nil {
-			logger.Error(fmt.Sprintf("Error while getting JWT service: %v", err))
-			return
-		}
-
-		_, err = jwtService.ValidateJWT(tokenString, userUUID)
-
-		if err != nil {
+		if jwtService.ValidateJWT(tokenString, userUUID) != nil {
 			logger.Warn("Invalid JWT token", zap.Error(err))
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 				"code":    "invalid_token",

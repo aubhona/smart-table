@@ -58,6 +58,7 @@ func EditItems(customerUUID, orderUUID, menuDishUUID uuid.UUID, count int, comme
 		GetCtx(),
 		&viewsCodegenCustomer.PostCustomerV1OrderItemsDraftCountEditParams{
 			CustomerUUID: customerUUID,
+			JWTToken:     "tipa_token_zhiest",
 			OrderUUID:    orderUUID,
 		},
 		viewsCodegenCustomer.CustomerV1OrderItemsDraftCountEditRequest{
@@ -94,6 +95,7 @@ func TestCustomerOrderItemsCountDraftEditHappyPath(t *testing.T) {
 		GetCtx(),
 		&viewsCodegenCustomer.PostCustomerV1OrderItemsDraftCountEditParams{
 			CustomerUUID: hostCustomerUUID,
+			JWTToken:     "tipa_token_zhiest",
 			OrderUUID:    orderUUID,
 		},
 		viewsCodegenCustomer.CustomerV1OrderItemsDraftCountEditRequest{
@@ -122,6 +124,7 @@ func TestCustomerOrderItemsCountDraftEditHappyPath(t *testing.T) {
 		GetCtx(),
 		&viewsCodegenCustomer.PostCustomerV1OrderItemsDraftCountEditParams{
 			CustomerUUID: hostCustomerUUID,
+			JWTToken:     "tipa_token_zhiest",
 			OrderUUID:    orderUUID,
 		},
 		viewsCodegenCustomer.CustomerV1OrderItemsDraftCountEditRequest{

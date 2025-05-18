@@ -26,10 +26,11 @@ app:
         allow_headers:
             - ngrok-skip-browser-warning
             - Authorization
-            - User-Uuid
+            - User-UUID
+            - Customer-UUID
+            - Order-UUID
             - JWT-Token
             - content-type
-            - customer-uuid
         allow_credentials: true
     max_input_file_size_mb: 1000
 

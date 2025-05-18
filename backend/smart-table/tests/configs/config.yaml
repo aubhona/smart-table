@@ -8,7 +8,7 @@ app:
             expiration: 24h
     customer:
         jwt:
-            enable: true
+            enable: false
             secret_key: APP_CUSTOMER_JWT_SECRET_KEY
             expiration: 24h
         init_data:
@@ -26,10 +26,11 @@ app:
         allow_headers:
             - ngrok-skip-browser-warning
             - Authorization
-            - User-Uuid
+            - User-UUID
+            - Customer-UUID
+            - Order-UUID
             - JWT-Token
             - content-type
-            - customer-uuid
         allow_credentials: true
     max_input_file_size_mb: 1000
 

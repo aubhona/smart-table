@@ -28,6 +28,7 @@ func TestCustomerOrderCatalogUpdateInfoTestHappyPath(t *testing.T) {
 		GetCtx(),
 		&viewsCustomerOrder.GetCustomerV1OrderCatalogUpdatedInfoParams{
 			CustomerUUID: hostCustomerUUID,
+			JWTToken:     "tipa_token_zhiest",
 			OrderUUID:    orderUUID,
 		},
 	)
@@ -46,6 +47,7 @@ func TestCustomerOrderCatalogUpdateInfoTestHappyPath(t *testing.T) {
 		GetCtx(),
 		&viewsCustomerOrder.GetCustomerV1OrderCatalogUpdatedInfoParams{
 			CustomerUUID: hostCustomerUUID,
+			JWTToken:     "tipa_token_zhiest",
 			OrderUUID:    orderUUID,
 		},
 	)

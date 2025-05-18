@@ -11,7 +11,7 @@ paths:
             description: Создание заказа, если первый пользователь в группе, иначе присоединение к заказу.
             parameters:
                 - $ref: '#/components/parameters/CustomerUUID'
-                # - $ref: '#/components/parameters/JwtToken'
+                - $ref: '#/components/parameters/JwtToken'
             requestBody:
                 required: true
                 content:
@@ -38,7 +38,7 @@ paths:
             description: Переводит заказ в статус ожидает оплаты
             parameters:
                 -   $ref: '#/components/parameters/CustomerUUID'
-                # -   $ref: '#/components/parameters/JwtToken'
+                -   $ref: '#/components/parameters/JwtToken'
                 -   $ref: '#/components/parameters/OrderUUID'
             responses:
                 '204':
@@ -62,7 +62,7 @@ paths:
             description: Сохраняет чек заказа
             parameters:
                 -   $ref: '#/components/parameters/CustomerUUID'
-                # -   $ref: '#/components/parameters/JwtToken'
+                -   $ref: '#/components/parameters/JwtToken'
                 -   $ref: '#/components/parameters/OrderUUID'
             responses:
                 '204':
@@ -86,7 +86,7 @@ paths:
             description: Возвращает подробную информацию по текущей корзине пользователя в заказе
             parameters:
                 -   $ref: '#/components/parameters/CustomerUUID'
-                # -   $ref: '#/components/parameters/JwtToken'
+                -   $ref: '#/components/parameters/JwtToken'
                 -   $ref: '#/components/parameters/OrderUUID'
             responses:
                 '200':
@@ -115,7 +115,7 @@ paths:
             description: Получение списка пользователей заказа
             parameters:
                 -   $ref: '#/components/parameters/CustomerUUID'
-                # -   $ref: '#/components/parameters/JwtToken'
+                -   $ref: '#/components/parameters/JwtToken'
                 -   $ref: '#/components/parameters/OrderUUID'
             responses:
                 '200':
@@ -143,7 +143,7 @@ paths:
             description: Отображение каталога плейса
             parameters:
                 - $ref: '#/components/parameters/CustomerUUID'
-                # - $ref: '#/components/parameters/JwtToken'
+                - $ref: '#/components/parameters/JwtToken'
                 - $ref: '#/components/parameters/OrderUUID'
             responses:
                 '200':
@@ -172,7 +172,7 @@ paths:
             description: Возвращает обновленную стоимость корзины, и количество блюд из меню, которые добавлены в корзину
             parameters:
                 -   $ref: '#/components/parameters/CustomerUUID'
-                # -   $ref: '#/components/parameters/JwtToken'
+                -   $ref: '#/components/parameters/JwtToken'
                 -   $ref: '#/components/parameters/OrderUUID'
             responses:
                 '200':
@@ -201,7 +201,7 @@ paths:
                 Изменяет количество блюд в корзине. Передается число в запросе. Знак числа определяет добавить или удалить блюда.s
             parameters:
                 -   $ref: '#/components/parameters/CustomerUUID'
-                # -   $ref: '#/components/parameters/JwtToken'
+                -   $ref: '#/components/parameters/JwtToken'
                 -   $ref: '#/components/parameters/OrderUUID'
             requestBody:
                 required: true
@@ -237,7 +237,7 @@ paths:
             description: Добавляет блюда из корзины в чек текущего заказа
             parameters:
                 -   $ref: '#/components/parameters/CustomerUUID'
-                # -   $ref: '#/components/parameters/JwtToken'
+                -   $ref: '#/components/parameters/JwtToken'
                 -   $ref: '#/components/parameters/OrderUUID'
             responses:
                 '204':

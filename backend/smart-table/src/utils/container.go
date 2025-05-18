@@ -13,6 +13,20 @@ import (
 const DiContainerName = "di-container"
 const DependenciesName = "dependencies"
 
+func GetFromDiContainer[T any](diContainer *dig.Container) (T, error) {
+	var zeroValue, dependency T
+
+	err := diContainer.Invoke(func(dep T) {
+		dependency = dep
+	})
+
+	if err != nil {
+		return zeroValue, err
+	}
+
+	return dependency, nil
+}
+
 func GetFromContainer[T any](ctx context.Context) (T, error) {
 	var zeroValue T
 
@@ -31,17 +45,7 @@ func GetFromContainer[T any](ctx context.Context) (T, error) {
 		return zeroValue, errors.New("failed getting di container from gin context")
 	}
 
-	var dependency T
-
-	err := diContainer.Invoke(func(dep T) {
-		dependency = dep
-	})
-
-	if err != nil {
-		return zeroValue, err
-	}
-
-	return dependency, nil
+	return GetFromDiContainer[T](diContainer)
 }
 
 func GetFromTelebotContainer[T any](ctx telebot.Context) (T, error) {
@@ -57,15 +61,5 @@ func GetFromTelebotContainer[T any](ctx telebot.Context) (T, error) {
 		return zeroValue, errors.New("failed getting di container from gin context")
 	}
 
-	var dependency T
-
-	err := diContainer.Invoke(func(dep T) {
-		dependency = dep
-	})
-
-	if err != nil {
-		return zeroValue, err
-	}
-
-	return dependency, nil
+	return GetFromDiContainer[T](diContainer)
 }
