@@ -15,8 +15,10 @@
 import ApiClient from './ApiClient';
 import AdminV1RestaurantCreateRequest from './model/AdminV1RestaurantCreateRequest';
 import AdminV1RestaurantCreateResponse from './model/AdminV1RestaurantCreateResponse';
+import AdminV1RestaurantDeleteRequest from './model/AdminV1RestaurantDeleteRequest';
 import AdminV1RestaurantDishCreateResponse from './model/AdminV1RestaurantDishCreateResponse';
 import AdminV1RestaurantDishListRequest from './model/AdminV1RestaurantDishListRequest';
+import AdminV1RestaurantEditRequest from './model/AdminV1RestaurantEditRequest';
 import AdminV1RestaurantListResponse from './model/AdminV1RestaurantListResponse';
 import DishInfo from './model/DishInfo';
 import ErrorResponse from './model/ErrorResponse';
@@ -75,6 +77,12 @@ export {
     AdminV1RestaurantCreateResponse,
 
     /**
+     * The AdminV1RestaurantDeleteRequest model constructor.
+     * @property {module:model/AdminV1RestaurantDeleteRequest}
+     */
+    AdminV1RestaurantDeleteRequest,
+
+    /**
      * The AdminV1RestaurantDishCreateResponse model constructor.
      * @property {module:model/AdminV1RestaurantDishCreateResponse}
      */
@@ -85,6 +93,12 @@ export {
      * @property {module:model/AdminV1RestaurantDishListRequest}
      */
     AdminV1RestaurantDishListRequest,
+
+    /**
+     * The AdminV1RestaurantEditRequest model constructor.
+     * @property {module:model/AdminV1RestaurantEditRequest}
+     */
+    AdminV1RestaurantEditRequest,
 
     /**
      * The AdminV1RestaurantListResponse model constructor.

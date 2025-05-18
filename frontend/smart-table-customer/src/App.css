@@ -6,7 +6,10 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100lvh;
+  height: 100vh; 
+  width: 100%;
+  max-width: 1200px;
+  max-height: 1366px;
 }
 
 .app-container {
@@ -14,7 +17,9 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100lvh;
-  padding: 20px;
+  min-height: 100vh;
+  width: 100%; 
+  max-width: 1200px;
+  padding: 0;
+  box-sizing: border-box; 
 }
-

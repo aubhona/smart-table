@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { handleMultipartResponse } from './multipartUtils';
+import { handleMultipartResponse } from '../components/multipartUtils';
+import { SERVER_URL } from "../config";
 
 import PlaceApi from "../api/place_api/generated/src/api/DefaultApi";
 import AdminV1PlaceListRequest from "../api/place_api/generated/src/model/AdminV1PlaceListRequest";
 import AdminV1PlaceCreateRequest from "../api/place_api/generated/src/model/AdminV1PlaceCreateRequest";
+import AdminV1PlaceDeleteRequest from "../api/place_api/generated/src/model/AdminV1PlaceDeleteRequest";
+import AdminV1PlaceEditRequest from "../api/place_api/generated/src/model/AdminV1PlaceEditRequest";
 
 import RestaurantApi from "../api/restaurant_api/generated/src/api/DefaultApi";
 
@@ -39,6 +42,11 @@ export default function PlacesAndDishes() {
   const [weightError, setWeightError] = useState("");
   const [pictureFile, setPictureFile] = useState(null);
 
+  const [showEditPlaceModal, setShowEditPlaceModal] = useState(false);
+  const [editPlace, setEditPlace] = useState(null);
+  const [editAddress, setEditAddress] = useState("");
+  const [editTableCount, setEditTableCount] = useState(1);
+
   const userUUID = localStorage.getItem("user_uuid");
   const jWTToken = localStorage.getItem("jwt_token");
 
@@ -52,7 +60,7 @@ export default function PlacesAndDishes() {
   ];
 
   const placeApi = new PlaceApi();
-  placeApi.apiClient.basePath = "https://87d6-2a01-4f9-c010-ecd2-00-1.ngrok-free.app";
+  placeApi.apiClient.basePath = SERVER_URL;
   placeApi.apiClient.defaultHeaders = {
     "User-UUID": userUUID,
     "JWT-Token": jWTToken,
@@ -60,7 +68,7 @@ export default function PlacesAndDishes() {
   };
 
   const restApi = new RestaurantApi();
-  restApi.apiClient.basePath = "https://87d6-2a01-4f9-c010-ecd2-00-1.ngrok-free.app";
+  restApi.apiClient.basePath = SERVER_URL;
   restApi.apiClient.defaultHeaders = {
     "User-UUID": userUUID,
     "JWT-Token": jWTToken,
@@ -85,7 +93,7 @@ export default function PlacesAndDishes() {
   async function loadDishes() {
     setLoading(true);
     try {
-      const resp = await fetch("https://87d6-2a01-4f9-c010-ecd2-00-1.ngrok-free.app/admin/v1/restaurant/dish/list", {
+      const resp = await fetch(`${SERVER_URL}/admin/v1/restaurant/dish/list`, {
         method: "POST",
         headers: {
           Accept: "multipart/mixed, application/json",
@@ -154,6 +162,50 @@ export default function PlacesAndDishes() {
     } catch (e) {
       console.error("Ошибка создания плейса:", e);
       alert(e.body?.message || e.message);
+    }
+  };
+
+  const handleDeletePlace = async (place_uuid) => {
+    if (!window.confirm("Удалить этот плейс?")) return;
+    try {
+      const req = AdminV1PlaceDeleteRequest.constructFromObject({ place_uuid });
+      await new Promise((res, rej) =>
+        placeApi.adminV1PlaceDeletePost(userUUID, jWTToken, req, (err) =>
+          err ? rej(err) : res()
+        )
+      );
+      await loadPlaces();
+    } catch (e) {
+      alert(e.body?.message || e.message || "Ошибка удаления плейса");
+    }
+  };
+
+  const openEditPlaceModal = (place) => {
+  setEditPlace(place);
+  setEditAddress(place.address);
+  setEditTableCount(place.table_count);
+  setShowEditPlaceModal(true);
+};
+
+  const handleSaveEditPlace = async () => {
+    if (!editPlace) return;
+    try {
+      const req = AdminV1PlaceEditRequest.constructFromObject({
+        place_uuid: editPlace.uuid,
+        address: editAddress,
+        table_count: editTableCount,
+        opening_time: openingTime,
+        closingTime: closingTime
+      });
+      await new Promise((res, rej) =>
+        placeApi.adminV1PlaceEditPost(userUUID, jWTToken, req, (err) =>
+          err ? rej(err) : res()
+        )
+      );
+      setShowEditPlaceModal(false);
+      await loadPlaces();
+    } catch (e) {
+      alert(e.body?.message || e.message || "Ошибка редактирования плейса");
     }
   };
 
@@ -242,7 +294,9 @@ export default function PlacesAndDishes() {
         >
           {tab === "places" ? "Создать плейс" : "Создать блюдо"}
         </button>
-        <button className="pd-profile-button">𓀡</button>
+        <button className="pd-profile-button">
+          <span className="material-icons">person</span>
+        </button>
       </div>
   
       <div className="pd-tabs">
@@ -274,9 +328,30 @@ export default function PlacesAndDishes() {
                 }));
                 window.location.href =`/restaurants/${restaurant_uuid}/places-dishes/${p.uuid}`
                 }}>
-              <strong>{p.address}</strong>
-              <br />
-              столов: {p.table_count}, {p.opening_time}–{p.closing_time}
+              <span className="pd-place-address">{p.address}</span>
+              столов: {p.table_count}, {p.opening_time}–{p.closing_time}            
+              <div className="pd-place-actions">
+                <button
+                  className="pd-button pd-edit-button"
+                  onClick={e => {
+                    e.stopPropagation();
+                    openEditPlaceModal(p)
+                  }}
+                  title="Редактировать"
+                >
+                  <span className="material-icons">edit</span>
+                </button>
+                <button
+                  className="pd-button pd-button-cancel"
+                  onClick={e => {
+                    e.stopPropagation();
+                    handleDeletePlace(p)
+                  }}
+                  title="Удалить"
+                >
+                  <span className="material-icons">delete</span>
+                </button>
+              </div>
             </div>
           ))}
   
@@ -414,6 +489,29 @@ export default function PlacesAndDishes() {
             <div className="pd-modal-buttons">
               <button onClick={handleCreateDish}>Создать блюдо</button>
               <button onClick={() => setShowModal(false)}>Отмена</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showEditPlaceModal && (
+        <div className="pd-modal-backdrop">
+          <div className="pd-modal">
+            <h3>Редактировать плейс</h3>
+            <input
+              value={editAddress}
+              onChange={e => setEditAddress(e.target.value)}
+              placeholder="Адрес"
+            />
+            <input
+              value={editTableCount}
+              onChange={e => setEditTableCount(e.target.value)}
+              placeholder="Количество столов"
+              type="number"
+              min={1}
+            />
+            <div className="pd-modal-buttons">
+              <button onClick={handleSaveEditPlace}>Сохранить</button>
+              <button onClick={() => setShowEditPlaceModal(false)}>Отмена</button>
             </div>
           </div>
         </div>

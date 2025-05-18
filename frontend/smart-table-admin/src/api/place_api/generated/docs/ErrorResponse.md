@@ -32,6 +32,12 @@ Name | Type | Description | Notes
 
 * `dish_not_found` (value: `"dish_not_found"`)
 
+* `menu_dish_not_found` (value: `"menu_dish_not_found"`)
+
+* `order_not_found` (value: `"order_not_found"`)
+
+* `item_not_found` (value: `"item_not_found"`)
+
 
 
 

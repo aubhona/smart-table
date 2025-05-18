@@ -1,0 +1,123 @@
+.user-order-container {
+  font-family: 'Courier New', Consolas, monospace;
+  background: #9c6e4b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.user-order-header {
+  display: flex;
+  justify-content: space-between;
+  width: 103%;
+  background-color: #552f04;
+  padding: 10px;
+  justify-content: center;
+  border-radius: 8px;
+  color: white;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.user-order-header .back-button {
+  font-family: 'Courier New', Consolas, monospace;
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 1.2em;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.user-order-content {
+  background-color: #ede2d9;
+  padding: 15px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 20px;
+}
+
+.user-order-content h2 {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+.user-order-content .user-order-list {
+  background-color: #faf6ee;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.user-order-content .user-order-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.user-order-content .user-order-item-name {
+  font-weight: bold;
+}
+
+.user-order-content .user-order-item-total {
+  font-size: 1.1em;
+  color: #5e7643;
+}
+
+.user-order-content .user-order-item-status {
+  display: flex;
+  align-items: center;
+}
+
+.status-circle {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-left: 10px;
+}
+
+.status-circle.white {
+  background-color: white;
+}
+
+.status-circle.blue {
+  background-color: blue;
+}
+
+.status-circle.yellow {
+  background-color: yellow;
+}
+
+.status-circle.green {
+  background-color: green;
+}
+
+.status-circle.cyan {
+  background-color: cyan;
+}
+
+.user-order-footer {
+  font-weight: bold;
+  position: fixed;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1180;
+  background-color: #ede2d9;
+  color: black;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.2); 
+  margin-bottom: 20px;
+}
+
+.user-order-footer .user-order-total-price {
+  margin-left: 5%;
+  font-weight: bold;
+}
+

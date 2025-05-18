@@ -1,4 +1,4 @@
-# SmartTableMobileApi.DefaultApi
+# SmartTableAdminApi.DefaultApi
 
 All URIs are relative to *http://localhost*
 
@@ -20,10 +20,10 @@ Method | HTTP request | Description
 ### Example
 
 ```javascript
-import SmartTableMobileApi from 'smart_table_mobile_api';
+import SmartTableAdminApi from 'smart_table_admin_api';
 
-let apiInstance = new SmartTableMobileApi.DefaultApi();
-let adminV1UserSignInRequest = new SmartTableMobileApi.AdminV1UserSignInRequest(); // AdminV1UserSignInRequest | 
+let apiInstance = new SmartTableAdminApi.DefaultApi();
+let adminV1UserSignInRequest = new SmartTableAdminApi.AdminV1UserSignInRequest(); // AdminV1UserSignInRequest | 
 apiInstance.adminV1UserSignInPost(adminV1UserSignInRequest, (error, data, response) => {
   if (error) {
     console.error(error);
@@ -65,10 +65,10 @@ No authorization required
 ### Example
 
 ```javascript
-import SmartTableMobileApi from 'smart_table_mobile_api';
+import SmartTableAdminApi from 'smart_table_admin_api';
 
-let apiInstance = new SmartTableMobileApi.DefaultApi();
-let adminV1UserSignUpRequest = new SmartTableMobileApi.AdminV1UserSignUpRequest(); // AdminV1UserSignUpRequest | 
+let apiInstance = new SmartTableAdminApi.DefaultApi();
+let adminV1UserSignUpRequest = new SmartTableAdminApi.AdminV1UserSignUpRequest(); // AdminV1UserSignUpRequest | 
 apiInstance.adminV1UserSignUpPost(adminV1UserSignUpRequest, (error, data, response) => {
   if (error) {
     console.error(error);

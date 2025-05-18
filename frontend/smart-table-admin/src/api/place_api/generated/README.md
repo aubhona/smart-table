@@ -124,11 +124,21 @@ All URIs are relative to *http://localhost*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *SmartTableAdminApi.DefaultApi* | [**adminV1PlaceCreatePost**](docs/DefaultApi.md#adminV1PlaceCreatePost) | **POST** /admin/v1/place/create | Создание плейса
+*SmartTableAdminApi.DefaultApi* | [**adminV1PlaceDeletePost**](docs/DefaultApi.md#adminV1PlaceDeletePost) | **POST** /admin/v1/place/delete | Удаление плейса
+*SmartTableAdminApi.DefaultApi* | [**adminV1PlaceEditPost**](docs/DefaultApi.md#adminV1PlaceEditPost) | **POST** /admin/v1/place/edit | Редактирование плейса
 *SmartTableAdminApi.DefaultApi* | [**adminV1PlaceEmployeeAddPost**](docs/DefaultApi.md#adminV1PlaceEmployeeAddPost) | **POST** /admin/v1/place/employee/add | Добавление сотрудника в плейс
+*SmartTableAdminApi.DefaultApi* | [**adminV1PlaceEmployeeDeletePost**](docs/DefaultApi.md#adminV1PlaceEmployeeDeletePost) | **POST** /admin/v1/place/employee/delete | Удаление сотрудника из плейса
+*SmartTableAdminApi.DefaultApi* | [**adminV1PlaceEmployeeEditPost**](docs/DefaultApi.md#adminV1PlaceEmployeeEditPost) | **POST** /admin/v1/place/employee/edit | Редактирование роли сотрудника плейса
 *SmartTableAdminApi.DefaultApi* | [**adminV1PlaceEmployeeListPost**](docs/DefaultApi.md#adminV1PlaceEmployeeListPost) | **POST** /admin/v1/place/employee/list | Получение списка сотрудников в плейса
 *SmartTableAdminApi.DefaultApi* | [**adminV1PlaceListPost**](docs/DefaultApi.md#adminV1PlaceListPost) | **POST** /admin/v1/place/list | Получение списка плейсов пользователя
 *SmartTableAdminApi.DefaultApi* | [**adminV1PlaceMenuDishCreatePost**](docs/DefaultApi.md#adminV1PlaceMenuDishCreatePost) | **POST** /admin/v1/place/menu/dish/create | Создание блюда в меню плейса
+*SmartTableAdminApi.DefaultApi* | [**adminV1PlaceMenuDishDeletePost**](docs/DefaultApi.md#adminV1PlaceMenuDishDeletePost) | **POST** /admin/v1/place/menu/dish/delete | Удаление блюда в меню плейса
+*SmartTableAdminApi.DefaultApi* | [**adminV1PlaceMenuDishEditPost**](docs/DefaultApi.md#adminV1PlaceMenuDishEditPost) | **POST** /admin/v1/place/menu/dish/edit | Редактирование блюда в меню плейса
 *SmartTableAdminApi.DefaultApi* | [**adminV1PlaceMenuDishListPost**](docs/DefaultApi.md#adminV1PlaceMenuDishListPost) | **POST** /admin/v1/place/menu/dish/list | Получение списка позиций в меню плейса
+*SmartTableAdminApi.DefaultApi* | [**adminV1PlaceOrderEditPost**](docs/DefaultApi.md#adminV1PlaceOrderEditPost) | **POST** /admin/v1/place/order/edit | Редкатирование заказа
+*SmartTableAdminApi.DefaultApi* | [**adminV1PlaceOrderInfoPost**](docs/DefaultApi.md#adminV1PlaceOrderInfoPost) | **POST** /admin/v1/place/order/info | Получение подробной информации о заказе
+*SmartTableAdminApi.DefaultApi* | [**adminV1PlaceOrderListClosedPost**](docs/DefaultApi.md#adminV1PlaceOrderListClosedPost) | **POST** /admin/v1/place/order/list/closed | Получение списка завершенных заказов плейса двухнедельной давности
+*SmartTableAdminApi.DefaultApi* | [**adminV1PlaceOrderListOpenedPost**](docs/DefaultApi.md#adminV1PlaceOrderListOpenedPost) | **POST** /admin/v1/place/order/list/opened | Получение списка открытых заказов плейса
 *SmartTableAdminApi.DefaultApi* | [**adminV1PlaceTableDeeplinksListPost**](docs/DefaultApi.md#adminV1PlaceTableDeeplinksListPost) | **POST** /admin/v1/place/table_deeplinks/list | Получение списка ссылок на столы для генерации QR
 
 
@@ -136,19 +146,40 @@ Class | Method | HTTP request | Description
 
  - [SmartTableAdminApi.AdminV1PlaceCreateRequest](docs/AdminV1PlaceCreateRequest.md)
  - [SmartTableAdminApi.AdminV1PlaceCreateResponse](docs/AdminV1PlaceCreateResponse.md)
+ - [SmartTableAdminApi.AdminV1PlaceDeleteRequest](docs/AdminV1PlaceDeleteRequest.md)
+ - [SmartTableAdminApi.AdminV1PlaceEditRequest](docs/AdminV1PlaceEditRequest.md)
  - [SmartTableAdminApi.AdminV1PlaceEmployeeAddRequest](docs/AdminV1PlaceEmployeeAddRequest.md)
+ - [SmartTableAdminApi.AdminV1PlaceEmployeeDeleteRequest](docs/AdminV1PlaceEmployeeDeleteRequest.md)
+ - [SmartTableAdminApi.AdminV1PlaceEmployeeEditRequest](docs/AdminV1PlaceEmployeeEditRequest.md)
  - [SmartTableAdminApi.AdminV1PlaceEmployeeListRequest](docs/AdminV1PlaceEmployeeListRequest.md)
  - [SmartTableAdminApi.AdminV1PlaceEmployeeListResponse](docs/AdminV1PlaceEmployeeListResponse.md)
  - [SmartTableAdminApi.AdminV1PlaceListRequest](docs/AdminV1PlaceListRequest.md)
  - [SmartTableAdminApi.AdminV1PlaceListResponse](docs/AdminV1PlaceListResponse.md)
  - [SmartTableAdminApi.AdminV1PlaceMenuDishCreateRequest](docs/AdminV1PlaceMenuDishCreateRequest.md)
  - [SmartTableAdminApi.AdminV1PlaceMenuDishCreateResponse](docs/AdminV1PlaceMenuDishCreateResponse.md)
+ - [SmartTableAdminApi.AdminV1PlaceMenuDishDeleteRequest](docs/AdminV1PlaceMenuDishDeleteRequest.md)
+ - [SmartTableAdminApi.AdminV1PlaceMenuDishEditRequest](docs/AdminV1PlaceMenuDishEditRequest.md)
  - [SmartTableAdminApi.AdminV1PlaceMenuDishListRequest](docs/AdminV1PlaceMenuDishListRequest.md)
+ - [SmartTableAdminApi.AdminV1PlaceOrderEditRequest](docs/AdminV1PlaceOrderEditRequest.md)
+ - [SmartTableAdminApi.AdminV1PlaceOrderInfoRequest](docs/AdminV1PlaceOrderInfoRequest.md)
+ - [SmartTableAdminApi.AdminV1PlaceOrderInfoResponse](docs/AdminV1PlaceOrderInfoResponse.md)
+ - [SmartTableAdminApi.AdminV1PlaceOrderListClosedRequest](docs/AdminV1PlaceOrderListClosedRequest.md)
+ - [SmartTableAdminApi.AdminV1PlaceOrderListClosedResponse](docs/AdminV1PlaceOrderListClosedResponse.md)
+ - [SmartTableAdminApi.AdminV1PlaceOrderListOpenedRequest](docs/AdminV1PlaceOrderListOpenedRequest.md)
+ - [SmartTableAdminApi.AdminV1PlaceOrderListOpenedResponse](docs/AdminV1PlaceOrderListOpenedResponse.md)
  - [SmartTableAdminApi.AdminV1PlaceTableDeepLinksListRequest](docs/AdminV1PlaceTableDeepLinksListRequest.md)
  - [SmartTableAdminApi.AdminV1PlaceTableDeepLinksListResponse](docs/AdminV1PlaceTableDeepLinksListResponse.md)
+ - [SmartTableAdminApi.CustomerInfo](docs/CustomerInfo.md)
  - [SmartTableAdminApi.EmployeeInfo](docs/EmployeeInfo.md)
  - [SmartTableAdminApi.ErrorResponse](docs/ErrorResponse.md)
+ - [SmartTableAdminApi.ItemInfo](docs/ItemInfo.md)
+ - [SmartTableAdminApi.ItemResolution](docs/ItemResolution.md)
+ - [SmartTableAdminApi.ItemStatus](docs/ItemStatus.md)
  - [SmartTableAdminApi.MenuDishInfo](docs/MenuDishInfo.md)
+ - [SmartTableAdminApi.OrderInfo](docs/OrderInfo.md)
+ - [SmartTableAdminApi.OrderMainInfo](docs/OrderMainInfo.md)
+ - [SmartTableAdminApi.OrderResolution](docs/OrderResolution.md)
+ - [SmartTableAdminApi.OrderStatus](docs/OrderStatus.md)
  - [SmartTableAdminApi.PlaceInfo](docs/PlaceInfo.md)
  - [SmartTableAdminApi.Role](docs/Role.md)
 

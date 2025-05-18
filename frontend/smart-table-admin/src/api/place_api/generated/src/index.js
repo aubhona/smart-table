@@ -15,19 +15,40 @@
 import ApiClient from './ApiClient';
 import AdminV1PlaceCreateRequest from './model/AdminV1PlaceCreateRequest';
 import AdminV1PlaceCreateResponse from './model/AdminV1PlaceCreateResponse';
+import AdminV1PlaceDeleteRequest from './model/AdminV1PlaceDeleteRequest';
+import AdminV1PlaceEditRequest from './model/AdminV1PlaceEditRequest';
 import AdminV1PlaceEmployeeAddRequest from './model/AdminV1PlaceEmployeeAddRequest';
+import AdminV1PlaceEmployeeDeleteRequest from './model/AdminV1PlaceEmployeeDeleteRequest';
+import AdminV1PlaceEmployeeEditRequest from './model/AdminV1PlaceEmployeeEditRequest';
 import AdminV1PlaceEmployeeListRequest from './model/AdminV1PlaceEmployeeListRequest';
 import AdminV1PlaceEmployeeListResponse from './model/AdminV1PlaceEmployeeListResponse';
 import AdminV1PlaceListRequest from './model/AdminV1PlaceListRequest';
 import AdminV1PlaceListResponse from './model/AdminV1PlaceListResponse';
 import AdminV1PlaceMenuDishCreateRequest from './model/AdminV1PlaceMenuDishCreateRequest';
 import AdminV1PlaceMenuDishCreateResponse from './model/AdminV1PlaceMenuDishCreateResponse';
+import AdminV1PlaceMenuDishDeleteRequest from './model/AdminV1PlaceMenuDishDeleteRequest';
+import AdminV1PlaceMenuDishEditRequest from './model/AdminV1PlaceMenuDishEditRequest';
 import AdminV1PlaceMenuDishListRequest from './model/AdminV1PlaceMenuDishListRequest';
+import AdminV1PlaceOrderEditRequest from './model/AdminV1PlaceOrderEditRequest';
+import AdminV1PlaceOrderInfoRequest from './model/AdminV1PlaceOrderInfoRequest';
+import AdminV1PlaceOrderInfoResponse from './model/AdminV1PlaceOrderInfoResponse';
+import AdminV1PlaceOrderListClosedRequest from './model/AdminV1PlaceOrderListClosedRequest';
+import AdminV1PlaceOrderListClosedResponse from './model/AdminV1PlaceOrderListClosedResponse';
+import AdminV1PlaceOrderListOpenedRequest from './model/AdminV1PlaceOrderListOpenedRequest';
+import AdminV1PlaceOrderListOpenedResponse from './model/AdminV1PlaceOrderListOpenedResponse';
 import AdminV1PlaceTableDeepLinksListRequest from './model/AdminV1PlaceTableDeepLinksListRequest';
 import AdminV1PlaceTableDeepLinksListResponse from './model/AdminV1PlaceTableDeepLinksListResponse';
+import CustomerInfo from './model/CustomerInfo';
 import EmployeeInfo from './model/EmployeeInfo';
 import ErrorResponse from './model/ErrorResponse';
+import ItemInfo from './model/ItemInfo';
+import ItemResolution from './model/ItemResolution';
+import ItemStatus from './model/ItemStatus';
 import MenuDishInfo from './model/MenuDishInfo';
+import OrderInfo from './model/OrderInfo';
+import OrderMainInfo from './model/OrderMainInfo';
+import OrderResolution from './model/OrderResolution';
+import OrderStatus from './model/OrderStatus';
 import PlaceInfo from './model/PlaceInfo';
 import Role from './model/Role';
 import DefaultApi from './api/DefaultApi';
@@ -84,10 +105,34 @@ export {
     AdminV1PlaceCreateResponse,
 
     /**
+     * The AdminV1PlaceDeleteRequest model constructor.
+     * @property {module:model/AdminV1PlaceDeleteRequest}
+     */
+    AdminV1PlaceDeleteRequest,
+
+    /**
+     * The AdminV1PlaceEditRequest model constructor.
+     * @property {module:model/AdminV1PlaceEditRequest}
+     */
+    AdminV1PlaceEditRequest,
+
+    /**
      * The AdminV1PlaceEmployeeAddRequest model constructor.
      * @property {module:model/AdminV1PlaceEmployeeAddRequest}
      */
     AdminV1PlaceEmployeeAddRequest,
+
+    /**
+     * The AdminV1PlaceEmployeeDeleteRequest model constructor.
+     * @property {module:model/AdminV1PlaceEmployeeDeleteRequest}
+     */
+    AdminV1PlaceEmployeeDeleteRequest,
+
+    /**
+     * The AdminV1PlaceEmployeeEditRequest model constructor.
+     * @property {module:model/AdminV1PlaceEmployeeEditRequest}
+     */
+    AdminV1PlaceEmployeeEditRequest,
 
     /**
      * The AdminV1PlaceEmployeeListRequest model constructor.
@@ -126,10 +171,64 @@ export {
     AdminV1PlaceMenuDishCreateResponse,
 
     /**
+     * The AdminV1PlaceMenuDishDeleteRequest model constructor.
+     * @property {module:model/AdminV1PlaceMenuDishDeleteRequest}
+     */
+    AdminV1PlaceMenuDishDeleteRequest,
+
+    /**
+     * The AdminV1PlaceMenuDishEditRequest model constructor.
+     * @property {module:model/AdminV1PlaceMenuDishEditRequest}
+     */
+    AdminV1PlaceMenuDishEditRequest,
+
+    /**
      * The AdminV1PlaceMenuDishListRequest model constructor.
      * @property {module:model/AdminV1PlaceMenuDishListRequest}
      */
     AdminV1PlaceMenuDishListRequest,
+
+    /**
+     * The AdminV1PlaceOrderEditRequest model constructor.
+     * @property {module:model/AdminV1PlaceOrderEditRequest}
+     */
+    AdminV1PlaceOrderEditRequest,
+
+    /**
+     * The AdminV1PlaceOrderInfoRequest model constructor.
+     * @property {module:model/AdminV1PlaceOrderInfoRequest}
+     */
+    AdminV1PlaceOrderInfoRequest,
+
+    /**
+     * The AdminV1PlaceOrderInfoResponse model constructor.
+     * @property {module:model/AdminV1PlaceOrderInfoResponse}
+     */
+    AdminV1PlaceOrderInfoResponse,
+
+    /**
+     * The AdminV1PlaceOrderListClosedRequest model constructor.
+     * @property {module:model/AdminV1PlaceOrderListClosedRequest}
+     */
+    AdminV1PlaceOrderListClosedRequest,
+
+    /**
+     * The AdminV1PlaceOrderListClosedResponse model constructor.
+     * @property {module:model/AdminV1PlaceOrderListClosedResponse}
+     */
+    AdminV1PlaceOrderListClosedResponse,
+
+    /**
+     * The AdminV1PlaceOrderListOpenedRequest model constructor.
+     * @property {module:model/AdminV1PlaceOrderListOpenedRequest}
+     */
+    AdminV1PlaceOrderListOpenedRequest,
+
+    /**
+     * The AdminV1PlaceOrderListOpenedResponse model constructor.
+     * @property {module:model/AdminV1PlaceOrderListOpenedResponse}
+     */
+    AdminV1PlaceOrderListOpenedResponse,
 
     /**
      * The AdminV1PlaceTableDeepLinksListRequest model constructor.
@@ -144,6 +243,12 @@ export {
     AdminV1PlaceTableDeepLinksListResponse,
 
     /**
+     * The CustomerInfo model constructor.
+     * @property {module:model/CustomerInfo}
+     */
+    CustomerInfo,
+
+    /**
      * The EmployeeInfo model constructor.
      * @property {module:model/EmployeeInfo}
      */
@@ -156,10 +261,52 @@ export {
     ErrorResponse,
 
     /**
+     * The ItemInfo model constructor.
+     * @property {module:model/ItemInfo}
+     */
+    ItemInfo,
+
+    /**
+     * The ItemResolution model constructor.
+     * @property {module:model/ItemResolution}
+     */
+    ItemResolution,
+
+    /**
+     * The ItemStatus model constructor.
+     * @property {module:model/ItemStatus}
+     */
+    ItemStatus,
+
+    /**
      * The MenuDishInfo model constructor.
      * @property {module:model/MenuDishInfo}
      */
     MenuDishInfo,
+
+    /**
+     * The OrderInfo model constructor.
+     * @property {module:model/OrderInfo}
+     */
+    OrderInfo,
+
+    /**
+     * The OrderMainInfo model constructor.
+     * @property {module:model/OrderMainInfo}
+     */
+    OrderMainInfo,
+
+    /**
+     * The OrderResolution model constructor.
+     * @property {module:model/OrderResolution}
+     */
+    OrderResolution,
+
+    /**
+     * The OrderStatus model constructor.
+     * @property {module:model/OrderStatus}
+     */
+    OrderStatus,
 
     /**
      * The PlaceInfo model constructor.

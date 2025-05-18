@@ -1,4 +1,4 @@
-# SmartTableMobileApi.AdminV1UserSignUpResponse
+# SmartTableAdminApi.AdminV1UserSignUpResponse
 
 ## Properties
 
