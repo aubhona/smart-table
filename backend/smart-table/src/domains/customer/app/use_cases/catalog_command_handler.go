@@ -19,6 +19,7 @@ import (
 type CatalogItemDTO struct {
 	ID         uuid.UUID
 	Calories   int
+	Weight     int
 	Count      int
 	Name       string
 	Price      string
@@ -112,6 +113,7 @@ func (handler *CatalogCommandHandler) Handle(command *CatalogCommand) (CatalogCo
 		result.Items = append(result.Items, CatalogItemDTO{
 			ID:         menuDish.ID,
 			Calories:   menuDish.Calories,
+			Weight:     menuDish.Weight,
 			Count:      len(items),
 			Name:       menuDish.Name,
 			Price:      menuDish.Price,
