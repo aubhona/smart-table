@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"fmt"
 	"time"
 
 	domainErrors "github.com/smart-table/src/domains/customer/domain/errors"
@@ -146,18 +145,12 @@ func (o *Order) DraftItem(
 	return itemRef
 }
 
-func (o *Order) CommitItem(itemUUID uuid.UUID) (utils.Optional[utils.SharedRef[Item]], error) {
-	item, found := lo.Find(o.items, func(item utils.SharedRef[Item]) bool {
-		return item.Get().uuid == itemUUID
-	})
-
-	if !found {
-		return utils.EmptyOptional[utils.SharedRef[Item]](), fmt.Errorf("item not found, item_uuid=%v", itemUUID)
+func (o *Order) CommitItems(customerUUID uuid.UUID) {
+	for _, item := range o.items {
+		if item.Get().GetIsDraft() && item.Get().GetCustomer().Get().GetUUID() == customerUUID {
+			item.Get().Commit()
+		}
 	}
-
-	item.Get().Commit()
-
-	return utils.NewOptional(item), nil
 }
 
 func (o *Order) GetCustomerByUUID(uuid uuid.UUID) utils.Optional[utils.SharedRef[Customer]] {
