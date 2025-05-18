@@ -27,6 +27,7 @@ func TestCustomerOrderItemsCommitHappyPath(t *testing.T) {
 		GetCtx(),
 		&viewsCodegenCustomer.PostCustomerV1OrderItemsCommitParams{
 			CustomerUUID: hostCustomerUUID,
+			JWTToken:     "tipa_token_zhiest",
 			OrderUUID:    orderUUID,
 		},
 	)
