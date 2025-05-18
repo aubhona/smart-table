@@ -12,18 +12,18 @@ function TableId({ onSubmit, error }) {
     if (tableId.length === 6) {
       onSubmit(tableId);
     } else {
-      alert('Неверный номер стола');
+      alert('Неверный ID стола');
     }
   };
 
   return (
     <div className="table-id-container"> 
-      <h2>Введите номер стола</h2>
+      <h2>Введите ID стола</h2>
       <input
         type="text"
         value={tableId}
         onChange={handleChange}
-        placeholder="6 цифр"
+        placeholder="ID стола"
       />
       <button onClick={handleSubmit}>Подтвердить</button>
       {error && <p className="table-id-error">{error}</p>}
@@ -32,3 +32,4 @@ function TableId({ onSubmit, error }) {
 }
 
 export default TableId;
+

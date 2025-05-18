@@ -81,17 +81,22 @@
 }
 
 .rest-item {
+  display: flex;
+  align-items: center;
   border: 1px solid #7d7575;
   border-radius: 999px;
   padding: 0.75rem 1rem;
-  background: transparent;
+  background-color: #7d7575;
   color: #fff;
   font-size: 1rem;
   cursor: pointer;
-  text-align: center;
-  transition: border-color 0.2s;
-  background: 0.2s;
-  background-color: #7d7575;
+  transition:  0.2s;
+  gap: 5rem;
+}
+
+.rest-item > :first-child {
+  margin-left: 3rem;
+  font-weight: bold;
 }
 
 .rest-item:hover {
@@ -159,4 +164,48 @@
   background: #fff;
   color: #000;
   border-color: #ccc;
+}
+
+.rest-item-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 0.3rem;
+}
+
+.rest-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.rest-button {
+  padding: 8px;
+  background: #2d2a2a;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  width: 160px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rest-button-delete {
+  background: #ffffff;
+  color: #010101;
+}
+
+.rest-button:hover {
+  background: #1b1a1a;
+}
+
+.rest-button-delete:hover {
+  background: #d2d2d2;
+}
+
+.rest-edit-btn:hover, .rest-delete-btn:hover {
+  background: #201e1e;
 }

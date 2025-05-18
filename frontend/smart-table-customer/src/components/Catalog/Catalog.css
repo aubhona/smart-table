@@ -3,34 +3,33 @@
   color: #ede2d9;
   text-align: center;
   flex-direction: column;
-  height: 65vh;
+  height: 68vh;
 }
 
 .top-buttons {
   position: fixed;
   display: grid;
   grid-template-columns: repeat(2, 1fr); 
+  padding: 3%;
+  top: 0%;
   background-color: #9c6e4b;
   gap: 5%;
   row-gap: 7%; 
-  top: 0%;
-  padding: 3%;
-  z-index: 6%;
+  z-index: 2;
   width: 99%;
   left: 50%;
   transform: translateX(-50%);
-  height: 7%;
-  max-height: auto;
+  height: 5%;
 }
   
 .small-button {
   font-family: 'Courier New', Consolas, monospace;
-  padding: 0% 0%;
   background-color: #552f04;
+  padding: 0% 0%;
   border: none;
   color: white;
   border-radius: 4% / 20%;
-  font-size: 100%;
+  font-size: 120%;
   cursor: pointer;
   transition: 0.2s;
   }
@@ -40,38 +39,43 @@
 }
 
 .category-tabs {
+  display: flex;
   position: fixed;
-  top: 9.5%;
-  left: 0%;
+  top: 7.5%;
+  padding: 2% 0.01%;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
   background: #9c6e4b;
-  display: flex;
   justify-content: space-around;
-  padding: 2% 0.01%;
-  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.2);
+  z-index: 2;
 }
 
 .category-scroll {
   display: flex;
-  gap: 2%;
-  padding: 0 5%;
-  padding-left: 0%;
+  padding: 0% 0%;
   overflow-x: auto;
   place-items: center;
+  background-color: #9c6e4b;
+  justify-content: space-around;
+  gap: 4%;
+  padding-left: 3%;
+  padding-right: 3%;
+  width: 100%;
 }
 
 .category-link {
+  font-family: 'Courier New', Consolas, monospace;
   background-color: #5e7643; 
   color: white; 
   border: none;
-  padding: 2% 2%;
+  padding: 2% 3%;
   border-radius: 5% / 12%;
-  font-size: 100%;
-  font-family: 'Courier New', Consolas, monospace;
+  font-size: 115%;
   cursor: pointer;
   text-align: center;
-  transition: background-color 0.3s ease;
-  white-space: nowrap; 
+  transition: 0.3s ease;
 }
 
 .category-link:hover {
@@ -82,22 +86,21 @@
   background: #3a492a;
 }
 
-.category-title {
-  font-weight: bold;
-  margin-top: 0%; 
-  margin-bottom: 3%;
-  padding-top: 0%;
-  padding-bottom: 1%;
-  color: #ede2d9;
-  text-align: left;
-  border-bottom: 5px solid #eccea7;
-  border-radius: 4% / 25%;
-  width: 100%;
-}
-
 .category-section {
   width: 100%; 
+  max-width: 1280px;
   margin-bottom: 6%;
+}
+
+.category-title {
+  font-weight: bold;
+  font-size: 25px;
+  margin: 20px 0;
+  padding-bottom: 8px;
+  color: #ede2d9;
+  text-align: left;
+  border-bottom: 2px solid #ede2d9;
+  width: 100%;
 }
 
 .scroll-padding {
@@ -127,14 +130,23 @@
   justify-content: space-between;
   height: 100%;
   min-height: 250px;
+  width: 180px;
 }
-  
+
 .dish-img {
   background-color: gray;
   height: 150px;
   margin-bottom: 5px;
   border-radius: 8% / 7%;
   text-align: center;
+}
+
+.dish-img img {
+  width: 180px; 
+  height: 150px; 
+  object-fit: cover;
+  margin-bottom: 5px;
+  border-radius: 8% / 7%;
 }
 
 .dish-info p {
@@ -153,7 +165,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 1180;
+  max-width: 1280;
   background-color: #ede2d9;
   color: black;
   padding: 15px;

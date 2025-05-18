@@ -3,11 +3,14 @@ import { Navigate } from "react-router-dom";
 import DefaultApi from "../api/user_api/generated/src/api/DefaultApi";
 import AdminV1UserSignInRequest from "../api/user_api/generated/src/model/AdminV1UserSignInRequest";
 import "../styles/AuthScreens.css";
+import { SERVER_URL } from "../config";
+import { ToastContainer } from "../components/Toast/Toast";
+import useToast from "../components/hooks/useToast";
 
 export default function LoginForm() {
+  const { toasts, addToast, removeToast } = useToast();
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [redirect, setRedirect] = useState(false);
 
   const handleLogin = async (e) => {
@@ -15,7 +18,7 @@ export default function LoginForm() {
 
     const payload = AdminV1UserSignInRequest.constructFromObject({ login, password });
     const api = new DefaultApi();
-    api.apiClient.basePath = "https://87d6-2a01-4f9-c010-ecd2-00-1.ngrok-free.app";
+    api.apiClient.basePath = SERVER_URL;
 
     try {
       const response = await new Promise((resolve, reject) => {
@@ -36,15 +39,16 @@ export default function LoginForm() {
       localStorage.setItem("user_uuid", user_uuid);
       localStorage.setItem("jwt_token", jwt_token);
 
-      setRedirect(true); 
+      addToast("Успешная авторизация!", "success");
+      setTimeout(() => setRedirect(true), 1000); // Redirect after showing success message
     } catch (err) {
       const code = err.response?.body?.code;
       if (code === "not_found") {
-        setError("Пользователь не найден");
+        addToast("Пользователь не найден", "error");
       } else if (code === "incorrect_password") {
-        setError("Неверный пароль");
+        addToast("Неверный пароль", "error");
       } else {
-        setError("Ошибка авторизации");
+        addToast("Ошибка авторизации", "error");
       }
       console.error("Ошибка авторизации:", err);
     }
@@ -56,6 +60,7 @@ export default function LoginForm() {
 
   return (
     <div className="auth-container">
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
       <h2>Вход в систему</h2>
       <form className="auth-form" onSubmit={handleLogin}>
         <input
@@ -72,7 +77,6 @@ export default function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        {error && <p className="auth-error">{error}</p>}
         <button type="submit" className="auth-button">
           Войти
         </button>

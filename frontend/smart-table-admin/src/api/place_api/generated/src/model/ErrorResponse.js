@@ -171,7 +171,25 @@ ErrorResponse['CodeEnum'] = {
      * value: "dish_not_found"
      * @const
      */
-    "dish_not_found": "dish_not_found"
+    "dish_not_found": "dish_not_found",
+
+    /**
+     * value: "menu_dish_not_found"
+     * @const
+     */
+    "menu_dish_not_found": "menu_dish_not_found",
+
+    /**
+     * value: "order_not_found"
+     * @const
+     */
+    "order_not_found": "order_not_found",
+
+    /**
+     * value: "item_not_found"
+     * @const
+     */
+    "item_not_found": "item_not_found"
 };
 
 

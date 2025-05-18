@@ -1,5 +1,5 @@
 /**
- * SmartTable Mobile API
+ * SmartTable Admin API
  * API для управления пользователем.
  *
  * The version of the OpenAPI document: 1.0.0
@@ -24,8 +24,8 @@ class AdminV1UserSignUpRequest {
      * @alias module:model/AdminV1UserSignUpRequest
      * @param login {String} Логин пользователя
      * @param tgLogin {String} Логин пользователя
-     * @param firstName {String} Имя пользователя на латинице
-     * @param lastName {String} Фамилия пользователя на латинице
+     * @param firstName {String} 
+     * @param lastName {String} 
      * @param password {String} Пароль пользователя
      */
     constructor(login, tgLogin, firstName, lastName, password) { 
@@ -130,13 +130,11 @@ AdminV1UserSignUpRequest.prototype['login'] = undefined;
 AdminV1UserSignUpRequest.prototype['tg_login'] = undefined;
 
 /**
- * Имя пользователя на латинице
  * @member {String} first_name
  */
 AdminV1UserSignUpRequest.prototype['first_name'] = undefined;
 
 /**
- * Фамилия пользователя на латинице
  * @member {String} last_name
  */
 AdminV1UserSignUpRequest.prototype['last_name'] = undefined;

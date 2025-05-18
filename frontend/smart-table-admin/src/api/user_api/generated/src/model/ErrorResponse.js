@@ -1,5 +1,5 @@
 /**
- * SmartTable Mobile API
+ * SmartTable Admin API
  * API для управления пользователем.
  *
  * The version of the OpenAPI document: 1.0.0
@@ -114,10 +114,10 @@ ErrorResponse.prototype['message'] = undefined;
 ErrorResponse['CodeEnum'] = {
 
     /**
-     * value: "not_found"
+     * value: "user_not_found"
      * @const
      */
-    "not_found": "not_found",
+    "user_not_found": "user_not_found",
 
     /**
      * value: "incorrect_password"

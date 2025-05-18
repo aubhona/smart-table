@@ -1,5 +1,5 @@
 /**
- * SmartTable Mobile API
+ * SmartTable Admin API
  * API для управления пользователем.
  *
  * The version of the OpenAPI document: 1.0.0

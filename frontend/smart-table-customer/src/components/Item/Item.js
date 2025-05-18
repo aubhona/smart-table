@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import "./Item.css";
 
 const dishes = [
-    { id: 1, category: "novinki", name: "Бурурброт", price: 10, calories: 250 },
+    { id: 1, category: "novinki", name: "Бурурброт", price: 1000, calories: 250, img: "https://i.pinimg.com/736x/98/d0/72/98d072b6a21f5c32509185c537182ec5.jpg" },
     { id: 2, category: "novinki", name: "Плов", price: 1200, calories: 300 },
     { id: 3, category: "pervoe", name: "Супчок", price: 15, calories: 400 },
     { id: 4, category: "vtoroe", name: "Котлета с пюре", price: 20, calories: 500 },
@@ -39,14 +39,14 @@ function Item() {
     <div className="item-container">
         <div className="top-bar">
           <button className="top-button" onClick={() => navigate(-1)}>назад</button>
-          <button className="top-button">официант</button>
         </div>
   
-        <div className="dish-image-item">Фотка {dish.name}</div>
+        <div className="dish-image-item">
+          <img src={dish.img} alt={dish.name}/>
+        </div>
   
         <div className="dish-info-item">
-          <p className="description-item">{dish.description || "Описание не указано"}</p>
-          <p className="composition-item">Состав: {dish.composition || "Не указан"}</p>
+          <p className="description-item">{dish.description || "Вкусный бургер"}</p>
           
           <textarea placeholder="Комментарий к заказу" />
         </div>

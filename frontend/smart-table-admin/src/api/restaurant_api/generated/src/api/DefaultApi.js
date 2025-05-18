@@ -15,8 +15,10 @@
 import ApiClient from "../ApiClient";
 import AdminV1RestaurantCreateRequest from '../model/AdminV1RestaurantCreateRequest';
 import AdminV1RestaurantCreateResponse from '../model/AdminV1RestaurantCreateResponse';
+import AdminV1RestaurantDeleteRequest from '../model/AdminV1RestaurantDeleteRequest';
 import AdminV1RestaurantDishCreateResponse from '../model/AdminV1RestaurantDishCreateResponse';
 import AdminV1RestaurantDishListRequest from '../model/AdminV1RestaurantDishListRequest';
+import AdminV1RestaurantEditRequest from '../model/AdminV1RestaurantEditRequest';
 import AdminV1RestaurantListResponse from '../model/AdminV1RestaurantListResponse';
 import ErrorResponse from '../model/ErrorResponse';
 
@@ -88,6 +90,59 @@ export default class DefaultApi {
       let returnType = AdminV1RestaurantCreateResponse;
       return this.apiClient.callApi(
         '/admin/v1/restaurant/create', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1RestaurantDeletePost operation.
+     * @callback module:api/DefaultApi~adminV1RestaurantDeletePostCallback
+     * @param {String} error Error message, if any.
+     * @param data This operation does not return a value.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Удаление ресторана
+     * Удаление ресторана
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1RestaurantDeleteRequest} adminV1RestaurantDeleteRequest 
+     * @param {module:api/DefaultApi~adminV1RestaurantDeletePostCallback} callback The callback function, accepting three arguments: error, data, response
+     */
+    adminV1RestaurantDeletePost(userUUID, jWTToken, adminV1RestaurantDeleteRequest, callback) {
+      let postBody = adminV1RestaurantDeleteRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1RestaurantDeletePost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1RestaurantDeletePost");
+      }
+      // verify the required parameter 'adminV1RestaurantDeleteRequest' is set
+      if (adminV1RestaurantDeleteRequest === undefined || adminV1RestaurantDeleteRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1RestaurantDeleteRequest' when calling adminV1RestaurantDeletePost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/admin/v1/restaurant/delete', 'POST',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, null, callback
       );
@@ -185,6 +240,150 @@ export default class DefaultApi {
     }
 
     /**
+     * Callback function to receive the result of the adminV1RestaurantDishDeletePost operation.
+     * @callback module:api/DefaultApi~adminV1RestaurantDishDeletePostCallback
+     * @param {String} error Error message, if any.
+     * @param data This operation does not return a value.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Удаление блюда ресторана
+     * Удаление блюда ресторана
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {String} dishUuid Уникальный идентификатор блюда
+     * @param {module:api/DefaultApi~adminV1RestaurantDishDeletePostCallback} callback The callback function, accepting three arguments: error, data, response
+     */
+    adminV1RestaurantDishDeletePost(userUUID, jWTToken, dishUuid, callback) {
+      let postBody = null;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1RestaurantDishDeletePost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1RestaurantDishDeletePost");
+      }
+      // verify the required parameter 'dishUuid' is set
+      if (dishUuid === undefined || dishUuid === null) {
+        throw new Error("Missing the required parameter 'dishUuid' when calling adminV1RestaurantDishDeletePost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+        'dish_uuid': dishUuid
+      };
+
+      let authNames = [];
+      let contentTypes = ['multipart/form-data'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/admin/v1/restaurant/dish/delete', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1RestaurantDishEditPost operation.
+     * @callback module:api/DefaultApi~adminV1RestaurantDishEditPostCallback
+     * @param {String} error Error message, if any.
+     * @param data This operation does not return a value.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Редактирование блюда ресторана
+     * Редактирование блюда ресторана
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {String} dishUuid Уникальный идентификатор блюда
+     * @param {String} dishName 
+     * @param {String} description 
+     * @param {String} category 
+     * @param {Number} calories 
+     * @param {Number} weight 
+     * @param {File} dishPictureFile 
+     * @param {module:api/DefaultApi~adminV1RestaurantDishEditPostCallback} callback The callback function, accepting three arguments: error, data, response
+     */
+    adminV1RestaurantDishEditPost(userUUID, jWTToken, dishUuid, dishName, description, category, calories, weight, dishPictureFile, callback) {
+      let postBody = null;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1RestaurantDishEditPost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1RestaurantDishEditPost");
+      }
+      // verify the required parameter 'dishUuid' is set
+      if (dishUuid === undefined || dishUuid === null) {
+        throw new Error("Missing the required parameter 'dishUuid' when calling adminV1RestaurantDishEditPost");
+      }
+      // verify the required parameter 'dishName' is set
+      if (dishName === undefined || dishName === null) {
+        throw new Error("Missing the required parameter 'dishName' when calling adminV1RestaurantDishEditPost");
+      }
+      // verify the required parameter 'description' is set
+      if (description === undefined || description === null) {
+        throw new Error("Missing the required parameter 'description' when calling adminV1RestaurantDishEditPost");
+      }
+      // verify the required parameter 'category' is set
+      if (category === undefined || category === null) {
+        throw new Error("Missing the required parameter 'category' when calling adminV1RestaurantDishEditPost");
+      }
+      // verify the required parameter 'calories' is set
+      if (calories === undefined || calories === null) {
+        throw new Error("Missing the required parameter 'calories' when calling adminV1RestaurantDishEditPost");
+      }
+      // verify the required parameter 'weight' is set
+      if (weight === undefined || weight === null) {
+        throw new Error("Missing the required parameter 'weight' when calling adminV1RestaurantDishEditPost");
+      }
+      // verify the required parameter 'dishPictureFile' is set
+      if (dishPictureFile === undefined || dishPictureFile === null) {
+        throw new Error("Missing the required parameter 'dishPictureFile' when calling adminV1RestaurantDishEditPost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+        'dish_uuid': dishUuid,
+        'dish_name': dishName,
+        'description': description,
+        'category': category,
+        'calories': calories,
+        'weight': weight,
+        'dish_picture_file': dishPictureFile
+      };
+
+      let authNames = [];
+      let contentTypes = ['multipart/form-data'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/admin/v1/restaurant/dish/edit', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
      * Callback function to receive the result of the adminV1RestaurantDishListPost operation.
      * @callback module:api/DefaultApi~adminV1RestaurantDishListPostCallback
      * @param {String} error Error message, if any.
@@ -233,6 +432,59 @@ export default class DefaultApi {
       let returnType = File;
       return this.apiClient.callApi(
         '/admin/v1/restaurant/dish/list', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1RestaurantEditPost operation.
+     * @callback module:api/DefaultApi~adminV1RestaurantEditPostCallback
+     * @param {String} error Error message, if any.
+     * @param data This operation does not return a value.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Редактирование ресторана
+     * Редактирование ресторана
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1RestaurantEditRequest} adminV1RestaurantEditRequest 
+     * @param {module:api/DefaultApi~adminV1RestaurantEditPostCallback} callback The callback function, accepting three arguments: error, data, response
+     */
+    adminV1RestaurantEditPost(userUUID, jWTToken, adminV1RestaurantEditRequest, callback) {
+      let postBody = adminV1RestaurantEditRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1RestaurantEditPost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1RestaurantEditPost");
+      }
+      // verify the required parameter 'adminV1RestaurantEditRequest' is set
+      if (adminV1RestaurantEditRequest === undefined || adminV1RestaurantEditRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1RestaurantEditRequest' when calling adminV1RestaurantEditPost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/admin/v1/restaurant/edit', 'POST',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, null, callback
       );

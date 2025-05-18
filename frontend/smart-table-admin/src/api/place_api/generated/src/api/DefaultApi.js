@@ -15,14 +15,26 @@
 import ApiClient from "../ApiClient";
 import AdminV1PlaceCreateRequest from '../model/AdminV1PlaceCreateRequest';
 import AdminV1PlaceCreateResponse from '../model/AdminV1PlaceCreateResponse';
+import AdminV1PlaceDeleteRequest from '../model/AdminV1PlaceDeleteRequest';
+import AdminV1PlaceEditRequest from '../model/AdminV1PlaceEditRequest';
 import AdminV1PlaceEmployeeAddRequest from '../model/AdminV1PlaceEmployeeAddRequest';
+import AdminV1PlaceEmployeeDeleteRequest from '../model/AdminV1PlaceEmployeeDeleteRequest';
+import AdminV1PlaceEmployeeEditRequest from '../model/AdminV1PlaceEmployeeEditRequest';
 import AdminV1PlaceEmployeeListRequest from '../model/AdminV1PlaceEmployeeListRequest';
 import AdminV1PlaceEmployeeListResponse from '../model/AdminV1PlaceEmployeeListResponse';
 import AdminV1PlaceListRequest from '../model/AdminV1PlaceListRequest';
 import AdminV1PlaceListResponse from '../model/AdminV1PlaceListResponse';
 import AdminV1PlaceMenuDishCreateRequest from '../model/AdminV1PlaceMenuDishCreateRequest';
 import AdminV1PlaceMenuDishCreateResponse from '../model/AdminV1PlaceMenuDishCreateResponse';
+import AdminV1PlaceMenuDishDeleteRequest from '../model/AdminV1PlaceMenuDishDeleteRequest';
 import AdminV1PlaceMenuDishListRequest from '../model/AdminV1PlaceMenuDishListRequest';
+import AdminV1PlaceOrderEditRequest from '../model/AdminV1PlaceOrderEditRequest';
+import AdminV1PlaceOrderInfoRequest from '../model/AdminV1PlaceOrderInfoRequest';
+import AdminV1PlaceOrderInfoResponse from '../model/AdminV1PlaceOrderInfoResponse';
+import AdminV1PlaceOrderListClosedRequest from '../model/AdminV1PlaceOrderListClosedRequest';
+import AdminV1PlaceOrderListClosedResponse from '../model/AdminV1PlaceOrderListClosedResponse';
+import AdminV1PlaceOrderListOpenedRequest from '../model/AdminV1PlaceOrderListOpenedRequest';
+import AdminV1PlaceOrderListOpenedResponse from '../model/AdminV1PlaceOrderListOpenedResponse';
 import AdminV1PlaceTableDeepLinksListRequest from '../model/AdminV1PlaceTableDeepLinksListRequest';
 import AdminV1PlaceTableDeepLinksListResponse from '../model/AdminV1PlaceTableDeepLinksListResponse';
 import ErrorResponse from '../model/ErrorResponse';
@@ -101,6 +113,112 @@ export default class DefaultApi {
     }
 
     /**
+     * Callback function to receive the result of the adminV1PlaceDeletePost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceDeletePostCallback
+     * @param {String} error Error message, if any.
+     * @param data This operation does not return a value.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Удаление плейса
+     * Удаление плейса
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1PlaceDeleteRequest} adminV1PlaceDeleteRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceDeletePostCallback} callback The callback function, accepting three arguments: error, data, response
+     */
+    adminV1PlaceDeletePost(userUUID, jWTToken, adminV1PlaceDeleteRequest, callback) {
+      let postBody = adminV1PlaceDeleteRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceDeletePost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceDeletePost");
+      }
+      // verify the required parameter 'adminV1PlaceDeleteRequest' is set
+      if (adminV1PlaceDeleteRequest === undefined || adminV1PlaceDeleteRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1PlaceDeleteRequest' when calling adminV1PlaceDeletePost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/admin/v1/place/delete', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1PlaceEditPost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceEditPostCallback
+     * @param {String} error Error message, if any.
+     * @param data This operation does not return a value.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Редактирование плейса
+     * Редактирование плейса
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1PlaceEditRequest} adminV1PlaceEditRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceEditPostCallback} callback The callback function, accepting three arguments: error, data, response
+     */
+    adminV1PlaceEditPost(userUUID, jWTToken, adminV1PlaceEditRequest, callback) {
+      let postBody = adminV1PlaceEditRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceEditPost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceEditPost");
+      }
+      // verify the required parameter 'adminV1PlaceEditRequest' is set
+      if (adminV1PlaceEditRequest === undefined || adminV1PlaceEditRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1PlaceEditRequest' when calling adminV1PlaceEditPost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/admin/v1/place/edit', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
      * Callback function to receive the result of the adminV1PlaceEmployeeAddPost operation.
      * @callback module:api/DefaultApi~adminV1PlaceEmployeeAddPostCallback
      * @param {String} error Error message, if any.
@@ -148,6 +266,112 @@ export default class DefaultApi {
       let returnType = null;
       return this.apiClient.callApi(
         '/admin/v1/place/employee/add', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1PlaceEmployeeDeletePost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceEmployeeDeletePostCallback
+     * @param {String} error Error message, if any.
+     * @param data This operation does not return a value.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Удаление сотрудника из плейса
+     * Удаление сотрудника из плейса
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1PlaceEmployeeDeleteRequest} adminV1PlaceEmployeeDeleteRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceEmployeeDeletePostCallback} callback The callback function, accepting three arguments: error, data, response
+     */
+    adminV1PlaceEmployeeDeletePost(userUUID, jWTToken, adminV1PlaceEmployeeDeleteRequest, callback) {
+      let postBody = adminV1PlaceEmployeeDeleteRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceEmployeeDeletePost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceEmployeeDeletePost");
+      }
+      // verify the required parameter 'adminV1PlaceEmployeeDeleteRequest' is set
+      if (adminV1PlaceEmployeeDeleteRequest === undefined || adminV1PlaceEmployeeDeleteRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1PlaceEmployeeDeleteRequest' when calling adminV1PlaceEmployeeDeletePost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/admin/v1/place/employee/delete', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1PlaceEmployeeEditPost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceEmployeeEditPostCallback
+     * @param {String} error Error message, if any.
+     * @param data This operation does not return a value.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Редактирование роли сотрудника плейса
+     * Редактирование роли сотрудника плейса
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1PlaceEmployeeEditRequest} adminV1PlaceEmployeeEditRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceEmployeeEditPostCallback} callback The callback function, accepting three arguments: error, data, response
+     */
+    adminV1PlaceEmployeeEditPost(userUUID, jWTToken, adminV1PlaceEmployeeEditRequest, callback) {
+      let postBody = adminV1PlaceEmployeeEditRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceEmployeeEditPost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceEmployeeEditPost");
+      }
+      // verify the required parameter 'adminV1PlaceEmployeeEditRequest' is set
+      if (adminV1PlaceEmployeeEditRequest === undefined || adminV1PlaceEmployeeEditRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1PlaceEmployeeEditRequest' when calling adminV1PlaceEmployeeEditPost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/admin/v1/place/employee/edit', 'POST',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, null, callback
       );
@@ -316,6 +540,112 @@ export default class DefaultApi {
     }
 
     /**
+     * Callback function to receive the result of the adminV1PlaceMenuDishDeletePost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceMenuDishDeletePostCallback
+     * @param {String} error Error message, if any.
+     * @param data This operation does not return a value.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Удаление блюда в меню плейса
+     * Удаление блюда в меню плейса
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1PlaceMenuDishCreateRequest} adminV1PlaceMenuDishCreateRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceMenuDishDeletePostCallback} callback The callback function, accepting three arguments: error, data, response
+     */
+    adminV1PlaceMenuDishDeletePost(userUUID, jWTToken, adminV1PlaceMenuDishCreateRequest, callback) {
+      let postBody = adminV1PlaceMenuDishCreateRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceMenuDishDeletePost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceMenuDishDeletePost");
+      }
+      // verify the required parameter 'adminV1PlaceMenuDishCreateRequest' is set
+      if (adminV1PlaceMenuDishCreateRequest === undefined || adminV1PlaceMenuDishCreateRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1PlaceMenuDishCreateRequest' when calling adminV1PlaceMenuDishDeletePost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/admin/v1/place/menu/dish/delete', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1PlaceMenuDishEditPost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceMenuDishEditPostCallback
+     * @param {String} error Error message, if any.
+     * @param data This operation does not return a value.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Редактирование блюда в меню плейса
+     * Редактирование блюда в меню плейса
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1PlaceMenuDishDeleteRequest} adminV1PlaceMenuDishDeleteRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceMenuDishEditPostCallback} callback The callback function, accepting three arguments: error, data, response
+     */
+    adminV1PlaceMenuDishEditPost(userUUID, jWTToken, adminV1PlaceMenuDishDeleteRequest, callback) {
+      let postBody = adminV1PlaceMenuDishDeleteRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceMenuDishEditPost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceMenuDishEditPost");
+      }
+      // verify the required parameter 'adminV1PlaceMenuDishDeleteRequest' is set
+      if (adminV1PlaceMenuDishDeleteRequest === undefined || adminV1PlaceMenuDishDeleteRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1PlaceMenuDishDeleteRequest' when calling adminV1PlaceMenuDishEditPost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/admin/v1/place/menu/dish/edit', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
      * Callback function to receive the result of the adminV1PlaceMenuDishListPost operation.
      * @callback module:api/DefaultApi~adminV1PlaceMenuDishListPostCallback
      * @param {String} error Error message, if any.
@@ -364,6 +694,221 @@ export default class DefaultApi {
       let returnType = File;
       return this.apiClient.callApi(
         '/admin/v1/place/menu/dish/list', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1PlaceOrderEditPost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceOrderEditPostCallback
+     * @param {String} error Error message, if any.
+     * @param data This operation does not return a value.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Редкатирование заказа
+     * Редкатирование заказа
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1PlaceOrderEditRequest} adminV1PlaceOrderEditRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceOrderEditPostCallback} callback The callback function, accepting three arguments: error, data, response
+     */
+    adminV1PlaceOrderEditPost(userUUID, jWTToken, adminV1PlaceOrderEditRequest, callback) {
+      let postBody = adminV1PlaceOrderEditRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceOrderEditPost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceOrderEditPost");
+      }
+      // verify the required parameter 'adminV1PlaceOrderEditRequest' is set
+      if (adminV1PlaceOrderEditRequest === undefined || adminV1PlaceOrderEditRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1PlaceOrderEditRequest' when calling adminV1PlaceOrderEditPost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/admin/v1/place/order/edit', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1PlaceOrderInfoPost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceOrderInfoPostCallback
+     * @param {String} error Error message, if any.
+     * @param {module:model/AdminV1PlaceOrderInfoResponse} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Получение подробной информации о заказе
+     * Получение подробной информации о заказе
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1PlaceOrderInfoRequest} adminV1PlaceOrderInfoRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceOrderInfoPostCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link module:model/AdminV1PlaceOrderInfoResponse}
+     */
+    adminV1PlaceOrderInfoPost(userUUID, jWTToken, adminV1PlaceOrderInfoRequest, callback) {
+      let postBody = adminV1PlaceOrderInfoRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceOrderInfoPost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceOrderInfoPost");
+      }
+      // verify the required parameter 'adminV1PlaceOrderInfoRequest' is set
+      if (adminV1PlaceOrderInfoRequest === undefined || adminV1PlaceOrderInfoRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1PlaceOrderInfoRequest' when calling adminV1PlaceOrderInfoPost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = AdminV1PlaceOrderInfoResponse;
+      return this.apiClient.callApi(
+        '/admin/v1/place/order/info', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1PlaceOrderListClosedPost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceOrderListClosedPostCallback
+     * @param {String} error Error message, if any.
+     * @param {module:model/AdminV1PlaceOrderListClosedResponse} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Получение списка завершенных заказов плейса двухнедельной давности
+     * Получение списка завершенных заказов плейса двухнедельной давности
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1PlaceOrderListClosedRequest} adminV1PlaceOrderListClosedRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceOrderListClosedPostCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link module:model/AdminV1PlaceOrderListClosedResponse}
+     */
+    adminV1PlaceOrderListClosedPost(userUUID, jWTToken, adminV1PlaceOrderListClosedRequest, callback) {
+      let postBody = adminV1PlaceOrderListClosedRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceOrderListClosedPost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceOrderListClosedPost");
+      }
+      // verify the required parameter 'adminV1PlaceOrderListClosedRequest' is set
+      if (adminV1PlaceOrderListClosedRequest === undefined || adminV1PlaceOrderListClosedRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1PlaceOrderListClosedRequest' when calling adminV1PlaceOrderListClosedPost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = AdminV1PlaceOrderListClosedResponse;
+      return this.apiClient.callApi(
+        '/admin/v1/place/order/list/closed', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the adminV1PlaceOrderListOpenedPost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceOrderListOpenedPostCallback
+     * @param {String} error Error message, if any.
+     * @param {module:model/AdminV1PlaceOrderListOpenedResponse} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Получение списка открытых заказов плейса
+     * Получение списка открытых заказов плейса
+     * @param {String} userUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {module:model/AdminV1PlaceOrderListOpenedRequest} adminV1PlaceOrderListOpenedRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceOrderListOpenedPostCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link module:model/AdminV1PlaceOrderListOpenedResponse}
+     */
+    adminV1PlaceOrderListOpenedPost(userUUID, jWTToken, adminV1PlaceOrderListOpenedRequest, callback) {
+      let postBody = adminV1PlaceOrderListOpenedRequest;
+      // verify the required parameter 'userUUID' is set
+      if (userUUID === undefined || userUUID === null) {
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceOrderListOpenedPost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceOrderListOpenedPost");
+      }
+      // verify the required parameter 'adminV1PlaceOrderListOpenedRequest' is set
+      if (adminV1PlaceOrderListOpenedRequest === undefined || adminV1PlaceOrderListOpenedRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1PlaceOrderListOpenedRequest' when calling adminV1PlaceOrderListOpenedPost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'User-UUID': userUUID,
+        'JWT-Token': jWTToken
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = AdminV1PlaceOrderListOpenedResponse;
+      return this.apiClient.callApi(
+        '/admin/v1/place/order/list/opened', 'POST',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, null, callback
       );

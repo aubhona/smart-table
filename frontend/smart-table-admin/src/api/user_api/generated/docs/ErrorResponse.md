@@ -1,4 +1,4 @@
-# SmartTableMobileApi.ErrorResponse
+# SmartTableAdminApi.ErrorResponse
 
 ## Properties
 
@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Enum: CodeEnum
 
 
-* `not_found` (value: `"not_found"`)
+* `user_not_found` (value: `"user_not_found"`)
 
 * `incorrect_password` (value: `"incorrect_password"`)
 

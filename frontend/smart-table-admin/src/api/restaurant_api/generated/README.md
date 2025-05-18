@@ -124,8 +124,12 @@ All URIs are relative to *http://localhost*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *SmartTableAdminApi.DefaultApi* | [**adminV1RestaurantCreatePost**](docs/DefaultApi.md#adminV1RestaurantCreatePost) | **POST** /admin/v1/restaurant/create | Создание ресторана
+*SmartTableAdminApi.DefaultApi* | [**adminV1RestaurantDeletePost**](docs/DefaultApi.md#adminV1RestaurantDeletePost) | **POST** /admin/v1/restaurant/delete | Удаление ресторана
 *SmartTableAdminApi.DefaultApi* | [**adminV1RestaurantDishCreatePost**](docs/DefaultApi.md#adminV1RestaurantDishCreatePost) | **POST** /admin/v1/restaurant/dish/create | Создание блюда ресторана
+*SmartTableAdminApi.DefaultApi* | [**adminV1RestaurantDishDeletePost**](docs/DefaultApi.md#adminV1RestaurantDishDeletePost) | **POST** /admin/v1/restaurant/dish/delete | Удаление блюда ресторана
+*SmartTableAdminApi.DefaultApi* | [**adminV1RestaurantDishEditPost**](docs/DefaultApi.md#adminV1RestaurantDishEditPost) | **POST** /admin/v1/restaurant/dish/edit | Редактирование блюда ресторана
 *SmartTableAdminApi.DefaultApi* | [**adminV1RestaurantDishListPost**](docs/DefaultApi.md#adminV1RestaurantDishListPost) | **POST** /admin/v1/restaurant/dish/list | Получение списка блюд ресторана
+*SmartTableAdminApi.DefaultApi* | [**adminV1RestaurantEditPost**](docs/DefaultApi.md#adminV1RestaurantEditPost) | **POST** /admin/v1/restaurant/edit | Редактирование ресторана
 *SmartTableAdminApi.DefaultApi* | [**adminV1RestaurantListGet**](docs/DefaultApi.md#adminV1RestaurantListGet) | **GET** /admin/v1/restaurant/list | Получение списка ресторанов пользователя
 
 
@@ -133,8 +137,10 @@ Class | Method | HTTP request | Description
 
  - [SmartTableAdminApi.AdminV1RestaurantCreateRequest](docs/AdminV1RestaurantCreateRequest.md)
  - [SmartTableAdminApi.AdminV1RestaurantCreateResponse](docs/AdminV1RestaurantCreateResponse.md)
+ - [SmartTableAdminApi.AdminV1RestaurantDeleteRequest](docs/AdminV1RestaurantDeleteRequest.md)
  - [SmartTableAdminApi.AdminV1RestaurantDishCreateResponse](docs/AdminV1RestaurantDishCreateResponse.md)
  - [SmartTableAdminApi.AdminV1RestaurantDishListRequest](docs/AdminV1RestaurantDishListRequest.md)
+ - [SmartTableAdminApi.AdminV1RestaurantEditRequest](docs/AdminV1RestaurantEditRequest.md)
  - [SmartTableAdminApi.AdminV1RestaurantListResponse](docs/AdminV1RestaurantListResponse.md)
  - [SmartTableAdminApi.DishInfo](docs/DishInfo.md)
  - [SmartTableAdminApi.ErrorResponse](docs/ErrorResponse.md)

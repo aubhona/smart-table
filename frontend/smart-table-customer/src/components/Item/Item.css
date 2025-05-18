@@ -11,10 +11,10 @@
   .top-bar {
     padding-top: 5%;
     left: 52%;
-    transform: translateX(-48%);
+    transform: translateX(-1,5%);
     display: flex;
     justify-content: space-between;
-    gap: 45%;
+    gap: 5%;
     margin-bottom: 4%;
   }
   
@@ -23,9 +23,9 @@
     background: #552f04; 
     color: white;
     border: none;
-    padding: 6%;
-    padding-left: 20%;
-    padding-right: 20%;
+    padding: 4%;
+    padding-left: 11%;
+    padding-right: 11%;
     border-radius: 8px;
     font-size: 1.2em; 
     cursor: pointer;
@@ -37,22 +37,29 @@
   }
   
   .dish-image-item {
-    background: gray;
-    height: 40%; 
-    width: 195%;
-    transform: translateX(-24.3%);
-    border-radius: 15px;
-    text-align: center;
-    line-height: 250px;
-    color: white;
-    margin-bottom: 1%;
-  }
+  background: gray;
+  height: 400px; /* Устанавливаем фиксированную высоту для контейнера */
+  width: 24rem;  /* Устанавливаем фиксированную ширину для контейнера */
+  border-radius: 8% / 7%;
+  text-align: center;
+  color: white;
+  margin-bottom: 1%;
+}
+
+.dish-image-item img {
+  width: 100%;    /* Картинка будет занимать всю ширину контейнера */
+  height: 100%;   /* Картинка будет занимать всю высоту контейнера */
+  object-fit: cover;  /* Обрезаем картинку так, чтобы она заполнила контейнер */
+  border-radius: 8% / 7%;  /* Если нужно, оставляем закругленные углы */
+}
   
   .dish-info-item {
     flex: 1;
-    width: 180%;
-    transform: translateX(-27.5%);
-    padding: 5%; 
+    width: 92%;
+    transform: translateX(-5%);
+    padding: 4%; 
+    padding-top: 1%;
+    margin-bottom: 40%;
   }
   
   .description-item,
@@ -68,7 +75,7 @@
     border-radius: 12px;
     padding: 15px;
     resize: none;
-    min-height: 150px;
+    min-height: 90px;
     margin-top: 5%;
     border: 1px solid #d1c6b1; 
   }
