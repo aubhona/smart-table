@@ -217,3 +217,7 @@ func (o *Order) GetDraftItemsTotalPrice() decimal.Decimal {
 func (o *Order) GetDeletesItems() []utils.SharedRef[Item] {
 	return o.deletedItems
 }
+
+func (o *Order) SetStatus(status defsInternalOrder.OrderStatus) {
+	o.status = status
+}
