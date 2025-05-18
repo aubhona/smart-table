@@ -24,15 +24,16 @@ type CustomerInfoImpl struct {
 	IsActive    bool
 	TotalPrice  decimal.Decimal
 	ItemInfoMap map[string]viewsCustomerOrder.ItemInfo
+	IsHost      bool
 }
 
 func convertItemToItemInfo(
 	item utils.SharedRef[domain.Item],
 ) viewsCustomerOrder.ItemInfo {
 	itemInfo := viewsCustomerOrder.ItemInfo{
-		UUID:        item.Get().GetUUID(),
+		DishUUID:    item.Get().GetDishUUID(),
 		Name:        item.Get().GetName(),
-		Status:      viewsCustomerOrder.ItemStatus(string(item.Get().GetStatus())),
+		Status:      viewsCustomerOrder.ItemStatus(item.Get().GetStatus()),
 		Description: item.Get().GetDescription(),
 		Weight:      item.Get().GetWeight(),
 		Calories:    item.Get().GetCalories(),
@@ -43,7 +44,7 @@ func convertItemToItemInfo(
 	}
 
 	if item.Get().GetResolution().HasValue() {
-		resolution := viewsCustomerOrder.ItemResolution(string(item.Get().GetResolution().Value()))
+		resolution := viewsCustomerOrder.ItemResolution(item.Get().GetResolution().Value())
 		itemInfo.Resolution = &resolution
 	}
 
@@ -57,6 +58,7 @@ func convertItemToItemInfo(
 
 func convertCustomerToCustomerInfoImpl(
 	customer utils.SharedRef[domain.Customer],
+	hostUUID uuid.UUID,
 ) CustomerInfoImpl {
 	return CustomerInfoImpl{
 		UUID:        customer.Get().GetUUID(),
@@ -65,6 +67,7 @@ func convertCustomerToCustomerInfoImpl(
 		IsActive:    false,
 		TotalPrice:  decimal.Zero,
 		ItemInfoMap: make(map[string]viewsCustomerOrder.ItemInfo),
+		IsHost:      customer.Get().GetUUID() == hostUUID,
 	}
 }
 
@@ -80,9 +83,10 @@ func convertCustomerInfoImplToCustomerInfo(
 		UUID:       customerInfoImpl.UUID,
 		TgLogin:    customerInfoImpl.TgLogin,
 		TgID:       customerInfoImpl.TgID,
-		IsActive:   &customerInfoImpl.IsActive,
+		IsActive:   customerInfoImpl.IsActive,
 		TotalPrice: customerInfoImpl.TotalPrice.String(),
 		ItemList:   itemList,
+		IsHost:     customerInfoImpl.IsHost,
 	}
 }
 
@@ -92,7 +96,10 @@ func getCustomerInfoList(
 	customerInfoImplMap := make(map[uuid.UUID]CustomerInfoImpl)
 
 	for _, customer := range order.Get().GetCustomers() {
-		customerInfoImplMap[customer.Get().GetUUID()] = convertCustomerToCustomerInfoImpl(customer)
+		customerInfoImplMap[customer.Get().GetUUID()] = convertCustomerToCustomerInfoImpl(
+			customer,
+			order.Get().GetHostUserUUID(),
+		)
 	}
 
 	for _, item := range order.Get().GetItems() {

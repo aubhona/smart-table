@@ -2,6 +2,7 @@ package smarttable_test
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"testing"
 
@@ -14,6 +15,23 @@ import (
 
 	"github.com/stretchr/testify/assert"
 )
+
+func CommitItems(hostCustomerUUID, orderUUID uuid.UUID) error {
+	response, err := viewsCodegenCustomerOrderClient.PostCustomerV1OrderItemsCommitWithResponse(
+		GetCtx(),
+		&viewsCodegenCustomer.PostCustomerV1OrderItemsCommitParams{
+			CustomerUUID: hostCustomerUUID,
+			OrderUUID:    orderUUID,
+			JWTToken:     "tipa_token_zhiest",
+		},
+	)
+
+	if response == nil || response.StatusCode() != http.StatusNoContent {
+		return errors.New("unexpected response status")
+	}
+
+	return err
+}
 
 func TestCustomerOrderItemsCommitHappyPath(t *testing.T) {
 	GetTestMutex().Lock()
