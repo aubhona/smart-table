@@ -1,21 +1,22 @@
 package app //nolint
 
 import (
+	defsInternalOrder "github.com/smart-table/src/codegen/intern/order"
 	appErrors "github.com/smart-table/src/domains/customer/app/use_cases/errors"
 	"github.com/smart-table/src/domains/customer/domain"
 	"github.com/smart-table/src/utils"
 )
 
-type ItemsCommitCommandHandler struct {
+type FinishOrderCommandHandler struct {
 	orderRepository domain.OrderRepository
 }
 
-func NewItemsCommitCommandHandler(orderRepository domain.OrderRepository) *ItemsCommitCommandHandler {
-	return &ItemsCommitCommandHandler{orderRepository: orderRepository}
+func NewFinishOrderCommandHandler(orderRepository domain.OrderRepository) *FinishOrderCommandHandler {
+	return &FinishOrderCommandHandler{orderRepository: orderRepository}
 }
 
-func (handler *ItemsCommitCommandHandler) Handle(
-	command *ItemsCommitCommand,
+func (handler *FinishOrderCommandHandler) Handle(
+	command *FinishOrderCommand,
 ) error {
 	tx, err := handler.orderRepository.Begin()
 	if err != nil {
@@ -33,7 +34,7 @@ func (handler *ItemsCommitCommandHandler) Handle(
 		return appErrors.OrderAccessDenied{OrderUUID: command.OrderUUID, CustomerUUID: command.CustomerUUID}
 	}
 
-	order.Get().CommitItems(command.CustomerUUID)
+	order.Get().SetStatus(defsInternalOrder.OrderStatusPaymentWaiting)
 
 	err = handler.orderRepository.Update(tx, order)
 	if err != nil {

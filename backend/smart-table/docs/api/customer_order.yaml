@@ -362,6 +362,8 @@ components:
             type: object
             additionalProperties: false
             properties:
+                go_tip_screen:
+                    type: boolean
                 room_code:
                     type: string
                 total_price:
@@ -375,6 +377,7 @@ components:
                     items:
                         $ref: '#/components/schemas/MenuDishItem'
             required:
+                - go_tip_screen
                 - room_code
                 - total_price
                 - categories

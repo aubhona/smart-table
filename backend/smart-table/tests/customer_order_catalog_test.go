@@ -78,9 +78,10 @@ func TestCustomerOrderCatalogHappyPath(t *testing.T) {
 	t.Logf("parsed %d menu dishes", len(metadata.Menu))
 
 	assert.Equal(t, 1, len(metadata.Menu))
-	assert.Equal(t, metadata.Menu[0].ID, menuDishUUID)
-	assert.Equal(t, metadata.TotalPrice, "0")
-	assert.Equal(t, metadata.Categories, []string{"some_cat"})
+	assert.Equal(t, menuDishUUID, metadata.Menu[0].ID)
+	assert.Equal(t, "0", metadata.TotalPrice)
+	assert.Equal(t, []string{"some_cat"}, metadata.Categories)
+	assert.Equal(t, false, metadata.GoTipScreen)
 
 	imageCount := 0
 

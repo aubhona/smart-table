@@ -1,4 +1,4 @@
-package viewscustomerorder
+package viewscustomerorder //nolint
 
 import (
 	"context"

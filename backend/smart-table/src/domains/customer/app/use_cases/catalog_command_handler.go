@@ -3,6 +3,8 @@ package app
 import (
 	"io"
 
+	defsInternalOrder "github.com/smart-table/src/codegen/intern/order"
+
 	"github.com/samber/lo"
 
 	"github.com/shopspring/decimal"
@@ -25,10 +27,11 @@ type CatalogItemDTO struct {
 }
 
 type CatalogCommandHandlerResult struct {
-	Items      []CatalogItemDTO
-	Categories []string
-	TotalPrice decimal.Decimal
-	RoomCode   string
+	GoTipScreen bool
+	Items       []CatalogItemDTO
+	Categories  []string
+	TotalPrice  decimal.Decimal
+	RoomCode    string
 }
 
 type CatalogCommandHandler struct {
@@ -73,10 +76,12 @@ func (handler *CatalogCommandHandler) Handle(command *CatalogCommand) (CatalogCo
 		menuDishUUIDToItemsMap[item.Get().GetDishUUID()] = append(menuDishUUIDToItemsMap[item.Get().GetDishUUID()], item)
 	}
 
-	result := CatalogCommandHandlerResult{}
-	result.RoomCode = order.Get().GetRoomCode()
-	result.TotalPrice = order.Get().GetDraftItemsTotalPrice()
-	result.Items = make([]CatalogItemDTO, 0, len(menuDishList))
+	result := CatalogCommandHandlerResult{
+		RoomCode:    order.Get().GetRoomCode(),
+		TotalPrice:  order.Get().GetDraftItemsTotalPrice(),
+		Items:       make([]CatalogItemDTO, 0, len(menuDishList)),
+		GoTipScreen: order.Get().GetStatus() == defsInternalOrder.OrderStatusPaymentWaiting,
+	}
 
 	uniqueCategories := make(map[string]interface{})
 

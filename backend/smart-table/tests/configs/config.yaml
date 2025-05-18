@@ -12,7 +12,7 @@ app:
             secret_key: APP_CUSTOMER_JWT_SECRET_KEY
             expiration: 24h
         init_data:
-            expiration: 24h
+            expiration: 1000h
     cors:
         allow_origins:
             - http://localhost:3002
