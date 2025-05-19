@@ -27,11 +27,12 @@ class MenuDishItem {
      * @param name {String} 
      * @param category {String} 
      * @param calories {Number} 
+     * @param weight {Number} 
      * @param count {Number} 
      */
-    constructor(id, price, name, category, calories, count) { 
+    constructor(id, price, name, category, calories, weight, count) { 
         
-        MenuDishItem.initialize(this, id, price, name, category, calories, count);
+        MenuDishItem.initialize(this, id, price, name, category, calories, weight, count);
     }
 
     /**
@@ -39,12 +40,13 @@ class MenuDishItem {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj, id, price, name, category, calories, count) { 
+    static initialize(obj, id, price, name, category, calories, weight, count) { 
         obj['id'] = id;
         obj['price'] = price;
         obj['name'] = name;
         obj['category'] = category;
         obj['calories'] = calories;
+        obj['weight'] = weight;
         obj['count'] = count;
     }
 
@@ -73,6 +75,9 @@ class MenuDishItem {
             }
             if (data.hasOwnProperty('calories')) {
                 obj['calories'] = ApiClient.convertToType(data['calories'], 'Number');
+            }
+            if (data.hasOwnProperty('weight')) {
+                obj['weight'] = ApiClient.convertToType(data['weight'], 'Number');
             }
             if (data.hasOwnProperty('count')) {
                 obj['count'] = ApiClient.convertToType(data['count'], 'Number');
@@ -116,7 +121,7 @@ class MenuDishItem {
 
 }
 
-MenuDishItem.RequiredProperties = ["id", "price", "name", "category", "calories", "count"];
+MenuDishItem.RequiredProperties = ["id", "price", "name", "category", "calories", "weight", "count"];
 
 /**
  * @member {String} id
@@ -142,6 +147,11 @@ MenuDishItem.prototype['category'] = undefined;
  * @member {Number} calories
  */
 MenuDishItem.prototype['calories'] = undefined;
+
+/**
+ * @member {Number} weight
+ */
+MenuDishItem.prototype['weight'] = undefined;
 
 /**
  * @member {Number} count

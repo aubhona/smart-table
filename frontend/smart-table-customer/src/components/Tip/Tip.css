@@ -89,3 +89,50 @@
 .tip-footer .save-button:hover {
   background-color: #3a492a;
 }
+
+.tip-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.25);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tip-modal {
+  background: #ede2d9;
+  border-radius: 12px;
+  padding: 32px 28px 24px 28px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 220px;
+}
+
+.tip-modal-message {
+  font-size: 1.15em;
+  font-weight: bold;
+  margin-bottom: 18px;
+  color: #2d1c0b;
+  text-align: center;
+}
+
+.tip-modal-close {
+  font-family: inherit;
+  font-size: 1em;
+  padding: 8px 24px;
+  border-radius: 8px;
+  border: 2px solid #5e7643;
+  background: #5e7643;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tip-modal-close:hover {
+  background: #3a492a;
+  border-color: #3a492a;
+}

@@ -6,147 +6,219 @@
   align-items: center;
   justify-content: flex-start;
   min-height: 100vh;
-  padding: 20px;
+  padding: 16px 0 100px 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .checkout-header {
   display: flex;
-  justify-content: space-between;
-  width: 270%;
-  background-color: #552f04;
-  padding: 10px;
   justify-content: center;
-  border-radius: 8px;
+  width: 100%;
+  max-width: 420px;
+  background-color: #552f04;
+  padding: 8px 0;
+  border-radius: 12px 12px 0 0;
   color: white;
-  margin-bottom: 20px;
-  margin-top: 10px;
+  margin-bottom: 12px;
+  margin-top: 0;
 }
 
 .checkout-header .back-button {
-  font-family: 'Courier New', Consolas, monospace;
+  font-family: inherit;
   background-color: transparent;
   border: none;
   color: white;
-  font-size: 1.2em;
+  font-size: 1.1em;
   cursor: pointer;
   font-weight: bold;
+  letter-spacing: 1px;
 }
 
 .checkout-content {
   background-color: #ede2d9;
-  padding: 15px;
-  border-radius: 8px;
-  width: 264%;
-  max-width: 800px;
-  margin-bottom: 20px;
+  padding: 18px 14px 14px 14px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 420px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .checkout-content h2 {
-  font-size: 1.2em;
-  margin-bottom: 10px;
-}
-
-.checkout-content .order-list {
-  background-color: #faf6ee;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.checkout-content .order-item {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
-.checkout-content .order-item-name {
+  font-size: 1.15em;
+  margin-bottom: 12px;
   font-weight: bold;
+  letter-spacing: 0.5px;
 }
 
-.checkout-content .order-item-total {
-  margin-left: 35%;
-  position: fixed;
-  font-size: 1.1em;
+.order-list {
+  background-color: #faf6ee;
+  padding: 10px 8px;
+  border-radius: 10px;
+  margin-bottom: 0;
+}
+
+.order-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 1em;
+}
+
+.order-item:last-child {
+  margin-bottom: 0;
+}
+
+.order-item-name {
+  font-weight: bold;
+  color: #2d1c0b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.order-item-qty {
+  color: #7a5c3a;
+  font-size: 0.98em;
+  min-width: 32px;
+  text-align: right;
+}
+
+.order-item-total {
+  font-size: 1.05em;
   color: #5e7643;
+  min-width: 60px;
+  text-align: right;
 }
 
-.checkout-content .order-item-status {
+.order-item-status {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
 }
 
 .status-circle {
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  margin-left: 10px;
+  margin-left: 6px;
   border: 2px solid #666;
 }
 
+.status-circle.white { background-color: white; }
+.status-circle.blue { background-color: #3a7bd5; }
+.status-circle.yellow { background-color: #ffe066; }
+.status-circle.green { background-color: #7ed957; }
+.status-circle.cyan { background-color: #4fd1c5; }
 
-.status-circle.white {
-  background-color: white;
+.empty-order {
+  color: #a89c8a;
+  text-align: center;
+  padding: 10px 0;
 }
 
-.status-circle.blue {
-  background-color: blue;
+.friends-orders-block {
+  width: 100%;
+  max-width: 420px;
+  background: #ede2d9;
+  border-radius: 12px;
+  margin-bottom: 18px;
+  padding: 14px 14px 10px 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
-.status-circle.yellow {
-  background-color: yellow;
+.friends-orders-block h3 {
+  font-size: 1.05em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #2d1c0b;
 }
 
-.status-circle.green {
-  background-color: green;
-}
-
-.status-circle.cyan {
-  background-color: cyan;
-}
-
-.user-orders {
-  margin-top: 20px;
+.user-orders-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
 }
 
 .user-order {
-  background-color: #ede2d9;
-  padding: 15px;
-  border-radius: 8px;
-  width: 340%;
-  margin-bottom: 20px;
-  margin-left: -135%;
+  max-width: 340px;
+  width: 92%;
+  margin: 0 auto;
+  background-color: #faf6ee;
+  padding: 13px 14px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.18s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+
+.user-order:hover {
+  background-color: #f1e7db;
+}
+
+.user-login {
+  font-weight: bold;
+  color: #2d1c0b;
+  font-size: 1em;
 }
 
 .user-total-price {
-  margin-left: 84%;
   font-weight: bold;
+  color: #5e7643;
+  font-size: 1em;
+}
+
+.empty-friends {
+  color: #a89c8a;
+  text-align: center;
+  padding: 10px 0;
 }
 
 .checkout-footer {
   font-weight: bold;
   position: fixed;
-  bottom: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 1180;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
   background-color: #ede2d9;
   color: black;
-  padding: 30px;
+  padding: 38px 0 32px 0;
   text-align: center;
-  box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.2); 
-  margin-bottom: 20px;
+  box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.13);
+  box-sizing: border-box;
+  z-index: 10;
+}
+
+.ch-total-price {
+  font-size: 1.08em;
+  margin-bottom: 8px;
 }
 
 .checkout-footer .buttons {
   display: flex;
-  gap: 30px;
-  margin-left: 5%;
-  margin-top: 2%;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.checkout-footer .button, .ch-go-back-button {
+  font-size: 0.92em;
+  padding: 0 0;
+  min-width: 70px;
+  height: 44px;
 }
 
 .checkout-footer .button {
-  font-family: 'Courier New', Consolas, monospace;
+  font-family: inherit;
   padding: 10px 20px;
   background-color: #bf4b4b;
   border: 2px solid #bf4b4b;
@@ -163,7 +235,7 @@
 }
 
 .ch-go-back-button {
-  font-family: 'Courier New', Consolas, monospace;
+  font-family: inherit;
   padding: 10px 20px;
   background-color: #5e7643;
   color: white;
@@ -177,4 +249,13 @@
 
 .ch-go-back-button:hover {
   background-color: #3a492a;
+}
+
+.checkout-content.wide-block, .friends-orders-block.wide-block {
+  max-width: 420px;
+  width: 90vw;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 10px;
+  padding-right: 10px;
 }
