@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **name** | **String** |  | 
 **category** | **String** |  | 
 **calories** | **Number** |  | 
+**weight** | **Number** |  | 
 **count** | **Number** |  | 
 
 
