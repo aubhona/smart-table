@@ -69,11 +69,7 @@ func (handler *CatalogCommandHandler) Handle(command *CatalogCommand) (CatalogCo
 
 	menuDishUUIDToItemsMap := make(map[uuid.UUID][]utils.SharedRef[domain.Item])
 
-	for _, item := range order.Get().GetItems() {
-		if !item.Get().GetIsDraft() {
-			continue
-		}
-
+	for _, item := range order.Get().GetDraftedItemsByCustomerUUID(command.CustomerUUID) {
 		_, exist := menuDishUUIDToItemsMap[item.Get().GetDishUUID()]
 
 		if !exist {
@@ -85,7 +81,7 @@ func (handler *CatalogCommandHandler) Handle(command *CatalogCommand) (CatalogCo
 
 	result := CatalogCommandHandlerResult{
 		RoomCode:    order.Get().GetRoomCode(),
-		TotalPrice:  order.Get().GetDraftItemsTotalPrice(),
+		TotalPrice:  order.Get().GetDraftItemsTotalPriceByCustomerUUID(command.CustomerUUID),
 		Items:       make([]CatalogItemDTO, 0, len(menuDishList)),
 		GoTipScreen: order.Get().GetStatus() == defsInternalOrder.OrderStatusPaymentWaiting,
 	}

@@ -110,8 +110,18 @@ func (o *Order) GetResolution() utils.Optional[defsInternalOrder.OrderResolution
 }
 func (o *Order) GetCustomers() []utils.SharedRef[Customer] { return o.customers }
 func (o *Order) GetItems() []utils.SharedRef[Item]         { return o.items }
-func (o *Order) GetCreatedAt() time.Time                   { return o.createdAt }
-func (o *Order) GetUpdatedAt() time.Time                   { return o.updatedAt }
+func (o *Order) GetItemsByCustomerUUID(customerUUID uuid.UUID) []utils.SharedRef[Item] {
+	return lo.Filter(o.items, func(item utils.SharedRef[Item], _ int) bool {
+		return item.Get().customer.Get().uuid == customerUUID
+	})
+}
+func (o *Order) GetDraftedItemsByCustomerUUID(customerUUID uuid.UUID) []utils.SharedRef[Item] {
+	return lo.Filter(o.items, func(item utils.SharedRef[Item], _ int) bool {
+		return item.Get().customer.Get().uuid == customerUUID && item.Get().isDraft
+	})
+}
+func (o *Order) GetCreatedAt() time.Time { return o.createdAt }
+func (o *Order) GetUpdatedAt() time.Time { return o.updatedAt }
 
 func (o *Order) DraftItem(
 	dishUUID uuid.UUID,
@@ -202,14 +212,10 @@ func (o *Order) DeleteItemsByDishUUID(dishUUID uuid.UUID, count int) error {
 	return nil
 }
 
-func (o *Order) GetDraftItemsTotalPrice() decimal.Decimal {
+func (o *Order) GetDraftItemsTotalPriceByCustomerUUID(customerUUID uuid.UUID) decimal.Decimal {
 	result := decimal.Zero
 
-	for _, item := range o.items {
-		if !item.Get().isDraft {
-			continue
-		}
-
+	for _, item := range o.GetDraftedItemsByCustomerUUID(customerUUID) {
 		result = result.Add(item.Get().price)
 	}
 
