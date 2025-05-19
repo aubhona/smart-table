@@ -135,6 +135,11 @@ func addHandlers(container *dig.Container) error { //nolint
 		return err
 	}
 
+	err = container.Provide(app.NewCartCommandHandler)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
