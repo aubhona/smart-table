@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
 import './RoomCode.css';
 
-function RoomCode({ onSubmit, error }) {
+function RoomCode({ onSubmit, error, expectedRoomCode }) {
   const [roomCode, setRoomCode] = useState('');
+  const [localError, setLocalError] = useState('');
 
   const handleChange = (event) => {
     setRoomCode(event.target.value);
+    setLocalError('');
   };
 
   const handleSubmit = () => {
-    if (roomCode.length === 4) {
-      onSubmit(roomCode);
-    } else {
-      alert('Неверный код комнаты');
+    if (!roomCode) {
+      setLocalError('Введите код комнаты');
+      return;
     }
+    onSubmit(roomCode);
   };
 
   return (
@@ -23,13 +25,15 @@ function RoomCode({ onSubmit, error }) {
         type="text"
         value={roomCode}
         onChange={handleChange}
-        placeholder="4 цифры"
+        placeholder="Код"
+        autoFocus
       />
       <button onClick={handleSubmit}>Подтвердить</button>
-      {error && <p className="room-code-error">{error}</p>}
+      {(error || localError) && (
+        <p className="room-code-error">{error || localError}</p>
+      )}
     </div>
   );
 }
 
 export default RoomCode;
-

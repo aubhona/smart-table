@@ -72,14 +72,17 @@ function UsersList() {
           ) : users.length === 0 ? (
             <div className="users-message empty">Нет друзей!</div>
           ) : (
-            users.map((user) => (
-              <div key={user.id || user.customer_uuid} className="user-item">
-                <div className="user-avatar">
-                  {(user.name || user.username || user.login || "?").charAt(0).toUpperCase()}
+            users.map((user) => {
+              const login =
+                user.username || user.login || user.tg_login || user.name || "Неизвестный пользователь";
+              return (
+                <div key={user.id || user.customer_uuid} className="user-item">
+                  <div className="user-name">
+                    {login.startsWith("@") ? login : `@${login}`}
+                  </div>
                 </div>
-                <div className="user-name">{user.name || user.username || user.login}</div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </div>
