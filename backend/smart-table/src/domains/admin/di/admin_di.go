@@ -8,6 +8,7 @@ import (
 	"github.com/smart-table/src/domains/admin/domain"
 	domainServices "github.com/smart-table/src/domains/admin/domain/services"
 	"github.com/smart-table/src/domains/admin/infra/pg"
+	infraQueries "github.com/smart-table/src/domains/admin/infra/queries"
 	"go.uber.org/dig"
 )
 
@@ -37,7 +38,17 @@ func addRepositories(container *dig.Container) error {
 }
 
 func addServices(container *dig.Container) error {
-	err := container.Provide(appQueries.NewS3QueryService)
+	err := container.Provide(
+		func(
+			stCustomerQueryServiceImpl *infraQueries.SmartTableCustomerQueryServiceImpl,
+		) appQueries.SmartTableCustomerQueryService {
+			return stCustomerQueryServiceImpl
+		})
+	if err != nil {
+		return err
+	}
+
+	err = container.Provide(appQueries.NewS3QueryService)
 	if err != nil {
 		return err
 	}
@@ -132,6 +143,16 @@ func addHandlers(container *dig.Container) error { //nolint
 	}
 
 	err = container.Provide(app.NewMenuDishStateCommandHandler)
+	if err != nil {
+		return err
+	}
+
+	err = container.Provide(app.NewOrderListCommandHandler)
+	if err != nil {
+		return err
+	}
+
+	err = container.Provide(app.NewOrderInfoCommandHandler)
 	if err != nil {
 		return err
 	}

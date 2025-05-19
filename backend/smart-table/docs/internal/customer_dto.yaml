@@ -1,0 +1,117 @@
+components:
+    schemas:
+        OrderInfoDTO:
+            type: object
+            additionalProperties: false
+            properties:
+                order_main_info:
+                    description: Основная информация о заказе
+                    $ref: '#/components/schemas/OrderMainInfoDTO'
+                customer_list:
+                    description: Cписко клиентов с информацией о их части заказа
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/CustomerInfoDTO'
+            required:
+                - order_main_info
+                - customer_list
+
+        OrderMainInfoDTO:
+            type: object
+            additionalProperties: false
+            properties:
+                uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор заказа
+                status:
+                    description: Статус заказа
+                    type: string
+                resolution:
+                    description: Резолюция заказа
+                    type: string
+                table_number:
+                    description: Номер стола
+                    type: integer
+                guests_count:
+                    description: Количество клиентов в заказе
+                    type: integer
+                total_price:
+                    description: Итоговая стоимость заказа
+                    type: string
+                created_at:
+                    description: Дата создания заказа
+                    type: string
+                    format: date-time
+            required:
+                - uuid
+                - status
+                - table_number
+                - guests_count
+                - total_price
+                - created_at
+
+        CustomerInfoDTO:
+            type: object
+            additionalProperties: false
+            properties:
+                uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор пользователя
+                tg_login:
+                    type: string
+                tg_id:
+                    type: string
+                item_group_list:
+                    description: Список групп позиций в заказе пользователя
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ItemGroupInfoDTO'
+                total_price:
+                    description: Итоговая стоимость части заказа пользователя
+                    type: string
+            required:
+                - uuid
+                - tg_login
+                - tg_id
+                - item_group_list
+                - total_price
+
+        ItemGroupInfoDTO:
+            type: object
+            additionalProperties: false
+            properties:
+                menu_dish_uuid:
+                        type: string
+                        format: uuid
+                        description: Уникальный идентификатор позиции в меню
+                item_uuid_list:
+                    description: Список идентификаторов позиций в группе
+                    type: array
+                    items:
+                        type: string
+                        format: uuid
+                        description: Уникальный идентификатор позиции в заказе
+                comment:
+                    type: string
+                status:
+                    type: string
+                resolution:
+                    type: string
+                name:
+                    type: string
+                item_price:
+                    type: string
+                result_price:
+                    type: string
+                count: 
+                    type: integer
+            required:
+                - menu_dish_uuid
+                - item_uuid_list
+                - status
+                - name
+                - item_price
+                - result_price
+                - count

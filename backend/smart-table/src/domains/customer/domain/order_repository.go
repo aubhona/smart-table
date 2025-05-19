@@ -20,6 +20,6 @@ type OrderRepository interface {
 	FindOrdersForUpdate(tx Transaction, orderUUIDs []uuid.UUID) ([]utils.SharedRef[Order], error)
 
 	FindActiveOrderByTableIDForUpdate(tx Transaction, tableID string) (utils.SharedRef[Order], error)
-
 	FindActiveOrderByCustomerUUID(customerUUID uuid.UUID) (utils.SharedRef[Order], error)
+	FindOrdersByPlaceUUID(placeUUID uuid.UUID, isActive bool) ([]utils.SharedRef[Order], error)
 }

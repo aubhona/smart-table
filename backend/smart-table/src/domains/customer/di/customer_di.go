@@ -125,6 +125,16 @@ func addHandlers(container *dig.Container) error { //nolint
 		return err
 	}
 
+	err = container.Provide(app.NewPlaceOrderListCommandHandler)
+	if err != nil {
+		return err
+	}
+
+	err = container.Provide(app.NewOrderInfoCommandHandler)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

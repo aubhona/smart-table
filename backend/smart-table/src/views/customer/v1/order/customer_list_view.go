@@ -116,7 +116,7 @@ func getCustomerInfoList(
 		if !isExists {
 			customerInfoImpl.IsActive = true
 			customerInfoImpl.ItemInfoMap[key] = convertItemToItemInfo(item)
-			customerInfoImpl.TotalPrice = item.Get().GetPrice()
+			customerInfoImpl.TotalPrice = customerInfoImpl.TotalPrice.Add(item.Get().GetPrice())
 		} else {
 			itemInfoPrice, err := decimal.NewFromString(itemInfo.Price)
 			if err != nil {
