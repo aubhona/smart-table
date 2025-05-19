@@ -215,3 +215,18 @@ func (o *OrderRepository) FindOrdersForUpdate(tx domain.Transaction, orderUUIDs 
 
 	return nil, getNotFoundError(orderUUIDs, orders)
 }
+
+func (o *OrderRepository) FindOrdersByPlaceUUID(placeUUID uuid.UUID, isActive bool) ([]utils.SharedRef[domain.Order], error) {
+	ctx := context.Background()
+	queries := db.New(o.coonPool)
+
+	orderUUIDs, err := queries.GetOrderUUIDsByPlaceUUID(ctx, db.GetOrderUUIDsByPlaceUUIDParams{
+		Column1: placeUUID,
+		Column2: isActive,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return o.FindOrders(orderUUIDs)
+}
