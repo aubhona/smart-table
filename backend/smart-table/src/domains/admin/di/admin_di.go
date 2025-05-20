@@ -48,6 +48,11 @@ func addServices(container *dig.Container) error {
 		return err
 	}
 
+	err = container.Provide(infraQueries.NewSmartTableQueryServiceImpl)
+	if err != nil {
+		return err
+	}
+
 	err = container.Provide(appQueries.NewS3QueryService)
 	if err != nil {
 		return err
