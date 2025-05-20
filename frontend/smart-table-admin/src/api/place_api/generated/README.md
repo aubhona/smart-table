@@ -137,8 +137,7 @@ Class | Method | HTTP request | Description
 *SmartTableAdminApi.DefaultApi* | [**adminV1PlaceMenuDishListPost**](docs/DefaultApi.md#adminV1PlaceMenuDishListPost) | **POST** /admin/v1/place/menu/dish/list | Получение списка позиций в меню плейса
 *SmartTableAdminApi.DefaultApi* | [**adminV1PlaceOrderEditPost**](docs/DefaultApi.md#adminV1PlaceOrderEditPost) | **POST** /admin/v1/place/order/edit | Редкатирование заказа
 *SmartTableAdminApi.DefaultApi* | [**adminV1PlaceOrderInfoPost**](docs/DefaultApi.md#adminV1PlaceOrderInfoPost) | **POST** /admin/v1/place/order/info | Получение подробной информации о заказе
-*SmartTableAdminApi.DefaultApi* | [**adminV1PlaceOrderListClosedPost**](docs/DefaultApi.md#adminV1PlaceOrderListClosedPost) | **POST** /admin/v1/place/order/list/closed | Получение списка завершенных заказов плейса двухнедельной давности
-*SmartTableAdminApi.DefaultApi* | [**adminV1PlaceOrderListOpenedPost**](docs/DefaultApi.md#adminV1PlaceOrderListOpenedPost) | **POST** /admin/v1/place/order/list/opened | Получение списка открытых заказов плейса
+*SmartTableAdminApi.DefaultApi* | [**adminV1PlaceOrderListPost**](docs/DefaultApi.md#adminV1PlaceOrderListPost) | **POST** /admin/v1/place/order/list | Получение списка заказов плейса
 *SmartTableAdminApi.DefaultApi* | [**adminV1PlaceTableDeeplinksListPost**](docs/DefaultApi.md#adminV1PlaceTableDeeplinksListPost) | **POST** /admin/v1/place/table_deeplinks/list | Получение списка ссылок на столы для генерации QR
 
 
@@ -163,16 +162,14 @@ Class | Method | HTTP request | Description
  - [SmartTableAdminApi.AdminV1PlaceOrderEditRequest](docs/AdminV1PlaceOrderEditRequest.md)
  - [SmartTableAdminApi.AdminV1PlaceOrderInfoRequest](docs/AdminV1PlaceOrderInfoRequest.md)
  - [SmartTableAdminApi.AdminV1PlaceOrderInfoResponse](docs/AdminV1PlaceOrderInfoResponse.md)
- - [SmartTableAdminApi.AdminV1PlaceOrderListClosedRequest](docs/AdminV1PlaceOrderListClosedRequest.md)
- - [SmartTableAdminApi.AdminV1PlaceOrderListClosedResponse](docs/AdminV1PlaceOrderListClosedResponse.md)
- - [SmartTableAdminApi.AdminV1PlaceOrderListOpenedRequest](docs/AdminV1PlaceOrderListOpenedRequest.md)
- - [SmartTableAdminApi.AdminV1PlaceOrderListOpenedResponse](docs/AdminV1PlaceOrderListOpenedResponse.md)
+ - [SmartTableAdminApi.AdminV1PlaceOrderListRequest](docs/AdminV1PlaceOrderListRequest.md)
+ - [SmartTableAdminApi.AdminV1PlaceOrderListResponse](docs/AdminV1PlaceOrderListResponse.md)
  - [SmartTableAdminApi.AdminV1PlaceTableDeepLinksListRequest](docs/AdminV1PlaceTableDeepLinksListRequest.md)
  - [SmartTableAdminApi.AdminV1PlaceTableDeepLinksListResponse](docs/AdminV1PlaceTableDeepLinksListResponse.md)
  - [SmartTableAdminApi.CustomerInfo](docs/CustomerInfo.md)
  - [SmartTableAdminApi.EmployeeInfo](docs/EmployeeInfo.md)
  - [SmartTableAdminApi.ErrorResponse](docs/ErrorResponse.md)
- - [SmartTableAdminApi.ItemInfo](docs/ItemInfo.md)
+ - [SmartTableAdminApi.ItemGroupInfo](docs/ItemGroupInfo.md)
  - [SmartTableAdminApi.ItemResolution](docs/ItemResolution.md)
  - [SmartTableAdminApi.ItemStatus](docs/ItemStatus.md)
  - [SmartTableAdminApi.MenuDishInfo](docs/MenuDishInfo.md)

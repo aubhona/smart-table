@@ -31,10 +31,8 @@ import AdminV1PlaceMenuDishListRequest from '../model/AdminV1PlaceMenuDishListRe
 import AdminV1PlaceOrderEditRequest from '../model/AdminV1PlaceOrderEditRequest';
 import AdminV1PlaceOrderInfoRequest from '../model/AdminV1PlaceOrderInfoRequest';
 import AdminV1PlaceOrderInfoResponse from '../model/AdminV1PlaceOrderInfoResponse';
-import AdminV1PlaceOrderListClosedRequest from '../model/AdminV1PlaceOrderListClosedRequest';
-import AdminV1PlaceOrderListClosedResponse from '../model/AdminV1PlaceOrderListClosedResponse';
-import AdminV1PlaceOrderListOpenedRequest from '../model/AdminV1PlaceOrderListOpenedRequest';
-import AdminV1PlaceOrderListOpenedResponse from '../model/AdminV1PlaceOrderListOpenedResponse';
+import AdminV1PlaceOrderListRequest from '../model/AdminV1PlaceOrderListRequest';
+import AdminV1PlaceOrderListResponse from '../model/AdminV1PlaceOrderListResponse';
 import AdminV1PlaceTableDeepLinksListRequest from '../model/AdminV1PlaceTableDeepLinksListRequest';
 import AdminV1PlaceTableDeepLinksListResponse from '../model/AdminV1PlaceTableDeepLinksListResponse';
 import ErrorResponse from '../model/ErrorResponse';
@@ -807,35 +805,35 @@ export default class DefaultApi {
     }
 
     /**
-     * Callback function to receive the result of the adminV1PlaceOrderListClosedPost operation.
-     * @callback module:api/DefaultApi~adminV1PlaceOrderListClosedPostCallback
+     * Callback function to receive the result of the adminV1PlaceOrderListPost operation.
+     * @callback module:api/DefaultApi~adminV1PlaceOrderListPostCallback
      * @param {String} error Error message, if any.
-     * @param {module:model/AdminV1PlaceOrderListClosedResponse} data The data returned by the service call.
+     * @param {module:model/AdminV1PlaceOrderListResponse} data The data returned by the service call.
      * @param {String} response The complete HTTP response.
      */
 
     /**
-     * Получение списка завершенных заказов плейса двухнедельной давности
-     * Получение списка завершенных заказов плейса двухнедельной давности
+     * Получение списка заказов плейса
+     * Получение списка заказов плейса
      * @param {String} userUUID Уникальный идентификатор пользователя
      * @param {String} jWTToken jwt токен пользователя
-     * @param {module:model/AdminV1PlaceOrderListClosedRequest} adminV1PlaceOrderListClosedRequest 
-     * @param {module:api/DefaultApi~adminV1PlaceOrderListClosedPostCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/AdminV1PlaceOrderListClosedResponse}
+     * @param {module:model/AdminV1PlaceOrderListRequest} adminV1PlaceOrderListRequest 
+     * @param {module:api/DefaultApi~adminV1PlaceOrderListPostCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link module:model/AdminV1PlaceOrderListResponse}
      */
-    adminV1PlaceOrderListClosedPost(userUUID, jWTToken, adminV1PlaceOrderListClosedRequest, callback) {
-      let postBody = adminV1PlaceOrderListClosedRequest;
+    adminV1PlaceOrderListPost(userUUID, jWTToken, adminV1PlaceOrderListRequest, callback) {
+      let postBody = adminV1PlaceOrderListRequest;
       // verify the required parameter 'userUUID' is set
       if (userUUID === undefined || userUUID === null) {
-        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceOrderListClosedPost");
+        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceOrderListPost");
       }
       // verify the required parameter 'jWTToken' is set
       if (jWTToken === undefined || jWTToken === null) {
-        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceOrderListClosedPost");
+        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceOrderListPost");
       }
-      // verify the required parameter 'adminV1PlaceOrderListClosedRequest' is set
-      if (adminV1PlaceOrderListClosedRequest === undefined || adminV1PlaceOrderListClosedRequest === null) {
-        throw new Error("Missing the required parameter 'adminV1PlaceOrderListClosedRequest' when calling adminV1PlaceOrderListClosedPost");
+      // verify the required parameter 'adminV1PlaceOrderListRequest' is set
+      if (adminV1PlaceOrderListRequest === undefined || adminV1PlaceOrderListRequest === null) {
+        throw new Error("Missing the required parameter 'adminV1PlaceOrderListRequest' when calling adminV1PlaceOrderListPost");
       }
 
       let pathParams = {
@@ -852,63 +850,9 @@ export default class DefaultApi {
       let authNames = [];
       let contentTypes = ['application/json'];
       let accepts = ['application/json'];
-      let returnType = AdminV1PlaceOrderListClosedResponse;
+      let returnType = AdminV1PlaceOrderListResponse;
       return this.apiClient.callApi(
-        '/admin/v1/place/order/list/closed', 'POST',
-        pathParams, queryParams, headerParams, formParams, postBody,
-        authNames, contentTypes, accepts, returnType, null, callback
-      );
-    }
-
-    /**
-     * Callback function to receive the result of the adminV1PlaceOrderListOpenedPost operation.
-     * @callback module:api/DefaultApi~adminV1PlaceOrderListOpenedPostCallback
-     * @param {String} error Error message, if any.
-     * @param {module:model/AdminV1PlaceOrderListOpenedResponse} data The data returned by the service call.
-     * @param {String} response The complete HTTP response.
-     */
-
-    /**
-     * Получение списка открытых заказов плейса
-     * Получение списка открытых заказов плейса
-     * @param {String} userUUID Уникальный идентификатор пользователя
-     * @param {String} jWTToken jwt токен пользователя
-     * @param {module:model/AdminV1PlaceOrderListOpenedRequest} adminV1PlaceOrderListOpenedRequest 
-     * @param {module:api/DefaultApi~adminV1PlaceOrderListOpenedPostCallback} callback The callback function, accepting three arguments: error, data, response
-     * data is of type: {@link module:model/AdminV1PlaceOrderListOpenedResponse}
-     */
-    adminV1PlaceOrderListOpenedPost(userUUID, jWTToken, adminV1PlaceOrderListOpenedRequest, callback) {
-      let postBody = adminV1PlaceOrderListOpenedRequest;
-      // verify the required parameter 'userUUID' is set
-      if (userUUID === undefined || userUUID === null) {
-        throw new Error("Missing the required parameter 'userUUID' when calling adminV1PlaceOrderListOpenedPost");
-      }
-      // verify the required parameter 'jWTToken' is set
-      if (jWTToken === undefined || jWTToken === null) {
-        throw new Error("Missing the required parameter 'jWTToken' when calling adminV1PlaceOrderListOpenedPost");
-      }
-      // verify the required parameter 'adminV1PlaceOrderListOpenedRequest' is set
-      if (adminV1PlaceOrderListOpenedRequest === undefined || adminV1PlaceOrderListOpenedRequest === null) {
-        throw new Error("Missing the required parameter 'adminV1PlaceOrderListOpenedRequest' when calling adminV1PlaceOrderListOpenedPost");
-      }
-
-      let pathParams = {
-      };
-      let queryParams = {
-      };
-      let headerParams = {
-        'User-UUID': userUUID,
-        'JWT-Token': jWTToken
-      };
-      let formParams = {
-      };
-
-      let authNames = [];
-      let contentTypes = ['application/json'];
-      let accepts = ['application/json'];
-      let returnType = AdminV1PlaceOrderListOpenedResponse;
-      return this.apiClient.callApi(
-        '/admin/v1/place/order/list/opened', 'POST',
+        '/admin/v1/place/order/list', 'POST',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, null, callback
       );

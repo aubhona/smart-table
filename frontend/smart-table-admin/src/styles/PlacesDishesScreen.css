@@ -80,6 +80,25 @@
     text-align: center;
     transition: border-color 0.2s;
     background-color: #7d7575;
+    gap: 1rem;
+  }
+
+  .pd-place-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    margin: 0 2rem;
+  }
+
+  .pd-place-address {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+
+  .pd-place-details {
+    color: #e6e6e6;
+    font-size: 0.9rem;
   }
 
   .pd-loading, .pd-empty {
@@ -304,9 +323,4 @@
 
 .pd-button-cancel {
   background-color: transparent;
-}
-
-.pd-place-address {
-  margin-left: 3rem;
-  font-weight: bold;
 }

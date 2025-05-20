@@ -38,6 +38,8 @@ Name | Type | Description | Notes
 
 * `item_not_found` (value: `"item_not_found"`)
 
+* `order_not_belong_to_place` (value: `"order_not_belong_to_place"`)
+
 
 
 

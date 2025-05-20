@@ -10,6 +10,7 @@ Method | HTTP request | Description
 [**customerV1OrderCreatePost**](DefaultApi.md#customerV1OrderCreatePost) | **POST** /customer/v1/order/create | Создаёт новый заказ
 [**customerV1OrderCustomerListGet**](DefaultApi.md#customerV1OrderCustomerListGet) | **GET** /customer/v1/order/customer/list | Получение списка пользователей заказа
 [**customerV1OrderFinishPost**](DefaultApi.md#customerV1OrderFinishPost) | **POST** /customer/v1/order/finish | Запрос на завершение заказа
+[**customerV1OrderItemStatePost**](DefaultApi.md#customerV1OrderItemStatePost) | **POST** /customer/v1/order/item/state | Получить карточку блюда
 [**customerV1OrderItemsCommitPost**](DefaultApi.md#customerV1OrderItemsCommitPost) | **POST** /customer/v1/order/items/commit | Добавить блюда к чеку
 [**customerV1OrderItemsDraftCountEditPost**](DefaultApi.md#customerV1OrderItemsDraftCountEditPost) | **POST** /customer/v1/order/items/draft/count/edit | Изменяет количество блюд в корзине.
 [**customerV1OrderTipSavePost**](DefaultApi.md#customerV1OrderTipSavePost) | **POST** /customer/v1/order/tip/save | Сохранение чека
@@ -308,6 +309,57 @@ No authorization required
 
 - **Content-Type**: Not defined
 - **Accept**: application/json
+
+
+## customerV1OrderItemStatePost
+
+> File customerV1OrderItemStatePost(customerUUID, jWTToken, orderUUID, customerV1OrderItemsStateRequest)
+
+Получить карточку блюда
+
+Возвращает подробную информацию по выбранному блюду
+
+### Example
+
+```javascript
+import SmartTableMobileApi from 'smart_table_mobile_api';
+
+let apiInstance = new SmartTableMobileApi.DefaultApi();
+let customerUUID = "customerUUID_example"; // String | Уникальный идентификатор пользователя
+let jWTToken = "jWTToken_example"; // String | jwt токен пользователя
+let orderUUID = "orderUUID_example"; // String | Уникальный идентификатор заказа
+let customerV1OrderItemsStateRequest = new SmartTableMobileApi.CustomerV1OrderItemsStateRequest(); // CustomerV1OrderItemsStateRequest | 
+apiInstance.customerV1OrderItemStatePost(customerUUID, jWTToken, orderUUID, customerV1OrderItemsStateRequest, (error, data, response) => {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+});
+```
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **customerUUID** | **String**| Уникальный идентификатор пользователя | 
+ **jWTToken** | **String**| jwt токен пользователя | 
+ **orderUUID** | **String**| Уникальный идентификатор заказа | 
+ **customerV1OrderItemsStateRequest** | [**CustomerV1OrderItemsStateRequest**](CustomerV1OrderItemsStateRequest.md)|  | 
+
+### Return type
+
+**File**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: multipart/mixed, application/json
 
 
 ## customerV1OrderItemsCommitPost

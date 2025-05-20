@@ -1,11 +1,12 @@
 .item-container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
     width: 100%;
     color: #3c2f1e;  
     padding: 0%; 
     box-sizing: border-box;
+    position: relative;
   }
   
   .top-bar {
@@ -83,7 +84,7 @@
   .item-footer {
     font-weight: bold;
     position: fixed;
-    bottom: -2.15%;
+    bottom: 0;
     height: 9.55%;
     left: 50%;
     transform: translateX(-50%);
@@ -94,7 +95,6 @@
     padding: 15px;
     text-align: center;
     box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.2); 
-    margin-bottom: 20px;
   }
   
   .item-summary {

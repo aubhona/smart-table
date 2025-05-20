@@ -14,23 +14,27 @@
 import ApiClient from '../ApiClient';
 
 /**
- * The CartItemInfo model module.
- * @module model/CartItemInfo
+ * The ItemStateInfo model module.
+ * @module model/ItemStateInfo
  * @version 1.0.0
  */
-class CartItemInfo {
+class ItemStateInfo {
     /**
-     * Constructs a new <code>CartItemInfo</code>.
-     * @alias module:model/CartItemInfo
+     * Constructs a new <code>ItemStateInfo</code>.
+     * @alias module:model/ItemStateInfo
      * @param id {String} 
      * @param name {String} 
+     * @param description {String} 
+     * @param weight {Number} 
+     * @param calories {Number} 
+     * @param category {String} 
      * @param price {String} 
      * @param count {Number} 
      * @param resultPrice {String} 
      */
-    constructor(id, name, price, count, resultPrice) { 
+    constructor(id, name, description, weight, calories, category, price, count, resultPrice) { 
         
-        CartItemInfo.initialize(this, id, name, price, count, resultPrice);
+        ItemStateInfo.initialize(this, id, name, description, weight, calories, category, price, count, resultPrice);
     }
 
     /**
@@ -38,30 +42,46 @@ class CartItemInfo {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj, id, name, price, count, resultPrice) { 
+    static initialize(obj, id, name, description, weight, calories, category, price, count, resultPrice) { 
         obj['id'] = id;
         obj['name'] = name;
+        obj['description'] = description;
+        obj['weight'] = weight;
+        obj['calories'] = calories;
+        obj['category'] = category;
         obj['price'] = price;
         obj['count'] = count;
         obj['result_price'] = resultPrice;
     }
 
     /**
-     * Constructs a <code>CartItemInfo</code> from a plain JavaScript object, optionally creating a new instance.
+     * Constructs a <code>ItemStateInfo</code> from a plain JavaScript object, optionally creating a new instance.
      * Copies all relevant properties from <code>data</code> to <code>obj</code> if supplied or a new instance if not.
      * @param {Object} data The plain JavaScript object bearing properties of interest.
-     * @param {module:model/CartItemInfo} obj Optional instance to populate.
-     * @return {module:model/CartItemInfo} The populated <code>CartItemInfo</code> instance.
+     * @param {module:model/ItemStateInfo} obj Optional instance to populate.
+     * @return {module:model/ItemStateInfo} The populated <code>ItemStateInfo</code> instance.
      */
     static constructFromObject(data, obj) {
         if (data) {
-            obj = obj || new CartItemInfo();
+            obj = obj || new ItemStateInfo();
 
             if (data.hasOwnProperty('id')) {
                 obj['id'] = ApiClient.convertToType(data['id'], 'String');
             }
             if (data.hasOwnProperty('name')) {
                 obj['name'] = ApiClient.convertToType(data['name'], 'String');
+            }
+            if (data.hasOwnProperty('description')) {
+                obj['description'] = ApiClient.convertToType(data['description'], 'String');
+            }
+            if (data.hasOwnProperty('weight')) {
+                obj['weight'] = ApiClient.convertToType(data['weight'], 'Number');
+            }
+            if (data.hasOwnProperty('calories')) {
+                obj['calories'] = ApiClient.convertToType(data['calories'], 'Number');
+            }
+            if (data.hasOwnProperty('category')) {
+                obj['category'] = ApiClient.convertToType(data['category'], 'String');
             }
             if (data.hasOwnProperty('price')) {
                 obj['price'] = ApiClient.convertToType(data['price'], 'String');
@@ -72,21 +92,18 @@ class CartItemInfo {
             if (data.hasOwnProperty('result_price')) {
                 obj['result_price'] = ApiClient.convertToType(data['result_price'], 'String');
             }
-            if (data.hasOwnProperty('comment')) {
-                obj['comment'] = ApiClient.convertToType(data['comment'], 'String');
-            }
         }
         return obj;
     }
 
     /**
-     * Validates the JSON data with respect to <code>CartItemInfo</code>.
+     * Validates the JSON data with respect to <code>ItemStateInfo</code>.
      * @param {Object} data The plain JavaScript object bearing properties of interest.
-     * @return {boolean} to indicate whether the JSON data is valid with respect to <code>CartItemInfo</code>.
+     * @return {boolean} to indicate whether the JSON data is valid with respect to <code>ItemStateInfo</code>.
      */
     static validateJSON(data) {
         // check to make sure all required properties are present in the JSON string
-        for (const property of CartItemInfo.RequiredProperties) {
+        for (const property of ItemStateInfo.RequiredProperties) {
             if (!data.hasOwnProperty(property)) {
                 throw new Error("The required field `" + property + "` is not found in the JSON data: " + JSON.stringify(data));
             }
@@ -100,16 +117,20 @@ class CartItemInfo {
             throw new Error("Expected the field `name` to be a primitive type in the JSON string but got " + data['name']);
         }
         // ensure the json data is a string
+        if (data['description'] && !(typeof data['description'] === 'string' || data['description'] instanceof String)) {
+            throw new Error("Expected the field `description` to be a primitive type in the JSON string but got " + data['description']);
+        }
+        // ensure the json data is a string
+        if (data['category'] && !(typeof data['category'] === 'string' || data['category'] instanceof String)) {
+            throw new Error("Expected the field `category` to be a primitive type in the JSON string but got " + data['category']);
+        }
+        // ensure the json data is a string
         if (data['price'] && !(typeof data['price'] === 'string' || data['price'] instanceof String)) {
             throw new Error("Expected the field `price` to be a primitive type in the JSON string but got " + data['price']);
         }
         // ensure the json data is a string
         if (data['result_price'] && !(typeof data['result_price'] === 'string' || data['result_price'] instanceof String)) {
             throw new Error("Expected the field `result_price` to be a primitive type in the JSON string but got " + data['result_price']);
-        }
-        // ensure the json data is a string
-        if (data['comment'] && !(typeof data['comment'] === 'string' || data['comment'] instanceof String)) {
-            throw new Error("Expected the field `comment` to be a primitive type in the JSON string but got " + data['comment']);
         }
 
         return true;
@@ -118,42 +139,57 @@ class CartItemInfo {
 
 }
 
-CartItemInfo.RequiredProperties = ["id", "name", "price", "count", "result_price"];
+ItemStateInfo.RequiredProperties = ["id", "name", "description", "weight", "calories", "category", "price", "count", "result_price"];
 
 /**
  * @member {String} id
  */
-CartItemInfo.prototype['id'] = undefined;
+ItemStateInfo.prototype['id'] = undefined;
 
 /**
  * @member {String} name
  */
-CartItemInfo.prototype['name'] = undefined;
+ItemStateInfo.prototype['name'] = undefined;
+
+/**
+ * @member {String} description
+ */
+ItemStateInfo.prototype['description'] = undefined;
+
+/**
+ * @member {Number} weight
+ */
+ItemStateInfo.prototype['weight'] = undefined;
+
+/**
+ * @member {Number} calories
+ */
+ItemStateInfo.prototype['calories'] = undefined;
+
+/**
+ * @member {String} category
+ */
+ItemStateInfo.prototype['category'] = undefined;
 
 /**
  * @member {String} price
  */
-CartItemInfo.prototype['price'] = undefined;
+ItemStateInfo.prototype['price'] = undefined;
 
 /**
  * @member {Number} count
  */
-CartItemInfo.prototype['count'] = undefined;
+ItemStateInfo.prototype['count'] = undefined;
 
 /**
  * @member {String} result_price
  */
-CartItemInfo.prototype['result_price'] = undefined;
-
-/**
- * @member {String} comment
- */
-CartItemInfo.prototype['comment'] = undefined;
+ItemStateInfo.prototype['result_price'] = undefined;
 
 
 
 
 
 
-export default CartItemInfo;
+export default ItemStateInfo;
 

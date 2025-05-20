@@ -32,16 +32,14 @@ import AdminV1PlaceMenuDishListRequest from './model/AdminV1PlaceMenuDishListReq
 import AdminV1PlaceOrderEditRequest from './model/AdminV1PlaceOrderEditRequest';
 import AdminV1PlaceOrderInfoRequest from './model/AdminV1PlaceOrderInfoRequest';
 import AdminV1PlaceOrderInfoResponse from './model/AdminV1PlaceOrderInfoResponse';
-import AdminV1PlaceOrderListClosedRequest from './model/AdminV1PlaceOrderListClosedRequest';
-import AdminV1PlaceOrderListClosedResponse from './model/AdminV1PlaceOrderListClosedResponse';
-import AdminV1PlaceOrderListOpenedRequest from './model/AdminV1PlaceOrderListOpenedRequest';
-import AdminV1PlaceOrderListOpenedResponse from './model/AdminV1PlaceOrderListOpenedResponse';
+import AdminV1PlaceOrderListRequest from './model/AdminV1PlaceOrderListRequest';
+import AdminV1PlaceOrderListResponse from './model/AdminV1PlaceOrderListResponse';
 import AdminV1PlaceTableDeepLinksListRequest from './model/AdminV1PlaceTableDeepLinksListRequest';
 import AdminV1PlaceTableDeepLinksListResponse from './model/AdminV1PlaceTableDeepLinksListResponse';
 import CustomerInfo from './model/CustomerInfo';
 import EmployeeInfo from './model/EmployeeInfo';
 import ErrorResponse from './model/ErrorResponse';
-import ItemInfo from './model/ItemInfo';
+import ItemGroupInfo from './model/ItemGroupInfo';
 import ItemResolution from './model/ItemResolution';
 import ItemStatus from './model/ItemStatus';
 import MenuDishInfo from './model/MenuDishInfo';
@@ -207,28 +205,16 @@ export {
     AdminV1PlaceOrderInfoResponse,
 
     /**
-     * The AdminV1PlaceOrderListClosedRequest model constructor.
-     * @property {module:model/AdminV1PlaceOrderListClosedRequest}
+     * The AdminV1PlaceOrderListRequest model constructor.
+     * @property {module:model/AdminV1PlaceOrderListRequest}
      */
-    AdminV1PlaceOrderListClosedRequest,
+    AdminV1PlaceOrderListRequest,
 
     /**
-     * The AdminV1PlaceOrderListClosedResponse model constructor.
-     * @property {module:model/AdminV1PlaceOrderListClosedResponse}
+     * The AdminV1PlaceOrderListResponse model constructor.
+     * @property {module:model/AdminV1PlaceOrderListResponse}
      */
-    AdminV1PlaceOrderListClosedResponse,
-
-    /**
-     * The AdminV1PlaceOrderListOpenedRequest model constructor.
-     * @property {module:model/AdminV1PlaceOrderListOpenedRequest}
-     */
-    AdminV1PlaceOrderListOpenedRequest,
-
-    /**
-     * The AdminV1PlaceOrderListOpenedResponse model constructor.
-     * @property {module:model/AdminV1PlaceOrderListOpenedResponse}
-     */
-    AdminV1PlaceOrderListOpenedResponse,
+    AdminV1PlaceOrderListResponse,
 
     /**
      * The AdminV1PlaceTableDeepLinksListRequest model constructor.
@@ -261,10 +247,10 @@ export {
     ErrorResponse,
 
     /**
-     * The ItemInfo model constructor.
-     * @property {module:model/ItemInfo}
+     * The ItemGroupInfo model constructor.
+     * @property {module:model/ItemGroupInfo}
      */
-    ItemInfo,
+    ItemGroupInfo,
 
     /**
      * The ItemResolution model constructor.

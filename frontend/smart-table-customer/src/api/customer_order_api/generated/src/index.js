@@ -22,9 +22,11 @@ import CustomerV1OrderCreateRequest from './model/CustomerV1OrderCreateRequest';
 import CustomerV1OrderCreateResponse from './model/CustomerV1OrderCreateResponse';
 import CustomerV1OrderCustomerListResponse from './model/CustomerV1OrderCustomerListResponse';
 import CustomerV1OrderItemsDraftCountEditRequest from './model/CustomerV1OrderItemsDraftCountEditRequest';
+import CustomerV1OrderItemsStateRequest from './model/CustomerV1OrderItemsStateRequest';
 import ErrorResponse from './model/ErrorResponse';
 import ItemInfo from './model/ItemInfo';
 import ItemResolution from './model/ItemResolution';
+import ItemStateInfo from './model/ItemStateInfo';
 import ItemStatus from './model/ItemStatus';
 import MenuDishItem from './model/MenuDishItem';
 import MenuDishItemUpdatedInfo from './model/MenuDishItemUpdatedInfo';
@@ -124,6 +126,12 @@ export {
     CustomerV1OrderItemsDraftCountEditRequest,
 
     /**
+     * The CustomerV1OrderItemsStateRequest model constructor.
+     * @property {module:model/CustomerV1OrderItemsStateRequest}
+     */
+    CustomerV1OrderItemsStateRequest,
+
+    /**
      * The ErrorResponse model constructor.
      * @property {module:model/ErrorResponse}
      */
@@ -140,6 +148,12 @@ export {
      * @property {module:model/ItemResolution}
      */
     ItemResolution,
+
+    /**
+     * The ItemStateInfo model constructor.
+     * @property {module:model/ItemStateInfo}
+     */
+    ItemStateInfo,
 
     /**
      * The ItemStatus model constructor.

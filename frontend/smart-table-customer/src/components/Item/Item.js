@@ -1,79 +1,222 @@
-import React, { useState }from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useOrder } from "../OrderContext/OrderContext";
+import { SERVER_URL } from "../../config";
+import { handleMultipartResponse } from "../hooks/multipartUtils";
+import LoadingScreen from "../LoadingScreen/LoadingScreen";
 import "./Item.css";
 
-const dishes = [
-    { id: 1, category: "novinki", name: "Бурурброт", price: 1000, calories: 250, img: "https://i.pinimg.com/736x/98/d0/72/98d072b6a21f5c32509185c537182ec5.jpg" },
-    { id: 2, category: "novinki", name: "Плов", price: 1200, calories: 300 },
-    { id: 3, category: "pervoe", name: "Супчок", price: 15, calories: 400 },
-    { id: 4, category: "vtoroe", name: "Котлета с пюре", price: 20, calories: 500 },
-    { id: 5, category: "napitki", name: "Кофе", price: 17, calories: 200 },
-    { id: 6, category: "napitki", name: "Чай", price: 10, calories: 200 },
-    { id: 7, category: "deserty", name: "Блины", price: 50, calories: 300 },
-    { id: 8, category: "pervoe", name: "Борщок", price: 100, calories: 200 },
-    { id: 9, category: "novinki", name: "Яблоко", price: 6, calories: 100 },
-    { id: 10, category: "holodnoe", name: "Сок", price: 6, calories: 100 },
-  ];
-
 function Item() {
-    const { id } = useParams();
-    const [cart, setCart] = useState({});
-    const navigate = useNavigate();
-    const dish = dishes.find(d => d.id === Number(id));
-  
-    if (!dish) return <div>Блюдо не найдено</div>;
+  const location = useLocation();
+  const initialCount = location.state?.count || 1;
+  const initialComment = location.state?.comment || "";
+  const originalComment = location.state?.comment ?? "";
 
-    const updateQuantity = (id, change) => {
-        setCart((prev) => {
-          const newQuantity = (prev[id] || 1) + change;
-          if (newQuantity <= 0) {
-            const updatedCart = { ...prev };
-            delete updatedCart[id]; 
-            return updatedCart;
+  const { id } = useParams();
+  const { customer_uuid, order_uuid } = useOrder();
+  const navigate = useNavigate();
+
+  const [dish, setDish] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [quantity, setQuantity] = useState(initialCount);
+  const [comment, setComment] = useState(initialComment);
+  const [success, setSuccess] = useState(false);
+  
+  const isEdit = location.state && location.state.count;
+
+  useEffect(() => {
+    if (!customer_uuid || !order_uuid || !id) return;
+    setLoading(true);
+
+    fetch(`${SERVER_URL}/customer/v1/order/item/state`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+        "Customer-UUID": customer_uuid,
+        "Order-UUID": order_uuid,
+        "JWT-Token": "bla-bla-bla",
+        "Accept": "multipart/mixed, application/json",
+      },
+      body: JSON.stringify({
+        dish_uuid: id,
+      }),
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Не удалось загрузить блюдо");
+        const { list, imagesMap } = await handleMultipartResponse(res, "item");
+        const dishData = Array.isArray(list) ? list[0] : list;
+        if (!initialComment && dishData?.comment) setComment(dishData.comment);
+        let img = null;
+        if(imagesMap && imagesMap[id]) {
+          img = imagesMap[id];
+        }
+        if(!img && imagesMap) {
+          const key = Object.keys(imagesMap);
+          if(key.length === 1) {
+            img = imagesMap[key[0]];
           }
-          return { ...prev, [id]: newQuantity };
+        }
+        setDish({
+          ...dishData, 
+          img: img || dishData?.img,
         });
-      };
-  
+        setLoading(false);
+      })
+      .catch((e) => {
+        setError(e.message || "Ошибка при загрузке блюда");
+        setLoading(false);
+      });
+  }, [customer_uuid, order_uuid, id]);
+
+  const handleAddOrSave = async () => {
+    try {
+      if (isEdit) {
+        const delta = quantity - initialCount;
+        if (comment !== originalComment) {
+          await fetch(`${SERVER_URL}/customer/v1/order/items/draft/count/edit`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "ngrok-skip-browser-warning": "true",
+              "Customer-UUID": customer_uuid,
+              "Order-UUID": order_uuid,
+              "JWT-Token": "bla-bla-bla",
+            },
+            body: JSON.stringify({
+              menu_dish_uuid: id,
+              count: 0,
+              comment: originalComment || undefined,
+            }),
+          });
+          await fetch(`${SERVER_URL}/customer/v1/order/items/draft/count/edit`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "ngrok-skip-browser-warning": "true",
+              "Customer-UUID": customer_uuid,
+              "Order-UUID": order_uuid,
+              "JWT-Token": "bla-bla-bla",
+            },
+            body: JSON.stringify({
+              menu_dish_uuid: id,
+              count: quantity,
+              comment: comment || undefined,
+            }),
+          });
+        } else if (delta > 0){
+          await fetch(`${SERVER_URL}/customer/v1/order/items/draft/count/edit`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "ngrok-skip-browser-warning": "true",
+              "Customer-UUID": customer_uuid,
+              "Order-UUID": order_uuid,
+              "JWT-Token": "bla-bla-bla",
+            },
+            body: JSON.stringify({
+              menu_dish_uuid: id,
+              count: delta,
+              comment: comment || undefined,
+            }),
+          });
+        }
+      } else {
+        await fetch(`${SERVER_URL}/customer/v1/order/items/draft/count/edit`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
+            "Customer-UUID": customer_uuid,
+            "Order-UUID": order_uuid,
+            "JWT-Token": "bla-bla-bla",
+          },
+          body: JSON.stringify({
+            menu_dish_uuid: id,
+            count: quantity,
+            comment: comment || undefined,
+          }),
+        });
+      }
+
+      setSuccess(true);
+      setTimeout(() => {
+        navigate(-1);
+      }, 500);
+    } catch (e) {
+      setError(e.message || "Ошибка сохранения/добавления блюда");
+    }
+  };
+
+  const updateQuantity = (change) => {
+    setQuantity((prev) => Math.max(1, prev + change));
+    setSuccess(false);
+  };
+
+  if (loading) return <LoadingScreen message="Загрузка блюда..." />;
+  if (error)
     return (
-    <div className="item-container">
+      <div className="item-container">
         <div className="top-bar">
-          <button className="top-button" onClick={() => navigate(-1)}>назад</button>
+          <button className="top-button" onClick={() => navigate(-1)}>Назад</button>
         </div>
-  
-        <div className="dish-image-item">
-          <img src={dish.img} alt={dish.name}/>
-        </div>
-  
-        <div className="dish-info-item">
-          <p className="description-item">{dish.description || "Вкусный бургер"}</p>
-          
-          <textarea placeholder="Комментарий к заказу" />
-        </div>
-  
-        <div className="item-footer">
-            <div className="item-summary">
-                <div className="dish-name-item">{dish.name}</div>
-                <div className="calories-item">{dish.calories} грамм</div>
-                <div className="price-item">{dish.price} ₽</div>
-            </div>
-            <div className="item-actions">
-                <div className="quantity-controls-item">
-                    <button onClick={() => updateQuantity(dish.id, -1)}>-</button>
-                    <span><strong>{cart[dish.id] || 1}</strong></span>
-                    <button onClick={() => updateQuantity(dish.id, 1)}>+</button>
-                </div>
-                <button 
-                    className="add-button" 
-                    // onClick={() => addToCart(dish.id)} 
-                    disabled={cart[dish.id] <= 0}
-                >
-                    Добавить
-                </button>
-                </div>
-            </div>
-        </div>
+        <div className="item-error">{error}</div>
+      </div>
     );
+  if (!dish) return null;
+
+  return (
+    <div className="item-container">
+      <div className="top-bar">
+        <button className="top-button" onClick={() => navigate(-1)}>Назад</button>
+      </div>
+
+      <div className="dish-image-item">
+        {dish.img ? (
+          <img src={dish.img} alt={dish.name} />
+        ) : (
+          <span>Нет фото</span>
+        )}
+      </div>
+
+      <div className="dish-info-item">
+        <p className="description-item">{dish.description || "Описание не указано"}</p>
+        <textarea
+          placeholder="Комментарий к заказу"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+        />
+      </div>
+
+      <div className="item-footer">
+        <div className="item-summary">
+          <div className="dish-name-item">{dish.name}</div>
+          <div className="calories-item">{dish.calories} ккал</div>
+          <div className="price-item">{dish.price} ₽</div>
+        </div>
+        <div className="item-actions">
+          <div className="quantity-controls-item">
+            <button onClick={() => updateQuantity(-1)}>-</button>
+            <span><strong>{quantity}</strong></span>
+            <button onClick={() => updateQuantity(1)}>+</button>
+          </div>
+          <button
+            className="add-button"
+            onClick={handleAddOrSave}
+            disabled={quantity <= 0}
+          >
+            {isEdit ? "Сохранить" : "Добавить"}
+          </button>
+        </div>
+        {success && (
+          <div className="success-msg">
+            Блюдо {isEdit ? "обновлено" : "добавлено"} в корзину!
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
-  
-  export default Item;
+
+export default Item;

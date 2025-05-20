@@ -11,10 +11,12 @@ docs/CustomerV1OrderCreateRequest.md
 docs/CustomerV1OrderCreateResponse.md
 docs/CustomerV1OrderCustomerListResponse.md
 docs/CustomerV1OrderItemsDraftCountEditRequest.md
+docs/CustomerV1OrderItemsStateRequest.md
 docs/DefaultApi.md
 docs/ErrorResponse.md
 docs/ItemInfo.md
 docs/ItemResolution.md
+docs/ItemStateInfo.md
 docs/ItemStatus.md
 docs/MenuDishItem.md
 docs/MenuDishItemUpdatedInfo.md
@@ -33,9 +35,13 @@ src/model/CustomerV1OrderCreateRequest.js
 src/model/CustomerV1OrderCreateResponse.js
 src/model/CustomerV1OrderCustomerListResponse.js
 src/model/CustomerV1OrderItemsDraftCountEditRequest.js
+src/model/CustomerV1OrderItemsStateRequest.js
 src/model/ErrorResponse.js
 src/model/ItemInfo.js
 src/model/ItemResolution.js
+src/model/ItemStateInfo.js
 src/model/ItemStatus.js
 src/model/MenuDishItem.js
 src/model/MenuDishItemUpdatedInfo.js
+test/model/CustomerV1OrderItemsStateRequest.spec.js
+test/model/ItemStateInfo.spec.js

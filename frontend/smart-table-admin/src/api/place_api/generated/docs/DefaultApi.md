@@ -18,8 +18,7 @@ Method | HTTP request | Description
 [**adminV1PlaceMenuDishListPost**](DefaultApi.md#adminV1PlaceMenuDishListPost) | **POST** /admin/v1/place/menu/dish/list | Получение списка позиций в меню плейса
 [**adminV1PlaceOrderEditPost**](DefaultApi.md#adminV1PlaceOrderEditPost) | **POST** /admin/v1/place/order/edit | Редкатирование заказа
 [**adminV1PlaceOrderInfoPost**](DefaultApi.md#adminV1PlaceOrderInfoPost) | **POST** /admin/v1/place/order/info | Получение подробной информации о заказе
-[**adminV1PlaceOrderListClosedPost**](DefaultApi.md#adminV1PlaceOrderListClosedPost) | **POST** /admin/v1/place/order/list/closed | Получение списка завершенных заказов плейса двухнедельной давности
-[**adminV1PlaceOrderListOpenedPost**](DefaultApi.md#adminV1PlaceOrderListOpenedPost) | **POST** /admin/v1/place/order/list/opened | Получение списка открытых заказов плейса
+[**adminV1PlaceOrderListPost**](DefaultApi.md#adminV1PlaceOrderListPost) | **POST** /admin/v1/place/order/list | Получение списка заказов плейса
 [**adminV1PlaceTableDeeplinksListPost**](DefaultApi.md#adminV1PlaceTableDeeplinksListPost) | **POST** /admin/v1/place/table_deeplinks/list | Получение списка ссылок на столы для генерации QR
 
 
@@ -710,13 +709,13 @@ No authorization required
 - **Accept**: application/json
 
 
-## adminV1PlaceOrderListClosedPost
+## adminV1PlaceOrderListPost
 
-> AdminV1PlaceOrderListClosedResponse adminV1PlaceOrderListClosedPost(userUUID, jWTToken, adminV1PlaceOrderListClosedRequest)
+> AdminV1PlaceOrderListResponse adminV1PlaceOrderListPost(userUUID, jWTToken, adminV1PlaceOrderListRequest)
 
-Получение списка завершенных заказов плейса двухнедельной давности
+Получение списка заказов плейса
 
-Получение списка завершенных заказов плейса двухнедельной давности
+Получение списка заказов плейса
 
 ### Example
 
@@ -726,8 +725,8 @@ import SmartTableAdminApi from 'smart_table_admin_api';
 let apiInstance = new SmartTableAdminApi.DefaultApi();
 let userUUID = "userUUID_example"; // String | Уникальный идентификатор пользователя
 let jWTToken = "jWTToken_example"; // String | jwt токен пользователя
-let adminV1PlaceOrderListClosedRequest = new SmartTableAdminApi.AdminV1PlaceOrderListClosedRequest(); // AdminV1PlaceOrderListClosedRequest | 
-apiInstance.adminV1PlaceOrderListClosedPost(userUUID, jWTToken, adminV1PlaceOrderListClosedRequest, (error, data, response) => {
+let adminV1PlaceOrderListRequest = new SmartTableAdminApi.AdminV1PlaceOrderListRequest(); // AdminV1PlaceOrderListRequest | 
+apiInstance.adminV1PlaceOrderListPost(userUUID, jWTToken, adminV1PlaceOrderListRequest, (error, data, response) => {
   if (error) {
     console.error(error);
   } else {
@@ -743,60 +742,11 @@ Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **userUUID** | **String**| Уникальный идентификатор пользователя | 
  **jWTToken** | **String**| jwt токен пользователя | 
- **adminV1PlaceOrderListClosedRequest** | [**AdminV1PlaceOrderListClosedRequest**](AdminV1PlaceOrderListClosedRequest.md)|  | 
+ **adminV1PlaceOrderListRequest** | [**AdminV1PlaceOrderListRequest**](AdminV1PlaceOrderListRequest.md)|  | 
 
 ### Return type
 
-[**AdminV1PlaceOrderListClosedResponse**](AdminV1PlaceOrderListClosedResponse.md)
-
-### Authorization
-
-No authorization required
-
-### HTTP request headers
-
-- **Content-Type**: application/json
-- **Accept**: application/json
-
-
-## adminV1PlaceOrderListOpenedPost
-
-> AdminV1PlaceOrderListOpenedResponse adminV1PlaceOrderListOpenedPost(userUUID, jWTToken, adminV1PlaceOrderListOpenedRequest)
-
-Получение списка открытых заказов плейса
-
-Получение списка открытых заказов плейса
-
-### Example
-
-```javascript
-import SmartTableAdminApi from 'smart_table_admin_api';
-
-let apiInstance = new SmartTableAdminApi.DefaultApi();
-let userUUID = "userUUID_example"; // String | Уникальный идентификатор пользователя
-let jWTToken = "jWTToken_example"; // String | jwt токен пользователя
-let adminV1PlaceOrderListOpenedRequest = new SmartTableAdminApi.AdminV1PlaceOrderListOpenedRequest(); // AdminV1PlaceOrderListOpenedRequest | 
-apiInstance.adminV1PlaceOrderListOpenedPost(userUUID, jWTToken, adminV1PlaceOrderListOpenedRequest, (error, data, response) => {
-  if (error) {
-    console.error(error);
-  } else {
-    console.log('API called successfully. Returned data: ' + data);
-  }
-});
-```
-
-### Parameters
-
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **userUUID** | **String**| Уникальный идентификатор пользователя | 
- **jWTToken** | **String**| jwt токен пользователя | 
- **adminV1PlaceOrderListOpenedRequest** | [**AdminV1PlaceOrderListOpenedRequest**](AdminV1PlaceOrderListOpenedRequest.md)|  | 
-
-### Return type
-
-[**AdminV1PlaceOrderListOpenedResponse**](AdminV1PlaceOrderListOpenedResponse.md)
+[**AdminV1PlaceOrderListResponse**](AdminV1PlaceOrderListResponse.md)
 
 ### Authorization
 

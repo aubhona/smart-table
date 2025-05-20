@@ -1,10 +1,10 @@
-# SmartTableAdminApi.AdminV1PlaceOrderInfoRequest
+# SmartTableAdminApi.AdminV1PlaceOrderListRequest
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**orderUuid** | **String** | Уникальный идентификатор заказа | 
+**isActive** | **Boolean** | Завершен ли заказ | 
 **placeUuid** | **String** | Уникальный идентификатор плейса | 
 
 

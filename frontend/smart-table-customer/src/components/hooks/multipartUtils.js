@@ -60,13 +60,25 @@ export function parseMixed(bodyBuf, boundary) {
   return parts;
 }
 
-// --- Главная функция! --- //
 export async function handleMultipartResponse(response, listField = 'dish_list') {
   const ct = response.headers.get("Content-Type") || "";
 
   if (!ct.startsWith("multipart/mixed")) {
     const json = await response.json();
-    const list = Array.isArray(json) ? json : json[listField] || [];
+    let list = [];
+    if (Array.isArray(json)) {
+      list = json;
+    } else if (Array.isArray(json[listField])) {
+      list = json[listField];
+    } else if (json[listField]) {
+      if(typeof json[listField] === 'object' && json[listField] !== null) { 
+        list = [json[listField]];
+      } else {
+        list = [json[listField]];
+      }
+    } else if (typeof json === 'object' && json !== null && !Array.isArray(json)) {
+      list = [json];
+    }
     return { 
       categories: json.categories || [], 
       list,
@@ -88,7 +100,20 @@ export async function handleMultipartResponse(response, listField = 'dish_list')
   if (!jsonPart) throw new Error("JSON часть не найдена");
   
   const json = JSON.parse(new TextDecoder().decode(jsonPart.data));
-  const list = Array.isArray(json) ? json : json[listField] || [];
+  let list = [];
+  if (Array.isArray(json)) {
+    list = json;
+  } else if (Array.isArray(json[listField])) {
+    list = json[listField];
+  } else if (json[listField]) {
+    if (typeof json[listField] === "object" && json[listField] !== null) {
+      list = [json[listField]];
+    } else {
+      list = [json[listField]];
+    }
+  } else if (typeof json === "object" && json !== null && !Array.isArray(json)) {
+    list = [json];
+  }
   const categories = json.categories || [];
   const room_code = json.room_code || undefined;
   const counts = json.items

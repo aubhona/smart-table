@@ -18,6 +18,7 @@ import CustomerV1OrderCreateRequest from '../model/CustomerV1OrderCreateRequest'
 import CustomerV1OrderCreateResponse from '../model/CustomerV1OrderCreateResponse';
 import CustomerV1OrderCustomerListResponse from '../model/CustomerV1OrderCustomerListResponse';
 import CustomerV1OrderItemsDraftCountEditRequest from '../model/CustomerV1OrderItemsDraftCountEditRequest';
+import CustomerV1OrderItemsStateRequest from '../model/CustomerV1OrderItemsStateRequest';
 import ErrorResponse from '../model/ErrorResponse';
 
 /**
@@ -362,6 +363,66 @@ export default class DefaultApi {
       let returnType = null;
       return this.apiClient.callApi(
         '/customer/v1/order/finish', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the customerV1OrderItemStatePost operation.
+     * @callback module:api/DefaultApi~customerV1OrderItemStatePostCallback
+     * @param {String} error Error message, if any.
+     * @param {File} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Получить карточку блюда
+     * Возвращает подробную информацию по выбранному блюду
+     * @param {String} customerUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {String} orderUUID Уникальный идентификатор заказа
+     * @param {module:model/CustomerV1OrderItemsStateRequest} customerV1OrderItemsStateRequest 
+     * @param {module:api/DefaultApi~customerV1OrderItemStatePostCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link File}
+     */
+    customerV1OrderItemStatePost(customerUUID, jWTToken, orderUUID, customerV1OrderItemsStateRequest, callback) {
+      let postBody = customerV1OrderItemsStateRequest;
+      // verify the required parameter 'customerUUID' is set
+      if (customerUUID === undefined || customerUUID === null) {
+        throw new Error("Missing the required parameter 'customerUUID' when calling customerV1OrderItemStatePost");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling customerV1OrderItemStatePost");
+      }
+      // verify the required parameter 'orderUUID' is set
+      if (orderUUID === undefined || orderUUID === null) {
+        throw new Error("Missing the required parameter 'orderUUID' when calling customerV1OrderItemStatePost");
+      }
+      // verify the required parameter 'customerV1OrderItemsStateRequest' is set
+      if (customerV1OrderItemsStateRequest === undefined || customerV1OrderItemsStateRequest === null) {
+        throw new Error("Missing the required parameter 'customerV1OrderItemsStateRequest' when calling customerV1OrderItemStatePost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'Customer-UUID': customerUUID,
+        'JWT-Token': jWTToken,
+        'Order-UUID': orderUUID
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['multipart/mixed', 'application/json'];
+      let returnType = File;
+      return this.apiClient.callApi(
+        '/customer/v1/order/item/state', 'POST',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, null, callback
       );

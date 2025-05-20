@@ -46,6 +46,8 @@ export default function PlacesAndDishes() {
   const [editPlace, setEditPlace] = useState(null);
   const [editAddress, setEditAddress] = useState("");
   const [editTableCount, setEditTableCount] = useState(1);
+  const [editOpeningTime, setEditOpeningTime] = useState("08:00");
+  const [editClosingTime, setEditClosingTime] = useState("23:00");
 
   const userUUID = localStorage.getItem("user_uuid");
   const jWTToken = localStorage.getItem("jwt_token");
@@ -181,11 +183,13 @@ export default function PlacesAndDishes() {
   };
 
   const openEditPlaceModal = (place) => {
-  setEditPlace(place);
-  setEditAddress(place.address);
-  setEditTableCount(place.table_count);
-  setShowEditPlaceModal(true);
-};
+    setEditPlace(place);
+    setEditAddress(place.address);
+    setEditTableCount(place.table_count);
+    setEditOpeningTime(place.opening_time);
+    setEditClosingTime(place.closing_time);
+    setShowEditPlaceModal(true);
+  };
 
   const handleSaveEditPlace = async () => {
     if (!editPlace) return;
@@ -194,8 +198,8 @@ export default function PlacesAndDishes() {
         place_uuid: editPlace.uuid,
         address: editAddress,
         table_count: editTableCount,
-        opening_time: openingTime,
-        closingTime: closingTime
+        opening_time: editOpeningTime,
+        closing_time: editClosingTime
       });
       await new Promise((res, rej) =>
         placeApi.adminV1PlaceEditPost(userUUID, jWTToken, req, (err) =>
@@ -321,39 +325,43 @@ export default function PlacesAndDishes() {
           <p className="pd-empty">Нет плейсов</p>
         )}
         {!loading && tab === "places" && places.map((p) => (
-            <div key={p.uuid} className="pd-item" onClick={() => {
-              localStorage.setItem("current_place", JSON.stringify({
-                  place_uuid: p.uuid,
-                  place_name: p.address
-                }));
-                window.location.href =`/restaurants/${restaurant_uuid}/places-dishes/${p.uuid}`
-                }}>
-              <span className="pd-place-address">{p.address}</span>
-              столов: {p.table_count}, {p.opening_time}–{p.closing_time}            
-              <div className="pd-place-actions">
-                <button
-                  className="pd-button pd-edit-button"
-                  onClick={e => {
-                    e.stopPropagation();
-                    openEditPlaceModal(p)
-                  }}
-                  title="Редактировать"
-                >
-                  <span className="material-icons">edit</span>
-                </button>
-                <button
-                  className="pd-button pd-button-cancel"
-                  onClick={e => {
-                    e.stopPropagation();
-                    handleDeletePlace(p)
-                  }}
-                  title="Удалить"
-                >
-                  <span className="material-icons">delete</span>
-                </button>
+          <div key={p.uuid} className="pd-item" onClick={() => {
+            localStorage.setItem("current_place", JSON.stringify({
+              place_uuid: p.uuid,
+              place_name: p.address
+            }));
+            window.location.href =`/restaurants/${restaurant_uuid}/places-dishes/${p.uuid}`
+          }}>
+            <div className="pd-place-info">
+              <div className="pd-place-address">{p.address}</div>
+              <div className="pd-place-details">
+                столов: {p.table_count}, {p.opening_time}–{p.closing_time}
               </div>
             </div>
-          ))}
+            <div className="pd-place-actions">
+              <button
+                className="pd-button pd-edit-button"
+                onClick={e => {
+                  e.stopPropagation();
+                  openEditPlaceModal(p)
+                }}
+                title="Редактировать"
+              >
+                <span className="material-icons">edit</span>
+              </button>
+              <button
+                className="pd-button pd-button-cancel"
+                onClick={e => {
+                  e.stopPropagation();
+                  handleDeletePlace(p)
+                }}
+                title="Удалить"
+              >
+                <span className="material-icons">delete</span>
+              </button>
+            </div>
+          </div>
+        ))}
   
         {!loading && tab === "dishes" && dishes.length === 0 && (
           <p className="pd-empty">Нет блюд</p>
@@ -497,17 +505,31 @@ export default function PlacesAndDishes() {
         <div className="pd-modal-backdrop">
           <div className="pd-modal">
             <h3>Редактировать плейс</h3>
+            <label>Адрес</label>
             <input
               value={editAddress}
               onChange={e => setEditAddress(e.target.value)}
-              placeholder="Адрес"
+              placeholder="Введите адрес"
             />
+            <label>Количество столов</label>
             <input
               value={editTableCount}
               onChange={e => setEditTableCount(e.target.value)}
-              placeholder="Количество столов"
+              placeholder="Введите количество"
               type="number"
               min={1}
+            />
+            <label>Время открытия</label>
+            <input
+              type="time"
+              value={editOpeningTime}
+              onChange={e => setEditOpeningTime(e.target.value)}
+            />
+            <label>Время закрытия</label>
+            <input
+              type="time"
+              value={editClosingTime}
+              onChange={e => setEditClosingTime(e.target.value)}
             />
             <div className="pd-modal-buttons">
               <button onClick={handleSaveEditPlace}>Сохранить</button>

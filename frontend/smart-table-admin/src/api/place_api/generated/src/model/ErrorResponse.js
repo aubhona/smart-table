@@ -189,7 +189,13 @@ ErrorResponse['CodeEnum'] = {
      * value: "item_not_found"
      * @const
      */
-    "item_not_found": "item_not_found"
+    "item_not_found": "item_not_found",
+
+    /**
+     * value: "order_not_belong_to_place"
+     * @const
+     */
+    "order_not_belong_to_place": "order_not_belong_to_place"
 };
 
 

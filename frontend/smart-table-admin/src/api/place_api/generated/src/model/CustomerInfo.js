@@ -12,7 +12,7 @@
  */
 
 import ApiClient from '../ApiClient';
-import ItemInfo from './ItemInfo';
+import ItemGroupInfo from './ItemGroupInfo';
 
 /**
  * The CustomerInfo model module.
@@ -26,11 +26,12 @@ class CustomerInfo {
      * @param uuid {String} Уникальный идентификатор пользователя
      * @param tgLogin {String} Логин пользователя, используемый для входа
      * @param tgId {String} 
-     * @param itemList {Array.<module:model/ItemInfo>} Список позиций в заказе пользователя
+     * @param itemGroupList {Array.<module:model/ItemGroupInfo>} Список групп позиций в заказе пользователя
+     * @param totalPrice {String} Итоговая стоимость части заказа пользователя
      */
-    constructor(uuid, tgLogin, tgId, itemList) { 
+    constructor(uuid, tgLogin, tgId, itemGroupList, totalPrice) { 
         
-        CustomerInfo.initialize(this, uuid, tgLogin, tgId, itemList);
+        CustomerInfo.initialize(this, uuid, tgLogin, tgId, itemGroupList, totalPrice);
     }
 
     /**
@@ -38,11 +39,12 @@ class CustomerInfo {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj, uuid, tgLogin, tgId, itemList) { 
+    static initialize(obj, uuid, tgLogin, tgId, itemGroupList, totalPrice) { 
         obj['uuid'] = uuid;
         obj['tg_login'] = tgLogin;
         obj['tg_id'] = tgId;
-        obj['item_list'] = itemList;
+        obj['item_group_list'] = itemGroupList;
+        obj['total_price'] = totalPrice;
     }
 
     /**
@@ -65,8 +67,11 @@ class CustomerInfo {
             if (data.hasOwnProperty('tg_id')) {
                 obj['tg_id'] = ApiClient.convertToType(data['tg_id'], 'String');
             }
-            if (data.hasOwnProperty('item_list')) {
-                obj['item_list'] = ApiClient.convertToType(data['item_list'], [ItemInfo]);
+            if (data.hasOwnProperty('item_group_list')) {
+                obj['item_group_list'] = ApiClient.convertToType(data['item_group_list'], [ItemGroupInfo]);
+            }
+            if (data.hasOwnProperty('total_price')) {
+                obj['total_price'] = ApiClient.convertToType(data['total_price'], 'String');
             }
         }
         return obj;
@@ -96,15 +101,19 @@ class CustomerInfo {
         if (data['tg_id'] && !(typeof data['tg_id'] === 'string' || data['tg_id'] instanceof String)) {
             throw new Error("Expected the field `tg_id` to be a primitive type in the JSON string but got " + data['tg_id']);
         }
-        if (data['item_list']) { // data not null
+        if (data['item_group_list']) { // data not null
             // ensure the json data is an array
-            if (!Array.isArray(data['item_list'])) {
-                throw new Error("Expected the field `item_list` to be an array in the JSON data but got " + data['item_list']);
+            if (!Array.isArray(data['item_group_list'])) {
+                throw new Error("Expected the field `item_group_list` to be an array in the JSON data but got " + data['item_group_list']);
             }
-            // validate the optional field `item_list` (array)
-            for (const item of data['item_list']) {
-                ItemInfo.validateJSON(item);
+            // validate the optional field `item_group_list` (array)
+            for (const item of data['item_group_list']) {
+                ItemGroupInfo.validateJSON(item);
             };
+        }
+        // ensure the json data is a string
+        if (data['total_price'] && !(typeof data['total_price'] === 'string' || data['total_price'] instanceof String)) {
+            throw new Error("Expected the field `total_price` to be a primitive type in the JSON string but got " + data['total_price']);
         }
 
         return true;
@@ -113,7 +122,7 @@ class CustomerInfo {
 
 }
 
-CustomerInfo.RequiredProperties = ["uuid", "tg_login", "tg_id", "item_list"];
+CustomerInfo.RequiredProperties = ["uuid", "tg_login", "tg_id", "item_group_list", "total_price"];
 
 /**
  * Уникальный идентификатор пользователя
@@ -133,10 +142,16 @@ CustomerInfo.prototype['tg_login'] = undefined;
 CustomerInfo.prototype['tg_id'] = undefined;
 
 /**
- * Список позиций в заказе пользователя
- * @member {Array.<module:model/ItemInfo>} item_list
+ * Список групп позиций в заказе пользователя
+ * @member {Array.<module:model/ItemGroupInfo>} item_group_list
  */
-CustomerInfo.prototype['item_list'] = undefined;
+CustomerInfo.prototype['item_group_list'] = undefined;
+
+/**
+ * Итоговая стоимость части заказа пользователя
+ * @member {String} total_price
+ */
+CustomerInfo.prototype['total_price'] = undefined;
 
 
 

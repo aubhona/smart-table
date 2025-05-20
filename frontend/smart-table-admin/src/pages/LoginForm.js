@@ -40,7 +40,7 @@ export default function LoginForm() {
       localStorage.setItem("jwt_token", jwt_token);
 
       addToast("Успешная авторизация!", "success");
-      setTimeout(() => setRedirect(true), 1000); // Redirect after showing success message
+      setTimeout(() => setRedirect(true), 1000); 
     } catch (err) {
       const code = err.response?.body?.code;
       if (code === "not_found") {
