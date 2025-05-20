@@ -46,11 +46,7 @@ func (handler *CatalogUpdateInfoCommandHandler) Handle(
 
 	countMap := make(map[uuid.UUID]int)
 
-	for _, item := range order.Get().GetItems() {
-		if !item.Get().GetIsDraft() {
-			continue
-		}
-
+	for _, item := range order.Get().GetDraftedItemsByCustomerUUID(command.CustomerUUID) {
 		countMap[item.Get().GetDishUUID()]++
 	}
 
