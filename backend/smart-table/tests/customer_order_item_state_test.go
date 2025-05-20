@@ -16,7 +16,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCustomerOrderCartHappyPath(t *testing.T) {
+func TestCustomerOrderItemStateHappyPath(t *testing.T) {
 	GetTestMutex().Lock()
 	defer GetTestMutex().Unlock()
 	defer CleanTest()
@@ -24,12 +24,16 @@ func TestCustomerOrderCartHappyPath(t *testing.T) {
 	_, _, _, hostCustomerUUID, orderUUID, _, menuDishUUID, _, err := CreateDefaultItems() //nolint
 	assert.NoError(t, err)
 
-	response, err := viewsCodegenCustomerOrderClient.GetCustomerV1OrderCartWithResponse(
+	response, err := viewsCodegenCustomerOrderClient.PostCustomerV1OrderItemStateWithResponse(
 		GetCtx(),
-		&viewsCodegenCustomer.GetCustomerV1OrderCartParams{
+		&viewsCodegenCustomer.PostCustomerV1OrderItemStateParams{
 			CustomerUUID: hostCustomerUUID,
 			JWTToken:     "tipa_token_zhiest",
 			OrderUUID:    orderUUID,
+		},
+		viewsCodegenCustomer.PostCustomerV1OrderItemStateJSONRequestBody{
+			DishUUID: menuDishUUID,
+			Comment:  &defaultComment,
 		},
 	)
 
@@ -63,19 +67,15 @@ func TestCustomerOrderCartHappyPath(t *testing.T) {
 		t.Fatalf("failed to read JSON part: %v", err)
 	}
 
-	var metadata viewsCodegenCustomer.CartInfo
+	var metadata viewsCodegenCustomer.ItemStateInfo
 
 	if err := json.Unmarshal(jsonBytes, &metadata); err != nil {
 		t.Fatalf("failed to unmarshal JSON: %v", err)
 	}
 
-	t.Logf("parsed %d menu dishes", len(metadata.Items))
-
-	assert.Equal(t, 1, len(metadata.Items))
-	assert.Equal(t, menuDishUUID, metadata.Items[0].ID)
-	assert.Equal(t, "369.39", metadata.Items[0].ResultPrice)
-	assert.Equal(t, defaultItemsCount, metadata.Items[0].Count)
-	assert.Equal(t, "369.39", metadata.TotalPrice)
+	assert.Equal(t, menuDishUUID, metadata.ID)
+	assert.Equal(t, "369.39", metadata.ResultPrice)
+	assert.Equal(t, defaultItemsCount, metadata.Count)
 
 	imageCount := 0
 
@@ -104,7 +104,7 @@ func TestCustomerOrderCartHappyPath(t *testing.T) {
 		imageCount++
 	}
 
-	if imageCount != len(metadata.Items) {
-		t.Errorf("expected %d images, got %d", len(metadata.Items), imageCount)
+	if imageCount != 1 {
+		t.Errorf("expected 1 images, got %d", imageCount)
 	}
 }
