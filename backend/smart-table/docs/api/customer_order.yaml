@@ -255,6 +255,41 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
 
+    /customer/v1/order/item/state:
+        post:
+            summary: Получить карточку блюда
+            description: Возвращает подробную информацию по выбранному блюду
+            parameters:
+                -   $ref: '#/components/parameters/CustomerUUID'
+                -   $ref: '#/components/parameters/JwtToken'
+                -   $ref: '#/components/parameters/OrderUUID'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CustomerV1OrderItemsStateRequest'
+            responses:
+                '200':
+                    description: Карточка блюда (ItemStateInfo JSON + binary images)
+                    content:
+                        multipart/mixed:
+                            schema:
+                                type: string
+                                format: binary
+                '403':
+                    description: Ошибка авторизации или доступа
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка поиска заказа или клиента
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
 components:
     parameters:
         CustomerUUID:
@@ -356,6 +391,19 @@ components:
             required:
                 - total_price
                 - menu_updated_info
+
+        # /customer/v1/order/item/state_POST
+        CustomerV1OrderItemsStateRequest:
+            type: object
+            additionalProperties: false
+            properties:
+                dish_uuid:
+                    type: string
+                    format: uuid
+                comment:
+                    type: string
+            required:
+                - dish_uuid
 
         # Objects
         Catalog:
@@ -479,7 +527,7 @@ components:
             type: object
             additionalProperties: false
             properties:
-                dish_uuid:
+                id:
                     type: string
                     format: uuid
                 name:
@@ -490,9 +538,45 @@ components:
                     type: integer
                 result_price:
                     type: string
+                comment:
+                    type: string
             required:
-                - dish_uuid
+                - id
                 - name
+                - price
+                - count
+                - result_price
+
+        ItemStateInfo:
+            type: object
+            additionalProperties: false
+            properties:
+                id:
+                    type: string
+                    format: uuid
+                name:
+                    type: string
+                description:
+                    type: string
+                weight:
+                    type: integer
+                calories:
+                    type: integer
+                category:
+                    type: string
+                price:
+                    type: string
+                count:
+                    type: integer
+                result_price:
+                    type: string
+            required:
+                - id
+                - name
+                - description
+                - weight
+                - calories
+                - category
                 - price
                 - count
                 - result_price

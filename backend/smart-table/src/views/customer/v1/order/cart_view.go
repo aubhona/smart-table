@@ -64,11 +64,12 @@ func (h *CustomerV1OrderHandler) GetCustomerV1OrderCart( //nolint
 				menuDish := &result.Items[i]
 
 				cart.Items = append(cart.Items, viewsCustomerOrder.CartItemInfo{
-					DishUUID:    menuDish.ID,
+					ID:          menuDish.ID,
 					Name:        menuDish.Name,
 					Count:       menuDish.Count,
 					Price:       menuDish.Price.String(),
 					ResultPrice: menuDish.ResultPrice.String(),
+					Comment:     menuDish.Comment.ToPointer(),
 				})
 			}
 
@@ -97,7 +98,7 @@ func (h *CustomerV1OrderHandler) GetCustomerV1OrderCart( //nolint
 
 				imageHeaders := textproto.MIMEHeader{}
 				imageHeaders.Set("Content-Type", "image/png")
-				imageHeaders.Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s.png"`, menuDish.ID))
+				imageHeaders.Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s.png"`, menuDish.PictureKey))
 
 				imagePart, err := writer.CreatePart(imageHeaders)
 				if err != nil {

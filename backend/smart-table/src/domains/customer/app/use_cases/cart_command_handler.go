@@ -26,6 +26,8 @@ type CartItemDTO struct {
 	Name        string
 	Price       decimal.Decimal
 	ResultPrice decimal.Decimal
+	Comment     utils.Optional[string]
+	PictureKey  string
 	Picture     io.Reader
 }
 
@@ -134,6 +136,8 @@ func (handler *CartCommandHandler) Handle(command *CartCommand) (CartCommandHand
 			Price:       price,
 			Picture:     pictureReader,
 			ResultPrice: price.Mul(decimal.NewFromInt(int64(len(groupedItems)))),
+			Comment:     item.Get().GetComment(),
+			PictureKey:  menuDish.PictureKey,
 		})
 	}
 
