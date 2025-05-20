@@ -14,20 +14,20 @@
 import ApiClient from '../ApiClient';
 
 /**
- * The AdminV1PlaceOrderInfoRequest model module.
- * @module model/AdminV1PlaceOrderInfoRequest
+ * The AdminV1PlaceOrderListRequest model module.
+ * @module model/AdminV1PlaceOrderListRequest
  * @version 1.0.0
  */
-class AdminV1PlaceOrderInfoRequest {
+class AdminV1PlaceOrderListRequest {
     /**
-     * Constructs a new <code>AdminV1PlaceOrderInfoRequest</code>.
-     * @alias module:model/AdminV1PlaceOrderInfoRequest
-     * @param orderUuid {String} Уникальный идентификатор заказа
+     * Constructs a new <code>AdminV1PlaceOrderListRequest</code>.
+     * @alias module:model/AdminV1PlaceOrderListRequest
+     * @param isActive {Boolean} Завершен ли заказ
      * @param placeUuid {String} Уникальный идентификатор плейса
      */
-    constructor(orderUuid, placeUuid) { 
+    constructor(isActive, placeUuid) { 
         
-        AdminV1PlaceOrderInfoRequest.initialize(this, orderUuid, placeUuid);
+        AdminV1PlaceOrderListRequest.initialize(this, isActive, placeUuid);
     }
 
     /**
@@ -35,24 +35,24 @@ class AdminV1PlaceOrderInfoRequest {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj, orderUuid, placeUuid) { 
-        obj['order_uuid'] = orderUuid;
+    static initialize(obj, isActive, placeUuid) { 
+        obj['is_active'] = isActive;
         obj['place_uuid'] = placeUuid;
     }
 
     /**
-     * Constructs a <code>AdminV1PlaceOrderInfoRequest</code> from a plain JavaScript object, optionally creating a new instance.
+     * Constructs a <code>AdminV1PlaceOrderListRequest</code> from a plain JavaScript object, optionally creating a new instance.
      * Copies all relevant properties from <code>data</code> to <code>obj</code> if supplied or a new instance if not.
      * @param {Object} data The plain JavaScript object bearing properties of interest.
-     * @param {module:model/AdminV1PlaceOrderInfoRequest} obj Optional instance to populate.
-     * @return {module:model/AdminV1PlaceOrderInfoRequest} The populated <code>AdminV1PlaceOrderInfoRequest</code> instance.
+     * @param {module:model/AdminV1PlaceOrderListRequest} obj Optional instance to populate.
+     * @return {module:model/AdminV1PlaceOrderListRequest} The populated <code>AdminV1PlaceOrderListRequest</code> instance.
      */
     static constructFromObject(data, obj) {
         if (data) {
-            obj = obj || new AdminV1PlaceOrderInfoRequest();
+            obj = obj || new AdminV1PlaceOrderListRequest();
 
-            if (data.hasOwnProperty('order_uuid')) {
-                obj['order_uuid'] = ApiClient.convertToType(data['order_uuid'], 'String');
+            if (data.hasOwnProperty('is_active')) {
+                obj['is_active'] = ApiClient.convertToType(data['is_active'], 'Boolean');
             }
             if (data.hasOwnProperty('place_uuid')) {
                 obj['place_uuid'] = ApiClient.convertToType(data['place_uuid'], 'String');
@@ -62,20 +62,16 @@ class AdminV1PlaceOrderInfoRequest {
     }
 
     /**
-     * Validates the JSON data with respect to <code>AdminV1PlaceOrderInfoRequest</code>.
+     * Validates the JSON data with respect to <code>AdminV1PlaceOrderListRequest</code>.
      * @param {Object} data The plain JavaScript object bearing properties of interest.
-     * @return {boolean} to indicate whether the JSON data is valid with respect to <code>AdminV1PlaceOrderInfoRequest</code>.
+     * @return {boolean} to indicate whether the JSON data is valid with respect to <code>AdminV1PlaceOrderListRequest</code>.
      */
     static validateJSON(data) {
         // check to make sure all required properties are present in the JSON string
-        for (const property of AdminV1PlaceOrderInfoRequest.RequiredProperties) {
+        for (const property of AdminV1PlaceOrderListRequest.RequiredProperties) {
             if (!data.hasOwnProperty(property)) {
                 throw new Error("The required field `" + property + "` is not found in the JSON data: " + JSON.stringify(data));
             }
-        }
-        // ensure the json data is a string
-        if (data['order_uuid'] && !(typeof data['order_uuid'] === 'string' || data['order_uuid'] instanceof String)) {
-            throw new Error("Expected the field `order_uuid` to be a primitive type in the JSON string but got " + data['order_uuid']);
         }
         // ensure the json data is a string
         if (data['place_uuid'] && !(typeof data['place_uuid'] === 'string' || data['place_uuid'] instanceof String)) {
@@ -88,24 +84,24 @@ class AdminV1PlaceOrderInfoRequest {
 
 }
 
-AdminV1PlaceOrderInfoRequest.RequiredProperties = ["order_uuid", "place_uuid"];
+AdminV1PlaceOrderListRequest.RequiredProperties = ["is_active", "place_uuid"];
 
 /**
- * Уникальный идентификатор заказа
- * @member {String} order_uuid
+ * Завершен ли заказ
+ * @member {Boolean} is_active
  */
-AdminV1PlaceOrderInfoRequest.prototype['order_uuid'] = undefined;
+AdminV1PlaceOrderListRequest.prototype['is_active'] = undefined;
 
 /**
  * Уникальный идентификатор плейса
  * @member {String} place_uuid
  */
-AdminV1PlaceOrderInfoRequest.prototype['place_uuid'] = undefined;
+AdminV1PlaceOrderListRequest.prototype['place_uuid'] = undefined;
 
 
 
 
 
 
-export default AdminV1PlaceOrderInfoRequest;
+export default AdminV1PlaceOrderListRequest;
 

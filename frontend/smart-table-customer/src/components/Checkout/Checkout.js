@@ -11,6 +11,7 @@ const Checkout = () => {
   const [users, setUsers] = useState([]);
   const [orderDetails, setOrderDetails] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [finishing, setFinishing] = useState(false);
   const [error, setError] = useState("");
 
   const statusColors = ["white", "blue", "yellow", "green", "cyan"];
@@ -25,7 +26,6 @@ const Checkout = () => {
     if (!customer_uuid || !order_uuid) return;
     setLoading(true);
 
-    // Получаем список пользователей и их заказы
     fetch(`${SERVER_URL}/customer/v1/order/customer/list`, {
       method: "GET",
       headers: {
@@ -41,12 +41,12 @@ const Checkout = () => {
         setLoading(false);
         if (!res.ok) throw new Error("Не удалось загрузить данные пользователей");
         const data = await res.json();
+        alert(JSON.stringify(data));
         setUsers(Array.isArray(data.customer_list) ? data.customer_list : []);
-        // Найти свой заказ
         const myOrder = (Array.isArray(data.customer_list) ? data.customer_list : []).find(
-          (u) => u.customer_uuid === customer_uuid
+          (u) => u.customer_uuid === customer_uuid || u.uuid === customer_uuid
         );
-        setOrderDetails(Array.isArray(myOrder?.order_details) ? myOrder.order_details : []);
+        setOrderDetails(Array.isArray(myOrder?.item_list) ? myOrder.item_list.filter(i => i.count > 0) : []);
       })
       .catch((e) => {
         setError(e.message || "Ошибка при загрузке пользователей");
@@ -61,6 +61,35 @@ const Checkout = () => {
   const handleUserClick = (user) =>
     navigate(`/user-order/${user.login || user.username || user.customer_uuid}`);
 
+  const handleFinishOrder = async () => {
+    setFinishing(true);
+    setError("");
+    try {
+      const res = await fetch(`${SERVER_URL}/customer/v1/order/finish`, {
+        method: "POST",
+        headers: {
+          "Customer-UUID": customer_uuid,
+          "Order-UUID": order_uuid,
+          "JWT-Token": "bla-bla-bla",
+        },
+      });
+  
+      if (res.status === 204) {
+        navigate("/tip");
+      } else {
+        let err = "Ошибка при завершении заказа";
+        try {
+          const data = await res.json();
+          if (data?.error) err = data.error;
+        } catch {}
+        setError(err);
+      }
+    } catch (e) {
+      setError(e.message || "Ошибка завершения заказа");
+    }
+    setFinishing(false);
+  };
+
   if (loading) return <LoadingScreen message="Загрузка заказа..." />;
   if (error)
     return (
@@ -71,9 +100,8 @@ const Checkout = () => {
       </div>
     );
 
-  const totalPrice = users.reduce((sum, user) => sum + (user.total_sum || 0), 0);
+  const totalPrice = users.reduce((sum, user) => sum + (Number(user.total_price)|| 0), 0);
 
-  // Сортировка пользователей по алфавиту
   const sortedUsers = [...users].sort((a, b) => {
     const nameA = (a.username || a.login || a.tg_login || '').toLowerCase();
     const nameB = (b.username || b.login || b.tg_login || '').toLowerCase();
@@ -90,8 +118,8 @@ const Checkout = () => {
           {orderDetails.map((item, index) => (
             <div key={index} className="order-item">
               <div className="order-item-name">{item.name}</div>
-              <div className="order-item-qty">x{item.quantity}</div>
-              <div className="order-item-total">{item.total} ₽</div>
+              <div className="order-item-qty">x{item.count}</div>
+              <div className="order-item-total">{(item.result_price || (item.price * item.count))} ₽</div>
               <div className="order-item-status">{renderStatus(item.status)}</div>
             </div>
           ))}
@@ -111,7 +139,7 @@ const Checkout = () => {
               <div className="user-login">
                 {user.username || user.login || user.tg_login || `Пользователь #${index + 1}`}
               </div>
-              <div className="user-total-price">{user.total_sum || 0} ₽</div>
+              <div className="user-total-price">{user.total_price || 0} ₽</div>
             </div>
           ))}
         </div>
@@ -123,8 +151,8 @@ const Checkout = () => {
           <button className="ch-go-back-button" onClick={handleGoCatalog}>
             Вернуться в каталог
           </button>
-          <button className="button" onClick={handleFinish}>
-            Завершить заказ
+          <button className="button" onClick={handleFinishOrder} disabled={finishing}>
+            {finishing ? "Завершаем заказ..." : "Завершить заказ"}
           </button>
         </div>
       </div>

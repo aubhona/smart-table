@@ -129,6 +129,7 @@ Class | Method | HTTP request | Description
 *SmartTableMobileApi.DefaultApi* | [**customerV1OrderCreatePost**](docs/DefaultApi.md#customerV1OrderCreatePost) | **POST** /customer/v1/order/create | Создаёт новый заказ
 *SmartTableMobileApi.DefaultApi* | [**customerV1OrderCustomerListGet**](docs/DefaultApi.md#customerV1OrderCustomerListGet) | **GET** /customer/v1/order/customer/list | Получение списка пользователей заказа
 *SmartTableMobileApi.DefaultApi* | [**customerV1OrderFinishPost**](docs/DefaultApi.md#customerV1OrderFinishPost) | **POST** /customer/v1/order/finish | Запрос на завершение заказа
+*SmartTableMobileApi.DefaultApi* | [**customerV1OrderItemStatePost**](docs/DefaultApi.md#customerV1OrderItemStatePost) | **POST** /customer/v1/order/item/state | Получить карточку блюда
 *SmartTableMobileApi.DefaultApi* | [**customerV1OrderItemsCommitPost**](docs/DefaultApi.md#customerV1OrderItemsCommitPost) | **POST** /customer/v1/order/items/commit | Добавить блюда к чеку
 *SmartTableMobileApi.DefaultApi* | [**customerV1OrderItemsDraftCountEditPost**](docs/DefaultApi.md#customerV1OrderItemsDraftCountEditPost) | **POST** /customer/v1/order/items/draft/count/edit | Изменяет количество блюд в корзине.
 *SmartTableMobileApi.DefaultApi* | [**customerV1OrderTipSavePost**](docs/DefaultApi.md#customerV1OrderTipSavePost) | **POST** /customer/v1/order/tip/save | Сохранение чека
@@ -145,9 +146,11 @@ Class | Method | HTTP request | Description
  - [SmartTableMobileApi.CustomerV1OrderCreateResponse](docs/CustomerV1OrderCreateResponse.md)
  - [SmartTableMobileApi.CustomerV1OrderCustomerListResponse](docs/CustomerV1OrderCustomerListResponse.md)
  - [SmartTableMobileApi.CustomerV1OrderItemsDraftCountEditRequest](docs/CustomerV1OrderItemsDraftCountEditRequest.md)
+ - [SmartTableMobileApi.CustomerV1OrderItemsStateRequest](docs/CustomerV1OrderItemsStateRequest.md)
  - [SmartTableMobileApi.ErrorResponse](docs/ErrorResponse.md)
  - [SmartTableMobileApi.ItemInfo](docs/ItemInfo.md)
  - [SmartTableMobileApi.ItemResolution](docs/ItemResolution.md)
+ - [SmartTableMobileApi.ItemStateInfo](docs/ItemStateInfo.md)
  - [SmartTableMobileApi.ItemStatus](docs/ItemStatus.md)
  - [SmartTableMobileApi.MenuDishItem](docs/MenuDishItem.md)
  - [SmartTableMobileApi.MenuDishItemUpdatedInfo](docs/MenuDishItemUpdatedInfo.md)

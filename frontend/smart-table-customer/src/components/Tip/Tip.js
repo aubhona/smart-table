@@ -40,9 +40,8 @@ const Tip = () => {
       });
   }, [customer_uuid, order_uuid]);
 
-  const totalPrice = users.reduce((sum, user) => sum + (user.total_sum || 0), 0);
+  const totalPrice = users.reduce((sum, user) => sum + (Number(user.total_price )|| 0), 0);
 
-  // Сортировка пользователей по алфавиту
   const sortedUsers = [...users].sort((a, b) => {
     const nameA = (a.username || a.login || a.tg_login || '').toLowerCase();
     const nameB = (b.username || b.login || b.tg_login || '').toLowerCase();
@@ -93,7 +92,7 @@ const Tip = () => {
               <div className="order-item-name">
                 {user.username || user.login || user.tg_login || `Пользователь #${idx + 1}`}
               </div>
-              <div className="order-item-total">{user.total_sum || 0} ₽</div>
+              <div className="order-item-total">{user.total_price || 0} ₽</div>
             </div>
           ))}
         </div>

@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 **uuid** | **String** | Уникальный идентификатор пользователя | 
 **tgLogin** | **String** | Логин пользователя, используемый для входа | 
 **tgId** | **String** |  | 
-**itemList** | [**[ItemInfo]**](ItemInfo.md) | Список позиций в заказе пользователя | 
+**itemGroupList** | [**[ItemGroupInfo]**](ItemGroupInfo.md) | Список групп позиций в заказе пользователя | 
+**totalPrice** | **String** | Итоговая стоимость части заказа пользователя | 
 
 
