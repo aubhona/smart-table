@@ -37,7 +37,7 @@ func (handler *CatalogUpdateInfoCommandHandler) Handle(
 	}
 
 	result := CatalogUpdateInfoCommandHandlerResult{
-		TotalPrice: order.Get().GetDraftItemsTotalPrice(),
+		TotalPrice: order.Get().GetDraftItemsTotalPriceByCustomerUUID(command.CustomerUUID),
 		MenuUpdatedInfo: make([]struct {
 			ID    uuid.UUID
 			Count int
