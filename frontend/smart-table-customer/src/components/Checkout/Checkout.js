@@ -10,6 +10,7 @@ const Checkout = () => {
   const { customer_uuid, order_uuid } = useOrder();
   const [users, setUsers] = useState([]);
   const [orderDetails, setOrderDetails] = useState([]);
+  const [isHost, setIsHost] = useState(false);
   const [loading, setLoading] = useState(true);
   const [finishing, setFinishing] = useState(false);
   const [error, setError] = useState("");
@@ -41,12 +42,18 @@ const Checkout = () => {
         setLoading(false);
         if (!res.ok) throw new Error("Не удалось загрузить данные пользователей");
         const data = await res.json();
-        alert(JSON.stringify(data));
         setUsers(Array.isArray(data.customer_list) ? data.customer_list : []);
-        const myOrder = (Array.isArray(data.customer_list) ? data.customer_list : []).find(
+        const myOrder = data.customer_list?.find(
           (u) => u.customer_uuid === customer_uuid || u.uuid === customer_uuid
         );
-        setOrderDetails(Array.isArray(myOrder?.item_list) ? myOrder.item_list.filter(i => i.count > 0) : []);
+        if (myOrder?.is_active) {
+          setOrderDetails(
+            Array.isArray(myOrder.item_list) ? myOrder.item_list.filter(i => i.count > 0) : []
+          );
+        } else {
+          setOrderDetails([]);
+        }
+        setIsHost(myOrder?.is_host === true);
       })
       .catch((e) => {
         setError(e.message || "Ошибка при загрузке пользователей");
@@ -57,7 +64,6 @@ const Checkout = () => {
   }, [customer_uuid, order_uuid]);
 
   const handleGoCatalog = () => navigate("/catalog");
-  const handleFinish = () => navigate("/tip");
   const handleUserClick = (user) =>
     navigate(`/user-order/${user.login || user.username || user.customer_uuid}`);
 
@@ -100,14 +106,17 @@ const Checkout = () => {
       </div>
     );
 
-  const totalPrice = users.reduce((sum, user) => sum + (Number(user.total_price)|| 0), 0);
 
   const sortedUsers = [...users].sort((a, b) => {
     const nameA = (a.username || a.login || a.tg_login || '').toLowerCase();
     const nameB = (b.username || b.login || b.tg_login || '').toLowerCase();
     return nameA.localeCompare(nameB);
   });
-  const friends = sortedUsers.filter((u) => u.customer_uuid !== customer_uuid && u.customer_uuid);
+
+  const friends = sortedUsers.filter(
+  (u) => u.customer_uuid !== customer_uuid && u.is_active && u.customer_uuid
+);
+
 
   return (
     <div className="checkout-container">
@@ -129,7 +138,9 @@ const Checkout = () => {
       <div className="friends-orders-block wide-block">
         <h3>Заказы друзей</h3>
         <div className="user-orders-list">
-          {friends.length === 0 && <div className="empty-friends">Нет заказов друзей</div>}
+          {friends.length === 0 && (
+            <div className="empty-friends">Нет заказов друзей</div>
+         )}
           {friends.map((user, index) => (
             <div
               key={user.customer_uuid || index}
@@ -146,14 +157,17 @@ const Checkout = () => {
       </div>
 
       <div className="checkout-footer">
-        <div className="ch-total-price">Итого: {totalPrice} ₽</div>
+        <div className="ch-total-price">
+          Итого: {users.reduce((sum, user) => sum + (Number(user.total_price)|| 0), 0)} ₽</div>
         <div className="buttons">
           <button className="ch-go-back-button" onClick={handleGoCatalog}>
             Вернуться в каталог
           </button>
-          <button className="button" onClick={handleFinishOrder} disabled={finishing}>
-            {finishing ? "Завершаем заказ..." : "Завершить заказ"}
-          </button>
+          {isHost && (
+            <button className="button" onClick={handleFinishOrder} disabled={finishing}>
+              {finishing ? "Завершаем заказ..." : "Завершить заказ"}
+            </button>
+          )}
         </div>
       </div>
     </div>
