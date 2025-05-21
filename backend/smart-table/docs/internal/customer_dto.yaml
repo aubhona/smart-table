@@ -115,3 +115,21 @@ components:
                 - item_price
                 - result_price
                 - count
+
+        ItemEditGroupDTO:
+            type: object
+            additionalProperties: false
+            properties:
+                item_uuid_list:
+                    description: Список идентификаторов позиций
+                    type: array
+                    items:
+                        type: string
+                        format: uuid
+                        description: Уникальный идентификатор позиции в заказе
+                item_status:
+                    description: Статус позиции заказа
+                    type: string
+            required:
+                - item_uuid_list
+                - item_status

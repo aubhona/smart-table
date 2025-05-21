@@ -6,8 +6,21 @@ import (
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 	defsInternalItem "github.com/smart-table/src/codegen/intern/item"
+	domainErrors "github.com/smart-table/src/domains/customer/domain/errors"
 	"github.com/smart-table/src/utils"
 )
+
+var validItemStatuses = map[defsInternalItem.ItemStatus]interface{}{
+	defsInternalItem.ItemStatusAccepted:           nil,
+	defsInternalItem.ItemStatusCancelledByClient:  nil,
+	defsInternalItem.ItemStatusCancelledByService: nil,
+	defsInternalItem.ItemStatusCooked:             nil,
+	defsInternalItem.ItemStatusCooking:            nil,
+	defsInternalItem.ItemStatusNew:                nil,
+	defsInternalItem.ItemStatusPaid:               nil,
+	defsInternalItem.ItemStatusPaymentWaiting:     nil,
+	defsInternalItem.ItemStatusServed:             nil,
+}
 
 type Item struct {
 	uuid        uuid.UUID
@@ -131,8 +144,31 @@ func (i *Item) GetUpdatedAt() time.Time                                        {
 func (i *Item) GetIsDraft() bool                                               { return i.isDraft }
 func (i *Item) GetCalories() int                                               { return i.calories }
 
-func (i *Item) SetStatus(status defsInternalItem.ItemStatus) {
+func (i *Item) SetStatus(status defsInternalItem.ItemStatus) error {
+	if i.GetIsDraft() && status != defsInternalItem.ItemStatusNew {
+		return domainErrors.DraftItemStatusChangeNotAllowed{
+			ItemUUID:   i.GetUUID(),
+			ItemStatus: status,
+		}
+	}
+
 	i.status = status
+
+	return nil
+}
+
+func IsValidItemStatus(status defsInternalItem.ItemStatus) bool {
+	_, exists := validItemStatuses[status]
+	return exists
+}
+
+func ParseItemStatus(raw string) (defsInternalItem.ItemStatus, error) {
+	status := defsInternalItem.ItemStatus(raw)
+	if !IsValidItemStatus(status) {
+		return "", domainErrors.InvalidItemStatus{ItemStatus: status}
+	}
+
+	return status, nil
 }
 
 func (i *Item) Commit() {

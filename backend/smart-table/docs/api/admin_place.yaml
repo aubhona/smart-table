@@ -1029,23 +1029,27 @@ components:
             type: object
             additionalProperties: false
             properties:
+                place_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
                 order_uuid:
                     type: string
                     format: uuid
-                    description: Уникальный идентификатор плейса
+                    description: Уникальный идентификатор заказа
+                table_number:
+                    description: Номер стола
+                    type: integer
                 order_status:
                     description: Статус заказа
                     $ref: '#/components/schemas/OrderStatus'
-                item_uuid:
-                    type: string
-                    format: uuid
-                    description: Уникальный идентификатор плейса
-                item_status:
-                    description: Статус позиции заказа
-                    $ref: '#/components/schemas/ItemStatus'
+                item_group:
+                    description: Изменение статуса для группы позиций
+                    $ref: '#/components/schemas/ItemEditGroup'
             required:
+                - place_uuid
                 - order_uuid
-                - order_status
+                - table_number
 
         # Errors
         ErrorResponse:
@@ -1056,6 +1060,10 @@ components:
                     type: string
                     description: Код ошибки
                     enum: 
+                        - invalid_item
+                        - invalid_order_status
+                        - invalid_item_status
+                        - incorrect_request_format
                         - incorrect_time_format
                         - incorrect_table_count
                         - incorrect_price
@@ -1211,6 +1219,24 @@ components:
                 - item_price
                 - result_price
                 - count
+
+        ItemEditGroup:
+            type: object
+            additionalProperties: false
+            properties:
+                item_uuid_list:
+                    description: Список идентификаторов позиций
+                    type: array
+                    items:
+                        type: string
+                        format: uuid
+                        description: Уникальный идентификатор позиции в заказе
+                item_status:
+                    description: Статус позиции заказа
+                    $ref: '#/components/schemas/ItemStatus'
+            required:
+                - item_uuid_list
+                - item_status
 
         ItemStatus:
             type: string

@@ -21,6 +21,10 @@ func NewPlaceTableService(dependencies *dependencies.Dependencies) *PlaceTableSe
 	return &PlaceTableService{webAppURL: dependencies.Config.Bot.WebAppURL}
 }
 
+func (p *PlaceTableService) BuildTableID(placeUUID uuid.UUID, tableNumber int) string {
+	return fmt.Sprintf("%s_%d", placeUUID, tableNumber)
+}
+
 func (p *PlaceTableService) GetPlaceUUIDFromTableID(tableID string) (uuid.UUID, error) {
 	parts := strings.Split(tableID, "_")
 	if len(parts) != 2 {

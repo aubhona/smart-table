@@ -70,7 +70,7 @@ func convertItemGroupInfoDTOToItemGroupInfo(
 		Name:         itemGroupInfoDTO.Name,
 		ItemPrice:    itemGroupInfoDTO.ItemPrice,
 		ResultPrice:  itemGroupInfoDTO.ResultPrice,
-		Count:        1,
+		Count:        itemGroupInfoDTO.Count,
 		Comment:      itemGroupInfoDTO.Comment,
 	}
 

@@ -43,6 +43,12 @@ func TestAdminOrderInfoHappyPath(t *testing.T) {
 	response.JSON200.OrderInfo.CustomerList[0].ItemGroupList[0].ItemUUIDList[0], err = uuid.Parse("14f12b05-6406-454d-855f-c25774307c11")
 	assert.NoError(t, err)
 
+	response.JSON200.OrderInfo.CustomerList[0].ItemGroupList[0].ItemUUIDList[1], err = uuid.Parse("1156360d-1d71-4a1c-adfb-2405cb9d5e15")
+	assert.NoError(t, err)
+
+	response.JSON200.OrderInfo.CustomerList[0].ItemGroupList[0].ItemUUIDList[2], err = uuid.Parse("1a372277-108a-4ea5-a0f7-e16009772644")
+	assert.NoError(t, err)
+
 	response.JSON200.OrderInfo.OrderMainInfo.UUID, err = uuid.Parse("149ebb8c-ce00-4492-b468-12d16b89ed36")
 	assert.NoError(t, err)
 
@@ -59,10 +65,12 @@ func TestAdminOrderInfoHappyPath(t *testing.T) {
       "item_group_list": [
         {
           "comment": "comment",
-          "count": 1,
+          "count": 3,
           "item_price": "123.13",
           "item_uuid_list": [
-            "14f12b05-6406-454d-855f-c25774307c11"
+            "14f12b05-6406-454d-855f-c25774307c11",
+						"1156360d-1d71-4a1c-adfb-2405cb9d5e15",
+						"1a372277-108a-4ea5-a0f7-e16009772644"
           ],
           "menu_dish_uuid": "%s",
           "name": "test_dish",
