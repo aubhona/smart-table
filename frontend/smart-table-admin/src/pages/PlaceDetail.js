@@ -3,7 +3,6 @@ import { handleMultipartResponse } from '../components/multipartUtils';
 import { useParams, useNavigate } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
 import { toPng } from "html-to-image";
-import { v4 as uuidv4 } from 'uuid';
 
 import DefaultApi from "../api/place_api/generated/src/api/DefaultApi";
 import AdminV1PlaceEmployeeAddRequest from "../api/place_api/generated/src/model/AdminV1PlaceEmployeeAddRequest";
@@ -16,6 +15,69 @@ import AdminV1PlaceMenuDishEditRequest from "../api/place_api/generated/src/mode
 
 import "../styles/PlaceScreen.css";
 import { SERVER_URL } from "../config";
+
+const STATUS_FLOW = ['В обработке', 'Принят', 'Готовится', 'Готов', 'Подан'];
+
+const OrderItemGroup = ({ item }) => {
+  const [open, setOpen] = useState(false);
+
+  if (item.count === 1) {
+    return (
+      <div className="ps-order-item">
+        <div className="ps-item-info">
+          <span className="ps-item-name">{item.name}</span>
+          <span className="ps-item-price">{item.count}x {item.item_price}₽</span>
+          <span className="ps-item-total-price">Итого: {item.result_price}₽</span>
+        </div>
+        <div className="ps-item-status">
+          <select value={item.status}>
+            {STATUS_FLOW.map(status => (
+              <option key={status} value={status}>{status}</option>
+            ))}
+          </select>
+          <button className="ps-status-btn cancel">Отменить</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="ps-order-item-group" style={{ marginBottom: 16 }}>
+      <div className="ps-item-info">
+        <span className="ps-item-name">{item.name}</span>
+        <span className="ps-item-price">{item.count}x {item.item_price}₽</span>
+        <span className="ps-item-total-price">Итого: {item.result_price}₽</span>
+        <button
+          className="ps-expand-btn"
+          onClick={() => setOpen(o => !o)}
+          style={{
+            marginLeft: 12, padding: '4px 12px', background: '#444', color: 'white', border: 'none', borderRadius: 5, cursor: 'pointer'
+          }}
+        >
+          {open ? "Скрыть блюда" : `Показать ${item.count} блюд`}
+        </button>
+      </div>
+      {open && (
+        <div className="ps-order-item-list" style={{ paddingLeft: 20, marginTop: 8 }}>
+          {item.item_uuid_list.map((uuid, idx) => (
+            <div key={uuid} className="ps-order-item-single" style={{ display: 'flex', alignItems: 'center', marginBottom: 6, gap: 16 }}>
+              <span className="ps-item-name">{item.name} #{idx + 1}</span>
+              <span>{item.item_price}₽</span>
+              <div style={{ marginLeft: 16 }}>
+                <select value={item.status}>
+                  {STATUS_FLOW.map(status => (
+                    <option key={status} value={status}>{status}</option>
+                  ))}
+                </select>
+              </div>
+              <button className="ps-status-btn cancel" style={{ marginLeft: 10 }}>Отменить</button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default function PlaceDetail() {
   const { restaurant_uuid, place_uuid } = useParams();
@@ -54,84 +116,21 @@ export default function PlaceDetail() {
   const [editMenuDishData, setEditMenuDishData] = useState(null);
   const [editMenuDishPrice, setEditMenuDishPrice] = useState("");
 
-  const STATUS_FLOW = ['В обработке', 'Принят', 'Готовится', 'Готов', 'Подан'];
   const ORDER_STATUSES = ['Открыт', 'Ожидает оплаты', 'Оплачен', 'Отменен'];
+  const STATUS_MAP = {
+    new: "Открыт",
+    payment_waiting: "Ожидает оплаты",
+    paid: "Оплачен",
+    canceled: "Отменен"
+  };
+  const REVERSE_STATUS_MAP = Object.fromEntries(
+    Object.entries(STATUS_MAP).map(([eng, rus]) => [rus, eng])
+  );
 
   const [orderSubTab, setOrderSubTab] = useState('open');
-  const [orders, setOrders] = useState([
-    {
-      id: uuidv4(),
-      status: 'Открыт',
-      createdAt: new Date().toLocaleString(),
-      tableId: `${place_uuid}_3`,
-      guests: 4,
-      totalPrice: 2150,
-      customers: [
-        {
-          id: uuidv4(),
-          name: 'Иван Петров',
-          instagram: '@ivan_petrov',
-          items: [
-            {
-              id: uuidv4(),
-              name: 'Бургер',
-              price: 500,
-              status: 'В обработке',
-              amount: 2
-            },
-            {
-              id: uuidv4(),
-              name: 'Кола',
-              price: 150,
-              status: 'Подан',
-              amount: 1
-            }
-          ]
-        },
-        {
-          id: uuidv4(),
-          name: 'Мария Сидорова',
-          instagram: '@maria_sid',
-          items: [
-            {
-              id: uuidv4(),
-              name: 'Салат Цезарь',
-              price: 300,
-              status: 'Готовится',
-              amount: 1
-            }
-          ]
-        }
-      ]
-    },
-  {
-    id: uuidv4(),
-    status: 'Оплачен',
-    createdAt: new Date().toLocaleString(),
-    tableId: `${place_uuid}_2`,
-    guests: 1,
-    totalPrice: 1800,
-    customers: [
-      {
-        id: uuidv4(),
-        name: 'Александр Соловкин',
-        instagram: '@l4sthope',
-        items: [
-          {
-            id: uuidv4(),
-            name: 'Суп',
-            price: 400,
-            status: 'Отменен',
-            user: '@user3',
-            amount: 2
-          }
-        ]
-      }
-    ],
-  }
-]);
-const [selectedOrder, setSelectedOrder] = useState(null);
-const [showCheckout, setShowCheckout] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showCheckout, setShowCheckout] = useState(false);
 
   const userUUID = localStorage.getItem("user_uuid");
   const jWTToken = localStorage.getItem("jwt_token");
@@ -142,38 +141,6 @@ const [showCheckout, setShowCheckout] = useState(false);
     "User-UUID": userUUID,
     "JWT-Token": jWTToken,
     "ngrok-skip-browser-warning": "true",
-  };
-
-  const updateOrderStatus = (orderId, newStatus) => {
-  setOrders(prev => 
-    prev.map(order => 
-      order.id === orderId ? { ...order, status: newStatus } : order
-    )
-  );
-};
-
-const updateItemStatus = (orderId, customerId, itemId, newStatus) => {
-    setOrders(prev => 
-      prev.map(order => {
-        if(order.id === orderId) {
-          return {
-            ...order,
-            customers: order.customers.map(customer => {
-              if(customer.id === customerId) {
-                return {
-                  ...customer,
-                  items: customer.items.map(item => 
-                    item.id === itemId ? { ...item, status: newStatus } : item
-                  )
-                };
-              }
-              return customer;
-            })
-          };
-        }
-        return order;
-      })
-    );
   };
 
   const handleGenerateQRCodes = async () => {
@@ -307,13 +274,110 @@ const updateItemStatus = (orderId, customerId, itemId, newStatus) => {
   }
 }
 
+  async function loadOrders() {
+    setLoading(true);
+    setError("");
+    try {
+      const resp = await fetch(`${SERVER_URL}/admin/v1/place/order/list`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "User-UUID": userUUID,
+          "JWT-Token": jWTToken,
+          "ngrok-skip-browser-warning": "true"
+        },
+        body: JSON.stringify({ 
+          is_active: true,
+          place_uuid })
+      });
+      if (!resp.ok) throw resp;
+      const data = await resp.json();
+      console.log("order_list", data.order_list)
+      console.log(data);
+      setOrders(
+        (data.order_list || []).map(order => ({
+          ...order,
+          status: STATUS_MAP[order.status] || order.status
+        }))
+      );
+    } catch (e) {
+      let msg = e.body?.message || e.message || "Ошибка получения заказов";
+      setError(msg);
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function loadOrderDetails(order_uuid, place_uuid) {
+    setLoading(true);
+    setError("");
+    try {
+      const resp = await fetch(`${SERVER_URL}/admin/v1/place/order/info`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "User-UUID": userUUID,
+          "JWT-Token": jWTToken,
+          "ngrok-skip-browser-warning": "true"
+        },
+        body: JSON.stringify({ order_uuid, place_uuid })
+      });
+      if (!resp.ok) throw resp;
+      const data = await resp.json();
+      console.log("order_info", data.order_info)
+      setSelectedOrder(data.order_info);
+    } catch (e) {
+      let msg = e.body?.message || e.message || "Ошибка получения деталей заказа";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function editOrder(order_uuid, status, extraParams = {}) {
+    setLoading(true);
+    setError("");
+    try {
+      const payload = {
+        order_uuid,
+        status,
+        ...extraParams, 
+      };
+      const resp = await fetch(`${SERVER_URL}/admin/v1/place/order/edit`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "User-UUID": userUUID,
+          "JWT-Token": jWTToken,
+          "ngrok-skip-browser-warning": "true"
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!resp.ok) {
+        let errText = await resp.text();
+        throw new Error(errText || "Ошибка изменения заказа");
+      }
+      await loadOrders();
+    } catch (e) {
+      setError(e.body?.message || e.message || "Ошибка редактирования заказа");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     if (tab === "staff") {
       loadStaff();
     } else if (tab === "menu") {
       loadMenuDishes();
     } else if (tab === "orders") {
-      loadDeepLinks();
+      loadOrders();
+    } else if (tab === "tables") {
+      handleGenerateQRCodes();
     }
   }, [place_uuid, tab]);
 
@@ -429,6 +493,7 @@ const updateItemStatus = (orderId, customerId, itemId, newStatus) => {
       setPrice("");
       setSelectedDish(null);
       setPriceError("");
+      setError("");
     } catch (e) {
       console.error("Ошибка добавления блюда в меню:", e);
       setError(e.body?.message || e.message);
@@ -490,17 +555,36 @@ const updateItemStatus = (orderId, customerId, itemId, newStatus) => {
         <h1 className="ps-title">Адрес: {placeName}</h1>
 
         {tab === "staff" && (
-          <button className="ps-create-button" onClick={() => setShowAddModal(true)}>
+          <button className="ps-create-button" onClick={() => {
+            setShowAddModal(true);
+            setLogin("");
+            setRole("");
+            setError("");
+          }}>
             Добавить сотрудника
           </button>
         )}
         {tab === "menu" && (
-          <button className="ps-create-button" onClick={() => setShowAddModal(true)}>
+          <button className="ps-create-button" onClick={() => {
+            setShowAddModal(true);
+            setSelectedDish(null);
+            setPrice("");
+            setError("");
+            setPriceError("");
+          }}>
             Добавить блюдо
           </button>
         )}
         {tab === "tables" && (
-          <button className="ps-create-button" onClick={handleGenerateQRCodes}>
+          <button className="ps-create-button" onClick={() => {
+            setShowAddModal(false);
+            setShowEditStaffModal(false);
+            setShowEditMenuDishModal(false);
+            setSelectedDish(null);
+            setPrice("");
+            setError("");
+            setPriceError("");
+          }}>
             Сгенерировать QR-код
           </button>
         )}
@@ -638,7 +722,6 @@ const updateItemStatus = (orderId, customerId, itemId, newStatus) => {
                         <p>{dish.description}</p>
                         <p>Категория: {dish.category}</p>
                         <p>{dish.calories} ккал, {dish.weight} г.</p>
-                        <div className="price-tag">{dish.price} ₽</div>
                         <div className="dish-actions">
                           <button
                             className="ps-button ps-edit-button"
@@ -721,25 +804,42 @@ const updateItemStatus = (orderId, customerId, itemId, newStatus) => {
             }
             return ['Оплачен', 'Отменен'].includes(order.status);
           })
-          .map(order => (
-            <div 
-              key={order.id}
-              className={`ps-order-card ${order.status.toLowerCase().replace(' ', '-')}`}
-              onClick={() => setSelectedOrder(order)}ы
-            >
-              <div className="ps-order-header">
-                <span>Заказ #{order.id.slice(0,6)}</span>
-                <span>Стол: {order.tableId.split('_')[1]}</span>
-              </div>
-              <div className="ps-order-info">
-                <span>{order.customers.length} посетителя</span>
-                <span>{order.totalPrice}₽</span>
-                <span className={`ps-status ps-status-${order.status.toLowerCase().replace(' ', '-')}`}>
-                  {order.status}
-                </span>
-              </div>
+          .length === 0 ? (
+            <div className="ps-no-orders">
+              Нет заказов
             </div>
-          ))}
+          ) : (
+            orders
+              .filter(order => order && order.uuid)
+              .filter(order => {
+                if (orderSubTab === 'open') {
+                  return ['Открыт', 'Ожидает оплаты'].includes(order.status);
+                }
+                return ['Оплачен', 'Отменен'].includes(order.status);
+              })
+              .map(order => (
+                <div 
+                  key={order.uuid}
+                  className={`ps-order-card ${order.status.toLowerCase().replace(' ', '-')}`}
+                  onClick={async () => {
+                    await loadOrderDetails(order.uuid, place_uuid);
+                    setShowCheckout(false);
+                  }}
+                >
+                  <div className="ps-order-header">
+                    <span>Заказ #{order.uuid.slice(0,6)}</span>
+                    <span>Стол: {order.table_number}</span>
+                  </div>
+                  <div className="ps-order-info">
+                    <span>{order.guests_count} посетителя</span>
+                    <span>{order.total_price}₽</span>
+                    <span className={`ps-status ps-status-${order.status.toLowerCase().replace(' ', '-')}`}>
+                      {order.status}
+                    </span>
+                  </div>
+                </div>
+              ))
+          )}
       </div>
 
       {selectedOrder && (
@@ -747,124 +847,78 @@ const updateItemStatus = (orderId, customerId, itemId, newStatus) => {
           <div className="ps-modal-header">
             <div className="ps-modal-top-buttons">
               <button
-                className="ps-action-btn"
+                className={`ps-action-btn${showCheckout ? ' active' : ''}`}
                 onClick={() => setShowCheckout(true)}
               >
-                Состав
+                <span className="ps-modal-tab-label">Состав заказа</span>
               </button>
               <button
-                className="ps-action-btn"
+                className={`ps-action-btn${!showCheckout ? ' active' : ''}`}
                 onClick={() => setShowCheckout(false)}
               >
-                Параметры
+                <span className="ps-modal-tab-label">Параметры заказа</span>
               </button>
             </div>
-            <h3>Заказ #{selectedOrder.id.slice(0,6)} (Стол {selectedOrder.tableId.split('_')[1]})</h3>
+            <h3>Заказ #{selectedOrder.order_main_info.uuid.slice(0,6)} (Стол {selectedOrder.order_main_info.table_number})</h3>
             <button onClick={() => {
               setSelectedOrder(null);
               setShowCheckout(false);
             }}>×</button>
           </div>
 
-        {!showCheckout ? (
+        {!showCheckout && (
           <>
             <div className="ps-order-details">
               <div className="ps-detail-item">
                 <span>Время создания:</span>
-                <span>{selectedOrder.createdAt}</span>
+                <span>{selectedOrder.order_main_info.created_at}</span>
               </div>
               <div className="ps-detail-item">
                 <span>Количество гостей:</span>
-                <span>{selectedOrder.guests}</span>
+                <span>{selectedOrder.order_main_info.guests_count}</span>
               </div>
               <div className="ps-detail-item">
                 <span>Общая сумма:</span>
-                <span>{selectedOrder.totalPrice}₽</span>
+                <span>{selectedOrder.order_main_info.total_price}₽</span>
               </div>
               <span>Статус заказа:</span>
               <div className="ps-item-status">
-                  <select
-                    value={selectedOrder.status}
-                    onChange={(e) => updateOrderStatus(selectedOrder.id, e.target.value)}
-                  >
-                    {ORDER_STATUSES.map(status => (
-                      <option key={status} value={status}>{status}</option>
-                    ))}
-                  </select>
-                  </div>
-            </div>
-
-            <div className="ps-modal-actions">
-              <button
-                className="ps-action-btn paid"
-                onClick={() => {
-                  updateOrderStatus(selectedOrder.id, 'Оплачен');
-                  setSelectedOrder(null);
-                }}
-              >
-                Оплачен
-              </button>
-              <button
-                className="ps-action-btn cancel"
-                onClick={() => {
-                  updateOrderStatus(selectedOrder.id, 'Открыт');
-                  setSelectedOrder(null);
-                }}
-              >
-                Отмена
-              </button>
+                <select
+                  value={selectedOrder.order_main_info.status}
+                  onChange={async (e) => {
+                    await editOrder(selectedOrder.order_main_info.uuid, REVERSE_STATUS_MAP[e.target.value] || e.target.value);
+                    await loadOrderDetails(selectedOrder.order_main_info.uuid);
+                  }}
+                >
+                  {ORDER_STATUSES.map(status => (
+                    <option key={status} value={status}>{status}</option>
+                  ))}
+                </select>
+              </div>
             </div>
           </>
-        ) : (
+        )} 
+
+          {showCheckout && selectedOrder.customer_list && (
             <div className="ps-checkout-screen">
-              {selectedOrder.customers.map(customer => (
-                <div key={customer.id} className="ps-customer-section">
-                  <div className="ps-customer-header">
-                    <h4>{customer.name}</h4>
-                    <span className="ps-customer-instagram">{customer.instagram}</span>
-                  </div>
-                  
-                  {customer.items.map(item => (
-                    <div key={item.id} className="ps-order-item">
-                      <div className="ps-item-info">
-                        <span className="ps-item-name">{item.name}</span>
-                        <span className="ps-item-price">{item.amount}x {item.price}₽</span>
-                      </div>
-                      
-                      <div className="ps-item-status">
-                        <select
-                          value={item.status}
-                          onChange={(e) => 
-                            updateItemStatus(
-                              selectedOrder.id, 
-                              customer.id,
-                              item.id, 
-                              e.target.value
-                            )
-                          }
-                        >
-                          {STATUS_FLOW.map(status => (
-                            <option key={status} value={status}>{status}</option>
-                          ))}
-                        </select>
-                        <button
-                          className="ps-status-btn cancel"
-                          onClick={() => 
-                            updateItemStatus(
-                              selectedOrder.id,
-                              customer.id, 
-                              item.id, 
-                              'Отменен'
-                            )
-                          }
-                        >
-                          Отменить
-                        </button>
+              {selectedOrder.customer_list.every(customer => !customer.item_group_list || customer.item_group_list.length === 0) ? (
+                <div className="ps-no-orders">Еще ничего не заказано!</div>
+              ) : (
+                selectedOrder.customer_list.map(customer => (
+                  <div key={customer.uuid} className="ps-customer-section">
+                    <div className="ps-customer-header">
+                      <h4>{customer.tg_login}</h4>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', minWidth: 100 }}>
+                        <span className="ps-item-total-price">Итоговая цена: {customer.total_price}₽</span>
+                        <span className="ps-customer-instagram" style={{ marginTop: 4 }}>{customer.tg_id}</span>
                       </div>
                     </div>
-                  ))}
-                </div>
-              ))}
+                    {customer.item_group_list.map(item => (
+                      <OrderItemGroup key={item.menu_dish_uuid} item={item} />
+                    ))}
+                  </div>
+                ))
+              )}
             </div>
           )}
         </div>
@@ -885,6 +939,10 @@ const updateItemStatus = (orderId, customerId, itemId, newStatus) => {
                   onClick={() => {
                     loadAvailableDishes();
                     setShowDishPicker(true);
+                    setSelectedDish(null);
+                    setPrice("");
+                    setError("");
+                    setPriceError("");
                   }}
                 >
                   Выбрать блюдо
@@ -899,7 +957,14 @@ const updateItemStatus = (orderId, customerId, itemId, newStatus) => {
                   </button>
                   <button
                     className="ps-button ps-button-cancel"
-                    onClick={() => setShowAddModal(false)}
+                    onClick={() => {
+                      setShowDishPicker(false);
+                      setShowAddModal(false);
+                      setSelectedDish(null);
+                      setPrice("");
+                      setError("");
+                      setPriceError("");
+                    }}
                   >
                     Отмена
                   </button>
@@ -959,7 +1024,13 @@ const updateItemStatus = (orderId, customerId, itemId, newStatus) => {
                   </button>
                   <button
                     className="ps-button ps-button-cancel"
-                    onClick={() => setShowAddModal(false)}
+                    onClick={() => {
+                      setShowAddModal(false);
+                      setSelectedDish(null);
+                      setPrice("");
+                      setError("");
+                      setPriceError("");
+                    }}
                   >
                     Отмена
                   </button>
