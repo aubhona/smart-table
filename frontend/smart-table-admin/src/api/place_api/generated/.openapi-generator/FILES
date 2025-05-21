@@ -81,6 +81,3 @@ src/model/OrderResolution.js
 src/model/OrderStatus.js
 src/model/PlaceInfo.js
 src/model/Role.js
-test/model/AdminV1PlaceOrderListRequest.spec.js
-test/model/AdminV1PlaceOrderListResponse.spec.js
-test/model/ItemGroupInfo.spec.js

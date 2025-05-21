@@ -17,16 +17,17 @@ function OrderFlow() {
     setOrderUuid,
     setRoomCode,
     order_uuid,
-    room_code,
     customer_uuid,
   } = useOrder();
 
   const { loading, showStartPrompt } = useCustomerAuth();
   const startParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
+  alert(startParam);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!loading && customer_uuid && order_uuid) {
+    
       navigate('/catalog', { replace: true });
     }
   }, [loading, customer_uuid, order_uuid, navigate]);

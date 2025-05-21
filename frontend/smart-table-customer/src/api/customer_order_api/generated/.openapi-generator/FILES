@@ -43,5 +43,3 @@ src/model/ItemStateInfo.js
 src/model/ItemStatus.js
 src/model/MenuDishItem.js
 src/model/MenuDishItemUpdatedInfo.js
-test/model/CustomerV1OrderItemsStateRequest.spec.js
-test/model/ItemStateInfo.spec.js

@@ -39,6 +39,8 @@ export default function LoginForm() {
       localStorage.setItem("user_uuid", user_uuid);
       localStorage.setItem("jwt_token", jwt_token);
 
+      console.log(user_uuid, jwt_token);
+
       addToast("Успешная авторизация!", "success");
       setTimeout(() => setRedirect(true), 1000); 
     } catch (err) {
