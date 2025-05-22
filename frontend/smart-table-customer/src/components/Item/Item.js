@@ -4,6 +4,7 @@ import { useOrder } from "../OrderContext/OrderContext";
 import { SERVER_URL } from "../../config";
 import { handleMultipartResponse } from "../hooks/multipartUtils";
 import LoadingScreen from "../LoadingScreen/LoadingScreen";
+import { getAuthHeaders } from '../../utils/authHeaders';
 import "./Item.css";
 
 function Item() {
@@ -13,7 +14,7 @@ function Item() {
   const originalComment = location.state?.comment ?? "";
 
   const { id } = useParams();
-  const { customer_uuid, order_uuid } = useOrder();
+  const { customer_uuid, order_uuid, jwt_token } = useOrder();
   const navigate = useNavigate();
 
   const [dish, setDish] = useState(null);
@@ -34,9 +35,7 @@ function Item() {
       headers: {
         "Content-Type": "application/json",
         "ngrok-skip-browser-warning": "true",
-        "Customer-UUID": customer_uuid,
-        "Order-UUID": order_uuid,
-        "JWT-Token": "bla-bla-bla",
+        ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
         "Accept": "multipart/mixed, application/json",
       },
       body: JSON.stringify({

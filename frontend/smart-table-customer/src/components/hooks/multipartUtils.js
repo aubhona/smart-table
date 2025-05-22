@@ -119,6 +119,7 @@ export async function handleMultipartResponse(response, listField = 'dish_list')
   const counts = json.items
     ? Object.fromEntries(json.items.map(item => [item.menu_dish_uuid, item.count]))
     : {};
+  const go_tip_screen = json.go_tip_screen || false;
 
   const imagesMap = {};
   parts.filter(p => p.filename).forEach(p => {
@@ -128,5 +129,5 @@ export async function handleMultipartResponse(response, listField = 'dish_list')
       imagesMap[key] = url;
   });
 
-  return { list, categories, imagesMap, room_code, counts };
+  return { list, categories, imagesMap, room_code, counts, go_tip_screen };
 }
