@@ -136,3 +136,14 @@
   background: #3a492a;
   border-color: #3a492a;
 }
+
+.order-item.selected {
+  background: #ede2d9 !important;
+  box-shadow: 0 2px 8px rgba(90, 110, 60, 0.10);
+  color: #5e7643;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.order-item {
+  transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+}

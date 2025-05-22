@@ -50,6 +50,9 @@
     padding: 15px;
     border-radius: 8px;
     overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .users-message {
@@ -127,5 +130,24 @@
 
 .go-back-button:hover {
     background-color: #381f02;
+}
+
+.user-list-item {
+    padding: 12px 18px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    background: #faf6ee;
+    transition: background 0.2s, box-shadow 0.2s;
+    font-size: 1.1em;
+    font-weight: 500;
+    color: #2d1c0b;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.user-list-item:hover, .user-list-item.selected {
+    background: #ede2d9;
+    box-shadow: 0 2px 8px rgba(90, 110, 60, 0.10);
+    color: #5e7643;
+    cursor: pointer;
 }
   

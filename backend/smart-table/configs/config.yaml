@@ -16,7 +16,10 @@ app:
     cors:
         allow_origins: 
             - http://localhost:3002
-            - https://aba3-213-183-51-117.ngrok-free.app
+            - http://localhost:3000
+            - http://localhost:3001
+            - http://localhost:3003
+            - https://h91q6lp9-3000.euw.devtunnels.ms/
         allow_methods:
             - GET
             - POST
@@ -58,15 +61,15 @@ logging:
     compress: true
     enable_console_and_file: true
     server:
-        request_sym_limit: 100
-        response_sym_limit: 100
+        request_sym_limit: 10000000
+        response_sym_limit: 10000000
     bot:
         enable: false
 
 bot:
     token: BOT_TOKEN
     poller_timeout: 10s
-    web_app_url: https://t.me/TableSmart_bot?startapp
+    web_app_url: https://t.me/UpdateEventBot?startapp
     test_mode: false
 
 s3:

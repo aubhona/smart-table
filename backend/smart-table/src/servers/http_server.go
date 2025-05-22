@@ -61,7 +61,7 @@ func NewGinRouter(container *dig.Container, deps *dependencies.Dependencies) *gi
 			panic(err)
 		}
 
-		privateAdmin.Use(JWTAuthMiddleware(deps.Logger, jwtService))
+		privateAdmin.Use(JWTAuthMiddleware(deps.Logger, jwtService, "User-UUID"))
 	}
 
 	if deps.Config.App.Customer.Jwt.Enable {
@@ -71,7 +71,7 @@ func NewGinRouter(container *dig.Container, deps *dependencies.Dependencies) *gi
 			panic(err)
 		}
 
-		privateCustomer.Use(JWTAuthMiddleware(deps.Logger, jwtService))
+		privateCustomer.Use(JWTAuthMiddleware(deps.Logger, jwtService, "Customer-UUID"))
 	}
 
 	customerStrictHandler := viewsCodegenCustomer.NewStrictHandler(&viewsCustomer.CustomerV1Handler{}, nil)
@@ -159,11 +159,11 @@ func GinZapResponseLogger(logger *zap.Logger, cfg *config.Config) gin.HandlerFun
 	}
 }
 
-func JWTAuthMiddleware(logger *zap.Logger, jwtService utils.JwtService) gin.HandlerFunc {
+func JWTAuthMiddleware(logger *zap.Logger, jwtService utils.JwtService, headerName string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("JWT-Token")
 
-		userUUID, err := uuid.Parse(c.GetHeader("User-UUID"))
+		userUUID, err := uuid.Parse(c.GetHeader(headerName))
 		if err != nil {
 			logger.Error(fmt.Sprintf("Error while parsing user_uuid: %v", err))
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{

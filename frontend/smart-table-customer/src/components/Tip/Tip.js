@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useOrder } from "../OrderContext/OrderContext";
+import { useNavigate } from "react-router-dom";
 import LoadingScreen from "../LoadingScreen/LoadingScreen";
 import { SERVER_URL } from "../../config";
+import { getAuthHeaders } from '../../utils/authHeaders';
 import "./Tip.css";
 
 const Tip = () => {
-  const { customer_uuid, order_uuid } = useOrder();
+  const { customer_uuid, order_uuid, jwt_token } = useOrder();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [selectedIdx, setSelectedIdx] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!customer_uuid || !order_uuid) return;
@@ -22,9 +26,7 @@ const Tip = () => {
         "Accept": "multipart/mixed, application/json",
         "ngrok-skip-browser-warning": "true",
         "Content-Type": "application/json",
-        "Customer-UUID": customer_uuid,
-        "Order-UUID": order_uuid,
-        "JWT-Token": "bla-bla-bla",
+        ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
       },
     })
       .then(async (res) => {
@@ -38,7 +40,7 @@ const Tip = () => {
         setUsers([]);
         setLoading(false);
       });
-  }, [customer_uuid, order_uuid]);
+  }, [customer_uuid, order_uuid, jwt_token]);
 
   const totalPrice = users.reduce((sum, user) => sum + (Number(user.total_price )|| 0), 0);
 
@@ -57,9 +59,7 @@ const Tip = () => {
         "Accept": "application/json",
         "ngrok-skip-browser-warning": "true",
         "Content-Type": "application/json",
-        "Customer-UUID": customer_uuid,
-        "Order-UUID": order_uuid,
-        "JWT-Token": "bla-bla-bla",
+        ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
       },
       body: JSON.stringify({})
     })
@@ -72,6 +72,12 @@ const Tip = () => {
         setSaving(false);
         alert(e.message || "Ошибка при сохранении чека");
       });
+  };
+
+  const handleUserClick = (user, idx) => {
+    setSelectedIdx(idx);
+    const userId = user.tg_login || user.username || user.login || user.customer_uuid || user.uuid;
+    setTimeout(() => navigate(`/user-order/${userId}`), 120);
   };
 
   if (loading) return <LoadingScreen message="Загрузка чека..." />;
@@ -88,7 +94,12 @@ const Tip = () => {
         <h2>Чек заказа</h2>
         <div className="order-list">
           {sortedUsers.map((user, idx) => (
-            <div key={user.customer_uuid || idx} className="order-item">
+            <div
+              key={user.customer_uuid || idx}
+              className={`order-item${selectedIdx === idx ? ' selected' : ''}`}
+              onClick={() => handleUserClick(user, idx)}
+              style={{ cursor: 'pointer' }}
+            >
               <div className="order-item-name">
                 {user.username || user.login || user.tg_login || `Пользователь #${idx + 1}`}
               </div>

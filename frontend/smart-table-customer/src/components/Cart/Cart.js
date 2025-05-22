@@ -5,17 +5,15 @@ import { handleMultipartResponse } from "../hooks/multipartUtils";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "../LoadingScreen/LoadingScreen";
 import "./Cart.css";
-
+import { getAuthHeaders } from '../../utils/authHeaders';
 function Cart() {
-  const { customer_uuid, order_uuid } = useOrder();
+  const { customer_uuid, order_uuid, jwt_token } = useOrder();
   const [cartItems, setCartItems] = useState([]);
   const [images, setImages] = useState({});
   const [loading, setLoading] = useState(true);
   const [commitLoading, setCommitLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
-  const JWT_TOKEN = "bla-bla-bla"; 
 
   const fetchCart = async () => {
     setLoading(true);
@@ -25,9 +23,7 @@ function Cart() {
         Accept: "multipart/mixed, application/json",
         "Content-Type": "application/json",
         "ngrok-skip-browser-warning": "true",
-        "Customer-UUID": customer_uuid,
-        "Order-UUID": order_uuid,
-        "JWT-Token": JWT_TOKEN
+        ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
       },
     })
       .then(async (res) => {
@@ -69,9 +65,7 @@ function Cart() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Customer-UUID": customer_uuid,
-          "Order-UUID": order_uuid,
-          "JWT-Token": JWT_TOKEN,
+          ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
         },
         body: JSON.stringify({
           menu_dish_uuid: item.id || item.menu_dish_uuid,
@@ -114,9 +108,7 @@ function Cart() {
       const res = await fetch(`${SERVER_URL}/customer/v1/order/items/commit`, {
         method: "POST",
         headers: {
-          "Customer-UUID": customer_uuid,
-          "Order-UUID": order_uuid,
-          "JWT-Token": JWT_TOKEN,
+          ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
         },
       });
       if (res.status === 204) {

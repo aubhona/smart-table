@@ -4,10 +4,11 @@ import { SERVER_URL } from "../../config";
 import { handleMultipartResponse } from "../hooks/multipartUtils";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "../LoadingScreen/LoadingScreen";
+import { getAuthHeaders } from '../../utils/authHeaders';
 import "./Catalog.css";
 
 function Catalog() {
-  const { customer_uuid, order_uuid, room_code, setRoomCode } = useOrder();
+  const { customer_uuid, order_uuid, room_code, setRoomCode, jwt_token } = useOrder();
   const [categories, setCategories] = useState([]);
   const [dishes, setDishes] = useState([]);
   const [images, setImages] = useState({});
@@ -36,29 +37,42 @@ function Catalog() {
             Accept: "multipart/mixed, application/json",
             "Content-Type": "application/json",
             "ngrok-skip-browser-warning": "true",
-            "Customer-UUID": customer_uuid,
-            "Order-UUID": order_uuid,
-            "JWT-Token": "bla-bla-bla"
+            ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
           }
         });
 
-        if (!res.ok) throw new Error("Failed to fetch catalog");
-        const { list, categories, imagesMap, room_code: rcode, counts: serverCounts } = await handleMultipartResponse(res, "menu");
+        const contentType = res.headers.get('content-type') || '';
 
-        setDishes(list.sort((a, b) => a.name.localeCompare(b.name, "ru")));
-        setCategories(categories.sort((a, b) => a.localeCompare(b, "ru")));
-        setImages(imagesMap);
-        if (rcode) setRoomCode(rcode);
-        setCounts(serverCounts || {});
-        setLoading(false);
-        setHasLoadedOnce(true);
-        catalogLoaded.current = true;
+        if (contentType.includes('application/json')) {
+          const data = await res.json();
+          console.log('Ответ от сервера:', data);
+          if (data.go_tip_screen) {
+            navigate("/tip");
+            return;
+          }
+          // ...можно обработать другие json-ответы...
+        } else {
+          // multipart/mixed
+          const { list, categories, imagesMap, room_code: rcode, counts: serverCounts, go_tip_screen  } = await handleMultipartResponse(res, "menu");
+          setDishes(list.sort((a, b) => a.name.localeCompare(b.name, "ru")));
+          setCategories(categories.sort((a, b) => a.localeCompare(b, "ru")));
+          setImages(imagesMap);
+          if (rcode) setRoomCode(rcode);
+          setCounts(serverCounts || {});
+          setLoading(false);
+          setHasLoadedOnce(true);
+          catalogLoaded.current = true;
+          if (go_tip_screen) {
+            navigate("/tip");
+            return;
+          }
+        }
       } catch (e) {
         setError("Ошибка загрузки каталога: " + e.message);
         setLoading(false);
       }
     })();
-  }, [customer_uuid, order_uuid]);
+  }, [customer_uuid, order_uuid, jwt_token, navigate, setRoomCode, hasLoadedOnce]);
 
   useEffect(() => {
     if (!catalogLoaded.current) return;
@@ -70,9 +84,7 @@ function Catalog() {
           headers: {
             "Content-Type": "application/json",
             "ngrok-skip-browser-warning": "true",
-            "Customer-UUID": customer_uuid,
-            "Order-UUID": order_uuid,
-            "JWT-Token": "bla-bla-bla"
+            ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
           }
         });
 
@@ -93,7 +105,7 @@ function Catalog() {
 
     window.addEventListener("focus", fetchCartInfo);
     return () => window.removeEventListener("focus", fetchCartInfo);
-  }, [catalogLoaded.current, customer_uuid, order_uuid]);
+  }, [customer_uuid, order_uuid, jwt_token]);
 
   const updateQuantity = async (dishId, delta) => {
     try {
@@ -106,9 +118,7 @@ function Catalog() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Customer-UUID": customer_uuid,
-          "Order-UUID": order_uuid,
-          "JWT-Token": "bla-bla-bla"
+          ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
         },
         body: JSON.stringify({
           menu_dish_uuid: dishId,
@@ -131,9 +141,7 @@ function Catalog() {
             headers: {
               "Content-Type": "application/json",
               "ngrok-skip-browser-warning": "true",
-              "Customer-UUID": customer_uuid,
-              "Order-UUID": order_uuid,
-              "JWT-Token": "bla-bla-bla"
+              ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
             }
           });
 

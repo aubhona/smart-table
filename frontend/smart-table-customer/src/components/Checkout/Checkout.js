@@ -3,17 +3,19 @@ import { useNavigate } from "react-router-dom";
 import { useOrder } from "../OrderContext/OrderContext";
 import LoadingScreen from "../LoadingScreen/LoadingScreen";
 import { SERVER_URL } from "../../config";
+import { getAuthHeaders } from '../../utils/authHeaders';
 import "./Checkout.css";
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { customer_uuid, order_uuid } = useOrder();
+  const { customer_uuid, order_uuid, jwt_token } = useOrder();
   const [users, setUsers] = useState([]);
   const [orderDetails, setOrderDetails] = useState([]);
   const [isHost, setIsHost] = useState(false);
   const [loading, setLoading] = useState(true);
   const [finishing, setFinishing] = useState(false);
   const [error, setError] = useState("");
+  const [selectedFriendIdx, setSelectedFriendIdx] = useState(null);
 
   const statusColors = ["white", "blue", "yellow", "green", "cyan"];
   const renderStatus = (status) => (
@@ -33,17 +35,16 @@ const Checkout = () => {
         "Accept": "multipart/mixed, application/json",
         "ngrok-skip-browser-warning": "true",
         "Content-Type": "application/json",
-        "Customer-UUID": customer_uuid,
-        "Order-UUID": order_uuid,
-        "JWT-Token": "bla-bla-bla",
+        ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
       },
     })
       .then(async (res) => {
         setLoading(false);
         if (!res.ok) throw new Error("Не удалось загрузить данные пользователей");
         const data = await res.json();
-        setUsers(Array.isArray(data.customer_list) ? data.customer_list : []);
-        const myOrder = data.customer_list?.find(
+        const customerList = Array.isArray(data.customer_list) ? data.customer_list : [];
+        setUsers(customerList);
+        const myOrder = customerList.find(
           (u) => u.customer_uuid === customer_uuid || u.uuid === customer_uuid
         );
         if (myOrder?.is_active) {
@@ -61,11 +62,14 @@ const Checkout = () => {
         setOrderDetails([]);
         setLoading(false);
       });
-  }, [customer_uuid, order_uuid]);
+  }, [customer_uuid, order_uuid, jwt_token]);
 
   const handleGoCatalog = () => navigate("/catalog");
-  const handleUserClick = (user) =>
-    navigate(`/user-order/${user.login || user.username || user.customer_uuid}`);
+  const handleUserClick = (user, idx) => {
+    setSelectedFriendIdx(idx);
+    const userId = user.tg_login || user.username || user.login || user.customer_uuid || user.uuid;
+    setTimeout(() => navigate(`/user-order/${userId}`), 120);
+  };
 
   const handleFinishOrder = async () => {
     setFinishing(true);
@@ -74,9 +78,7 @@ const Checkout = () => {
       const res = await fetch(`${SERVER_URL}/customer/v1/order/finish`, {
         method: "POST",
         headers: {
-          "Customer-UUID": customer_uuid,
-          "Order-UUID": order_uuid,
-          "JWT-Token": "bla-bla-bla",
+          ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
         },
       });
   
@@ -106,17 +108,9 @@ const Checkout = () => {
       </div>
     );
 
-
-  const sortedUsers = [...users].sort((a, b) => {
-    const nameA = (a.username || a.login || a.tg_login || '').toLowerCase();
-    const nameB = (b.username || b.login || b.tg_login || '').toLowerCase();
-    return nameA.localeCompare(nameB);
-  });
-
-  const friends = sortedUsers.filter(
-  (u) => u.customer_uuid !== customer_uuid && u.is_active && u.customer_uuid
-);
-
+  const friends = users.filter(
+    (u) => (u.customer_uuid || u.uuid) !== customer_uuid && u.is_active && (u.customer_uuid || u.uuid)
+  );
 
   return (
     <div className="checkout-container">
@@ -140,17 +134,18 @@ const Checkout = () => {
         <div className="user-orders-list">
           {friends.length === 0 && (
             <div className="empty-friends">Нет заказов друзей</div>
-         )}
+          )}
           {friends.map((user, index) => (
             <div
-              key={user.customer_uuid || index}
-              className="user-order"
-              onClick={() => handleUserClick(user)}
+              key={user.customer_uuid || user.uuid || index}
+              className={`user-order user-order-summary${selectedFriendIdx === index ? ' selected' : ''}`}
+              onClick={() => handleUserClick(user, index)}
+              style={{cursor: 'pointer', width: '100%'}}
             >
-              <div className="user-login">
-                {user.username || user.login || user.tg_login || `Пользователь #${index + 1}`}
+              <div className="user-order-row" style={{display:'flex',justifyContent:'space-between',alignItems:'center',fontSize:'20px',padding:'10px 0'}}>
+                <span className="user-login" style={{fontWeight:'bold'}}>{user.username || user.login || user.tg_login || `Пользователь #${index + 1}`}</span>
+                <span className="user-total-price">{user.total_price || 0} ₽</span>
               </div>
-              <div className="user-total-price">{user.total_price || 0} ₽</div>
             </div>
           ))}
         </div>

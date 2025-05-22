@@ -2,15 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOrder } from "../OrderContext/OrderContext";
 import { SERVER_URL } from "../../config";
+import { getAuthHeaders } from '../../utils/authHeaders';
 import "./UsersList.css";
 
 function UsersList() {
   const navigate = useNavigate();
-  const { order_uuid, customer_uuid, room_code } = useOrder() || {};
+  const { order_uuid, customer_uuid, room_code, jwt_token } = useOrder() || {};
   const [roomCode, setRoomCode] = useState(room_code || "");
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedIdx, setSelectedIdx] = useState(null);
 
   useEffect(() => {
     if (!customer_uuid || !order_uuid) {
@@ -27,9 +29,7 @@ function UsersList() {
         Accept: "multipart/mixed, application/json",
         "Content-Type": "application/json",
         "ngrok-skip-browser-warning": "69420",
-        "Customer-UUID": customer_uuid,
-        "Order-UUID": order_uuid,
-        "JWT-Token": "bla-bla-bla"
+        ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
       }
     })
       .then(async (res) => {
@@ -48,10 +48,16 @@ function UsersList() {
         setError(err.message || "Ошибка загрузки списка пользователей");
         setLoading(false);
       });
-  }, [customer_uuid, order_uuid]);
+  }, [customer_uuid, order_uuid, jwt_token]);
 
   const goBack = () => {
     navigate("/catalog");
+  };
+
+  const handleUserClick = (user, idx) => {
+    setSelectedIdx(idx);
+    const userId = user.tg_login || user.username || user.login || user.customer_uuid || user.uuid;
+    setTimeout(() => navigate(`/user-order/${userId}`), 120);
   };
 
   return (
@@ -72,17 +78,18 @@ function UsersList() {
           ) : users.length === 0 ? (
             <div className="users-message empty">Нет друзей!</div>
           ) : (
-            users.map((user) => {
-              const login =
-                user.username || user.login || user.tg_login || user.name || "Неизвестный пользователь";
-              return (
-                <div key={user.id || user.customer_uuid} className="user-item">
-                  <div className="user-name">
-                    {login.startsWith("@") ? login : `@${login}`}
-                  </div>
-                </div>
-              );
-            })
+            <ul className="users-list">
+              {users.map((user, idx) => (
+                <li
+                  key={user.customer_uuid || user.uuid || idx}
+                  className={`user-list-item${selectedIdx === idx ? ' selected' : ''}`}
+                  onClick={() => handleUserClick(user, idx)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {user.username || user.login || user.tg_login || `Пользователь #${idx + 1}`}
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       </div>

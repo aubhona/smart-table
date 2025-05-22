@@ -9,7 +9,7 @@ function TableId({ onSubmit, error }) {
   };
 
   const handleSubmit = () => {
-    if (tableId.length === 6) {
+    if (tableId) {
       onSubmit(tableId);
     } else {
       alert('Неверный ID стола');
