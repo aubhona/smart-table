@@ -18,11 +18,11 @@ import (
 )
 
 var validOrderStatuses = map[defsInternalOrder.OrderStatus]interface{}{
-	defsInternalOrder.OrderStatusCancelledByClient:  nil,
-	defsInternalOrder.OrderStatusCancelledByService: nil,
-	defsInternalOrder.OrderStatusNew:                nil,
-	defsInternalOrder.OrderStatusPaid:               nil,
-	defsInternalOrder.OrderStatusPaymentWaiting:     nil,
+	defsInternalOrder.OrderStatusCanceledByClient:  nil,
+	defsInternalOrder.OrderStatusCanceledByService: nil,
+	defsInternalOrder.OrderStatusNew:               nil,
+	defsInternalOrder.OrderStatusPaid:              nil,
+	defsInternalOrder.OrderStatusPaymentWaiting:    nil,
 }
 
 var ItemStatusesCanChangeOnlyWithOrderStatus = map[defsInternalItem.ItemStatus]interface{}{

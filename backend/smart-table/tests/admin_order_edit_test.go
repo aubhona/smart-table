@@ -16,7 +16,7 @@ func TestAdminOrderEditHappyPath(t *testing.T) {
 	defer GetTestMutex().Unlock()
 	defer CleanTest()
 
-	userUUID, _, placeUUID, hostCustomerUUID, orderUUID, _, _, token, err := CreateDefaultItems()
+	userUUID, _, placeUUID, hostCustomerUUID, orderUUID, _, _, token, err := CreateDefaultItems() //nolint
 	assert.NoError(t, err)
 
 	err = CommitItems(hostCustomerUUID, orderUUID)
@@ -39,7 +39,7 @@ func TestAdminOrderEditHappyPath(t *testing.T) {
 	assert.NotNil(t, responseOrderInfo.JSON200)
 
 	itemGroup := viewsCodegenAdminPlace.ItemEditGroup{
-		ItemStatus: viewsCodegenAdminPlace.ItemStatus("cooked"),
+		ItemStatus:   viewsCodegenAdminPlace.ItemStatus("cooked"),
 		ItemUUIDList: []uuid.UUID{responseOrderInfo.JSON200.OrderInfo.CustomerList[0].ItemGroupList[0].ItemUUIDList[0]},
 	}
 
@@ -50,11 +50,11 @@ func TestAdminOrderEditHappyPath(t *testing.T) {
 			JWTToken: token,
 		},
 		viewsCodegenAdminPlace.PostAdminV1PlaceOrderEditJSONRequestBody{
-			PlaceUUID: placeUUID,
-			OrderUUID: orderUUID,
+			PlaceUUID:   placeUUID,
+			OrderUUID:   orderUUID,
 			TableNumber: responseOrderInfo.JSON200.OrderInfo.OrderMainInfo.TableNumber,
 			OrderStatus: nil,
-			ItemGroup: &itemGroup,
+			ItemGroup:   &itemGroup,
 		},
 	)
 
@@ -70,8 +70,8 @@ func TestAdminOrderEditHappyPath(t *testing.T) {
 
 	assert.Equal(t, "cooked", order.PgItems[0].Status)
 
-	orderStatus := viewsCodegenAdminPlace.OrderStatus("cancelled_by_service")
-	
+	orderStatus := viewsCodegenAdminPlace.OrderStatus("canceled_by_service")
+
 	responseOrderEdit, err = viewsCodegenAdminPlaceClient.PostAdminV1PlaceOrderEditWithResponse(
 		GetCtx(),
 		&viewsCodegenAdminPlace.PostAdminV1PlaceOrderEditParams{
@@ -79,11 +79,11 @@ func TestAdminOrderEditHappyPath(t *testing.T) {
 			JWTToken: token,
 		},
 		viewsCodegenAdminPlace.PostAdminV1PlaceOrderEditJSONRequestBody{
-			PlaceUUID: placeUUID,
-			OrderUUID: orderUUID,
+			PlaceUUID:   placeUUID,
+			OrderUUID:   orderUUID,
 			TableNumber: responseOrderInfo.JSON200.OrderInfo.OrderMainInfo.TableNumber,
 			OrderStatus: &orderStatus,
-			ItemGroup: nil,
+			ItemGroup:   nil,
 		},
 	)
 
@@ -97,6 +97,6 @@ func TestAdminOrderEditHappyPath(t *testing.T) {
 	err = json.Unmarshal(pgOrders[0], &order)
 	assert.NoError(t, err)
 
-	assert.Equal(t, "cancelled_by_service", order.PgOrder.Status)
-	assert.Equal(t, "cancelled_by_service", order.PgItems[0].Status)
+	assert.Equal(t, "canceled_by_service", order.PgOrder.Status)
+	assert.Equal(t, "canceled_by_service", order.PgItems[0].Status)
 }

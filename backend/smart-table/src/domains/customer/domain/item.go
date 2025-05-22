@@ -11,15 +11,15 @@ import (
 )
 
 var validItemStatuses = map[defsInternalItem.ItemStatus]interface{}{
-	defsInternalItem.ItemStatusAccepted:           nil,
-	defsInternalItem.ItemStatusCancelledByClient:  nil,
-	defsInternalItem.ItemStatusCancelledByService: nil,
-	defsInternalItem.ItemStatusCooked:             nil,
-	defsInternalItem.ItemStatusCooking:            nil,
-	defsInternalItem.ItemStatusNew:                nil,
-	defsInternalItem.ItemStatusPaid:               nil,
-	defsInternalItem.ItemStatusPaymentWaiting:     nil,
-	defsInternalItem.ItemStatusServed:             nil,
+	defsInternalItem.ItemStatusAccepted:          nil,
+	defsInternalItem.ItemStatusCanceledByClient:  nil,
+	defsInternalItem.ItemStatusCanceledByService: nil,
+	defsInternalItem.ItemStatusCooked:            nil,
+	defsInternalItem.ItemStatusCooking:           nil,
+	defsInternalItem.ItemStatusNew:               nil,
+	defsInternalItem.ItemStatusPaid:              nil,
+	defsInternalItem.ItemStatusPaymentWaiting:    nil,
+	defsInternalItem.ItemStatusServed:            nil,
 }
 
 type Item struct {
