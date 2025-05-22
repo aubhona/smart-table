@@ -17,6 +17,19 @@ import (
 	"golang.org/x/exp/slices"
 )
 
+var validOrderStatuses = map[defsInternalOrder.OrderStatus]interface{}{
+	defsInternalOrder.OrderStatusCancelledByClient:  nil,
+	defsInternalOrder.OrderStatusCancelledByService: nil,
+	defsInternalOrder.OrderStatusNew:                nil,
+	defsInternalOrder.OrderStatusPaid:               nil,
+	defsInternalOrder.OrderStatusPaymentWaiting:     nil,
+}
+
+var ItemStatusesCanChangeOnlyWithOrderStatus = map[defsInternalItem.ItemStatus]interface{}{
+	defsInternalItem.ItemStatusPaymentWaiting: nil,
+	defsInternalItem.ItemStatusPaid:           nil,
+}
+
 type Order struct {
 	uuid         uuid.UUID
 	roomCode     string
@@ -165,6 +178,81 @@ func (o *Order) CommitItems(customerUUID uuid.UUID) {
 	}
 }
 
+func (o *Order) SetStatus(status defsInternalOrder.OrderStatus) error {
+	parsedItemStatus, err := ParseItemStatus(string(status))
+	if err != nil {
+		return err
+	}
+
+	for _, item := range o.items {
+		err = item.Get().SetStatus(parsedItemStatus)
+		if err != nil {
+			return err
+		}
+	}
+
+	o.status = status
+
+	return nil
+}
+
+func IsValidOrderStatus(status defsInternalOrder.OrderStatus) bool {
+	_, exists := validOrderStatuses[status]
+	return exists
+}
+
+func ParseOrderStatus(raw string) (defsInternalOrder.OrderStatus, error) {
+	status := defsInternalOrder.OrderStatus(raw)
+	if !IsValidOrderStatus(status) {
+		return "", domainErrors.InvalidOrderStatus{OrderStatus: status}
+	}
+
+	return status, nil
+}
+
+func (o *Order) ChangeItemsStatus(itemUUIDList []uuid.UUID, status string) error {
+	parsedItemStatus, err := ParseItemStatus(status)
+	if err != nil {
+		return err
+	}
+
+	_, exists := ItemStatusesCanChangeOnlyWithOrderStatus[parsedItemStatus]
+	if exists {
+		return domainErrors.ItemStatusChangeRequiresOrderStatusUpdate{
+			ItemStatus: parsedItemStatus,
+		}
+	}
+
+	itemUUIDSet := make(map[uuid.UUID]interface{})
+	for _, itemUUID := range itemUUIDList {
+		itemUUIDSet[itemUUID] = nil
+	}
+
+	parsedOrderStatus, err := ParseOrderStatus(status)
+	needToChangeOrderStatus := err == nil
+
+	for _, item := range o.items {
+		_, exists := itemUUIDSet[item.Get().GetUUID()]
+		if exists {
+			err = item.Get().SetStatus(parsedItemStatus)
+			if err != nil {
+				return err
+			}
+		} else if item.Get().GetStatus() != parsedItemStatus {
+			needToChangeOrderStatus = false
+		}
+	}
+
+	if needToChangeOrderStatus {
+		err := o.SetStatus(parsedOrderStatus)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (o *Order) GetCustomerByUUID(uuid uuid.UUID) utils.Optional[utils.SharedRef[Customer]] {
 	customer, found := lo.Find(o.customers, func(item utils.SharedRef[Customer]) bool {
 		return item.Get().uuid == uuid
@@ -229,6 +317,6 @@ func (o *Order) GetDeletesItems() []utils.SharedRef[Item] {
 func (o *Order) MarkWaitingPayment() {
 	o.status = defsInternalOrder.OrderStatusPaymentWaiting
 	for _, item := range o.items {
-		item.Get().SetStatus(defsInternalItem.ItemStatusPaymentWaiting)
+		_ = item.Get().SetStatus(defsInternalItem.ItemStatusPaymentWaiting)
 	}
 }

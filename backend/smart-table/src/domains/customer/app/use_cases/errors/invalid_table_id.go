@@ -7,5 +7,5 @@ type InvalidTableID struct {
 }
 
 func (e InvalidTableID) Error() string {
-	return fmt.Sprintf("invalid table id '%s'", e.TableID)
+	return fmt.Sprintf("invalid table_id='%s'", e.TableID)
 }

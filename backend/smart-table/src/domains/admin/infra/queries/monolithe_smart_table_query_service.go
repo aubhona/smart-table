@@ -9,7 +9,10 @@ import (
 	appQueriesErrors "github.com/smart-table/src/domains/admin/app/queries/errors"
 	appServices "github.com/smart-table/src/domains/admin/app/services"
 	customerApp "github.com/smart-table/src/domains/customer/app/use_cases"
+	customerAppErrors "github.com/smart-table/src/domains/customer/app/use_cases/errors"
 	"github.com/smart-table/src/domains/customer/domain"
+	customerDomainErrors "github.com/smart-table/src/domains/customer/domain/errors"
+	"github.com/smart-table/src/logging"
 	"github.com/smart-table/src/utils"
 )
 
@@ -17,23 +20,25 @@ type SmartTableCustomerQueryServiceImpl struct {
 	placeTableService            *appServices.PlaceTableService
 	orderInfoCommandHandler      *customerApp.OrderInfoCommandHandler
 	placeOrderListCommandHandler *customerApp.PlaceOrderListCommandHandler
+	placeOrderEditCommandHandler *customerApp.PlaceOrderEditCommandHandler
 }
 
 func NewSmartTableQueryServiceImpl(
 	placeTableService *appServices.PlaceTableService,
 	orderInfoCommandHandler *customerApp.OrderInfoCommandHandler,
 	placeOrderListCommandHandler *customerApp.PlaceOrderListCommandHandler,
+	placeOrderEditCommandHandler *customerApp.PlaceOrderEditCommandHandler,
 ) *SmartTableCustomerQueryServiceImpl {
 	return &SmartTableCustomerQueryServiceImpl{
 		placeTableService:            placeTableService,
 		orderInfoCommandHandler:      orderInfoCommandHandler,
 		placeOrderListCommandHandler: placeOrderListCommandHandler,
+		placeOrderEditCommandHandler: placeOrderEditCommandHandler,
 	}
 }
 
 func (s *SmartTableCustomerQueryServiceImpl) GetPlaceOrder(
-	placeUUID uuid.UUID,
-	orderUUID uuid.UUID,
+	placeUUID, orderUUID uuid.UUID,
 ) (defsInternalCustomerDTO.OrderInfoDTO, error) {
 	response, err := s.orderInfoCommandHandler.Handle(&customerApp.OrderInfoCommand{
 		OrderUUID: orderUUID,
@@ -86,12 +91,58 @@ func (s *SmartTableCustomerQueryServiceImpl) GetPlaceOrders(
 	return result, nil
 }
 
+func (s *SmartTableCustomerQueryServiceImpl) EditPlaceOrder(
+	orderUUID uuid.UUID,
+	tableID string,
+	orderStatus utils.Optional[string],
+	itemEditGpoup utils.Optional[defsInternalCustomerDTO.ItemEditGroupDTO],
+) error {
+	err := s.placeOrderEditCommandHandler.Handle(&customerApp.PlaceOrderEditCommand{
+		OrderUUID:     orderUUID,
+		TableID:       tableID,
+		OrderStatus:   orderStatus,
+		ItemEditGpoup: itemEditGpoup,
+	})
+	if err != nil {
+		switch {
+		case utils.IsTheSameErrorType[customerAppErrors.IncorrectTableID](err):
+			PlaceUUID, err := s.placeTableService.GetPlaceUUIDFromTableID(tableID)
+			if err != nil {
+				return err
+			}
+
+			return appQueriesErrors.OrderNotBelongToPLace{
+				PlaceUUID: PlaceUUID,
+				OrderUUID: orderUUID,
+			}
+		case utils.IsTheSameErrorType[customerAppErrors.IncorrectEditOrderRequest](err):
+			return appQueriesErrors.IncorrectEditOrderRequest{}
+		case utils.IsTheSameErrorType[customerDomainErrors.OrderNotFound](err):
+			return appQueriesErrors.OrderNotFound{OrderUUID: orderUUID}
+		case utils.IsTheSameErrorType[customerDomainErrors.InvalidOrderStatus](err):
+			return appQueriesErrors.InvalidOrderStatus{OrderStatus: orderStatus}
+		case utils.IsTheSameErrorType[customerDomainErrors.InvalidItemStatus](err):
+			return appQueriesErrors.InvalidItemStatus{ItemEditGpoup: itemEditGpoup}
+		case utils.IsTheSameErrorType[customerDomainErrors.DraftItemStatusChangeNotAllowed](err):
+			return appQueriesErrors.DraftItemStatusChangeNotAllowed{ItemEditGpoup: itemEditGpoup}
+		case utils.IsTheSameErrorType[customerDomainErrors.ItemStatusChangeRequiresOrderStatusUpdate](err):
+			return appQueriesErrors.ItemStatusChangeRequiresOrderStatusUpdate{ItemEditGpoup: itemEditGpoup}
+		}
+
+		logging.GetLogger().Error(fmt.Sprintf("Error while getting result from customer command handler: %v", err))
+
+		return appQueriesErrors.UnsuccessOrderEdit{InnerError: err}
+	}
+
+	return nil
+}
+
 // Converters.
 type CustomerInfoImpl struct {
 	UUID         uuid.UUID
 	TgLogin      string
 	TgID         string
-	ItemGroupMap map[string]defsInternalCustomerDTO.ItemGroupInfoDTO
+	ItemGroupMap map[string]*defsInternalCustomerDTO.ItemGroupInfoDTO
 	TotalPrice   decimal.Decimal
 }
 
@@ -128,7 +179,7 @@ func convertCustomerToCustomerInfoImpl(
 		UUID:         customer.Get().GetUUID(),
 		TgLogin:      customer.Get().GetTgLogin(),
 		TgID:         customer.Get().GetTgID(),
-		ItemGroupMap: make(map[string]defsInternalCustomerDTO.ItemGroupInfoDTO),
+		ItemGroupMap: make(map[string]*defsInternalCustomerDTO.ItemGroupInfoDTO),
 		TotalPrice:   decimal.Zero,
 	}
 }
@@ -138,7 +189,7 @@ func convertCustomerInfoImplToCustomerInfo(
 ) defsInternalCustomerDTO.CustomerInfoDTO {
 	itemGroupList := make([]defsInternalCustomerDTO.ItemGroupInfoDTO, 0, len(customerInfoImpl.ItemGroupMap))
 	for i := range customerInfoImpl.ItemGroupMap {
-		itemGroupList = append(itemGroupList, customerInfoImpl.ItemGroupMap[i])
+		itemGroupList = append(itemGroupList, *customerInfoImpl.ItemGroupMap[i])
 	}
 
 	return defsInternalCustomerDTO.CustomerInfoDTO{
@@ -182,12 +233,11 @@ func convertOrderToOrderInfoDTO(
 	order utils.SharedRef[domain.Order],
 	placeTableService *appServices.PlaceTableService,
 ) defsInternalCustomerDTO.OrderInfoDTO {
-	customerInfoImplMap := make(map[uuid.UUID]CustomerInfoImpl)
+	customerInfoImplMap := make(map[uuid.UUID]*CustomerInfoImpl)
 
 	for _, customer := range order.Get().GetCustomers() {
-		customerInfoImplMap[customer.Get().GetUUID()] = convertCustomerToCustomerInfoImpl(
-			customer,
-		)
+		customerInfoImpl := convertCustomerToCustomerInfoImpl(customer)
+		customerInfoImplMap[customer.Get().GetUUID()] = &customerInfoImpl
 	}
 
 	orderTotalPrice := decimal.Zero
@@ -204,10 +254,13 @@ func convertOrderToOrderInfoDTO(
 
 		itemGroup, isExists := customerInfoImpl.ItemGroupMap[key]
 		if !isExists {
-			customerInfoImpl.ItemGroupMap[key] = createItemGroupInfoDTO(item)
+			ItemGroup := createItemGroupInfoDTO(item)
+			customerInfoImpl.ItemGroupMap[key] = &ItemGroup
 			customerInfoImpl.TotalPrice = customerInfoImpl.TotalPrice.Add(item.Get().GetPrice())
 			orderTotalPrice = orderTotalPrice.Add(item.Get().GetPrice())
 		} else {
+			itemGroup.ItemUUIDList = append(itemGroup.ItemUUIDList, item.Get().GetUUID())
+
 			itemPrice, err := decimal.NewFromString(itemGroup.ItemPrice)
 			if err != nil {
 				panic(err)
@@ -225,17 +278,13 @@ func convertOrderToOrderInfoDTO(
 
 			itemGroup.Count++
 
-			customerInfoImpl.ItemGroupMap[key] = itemGroup
-
 			orderTotalPrice = orderTotalPrice.Add(itemPrice)
 		}
-
-		customerInfoImplMap[customerUUID] = customerInfoImpl
 	}
 
 	customerList := make([]defsInternalCustomerDTO.CustomerInfoDTO, 0, len(customerInfoImplMap))
 	for _, customerInfoImpl := range customerInfoImplMap {
-		customerList = append(customerList, convertCustomerInfoImplToCustomerInfo(&customerInfoImpl))
+		customerList = append(customerList, convertCustomerInfoImplToCustomerInfo(customerInfoImpl))
 	}
 
 	orderMainInfo := convertOrderToOrderMainInfoDTO(order, orderTotalPrice, placeTableService)

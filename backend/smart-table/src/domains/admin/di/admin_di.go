@@ -162,6 +162,11 @@ func addHandlers(container *dig.Container) error { //nolint
 		return err
 	}
 
+	err = container.Provide(app.NewOrderEditCommandHandler)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
