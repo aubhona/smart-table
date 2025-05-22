@@ -30,47 +30,49 @@ const OrderItemGroup = ({ item }) => {
           <span className="ps-item-total-price">Итого: {item.result_price}₽</span>
         </div>
         <div className="ps-item-status">
-          <select value={item.status}>
+          <select value={item.status} className="ps-status-select-wide">
             {STATUS_FLOW.map(status => (
               <option key={status} value={status}>{status}</option>
             ))}
           </select>
-          <button className="ps-status-btn cancel">Отменить</button>
+          <button className="ps-status-btn cancel ps-cancel-btn-right">Отменить</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="ps-order-item-group" style={{ marginBottom: 16 }}>
-      <div className="ps-item-info">
-        <span className="ps-item-name">{item.name}</span>
-        <span className="ps-item-price">{item.count}x {item.item_price}₽</span>
-        <span className="ps-item-total-price">Итого: {item.result_price}₽</span>
-        <button
-          className="ps-expand-btn"
-          onClick={() => setOpen(o => !o)}
-          style={{
-            marginLeft: 12, padding: '4px 12px', background: '#444', color: 'white', border: 'none', borderRadius: 5, cursor: 'pointer'
-          }}
-        >
-          {open ? "Скрыть блюда" : `Показать ${item.count} блюд`}
-        </button>
+    <div className="ps-order-item-group">
+      <div className="ps-item-info ps-order-group-info">
+        <span className="ps-item-name ps-order-group-name">{item.name}</span>
+        <span className="ps-item-price ps-order-group-price">{item.count}x {item.item_price}₽</span>
+        <div className="ps-order-group-right">
+          <span className="ps-item-total-price ps-order-group-total">Итого: {item.result_price}₽</span>
+          <button
+            className="ps-expand-btn ps-order-group-expand"
+            onClick={() => setOpen(o => !o)}
+          >
+            {open ? "Скрыть блюда" : "Показать все"}
+          </button>
+        </div>
       </div>
       {open && (
-        <div className="ps-order-item-list" style={{ paddingLeft: 20, marginTop: 8 }}>
+        <div className="ps-order-item-list">
           {item.item_uuid_list.map((uuid, idx) => (
-            <div key={uuid} className="ps-order-item-single" style={{ display: 'flex', alignItems: 'center', marginBottom: 6, gap: 16 }}>
+            <div 
+              key={uuid} 
+              className="ps-order-item-single ps-order-group-single"
+            >
               <span className="ps-item-name">{item.name} #{idx + 1}</span>
               <span>{item.item_price}₽</span>
-              <div style={{ marginLeft: 16 }}>
-                <select value={item.status}>
+              <div>
+                <select value={item.status} className="ps-status-select-wide">
                   {STATUS_FLOW.map(status => (
                     <option key={status} value={status}>{status}</option>
                   ))}
                 </select>
               </div>
-              <button className="ps-status-btn cancel" style={{ marginLeft: 10 }}>Отменить</button>
+              <button className="ps-status-btn cancel ps-cancel-btn-right">Отменить</button>
             </div>
           ))}
         </div>
@@ -116,12 +118,13 @@ export default function PlaceDetail() {
   const [editMenuDishData, setEditMenuDishData] = useState(null);
   const [editMenuDishPrice, setEditMenuDishPrice] = useState("");
 
-  const ORDER_STATUSES = ['Открыт', 'Ожидает оплаты', 'Оплачен', 'Отменен'];
+  const ORDER_STATUSES = ['Открыт', 'Ожидает оплаты', 'Оплачен', 'Отменен', 'Обслуживается'];
   const STATUS_MAP = {
     new: "Открыт",
     payment_waiting: "Ожидает оплаты",
     paid: "Оплачен",
-    canceled: "Отменен"
+    cancelled_by_service: "Отменен",
+    serving: "Обслуживается"
   };
   const REVERSE_STATUS_MAP = Object.fromEntries(
     Object.entries(STATUS_MAP).map(([eng, rus]) => [rus, eng])
@@ -328,7 +331,13 @@ export default function PlaceDetail() {
       if (!resp.ok) throw resp;
       const data = await resp.json();
       console.log("order_info", data.order_info)
-      setSelectedOrder(data.order_info);
+      setSelectedOrder({
+        ...data.order_info,
+        order_main_info: {
+          ...data.order_info.order_main_info,
+          status: data.order_info.order_main_info.status
+        }
+      });
     } catch (e) {
       let msg = e.body?.message || e.message || "Ошибка получения деталей заказа";
       setError(msg);
@@ -337,13 +346,15 @@ export default function PlaceDetail() {
     }
   }
 
-  async function editOrder(order_uuid, status, extraParams = {}) {
+  async function editOrder(order_uuid, order_status, place_uuid, extraParams = {}) {
     setLoading(true);
     setError("");
     try {
       const payload = {
+        place_uuid: place_uuid,
         order_uuid,
-        status,
+        table_number: selectedOrder?.order_main_info?.table_number,
+        order_status,
         ...extraParams, 
       };
       const resp = await fetch(`${SERVER_URL}/admin/v1/place/order/edit`, {
@@ -362,6 +373,7 @@ export default function PlaceDetail() {
         throw new Error(errText || "Ошибка изменения заказа");
       }
       await loadOrders();
+
     } catch (e) {
       setError(e.body?.message || e.message || "Ошибка редактирования заказа");
     } finally {
@@ -780,151 +792,156 @@ export default function PlaceDetail() {
         )}
 
         {tab === "orders" && (
-    <div className="ps-orders-container">
-      <div className="ps-order-subtabs">
-        <button
-          className={`subtab ${orderSubTab === 'open' ? 'active' : ''}`}
-          onClick={() => setOrderSubTab('open')}
-        >
-          Открытые заказы
-        </button>
-        <button
-          className={`subtab ${orderSubTab === 'closed' ? 'active' : ''}`}
-          onClick={() => setOrderSubTab('closed')}
-        >
-          Закрытые заказы
-        </button>
-      </div>
-
-      <div className="ps-orders-list">
-        {orders
-          .filter(order => {
-            if (orderSubTab === 'open') {
-              return ['Открыт', 'Ожидает оплаты'].includes(order.status);
-            }
-            return ['Оплачен', 'Отменен'].includes(order.status);
-          })
-          .length === 0 ? (
-            <div className="ps-no-orders">
-              Нет заказов
-            </div>
-          ) : (
-            orders
-              .filter(order => order && order.uuid)
-              .filter(order => {
-                if (orderSubTab === 'open') {
-                  return ['Открыт', 'Ожидает оплаты'].includes(order.status);
-                }
-                return ['Оплачен', 'Отменен'].includes(order.status);
-              })
-              .map(order => (
-                <div 
-                  key={order.uuid}
-                  className={`ps-order-card ${order.status.toLowerCase().replace(' ', '-')}`}
-                  onClick={async () => {
-                    await loadOrderDetails(order.uuid, place_uuid);
-                    setShowCheckout(false);
-                  }}
-                >
-                  <div className="ps-order-header">
-                    <span>Заказ #{order.uuid.slice(0,6)}</span>
-                    <span>Стол: {order.table_number}</span>
-                  </div>
-                  <div className="ps-order-info">
-                    <span>{order.guests_count} посетителя</span>
-                    <span>{order.total_price}₽</span>
-                    <span className={`ps-status ps-status-${order.status.toLowerCase().replace(' ', '-')}`}>
-                      {order.status}
-                    </span>
-                  </div>
-                </div>
-              ))
-          )}
-      </div>
-
-      {selectedOrder && (
-        <div className="ps-order-modal">
-          <div className="ps-modal-header">
-            <div className="ps-modal-top-buttons">
+          <div className="ps-orders-container">
+            <div className="ps-order-subtabs">
               <button
-                className={`ps-action-btn${showCheckout ? ' active' : ''}`}
-                onClick={() => setShowCheckout(true)}
+                className={`subtab ${orderSubTab === 'open' ? 'active' : ''}`}
+                onClick={() => setOrderSubTab('open')}
               >
-                <span className="ps-modal-tab-label">Состав заказа</span>
+                Открытые заказы
               </button>
               <button
-                className={`ps-action-btn${!showCheckout ? ' active' : ''}`}
-                onClick={() => setShowCheckout(false)}
+                className={`subtab ${orderSubTab === 'closed' ? 'active' : ''}`}
+                onClick={() => setOrderSubTab('closed')}
               >
-                <span className="ps-modal-tab-label">Параметры заказа</span>
+                Закрытые заказы
               </button>
             </div>
-            <h3>Заказ #{selectedOrder.order_main_info.uuid.slice(0,6)} (Стол {selectedOrder.order_main_info.table_number})</h3>
-            <button onClick={() => {
-              setSelectedOrder(null);
-              setShowCheckout(false);
-            }}>×</button>
-          </div>
 
-        {!showCheckout && (
-          <>
-            <div className="ps-order-details">
-              <div className="ps-detail-item">
-                <span>Время создания:</span>
-                <span>{selectedOrder.order_main_info.created_at}</span>
-              </div>
-              <div className="ps-detail-item">
-                <span>Количество гостей:</span>
-                <span>{selectedOrder.order_main_info.guests_count}</span>
-              </div>
-              <div className="ps-detail-item">
-                <span>Общая сумма:</span>
-                <span>{selectedOrder.order_main_info.total_price}₽</span>
-              </div>
-              <span>Статус заказа:</span>
-              <div className="ps-item-status">
-                <select
-                  value={selectedOrder.order_main_info.status}
-                  onChange={async (e) => {
-                    await editOrder(selectedOrder.order_main_info.uuid, REVERSE_STATUS_MAP[e.target.value] || e.target.value);
-                    await loadOrderDetails(selectedOrder.order_main_info.uuid);
-                  }}
-                >
-                  {ORDER_STATUSES.map(status => (
-                    <option key={status} value={status}>{status}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </>
-        )} 
-
-          {showCheckout && selectedOrder.customer_list && (
-            <div className="ps-checkout-screen">
-              {selectedOrder.customer_list.every(customer => !customer.item_group_list || customer.item_group_list.length === 0) ? (
-                <div className="ps-no-orders">Еще ничего не заказано!</div>
-              ) : (
-                selectedOrder.customer_list.map(customer => (
-                  <div key={customer.uuid} className="ps-customer-section">
-                    <div className="ps-customer-header">
-                      <h4>{customer.tg_login}</h4>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', minWidth: 100 }}>
-                        <span className="ps-item-total-price">Итоговая цена: {customer.total_price}₽</span>
-                        <span className="ps-customer-instagram" style={{ marginTop: 4 }}>{customer.tg_id}</span>
+            <div className="ps-orders-list">
+              {orders
+                .filter(order => {
+                  if (orderSubTab === 'open') {
+                    return ['Открыт', 'Ожидает оплаты', 'Обслуживается'].includes(order.status);
+                  }
+                  return ['Оплачен', 'Отменен'].includes(order.status);
+                })
+                .length === 0 ? (
+                  <div className="ps-no-orders">
+                    Нет заказов
+                  </div>
+                ) : (
+                  orders
+                    .filter(order => order && order.uuid)
+                    .filter(order => {
+                      if (orderSubTab === 'open') {
+                        return ['Открыт', 'Ожидает оплаты', 'Обслуживается'].includes(order.status);
+                      }
+                      return ['Оплачен', 'Отменен'].includes(order.status);
+                    })
+                    .map(order => (
+                      <div 
+                        key={order.uuid}
+                          className={`ps-order-card ${order.status.toLowerCase().replace(' ', '-')}`}
+                        onClick={async () => {
+                          await loadOrderDetails(order.uuid, place_uuid);
+                          setShowCheckout(false);
+                        }}
+                      >
+                        <div className="ps-order-header">
+                          <span>Заказ #{order.uuid.slice(0,6)}</span>
+                          <span>Стол: {order.table_number}</span>
+                        </div>
+                        <div className="ps-order-info">
+                          <span>{order.guests_count} посетителя</span>
+                          <span>{order.total_price}₽</span>
+                          <span className={`ps-status ps-status-${order.status.toLowerCase().replace(' ', '-')}`}>
+                            {order.status}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    {customer.item_group_list.map(item => (
-                      <OrderItemGroup key={item.menu_dish_uuid} item={item} />
-                    ))}
-                  </div>
-                ))
-              )}
+                    ))
+                )}
             </div>
-          )}
-        </div>
-      )}
-    </div>
-  )}
+
+            {selectedOrder && (
+              <div className="ps-order-modal">
+                <div className="ps-modal-header">
+                  <div className="ps-modal-top-buttons">
+                    <button
+                      className={`ps-action-btn${showCheckout ? ' active' : ''}`}
+                      onClick={() => setShowCheckout(true)}
+                    >
+                      <span className="ps-modal-tab-label">Состав заказа</span>
+                    </button>
+                    <button
+                      className={`ps-action-btn${!showCheckout ? ' active' : ''}`}
+                      onClick={() => setShowCheckout(false)}
+                    >
+                    <span className="ps-modal-tab-label">Параметры заказа</span>
+                    </button>
+                  </div>
+                    <h3>Заказ #{selectedOrder.order_main_info.uuid.slice(0,6)} (Стол {selectedOrder.order_main_info.table_number})</h3>
+                  <button onClick={() => {
+                    setSelectedOrder(null);
+                    setShowCheckout(false);
+                  }}>×</button>
+                </div>
+
+              {!showCheckout && (
+                <>
+                  <div className="ps-order-details">
+                    <div className="ps-detail-item">
+                      <span>Время создания:</span>
+                      <span>{selectedOrder.order_main_info.created_at}</span>
+                    </div>
+                    <div className="ps-detail-item">
+                      <span>Количество гостей:</span>
+                      <span>{selectedOrder.order_main_info.guests_count}</span>
+                    </div>
+                    <div className="ps-detail-item">
+                      <span>Общая сумма:</span>
+                    <span>{selectedOrder.order_main_info.total_price}₽</span>
+                    </div>
+                    <span>Статус заказа:</span>
+                    <div className="ps-item-status">
+                      <select
+                          value={selectedOrder.order_main_info.status}
+                        onChange={async (e) => {
+                          const newRusStatus = e.target.value; 
+                          const newEngStatus = REVERSE_STATUS_MAP[newRusStatus] || newRusStatus;
+                          await editOrder(selectedOrder.order_main_info.uuid, newEngStatus, place_uuid);
+                          setSelectedOrder(null);
+                          setShowCheckout(false);
+                        }}
+                      >
+                        {Object.entries(STATUS_MAP).map(([key, label]) => (
+                          <option key={key} value={key}>
+                            {label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </>
+              )} 
+
+                {showCheckout && selectedOrder.customer_list && (
+                  <div className="ps-checkout-screen">
+                    {selectedOrder.customer_list.every(customer => !customer.item_group_list || customer.item_group_list.length === 0) ? (
+                      <div className="ps-no-orders">Еще ничего не заказано!</div>
+                    ) : (
+                      selectedOrder.customer_list.map(customer => (
+                        <div key={customer.uuid} className="ps-customer-section">
+                          <div className="ps-customer-header">
+                          <h4>{customer.tg_login}</h4>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', minWidth: 100 }}>
+                              <span className="ps-item-total-price">Итоговая цена: {customer.total_price}₽</span>
+                              <span className="ps-customer-instagram" style={{ marginTop: 4 }}>{customer.tg_id}</span>
+                            </div>
+                          </div>
+                          {customer.item_group_list.map(item => (
+                            <OrderItemGroup key={item.menu_dish_uuid} item={item} />
+                          ))}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {showAddModal && tab === "menu" && (

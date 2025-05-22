@@ -39,6 +39,7 @@ import AdminV1PlaceTableDeepLinksListResponse from './model/AdminV1PlaceTableDee
 import CustomerInfo from './model/CustomerInfo';
 import EmployeeInfo from './model/EmployeeInfo';
 import ErrorResponse from './model/ErrorResponse';
+import ItemEditGroup from './model/ItemEditGroup';
 import ItemGroupInfo from './model/ItemGroupInfo';
 import ItemResolution from './model/ItemResolution';
 import ItemStatus from './model/ItemStatus';
@@ -245,6 +246,12 @@ export {
      * @property {module:model/ErrorResponse}
      */
     ErrorResponse,
+
+    /**
+     * The ItemEditGroup model constructor.
+     * @property {module:model/ItemEditGroup}
+     */
+    ItemEditGroup,
 
     /**
      * The ItemGroupInfo model constructor.

@@ -182,8 +182,8 @@
 .checkout-button {
   font-weight: bold;
   font-family: 'Courier New', Consolas, monospace;
-  background-color: #B3A88A;
-  color: #3A3323;
+  background-color: #5e7643;
+  color: #ffffff;
   border: none;
   padding: 10px;
   font-size: 16px;
@@ -194,6 +194,14 @@
 
 .checkout-button:hover {
   background-color: #3a492a;
+}
+
+.checkout-button:disabled,
+.catalog-footer .checkout-button:disabled {
+  background: #bdbdbd !important;
+  color: #fff !important;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
   
 .quantity-controls {

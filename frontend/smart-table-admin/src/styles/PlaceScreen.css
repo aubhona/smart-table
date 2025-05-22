@@ -627,6 +627,7 @@
 .ps-status-ожидает-оплаты { color: #FFC107; }
 .ps-status-оплачен { color: #2196F3; }
 .ps-status-отменен { color: #f44336; }
+.ps-status-обслуживается { color: #bf21f3; }
 
 .ps-modal-top-buttons {
   display: flex;
@@ -655,6 +656,10 @@
 
 .ps-order-card.отменен {
   border: 2px solid #f44336;
+}
+
+.ps-order-card.обслуживается {
+  border: 2px solid #bf21f3; 
 }
 
 
@@ -745,4 +750,84 @@
   color: #e0e0e0;
   text-align: center;
   letter-spacing: 0.01em;
+}
+
+/* --- OrderItemGroup styles --- */
+.ps-order-item-group {
+  margin-bottom: 16px;
+}
+
+.ps-order-group-info {
+  background-color: #7d7575;
+  padding: 8px 12px;
+  border-radius: 4px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0;
+  position: relative;
+}
+
+.ps-order-group-name {
+  flex: 1;
+  text-align: left;
+}
+
+.ps-order-group-price {
+  flex: 1;
+  text-align: center;
+  margin-left: 12%;
+}
+
+.ps-order-group-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.ps-order-group-total {
+  color: #6bcd6e;
+  font-weight: bold;
+  text-align: right;
+}
+
+.ps-order-group-expand {
+  margin-top: 8px;
+  padding: 4px 12px;
+  background: #444;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.ps-order-item-list {
+  padding-left: 20px;
+  margin-top: 8px;
+}
+
+.ps-order-group-single {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  gap: 16px;
+  padding: 8px 12px;
+  background-color: #7d7575;
+  border-radius: 4px;
+  color: white;
+}
+
+.ps-order-group-single .ps-status-select-wide {
+  margin-left: 35px;
+}
+
+.ps-status-select-wide {
+  width: 250px;
+}
+
+.ps-cancel-btn-right {
+  margin-left: auto;
 }

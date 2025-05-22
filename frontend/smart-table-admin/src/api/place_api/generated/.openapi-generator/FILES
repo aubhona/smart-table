@@ -29,6 +29,7 @@ docs/CustomerInfo.md
 docs/DefaultApi.md
 docs/EmployeeInfo.md
 docs/ErrorResponse.md
+docs/ItemEditGroup.md
 docs/ItemGroupInfo.md
 docs/ItemResolution.md
 docs/ItemStatus.md
@@ -71,6 +72,7 @@ src/model/AdminV1PlaceTableDeepLinksListResponse.js
 src/model/CustomerInfo.js
 src/model/EmployeeInfo.js
 src/model/ErrorResponse.js
+src/model/ItemEditGroup.js
 src/model/ItemGroupInfo.js
 src/model/ItemResolution.js
 src/model/ItemStatus.js
@@ -81,3 +83,4 @@ src/model/OrderResolution.js
 src/model/OrderStatus.js
 src/model/PlaceInfo.js
 src/model/Role.js
+test/model/ItemEditGroup.spec.js

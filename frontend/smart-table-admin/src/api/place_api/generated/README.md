@@ -169,6 +169,7 @@ Class | Method | HTTP request | Description
  - [SmartTableAdminApi.CustomerInfo](docs/CustomerInfo.md)
  - [SmartTableAdminApi.EmployeeInfo](docs/EmployeeInfo.md)
  - [SmartTableAdminApi.ErrorResponse](docs/ErrorResponse.md)
+ - [SmartTableAdminApi.ItemEditGroup](docs/ItemEditGroup.md)
  - [SmartTableAdminApi.ItemGroupInfo](docs/ItemGroupInfo.md)
  - [SmartTableAdminApi.ItemResolution](docs/ItemResolution.md)
  - [SmartTableAdminApi.ItemStatus](docs/ItemStatus.md)

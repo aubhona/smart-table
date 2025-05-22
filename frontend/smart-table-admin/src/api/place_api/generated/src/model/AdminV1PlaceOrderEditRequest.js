@@ -12,7 +12,7 @@
  */
 
 import ApiClient from '../ApiClient';
-import ItemStatus from './ItemStatus';
+import ItemEditGroup from './ItemEditGroup';
 import OrderStatus from './OrderStatus';
 
 /**
@@ -24,12 +24,13 @@ class AdminV1PlaceOrderEditRequest {
     /**
      * Constructs a new <code>AdminV1PlaceOrderEditRequest</code>.
      * @alias module:model/AdminV1PlaceOrderEditRequest
-     * @param orderUuid {String} Уникальный идентификатор плейса
-     * @param orderStatus {module:model/OrderStatus} 
+     * @param placeUuid {String} Уникальный идентификатор плейса
+     * @param orderUuid {String} Уникальный идентификатор заказа
+     * @param tableNumber {Number} Номер стола
      */
-    constructor(orderUuid, orderStatus) { 
+    constructor(placeUuid, orderUuid, tableNumber) { 
         
-        AdminV1PlaceOrderEditRequest.initialize(this, orderUuid, orderStatus);
+        AdminV1PlaceOrderEditRequest.initialize(this, placeUuid, orderUuid, tableNumber);
     }
 
     /**
@@ -37,9 +38,10 @@ class AdminV1PlaceOrderEditRequest {
      * This method is used by the constructors of any subclasses, in order to implement multiple inheritance (mix-ins).
      * Only for internal use.
      */
-    static initialize(obj, orderUuid, orderStatus) { 
+    static initialize(obj, placeUuid, orderUuid, tableNumber) { 
+        obj['place_uuid'] = placeUuid;
         obj['order_uuid'] = orderUuid;
-        obj['order_status'] = orderStatus;
+        obj['table_number'] = tableNumber;
     }
 
     /**
@@ -53,17 +55,20 @@ class AdminV1PlaceOrderEditRequest {
         if (data) {
             obj = obj || new AdminV1PlaceOrderEditRequest();
 
+            if (data.hasOwnProperty('place_uuid')) {
+                obj['place_uuid'] = ApiClient.convertToType(data['place_uuid'], 'String');
+            }
             if (data.hasOwnProperty('order_uuid')) {
                 obj['order_uuid'] = ApiClient.convertToType(data['order_uuid'], 'String');
+            }
+            if (data.hasOwnProperty('table_number')) {
+                obj['table_number'] = ApiClient.convertToType(data['table_number'], 'Number');
             }
             if (data.hasOwnProperty('order_status')) {
                 obj['order_status'] = OrderStatus.constructFromObject(data['order_status']);
             }
-            if (data.hasOwnProperty('item_uuid')) {
-                obj['item_uuid'] = ApiClient.convertToType(data['item_uuid'], 'String');
-            }
-            if (data.hasOwnProperty('item_status')) {
-                obj['item_status'] = ItemStatus.constructFromObject(data['item_status']);
+            if (data.hasOwnProperty('item_group')) {
+                obj['item_group'] = ItemEditGroup.constructFromObject(data['item_group']);
             }
         }
         return obj;
@@ -82,12 +87,16 @@ class AdminV1PlaceOrderEditRequest {
             }
         }
         // ensure the json data is a string
+        if (data['place_uuid'] && !(typeof data['place_uuid'] === 'string' || data['place_uuid'] instanceof String)) {
+            throw new Error("Expected the field `place_uuid` to be a primitive type in the JSON string but got " + data['place_uuid']);
+        }
+        // ensure the json data is a string
         if (data['order_uuid'] && !(typeof data['order_uuid'] === 'string' || data['order_uuid'] instanceof String)) {
             throw new Error("Expected the field `order_uuid` to be a primitive type in the JSON string but got " + data['order_uuid']);
         }
-        // ensure the json data is a string
-        if (data['item_uuid'] && !(typeof data['item_uuid'] === 'string' || data['item_uuid'] instanceof String)) {
-            throw new Error("Expected the field `item_uuid` to be a primitive type in the JSON string but got " + data['item_uuid']);
+        // validate the optional field `item_group`
+        if (data['item_group']) { // data not null
+          ItemEditGroup.validateJSON(data['item_group']);
         }
 
         return true;
@@ -96,13 +105,25 @@ class AdminV1PlaceOrderEditRequest {
 
 }
 
-AdminV1PlaceOrderEditRequest.RequiredProperties = ["order_uuid", "order_status"];
+AdminV1PlaceOrderEditRequest.RequiredProperties = ["place_uuid", "order_uuid", "table_number"];
 
 /**
  * Уникальный идентификатор плейса
+ * @member {String} place_uuid
+ */
+AdminV1PlaceOrderEditRequest.prototype['place_uuid'] = undefined;
+
+/**
+ * Уникальный идентификатор заказа
  * @member {String} order_uuid
  */
 AdminV1PlaceOrderEditRequest.prototype['order_uuid'] = undefined;
+
+/**
+ * Номер стола
+ * @member {Number} table_number
+ */
+AdminV1PlaceOrderEditRequest.prototype['table_number'] = undefined;
 
 /**
  * @member {module:model/OrderStatus} order_status
@@ -110,15 +131,9 @@ AdminV1PlaceOrderEditRequest.prototype['order_uuid'] = undefined;
 AdminV1PlaceOrderEditRequest.prototype['order_status'] = undefined;
 
 /**
- * Уникальный идентификатор плейса
- * @member {String} item_uuid
+ * @member {module:model/ItemEditGroup} item_group
  */
-AdminV1PlaceOrderEditRequest.prototype['item_uuid'] = undefined;
-
-/**
- * @member {module:model/ItemStatus} item_status
- */
-AdminV1PlaceOrderEditRequest.prototype['item_status'] = undefined;
+AdminV1PlaceOrderEditRequest.prototype['item_group'] = undefined;
 
 
 

@@ -81,7 +81,7 @@ function Item() {
               "ngrok-skip-browser-warning": "true",
               "Customer-UUID": customer_uuid,
               "Order-UUID": order_uuid,
-              "JWT-Token": "bla-bla-bla",
+              "JWT-Token": jwt_token,
             },
             body: JSON.stringify({
               menu_dish_uuid: id,
@@ -96,7 +96,7 @@ function Item() {
               "ngrok-skip-browser-warning": "true",
               "Customer-UUID": customer_uuid,
               "Order-UUID": order_uuid,
-              "JWT-Token": "bla-bla-bla",
+              "JWT-Token": jwt_token,
             },
             body: JSON.stringify({
               menu_dish_uuid: id,
@@ -112,7 +112,7 @@ function Item() {
               "ngrok-skip-browser-warning": "true",
               "Customer-UUID": customer_uuid,
               "Order-UUID": order_uuid,
-              "JWT-Token": "bla-bla-bla",
+              "JWT-Token": jwt_token,
             },
             body: JSON.stringify({
               menu_dish_uuid: id,
@@ -129,7 +129,7 @@ function Item() {
             "ngrok-skip-browser-warning": "true",
             "Customer-UUID": customer_uuid,
             "Order-UUID": order_uuid,
-            "JWT-Token": "bla-bla-bla",
+            "JWT-Token": jwt_token,
           },
           body: JSON.stringify({
             menu_dish_uuid: id,
