@@ -15,18 +15,13 @@ function Catalog() {
   const [counts, setCounts] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const catalogLoaded = useRef(false); 
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!customer_uuid || !order_uuid) return;
 
-    if (hasLoadedOnce) {
-      setLoading(false);
-    } else {
-      setLoading(true);
-    }
+    setLoading(true);
 
     catalogLoaded.current = false;
     (async () => {
@@ -45,23 +40,17 @@ function Catalog() {
 
         if (contentType.includes('application/json')) {
           const data = await res.json();
-          console.log('Ответ от сервера:', data);
           if (data.go_tip_screen) {
             navigate("/tip");
             return;
           }
-          // ...можно обработать другие json-ответы...
         } else {
-          // multipart/mixed
-          const { list, categories, imagesMap, room_code: rcode, counts: serverCounts, go_tip_screen  } = await handleMultipartResponse(res, "menu");
+          const { list, categories, imagesMap, room_code: rcode, go_tip_screen  } = await handleMultipartResponse(res, "menu");
           setDishes(list.sort((a, b) => a.name.localeCompare(b.name, "ru")));
           setCategories(categories.sort((a, b) => a.localeCompare(b, "ru")));
           setImages(imagesMap);
-          if (rcode) setRoomCode(rcode);
-          setCounts(serverCounts || {});
           setLoading(false);
-          setHasLoadedOnce(true);
-          catalogLoaded.current = true;
+          if (rcode) setRoomCode(rcode);
           if (go_tip_screen) {
             navigate("/tip");
             return;
@@ -72,40 +61,41 @@ function Catalog() {
         setLoading(false);
       }
     })();
-  }, [customer_uuid, order_uuid, jwt_token, navigate, setRoomCode, hasLoadedOnce]);
+  }, [customer_uuid, order_uuid, jwt_token, navigate, setRoomCode]);
 
   useEffect(() => {
-    if (!catalogLoaded.current) return;
     if (!customer_uuid || !order_uuid) return;
-    const fetchCartInfo = async () => {
-      try {
-        const res = await fetch(`${SERVER_URL}/customer/v1/order/catalog/updated-info`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "ngrok-skip-browser-warning": "true",
-            ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
-          }
-        });
-
-        if (!res.ok) throw new Error("Failed to fetch cart info");
-        const data = await res.json();
-        let menuUpdated = data.menu_updated_info || data.items || [];
-        const byId = {};
-        menuUpdated.forEach(item => {
-          byId[item.id || item.menu_dish_uuid] = item.count;
-        });
-        setCounts(byId);
-      } catch (err) {
-        console.error("Error fetching cart info:", err);
-      }
-    };
 
     fetchCartInfo();
 
     window.addEventListener("focus", fetchCartInfo);
     return () => window.removeEventListener("focus", fetchCartInfo);
   }, [customer_uuid, order_uuid, jwt_token]);
+
+  const fetchCartInfo = async () => {
+    try {
+      const res = await fetch(`${SERVER_URL}/customer/v1/order/catalog/updated-info`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+          ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
+        }
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch cart info");
+
+      const data = await res.json();
+      let menuUpdated = data.menu_updated_info || data.items || [];
+      const byId = {};
+      menuUpdated.forEach(item => {
+        byId[item.id || item.menu_dish_uuid] = item.count;
+      });
+      setCounts(byId);
+    } catch (err) {
+      console.error("Error fetching cart info:", err);
+    }
+  };
 
   const updateQuantity = async (dishId, delta) => {
     try {
@@ -134,30 +124,7 @@ function Catalog() {
         throw new Error("Failed to update quantity");
       }
 
-      const fetchCartInfo = async () => {
-        try {
-          const res = await fetch(`${SERVER_URL}/customer/v1/order/catalog/updated-info`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "ngrok-skip-browser-warning": "true",
-              ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
-            }
-          });
-
-          if (!res.ok) throw new Error("Failed to fetch cart info");
-          const data = await res.json();
-          let menuUpdated = data.menu_updated_info || data.items || [];
-          const byId = {};
-          menuUpdated.forEach(item => {
-            byId[item.id || item.menu_dish_uuid] = item.count;
-          });
-          setCounts(byId);
-        } catch (err) {
-          console.error("Error fetching cart info:", err);
-        }
-      };
-      fetchCartInfo();
+      await fetchCartInfo();
     } catch (err) {
       console.error("Error updating quantity:", err);
     }
@@ -189,7 +156,7 @@ function Catalog() {
   const handleGoToUsers = () => navigate("/catalog/users-list");
   const handleCheckout = () => navigate("/checkout");
 
-  if (loading && !hasLoadedOnce) return <LoadingScreen message="Загрузка..." />;
+  if (loading) return <LoadingScreen message="Загрузка..." />;
   if (error)
     return (
       <div style={{ color: "red", padding: "10%", textAlign: "center" }}>{error}</div>
@@ -289,7 +256,11 @@ function Catalog() {
           <p>
             Итого: <strong>{totalPrice} ₽</strong>
           </p>
-          <button className="checkout-button" onClick={handleGoToCart}>
+          <button
+            className="checkout-button category-link"
+            onClick={handleGoToCart}
+            disabled={Object.values(counts).reduce((sum, v) => sum + v, 0) === 0}
+          >
             Далее
           </button>
         </div>

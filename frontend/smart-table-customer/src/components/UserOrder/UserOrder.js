@@ -70,14 +70,14 @@ const UserOrder = () => {
   if (loading) return <LoadingScreen message="Загрузка заказа пользователя..." />;
   if (error) {
     return (
-      <div className="user-order-container">
-        <div className="user-order-header">
+      <div className="uo-container">
+        <div className="uo-header">
           <button className="back-button" onClick={handleGoBack}>
             Назад
           </button>
         </div>
-        <div className="user-order-content">
-          <div className="user-order-error">{error}</div>
+        <div className="uo-content">
+          <div className="uo-error">{error}</div>
         </div>
       </div>
     );
@@ -86,31 +86,28 @@ const UserOrder = () => {
   const userName = userData?.username || userData?.login || userData?.tg_login || userLogin;
 
   return (
-    <div className="user-order-container">
-      <div className="user-order-header">
+    <div className="uo-container">
+      <div className="uo-header">
         <h2>Заказ пользователя</h2>
       </div>
-      <div className="user-order-content">
+      <div className="uo-content">
         <div className="user-name-order">{userName}</div>
-        <div className="user-order-list">
+        <div className="uo-list">
           {userOrderItems.length === 0 && <div className="empty-order">Нет блюд в заказе</div>}
           {userOrderItems.map((item, index) => (
-            <div key={index} className="user-order-item">
-              <div className="item-details">
-                <div className="dish-name">{item.name}</div>
-                <div className="item-price">{item.price} ₽</div>
-              </div>
-              <div className="item-right">
-                <div className="item-qty">{item.count}</div>
-                <div className="result-price">{item.result_price || (item.price * item.count)} ₽</div>
-                <div className="item-status">{renderStatus(item.status)}</div>
-              </div>
+            <div key={index} className="uo-item">
+              <span className="dish-name">{item.name}</span>
+              <span className="item-qty">{item.count}</span>
+              <span className="item-x">×</span>
+              <span className="item-price">{item.price} ₽</span>
+              <span className="uo-result-price">{item.result_price || (item.price * item.count)} ₽</span>
+              <span className="item-status">{renderStatus(item.status)}</span>
             </div>
           ))}
         </div>
       </div>
-      <div className="user-order-footer">
-        <div className="user-total-price">Итого: {userData?.total_price || userOrderItems.reduce((sum, item) => sum + (item.result_price || (item.price * item.count)), 0)} ₽</div>
+      <div className="uo-footer">
+        <div className="uo-total-price">Итого: {userData?.total_price || userOrderItems.reduce((sum, item) => sum + (item.result_price || (item.price * item.count)), 0)} ₽</div>
         <button className="go-back-button" onClick={handleGoBack}>
           Назад
         </button>

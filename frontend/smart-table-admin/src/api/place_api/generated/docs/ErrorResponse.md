@@ -12,6 +12,14 @@ Name | Type | Description | Notes
 ## Enum: CodeEnum
 
 
+* `invalid_item` (value: `"invalid_item"`)
+
+* `invalid_order_status` (value: `"invalid_order_status"`)
+
+* `invalid_item_status` (value: `"invalid_item_status"`)
+
+* `incorrect_request_format` (value: `"incorrect_request_format"`)
+
 * `incorrect_time_format` (value: `"incorrect_time_format"`)
 
 * `incorrect_table_count` (value: `"incorrect_table_count"`)

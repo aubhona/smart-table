@@ -17,7 +17,7 @@
     color: white;
     border-radius: 8px;
     margin-bottom: 20px;
-    margin-top: 40px;
+    margin-top: 20px;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -45,8 +45,8 @@
 .users-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    background-color: #faf6ee;
+    gap: 4px;
+    background-color: #ede2d9;
     padding: 15px;
     border-radius: 8px;
     overflow-y: auto;
@@ -78,7 +78,7 @@
 .user-item {
     display: flex;
     align-items: center;
-    background-color: white;
+    background-color: rgb(255, 255, 255);
     padding: 15px;
     border-radius: 8px;
     transition: transform 0.2s ease;
@@ -109,13 +109,13 @@
     color: #552f04;
 }
 
-.bottom-section {
+.ul-bottom-section {
     display: flex;
     justify-content: center;
     padding: 20px 0;
 }
 
-.go-back-button {
+.ul-go-back-button {
     font-family: 'Courier New', Consolas, monospace;
     background: #552f04;
     color: white;
@@ -128,26 +128,44 @@
     transition: background-color 0.2s ease;
 }
 
-.go-back-button:hover {
-    background-color: #381f02;
+.ul-go-back-button:hover {
+    background-color: #341c02;
 }
 
 .user-list-item {
-    padding: 12px 18px;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0;
+    margin-bottom: 18px;
+}
+
+.user-list-bg {
+    background: #552f04;
+    border-radius: 14px;
+    width: 99%;
+    margin: 0 auto;
+    padding: 6px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-list-inner {
+    background: #fff;
     border-radius: 10px;
-    margin-bottom: 8px;
-    background: #faf6ee;
-    transition: background 0.2s, box-shadow 0.2s;
+    width: 85%;
+    margin: 0 auto;
+    padding: 12px 18px;
     font-size: 1.1em;
     font-weight: 500;
     color: #2d1c0b;
     box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    text-align: center;
+    transition: background 0.2s, color 0.2s;
 }
 
-.user-list-item:hover, .user-list-item.selected {
-    background: #ede2d9;
-    box-shadow: 0 2px 8px rgba(90, 110, 60, 0.10);
-    color: #5e7643;
-    cursor: pointer;
+.user-list-item.selected .user-list-inner {
+    background: #5e7643;
+    color: #fff;
 }
   

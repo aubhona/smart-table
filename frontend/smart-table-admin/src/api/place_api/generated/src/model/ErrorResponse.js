@@ -114,6 +114,30 @@ ErrorResponse.prototype['message'] = undefined;
 ErrorResponse['CodeEnum'] = {
 
     /**
+     * value: "invalid_item"
+     * @const
+     */
+    "invalid_item": "invalid_item",
+
+    /**
+     * value: "invalid_order_status"
+     * @const
+     */
+    "invalid_order_status": "invalid_order_status",
+
+    /**
+     * value: "invalid_item_status"
+     * @const
+     */
+    "invalid_item_status": "invalid_item_status",
+
+    /**
+     * value: "incorrect_request_format"
+     * @const
+     */
+    "incorrect_request_format": "incorrect_request_format",
+
+    /**
      * value: "incorrect_time_format"
      * @const
      */

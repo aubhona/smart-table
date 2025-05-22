@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOrder } from "../OrderContext/OrderContext";
 import LoadingScreen from "../LoadingScreen/LoadingScreen";
@@ -8,7 +8,7 @@ import "./Checkout.css";
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { customer_uuid, order_uuid, jwt_token } = useOrder();
+  const { customer_uuid, order_uuid, jwt_token, setOrderUuid } = useOrder();
   const [users, setUsers] = useState([]);
   const [orderDetails, setOrderDetails] = useState([]);
   const [isHost, setIsHost] = useState(false);
@@ -28,20 +28,26 @@ const Checkout = () => {
   useEffect(() => {
     if (!customer_uuid || !order_uuid) return;
     setLoading(true);
-
-    fetch(`${SERVER_URL}/customer/v1/order/customer/list`, {
-      method: "GET",
-      headers: {
-        "Accept": "multipart/mixed, application/json",
-        "ngrok-skip-browser-warning": "true",
-        "Content-Type": "application/json",
-        ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
-      },
-    })
-      .then(async (res) => {
-        setLoading(false);
+  
+    let isMounted = true;
+    let pollingInterval;
+  
+    const fetchUsersAndOrders = async () => {
+      try {
+        const res = await fetch(`${SERVER_URL}/customer/v1/order/customer/list`, {
+          method: "GET",
+          headers: {
+            Accept: "multipart/mixed, application/json",
+            "ngrok-skip-browser-warning": "true",
+            "Content-Type": "application/json",
+            ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
+          },
+        });
         if (!res.ok) throw new Error("Не удалось загрузить данные пользователей");
         const data = await res.json();
+  
+        if (!isMounted) return;
+  
         const customerList = Array.isArray(data.customer_list) ? data.customer_list : [];
         setUsers(customerList);
         const myOrder = customerList.find(
@@ -49,19 +55,30 @@ const Checkout = () => {
         );
         if (myOrder?.is_active) {
           setOrderDetails(
-            Array.isArray(myOrder.item_list) ? myOrder.item_list.filter(i => i.count > 0) : []
+            Array.isArray(myOrder.item_list) ? myOrder.item_list.filter((i) => i.count > 0) : []
           );
         } else {
           setOrderDetails([]);
         }
         setIsHost(myOrder?.is_host === true);
-      })
-      .catch((e) => {
+        setLoading(false);
+      } catch (e) {
+        if (!isMounted) return;
         setError(e.message || "Ошибка при загрузке пользователей");
         setUsers([]);
         setOrderDetails([]);
         setLoading(false);
-      });
+      }
+    };
+  
+    fetchUsersAndOrders();
+  
+    pollingInterval = setInterval(fetchUsersAndOrders, 4000); 
+  
+    return () => {
+      isMounted = false;
+      clearInterval(pollingInterval);
+    };
   }, [customer_uuid, order_uuid, jwt_token]);
 
   const handleGoCatalog = () => navigate("/catalog");
@@ -143,7 +160,7 @@ const Checkout = () => {
               style={{cursor: 'pointer', width: '100%'}}
             >
               <div className="user-order-row" style={{display:'flex',justifyContent:'space-between',alignItems:'center',fontSize:'20px',padding:'10px 0'}}>
-                <span className="user-login" style={{fontWeight:'bold'}}>{user.username || user.login || user.tg_login || `Пользователь #${index + 1}`}</span>
+                <span className="user-login" style={{fontWeight:'bold'}}>{user.username || user.login || user.tg_login}</span>
                 <span className="user-total-price">{user.total_price || 0} ₽</span>
               </div>
             </div>

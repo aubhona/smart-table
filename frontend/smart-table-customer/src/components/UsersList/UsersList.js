@@ -60,6 +60,12 @@ function UsersList() {
     setTimeout(() => navigate(`/user-order/${userId}`), 120);
   };
 
+  const sortedUsers = [...users].sort((a, b) => {
+    const nameA = (a.username || a.login || a.tg_login || '').toLowerCase();
+    const nameB = (b.username || b.login || b.tg_login || '').toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
+
   return (
     <div className="users-container">
       <div className="users-header">
@@ -79,14 +85,18 @@ function UsersList() {
             <div className="users-message empty">Нет друзей!</div>
           ) : (
             <ul className="users-list">
-              {users.map((user, idx) => (
+              {sortedUsers.map((user, idx) => (
                 <li
                   key={user.customer_uuid || user.uuid || idx}
                   className={`user-list-item${selectedIdx === idx ? ' selected' : ''}`}
                   onClick={() => handleUserClick(user, idx)}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: 'pointer', background: 'transparent', boxShadow: 'none' }}
                 >
-                  {user.username || user.login || user.tg_login || `Пользователь #${idx + 1}`}
+                  <div className="user-list-bg">
+                    <div className="user-list-inner">
+                      {user.username || user.login || user.tg_login || `Пользователь #${idx + 1}`}
+                    </div>
+                  </div>
                 </li>
               ))}
             </ul>
@@ -94,8 +104,8 @@ function UsersList() {
         </div>
       </div>
 
-      <div className="bottom-section">
-        <button className="go-back-button" onClick={goBack}>
+      <div className="ul-bottom-section">
+        <button className="ul-go-back-button" onClick={goBack}>
           Назад
         </button>
       </div>

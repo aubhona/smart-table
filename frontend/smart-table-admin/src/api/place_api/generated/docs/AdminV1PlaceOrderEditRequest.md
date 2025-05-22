@@ -4,9 +4,10 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**orderUuid** | **String** | Уникальный идентификатор плейса | 
-**orderStatus** | [**OrderStatus**](OrderStatus.md) |  | 
-**itemUuid** | **String** | Уникальный идентификатор плейса | [optional] 
-**itemStatus** | [**ItemStatus**](ItemStatus.md) |  | [optional] 
+**placeUuid** | **String** | Уникальный идентификатор плейса | 
+**orderUuid** | **String** | Уникальный идентификатор заказа | 
+**tableNumber** | **Number** | Номер стола | 
+**orderStatus** | [**OrderStatus**](OrderStatus.md) |  | [optional] 
+**itemGroup** | [**ItemEditGroup**](ItemEditGroup.md) |  | [optional] 
 
 
