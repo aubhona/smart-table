@@ -7,12 +7,12 @@ components:
                 - serving
                 - payment_waiting
                 - paid
-                - cancelled_by_service
-                - cancelled_by_client
+                - canceled_by_service
+                - canceled_by_client
 
         OrderResolution:
             type: string
             enum:
                 - paid
-                - cancelled_by_service
-                - cancelled_by_client
+                - canceled_by_service
+                - canceled_by_client
