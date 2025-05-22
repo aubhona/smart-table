@@ -84,6 +84,7 @@ func ConvertToPgItem(item utils.SharedRef[domain.Item]) ([]byte, error) {
 		Description:  item.Get().GetDescription(),
 		PictureLink:  item.Get().GetPictureLink(),
 		Weight:       item.Get().GetWeight(),
+		Calories:     item.Get().GetCalories(),
 		Category:     item.Get().GetCategory(),
 		Price:        item.Get().GetPrice().String(),
 		Comment:      comment,

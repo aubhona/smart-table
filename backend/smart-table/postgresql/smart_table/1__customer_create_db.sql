@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS smart_table_customer.items (
    "name" TEXT NOT NULL,
    "description" TEXT NOT NULL,
    "picture_link" TEXT NOT NULL,
+   "calories" INT NOT NULL,
    "weight" INT NOT NULL,
    "category" TEXT NOT NULL,
    "price" TEXT NOT NULL,

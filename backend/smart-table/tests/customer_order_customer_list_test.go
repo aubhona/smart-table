@@ -45,10 +45,10 @@ func TestCustomerOrderCustomerListHappyPath(t *testing.T) {
     "is_host": true,
     "item_list": [
       {
-        "calories": 0,
+        "calories": 100,
         "category": "some_cat",
         "comment": "comment",
-        "count": 2,
+        "count": 3,
         "description": "some_desc",
         "name": "test_dish",
         "price": "123.13",

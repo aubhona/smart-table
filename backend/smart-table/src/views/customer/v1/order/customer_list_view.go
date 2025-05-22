@@ -39,7 +39,7 @@ func convertItemToItemInfo(
 		Calories:    item.Get().GetCalories(),
 		Category:    item.Get().GetCategory(),
 		Price:       item.Get().GetPrice().String(),
-		Count:       0,
+		Count:       1,
 		ResultPrice: item.Get().GetPrice().String(),
 	}
 
