@@ -16,10 +16,32 @@ import AdminV1PlaceMenuDishEditRequest from "../api/place_api/generated/src/mode
 import "../styles/PlaceScreen.css";
 import { SERVER_URL } from "../config";
 
-const STATUS_FLOW = ['В обработке', 'Принят', 'Готовится', 'Готов', 'Подан'];
+const ORDER_STATUS_MAP = {
+  new: "Открыт",
+  payment_waiting: "Ожидает оплаты",
+  paid: "Оплачен",
+  cancelled_by_service: "Отменен"
+};
 
-const OrderItemGroup = ({ item }) => {
+const ORDER_REVERSE_STATUS_MAP = Object.fromEntries(
+  Object.entries(ORDER_STATUS_MAP).map(([eng, rus]) => [rus, eng])
+);
+
+const DISH_STATUS_FLOW = ['accepted', 'cooking', 'cooked', 'served', 'cancelled_by_service'];
+const DISH_STATUS_MAP = {
+  accepted: 'Принят',
+  cooking: 'Готовится',
+  cooked: 'Готов',
+  served: 'Подан',
+  cancelled_by_service: 'Отменен'
+};
+
+const LOCKED_ORDER_STATUSES = ['paid', 'cancelled_by_service'];
+const LOCKED_DISH_STATUSES = ['served', 'cancelled_by_service'];
+
+const OrderItemGroup = ({ item, orderStatus, editOrderItemStatus }) => {
   const [open, setOpen] = useState(false);
+  const isLocked = LOCKED_ORDER_STATUSES.includes(orderStatus) || LOCKED_DISH_STATUSES.includes(item.status);
 
   if (item.count === 1) {
     return (
@@ -30,12 +52,16 @@ const OrderItemGroup = ({ item }) => {
           <span className="ps-item-total-price">Итого: {item.result_price}₽</span>
         </div>
         <div className="ps-item-status">
-          <select value={item.status} className="ps-status-select-wide">
-            {STATUS_FLOW.map(status => (
-              <option key={status} value={status}>{status}</option>
+          <select
+            value={item.status}
+            className="ps-status-select-wide"
+            disabled={isLocked}
+            onChange={e => !isLocked && editOrderItemStatus(item.item_uuid_list[0], e.target.value)}
+          >
+            {DISH_STATUS_FLOW.map(status => (
+              <option key={status} value={status}>{DISH_STATUS_MAP[status]}</option>
             ))}
           </select>
-          <button className="ps-status-btn cancel ps-cancel-btn-right">Отменить</button>
         </div>
       </div>
     );
@@ -66,13 +92,17 @@ const OrderItemGroup = ({ item }) => {
               <span className="ps-item-name">{item.name} #{idx + 1}</span>
               <span>{item.item_price}₽</span>
               <div>
-                <select value={item.status} className="ps-status-select-wide">
-                  {STATUS_FLOW.map(status => (
-                    <option key={status} value={status}>{status}</option>
+                <select
+                  value={item.status}
+                  className="ps-status-select-wide"
+                  disabled={isLocked}
+                  onChange={e => !isLocked && editOrderItemStatus(uuid, e.target.value)}
+                >
+                  {DISH_STATUS_FLOW.map(status => (
+                    <option key={status} value={status}>{DISH_STATUS_MAP[status]}</option>
                   ))}
                 </select>
               </div>
-              <button className="ps-status-btn cancel ps-cancel-btn-right">Отменить</button>
             </div>
           ))}
         </div>
@@ -117,18 +147,6 @@ export default function PlaceDetail() {
   const [showEditMenuDishModal, setShowEditMenuDishModal] = useState(false);
   const [editMenuDishData, setEditMenuDishData] = useState(null);
   const [editMenuDishPrice, setEditMenuDishPrice] = useState("");
-
-  const ORDER_STATUSES = ['Открыт', 'Ожидает оплаты', 'Оплачен', 'Отменен', 'Обслуживается'];
-  const STATUS_MAP = {
-    new: "Открыт",
-    payment_waiting: "Ожидает оплаты",
-    paid: "Оплачен",
-    cancelled_by_service: "Отменен",
-    serving: "Обслуживается"
-  };
-  const REVERSE_STATUS_MAP = Object.fromEntries(
-    Object.entries(STATUS_MAP).map(([eng, rus]) => [rus, eng])
-  );
 
   const [orderSubTab, setOrderSubTab] = useState('open');
   const [orders, setOrders] = useState([]);
@@ -295,13 +313,12 @@ export default function PlaceDetail() {
           place_uuid })
       });
       if (!resp.ok) throw resp;
+
       const data = await resp.json();
-      console.log("order_list", data.order_list)
-      console.log(data);
       setOrders(
         (data.order_list || []).map(order => ({
           ...order,
-          status: STATUS_MAP[order.status] || order.status
+          status: ORDER_STATUS_MAP[order.status] || order.status
         }))
       );
     } catch (e) {
@@ -329,13 +346,13 @@ export default function PlaceDetail() {
         body: JSON.stringify({ order_uuid, place_uuid })
       });
       if (!resp.ok) throw resp;
+
       const data = await resp.json();
-      console.log("order_info", data.order_info)
       setSelectedOrder({
         ...data.order_info,
         order_main_info: {
           ...data.order_info.order_main_info,
-          status: data.order_info.order_main_info.status
+          status: ORDER_STATUS_MAP[data.order_info.order_main_info.status] || data.order_info.order_main_info.status
         }
       });
     } catch (e) {
@@ -349,10 +366,16 @@ export default function PlaceDetail() {
   async function editOrder(order_uuid, order_status, place_uuid, extraParams = {}) {
     setLoading(true);
     setError("");
+
+    if (LOCKED_ORDER_STATUSES.includes(selectedOrder?.order_main_info.status)) {
+      setLoading(false);
+      return;
+    }
+
     try {
       const payload = {
         place_uuid: place_uuid,
-        order_uuid,
+        order_uuid: order_uuid,
         table_number: selectedOrder?.order_main_info?.table_number,
         order_status,
         ...extraParams, 
@@ -372,10 +395,54 @@ export default function PlaceDetail() {
         let errText = await resp.text();
         throw new Error(errText || "Ошибка изменения заказа");
       }
-      await loadOrders();
 
+      await loadOrders();
+      await loadOrderDetails(order_uuid);
     } catch (e) {
       setError(e.body?.message || e.message || "Ошибка редактирования заказа");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function editOrderItemStatus(order_uuid, item_uuid, place_uuid, newStatus) {
+    if (!selectedOrder) return;
+
+    if (LOCKED_ORDER_STATUSES.includes(selectedOrder.order_main_info.status)) return;
+
+    setLoading(true);
+    setError("");
+    try {
+      const payload = {
+        place_uuid: place_uuid,
+        order_uuid: order_uuid,
+        table_number: selectedOrder?.order_main_info?.table_number,
+        item_group: {
+          item_uuid_list: [item_uuid],
+          item_status: newStatus,
+        },
+      };
+
+      console.log(payload);
+
+      const resp = await fetch(`${SERVER_URL}/admin/v1/place/order/edit`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "User-UUID": userUUID,
+          "JWT-Token": jWTToken,
+          "ngrok-skip-browser-warning": "true",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!resp.ok) throw new Error(`Ошибка изменения статуса позиции: ${resp.status}`);
+
+      await loadOrderDetails(selectedOrder.order_main_info.uuid, place_uuid);
+      await loadOrders();
+    } catch (e) {
+      setError(e.message || "Ошибка при изменении статуса позиции");
     } finally {
       setLoading(false);
     }
@@ -734,6 +801,7 @@ export default function PlaceDetail() {
                         <p>{dish.description}</p>
                         <p>Категория: {dish.category}</p>
                         <p>{dish.calories} ккал, {dish.weight} г.</p>
+                        <span className="price-tag">{dish.price}₽</span>
                         <div className="dish-actions">
                           <button
                             className="ps-button ps-edit-button"
@@ -812,7 +880,7 @@ export default function PlaceDetail() {
               {orders
                 .filter(order => {
                   if (orderSubTab === 'open') {
-                    return ['Открыт', 'Ожидает оплаты', 'Обслуживается'].includes(order.status);
+                    return ['Открыт', 'Ожидает оплаты'].includes(order.status);
                   }
                   return ['Оплачен', 'Отменен'].includes(order.status);
                 })
@@ -825,14 +893,14 @@ export default function PlaceDetail() {
                     .filter(order => order && order.uuid)
                     .filter(order => {
                       if (orderSubTab === 'open') {
-                        return ['Открыт', 'Ожидает оплаты', 'Обслуживается'].includes(order.status);
+                        return ['Открыт', 'Ожидает оплаты'].includes(order.status);
                       }
                       return ['Оплачен', 'Отменен'].includes(order.status);
                     })
                     .map(order => (
                       <div 
                         key={order.uuid}
-                          className={`ps-order-card ${order.status.toLowerCase().replace(' ', '-')}`}
+                        className={`ps-order-card ${order.status.toLowerCase().replace(' ', '-')}`}
                         onClick={async () => {
                           await loadOrderDetails(order.uuid, place_uuid);
                           setShowCheckout(false);
@@ -896,16 +964,18 @@ export default function PlaceDetail() {
                     <span>Статус заказа:</span>
                     <div className="ps-item-status">
                       <select
-                          value={selectedOrder.order_main_info.status}
+                        value={ORDER_REVERSE_STATUS_MAP[selectedOrder.order_main_info.status] || selectedOrder.order_main_info.status}
                         onChange={async (e) => {
+                          if (LOCKED_ORDER_STATUSES.includes(selectedOrder.order_main_info.status)) return;
                           const newRusStatus = e.target.value; 
-                          const newEngStatus = REVERSE_STATUS_MAP[newRusStatus] || newRusStatus;
+                          const newEngStatus = ORDER_REVERSE_STATUS_MAP[newRusStatus] || newRusStatus;
                           await editOrder(selectedOrder.order_main_info.uuid, newEngStatus, place_uuid);
                           setSelectedOrder(null);
                           setShowCheckout(false);
                         }}
+                        disabled={LOCKED_ORDER_STATUSES.includes(selectedOrder.order_main_info.status)}
                       >
-                        {Object.entries(STATUS_MAP).map(([key, label]) => (
+                        {Object.entries(ORDER_STATUS_MAP).map(([key, label]) => (
                           <option key={key} value={key}>
                             {label}
                           </option>
@@ -931,7 +1001,19 @@ export default function PlaceDetail() {
                             </div>
                           </div>
                           {customer.item_group_list.map(item => (
-                            <OrderItemGroup key={item.menu_dish_uuid} item={item} />
+                            <OrderItemGroup
+                            key={item.menu_dish_uuid}
+                            item={item}
+                            orderStatus={selectedOrder.order_main_info.status}
+                            editOrderItemStatus={(item_uuid, newStatus) => 
+                              editOrderItemStatus(
+                                selectedOrder.order_main_info.uuid,
+                                item_uuid,
+                                place_uuid,
+                                newStatus
+                              )
+                            }
+                          />
                           ))}
                         </div>
                       ))

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './RoomCode.css';
 
-function RoomCode({ onSubmit, error, expectedRoomCode }) {
+function RoomCode({ onSubmit, error }) {
   const [roomCode, setRoomCode] = useState('');
   const [localError, setLocalError] = useState('');
 

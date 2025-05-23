@@ -83,4 +83,3 @@ src/model/OrderResolution.js
 src/model/OrderStatus.js
 src/model/PlaceInfo.js
 src/model/Role.js
-test/model/ItemEditGroup.spec.js

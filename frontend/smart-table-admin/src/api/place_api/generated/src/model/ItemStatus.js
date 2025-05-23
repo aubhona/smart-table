@@ -69,17 +69,17 @@ export default class ItemStatus {
 
     
         /**
-         * value: "cancelled_by_service"
+         * value: "canceled_by_service"
          * @const
          */
-        "cancelled_by_service" = "cancelled_by_service";
+        "canceled_by_service" = "canceled_by_service";
 
     
         /**
-         * value: "cancelled_by_client"
+         * value: "canceled_by_client"
          * @const
          */
-        "cancelled_by_client" = "cancelled_by_client";
+        "canceled_by_client" = "canceled_by_client";
 
     
 

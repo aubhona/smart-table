@@ -3,7 +3,7 @@ import { useOrder } from "../OrderContext/OrderContext";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "../LoadingScreen/LoadingScreen";
 import { SERVER_URL } from "../../config";
-import { getAuthHeaders } from '../../utils/authHeaders';
+import { getAuthHeaders } from '../hooks/authHeaders';
 import "./Tip.css";
 
 const Tip = () => {
@@ -120,7 +120,12 @@ const Tip = () => {
         <div className="tip-modal-overlay">
           <div className="tip-modal">
             <div className="tip-modal-message">Ваш чек в чате!</div>
-            <button className="tip-modal-close" onClick={() => setShowModal(false)}>Закрыть</button>
+            <button className="tip-modal-close" onClick={() => {
+              setShowModal(false);
+              if (window.Telegram?.WebApp?.close) {
+                window.Telegram.WebApp.close();
+              }
+            }}>Закрыть</button>
           </div>
         </div>
       )}

@@ -34,15 +34,38 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
+  background-color: #f9f5f1;
+  border-radius: 15px;
+  padding: 15px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.tip-content .order-item:hover {
+  background-color: #f0e6d9;
+  border-color: #5e7643;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.tip-content .order-item.selected {
+  background-color: #e8f0e3;
+  border-color: #5e7643;
 }
 
 .tip-content .order-item-name {
   font-weight: bold;
+  font-size: 18px;
+  color: #2d1c0b;
 }
 
 .tip-content .order-item-total {
   font-size: 1.1em;
   color: #5e7643;
+  font-weight: bold;
 }
 
 .tip-footer {
