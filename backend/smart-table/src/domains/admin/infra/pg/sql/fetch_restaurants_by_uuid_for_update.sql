@@ -8,7 +8,7 @@ SELECT jsonb_build_object(
     'dishes', (
         COALESCE(
             (
-                 SELECT jsonb_agg(to_jsonb(d))
+                 SELECT jsonb_agg(to_jsonb(d) ORDER BY d.name)
                  FROM smart_table_admin.dishes d
                  WHERE d.restaurant_uuid = r.uuid
              ),
@@ -26,4 +26,5 @@ SELECT jsonb_build_object(
 ) AS restaurant_data
 FROM smart_table_admin.restaurants r
 WHERE r.uuid = ANY($1::UUID[])
+ORDER BY r.name
 FOR UPDATE;

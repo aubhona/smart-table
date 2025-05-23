@@ -2,10 +2,10 @@ package app
 
 import (
 	"io"
-
-	defsInternalOrder "github.com/smart-table/src/codegen/intern/order"
+	"slices"
 
 	"github.com/samber/lo"
+	defsInternalOrder "github.com/smart-table/src/codegen/intern/order"
 
 	"github.com/shopspring/decimal"
 	appErrors "github.com/smart-table/src/domains/customer/app/use_cases/errors"
@@ -122,6 +122,8 @@ func (handler *CatalogCommandHandler) Handle(command *CatalogCommand) (CatalogCo
 	}
 
 	result.Categories = lo.Keys(uniqueCategories)
+
+	slices.Sort(result.Categories)
 
 	return result, nil
 }

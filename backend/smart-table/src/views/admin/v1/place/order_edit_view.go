@@ -44,7 +44,7 @@ func (h *AdminV1PlaceHandler) PostAdminV1PlaceOrderEdit( //nolint
 		PlaceUUID:     request.Body.PlaceUUID,
 		TableNumber:   request.Body.TableNumber,
 		OrderStatus:   OrderStatus,
-		ItemEditGpoup: ItemGroup,
+		ItemEditGroup: ItemGroup,
 	})
 	if err != nil {
 		switch {

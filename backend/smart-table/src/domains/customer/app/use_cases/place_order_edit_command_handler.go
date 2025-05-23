@@ -49,8 +49,8 @@ func (handler *PlaceOrderEditCommandHandler) Handle(command *PlaceOrderEditComma
 		if err != nil {
 			return err
 		}
-	case command.ItemEditGpoup.HasValue() && len(command.ItemEditGpoup.Value().ItemUUIDList) != 0:
-		err = order.Get().ChangeItemsStatus(command.ItemEditGpoup.Value().ItemUUIDList, command.ItemEditGpoup.Value().ItemStatus)
+	case command.ItemEditGroup.HasValue() && len(command.ItemEditGroup.Value().ItemUUIDList) != 0:
+		err = order.Get().ChangeItemsStatus(command.ItemEditGroup.Value().ItemUUIDList, command.ItemEditGroup.Value().ItemStatus)
 		if err != nil {
 			return err
 		}
