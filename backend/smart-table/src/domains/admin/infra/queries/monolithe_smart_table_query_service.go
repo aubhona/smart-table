@@ -95,13 +95,13 @@ func (s *SmartTableCustomerQueryServiceImpl) EditPlaceOrder(
 	orderUUID uuid.UUID,
 	tableID string,
 	orderStatus utils.Optional[string],
-	itemEditGpoup utils.Optional[defsInternalCustomerDTO.ItemEditGroupDTO],
+	itemEditGroup utils.Optional[defsInternalCustomerDTO.ItemEditGroupDTO],
 ) error {
 	err := s.placeOrderEditCommandHandler.Handle(&customerApp.PlaceOrderEditCommand{
 		OrderUUID:     orderUUID,
 		TableID:       tableID,
 		OrderStatus:   orderStatus,
-		ItemEditGpoup: itemEditGpoup,
+		ItemEditGroup: itemEditGroup,
 	})
 	if err != nil {
 		switch {
@@ -122,11 +122,11 @@ func (s *SmartTableCustomerQueryServiceImpl) EditPlaceOrder(
 		case utils.IsTheSameErrorType[customerDomainErrors.InvalidOrderStatus](err):
 			return appQueriesErrors.InvalidOrderStatus{OrderStatus: orderStatus}
 		case utils.IsTheSameErrorType[customerDomainErrors.InvalidItemStatus](err):
-			return appQueriesErrors.InvalidItemStatus{ItemEditGpoup: itemEditGpoup}
+			return appQueriesErrors.InvalidItemStatus{ItemEditGpoup: itemEditGroup}
 		case utils.IsTheSameErrorType[customerDomainErrors.DraftItemStatusChangeNotAllowed](err):
-			return appQueriesErrors.DraftItemStatusChangeNotAllowed{ItemEditGpoup: itemEditGpoup}
+			return appQueriesErrors.DraftItemStatusChangeNotAllowed{ItemEditGpoup: itemEditGroup}
 		case utils.IsTheSameErrorType[customerDomainErrors.ItemStatusChangeRequiresOrderStatusUpdate](err):
-			return appQueriesErrors.ItemStatusChangeRequiresOrderStatusUpdate{ItemEditGpoup: itemEditGpoup}
+			return appQueriesErrors.ItemStatusChangeRequiresOrderStatusUpdate{ItemEditGpoup: itemEditGroup}
 		}
 
 		logging.GetLogger().Error(fmt.Sprintf("Error while getting result from customer command handler: %v", err))

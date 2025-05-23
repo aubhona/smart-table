@@ -80,13 +80,14 @@ func (handler *CartCommandHandler) Handle(command *CartCommand) (CartCommandHand
 
 		go func(dishUUID uuid.UUID) {
 			defer waitGroup.Done()
-			mutex.Lock()
-			defer mutex.Unlock()
 
 			menuDishDTO, err := handler.appAdminQueries.GetMenuDish(order.Get().GetTableID(), dishUUID, true)
 			if err != nil {
 				logging.GetLogger().Error("failed to get menu dish", zap.Error(err))
 			}
+
+			mutex.Lock()
+			defer mutex.Unlock()
 
 			menuDishMap[menuDishDTO.ID] = menuDishDTO
 		}(dishUUID)

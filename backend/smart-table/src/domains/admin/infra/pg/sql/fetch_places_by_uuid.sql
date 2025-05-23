@@ -10,7 +10,7 @@
            'restaurant', to_jsonb(r),
            'dishes', (
                SELECT COALESCE(
-                  jsonb_agg(to_jsonb(d)),
+                  jsonb_agg(to_jsonb(d) ORDER BY d.name),
                   '[]'::jsonb
                )
                FROM smart_table_admin.dishes d
@@ -35,7 +35,7 @@
                         FROM smart_table_admin.users u
                         WHERE u.uuid = e.user_uuid
                     )
-                )
+                ) ORDER BY e.role
             ),
             '[]'::jsonb
         )
@@ -52,7 +52,7 @@
                        FROM smart_table_admin.dishes d
                        WHERE d.uuid = md.dish_uuid
                    )
-               )
+               ) ORDER BY md.uuid
            ),
            '[]'::jsonb
         )
@@ -61,4 +61,5 @@
     )
 ) AS place_data
 FROM smart_table_admin.places p
-WHERE p.uuid = ANY($1::UUID[]);
+WHERE p.uuid = ANY($1::UUID[])
+ORDER BY p.uuid;

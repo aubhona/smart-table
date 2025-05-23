@@ -11,5 +11,5 @@ type PlaceOrderEditCommand struct {
 	OrderUUID     uuid.UUID
 	TableID       string
 	OrderStatus   utils.Optional[string]
-	ItemEditGpoup utils.Optional[defsInternalCustomerDTO.ItemEditGroupDTO]
+	ItemEditGroup utils.Optional[defsInternalCustomerDTO.ItemEditGroupDTO]
 }

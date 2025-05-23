@@ -10,7 +10,7 @@ SELECT
             SELECT COALESCE(
                 (
                     SELECT
-                        jsonb_agg(to_jsonb(i))
+                        jsonb_agg(to_jsonb(i) ORDER BY i.name)
                     FROM
                         smart_table_customer.items i
                     WHERE
@@ -23,7 +23,7 @@ SELECT
             SELECT COALESCE(
                 (
                     SELECT
-                        jsonb_agg(to_jsonb(c))
+                        jsonb_agg(to_jsonb(c) ORDER BY c.tg_id)
                     FROM
                         smart_table_customer.customers c
                     WHERE
@@ -36,4 +36,5 @@ SELECT
 FROM
   smart_table_customer.orders AS o
 WHERE
-  o.uuid = ANY($1::UUID[]);
+  o.uuid = ANY($1::UUID[])
+ORDER BY o.uuid;

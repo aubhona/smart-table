@@ -52,6 +52,6 @@ func (handler *OrderEditCommandHandler) Handle(
 		orderEditCommand.OrderUUID,
 		tableID,
 		orderEditCommand.OrderStatus,
-		orderEditCommand.ItemEditGpoup,
+		orderEditCommand.ItemEditGroup,
 	)
 }

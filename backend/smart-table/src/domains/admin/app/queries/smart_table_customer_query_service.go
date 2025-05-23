@@ -13,6 +13,6 @@ type SmartTableCustomerQueryService interface {
 		orderUUID uuid.UUID,
 		tableID string,
 		orderStatus utils.Optional[string],
-		itemEditGpoup utils.Optional[defsInternalCustomerDTO.ItemEditGroupDTO],
+		itemEditGroup utils.Optional[defsInternalCustomerDTO.ItemEditGroupDTO],
 	) error
 }
