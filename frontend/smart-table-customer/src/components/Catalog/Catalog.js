@@ -4,7 +4,7 @@ import { SERVER_URL } from "../../config";
 import { handleMultipartResponse } from "../hooks/multipartUtils";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "../LoadingScreen/LoadingScreen";
-import { getAuthHeaders } from '../../utils/authHeaders';
+import { getAuthHeaders } from '../hooks/authHeaders';
 import "./Catalog.css";
 
 function Catalog() {

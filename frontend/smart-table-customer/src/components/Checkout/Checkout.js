@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useOrder } from "../OrderContext/OrderContext";
 import LoadingScreen from "../LoadingScreen/LoadingScreen";
 import { SERVER_URL } from "../../config";
-import { getAuthHeaders } from '../../utils/authHeaders';
+import { getAuthHeaders } from '../hooks/authHeaders';
 import "./Checkout.css";
 
 const Checkout = () => {
@@ -17,13 +17,27 @@ const Checkout = () => {
   const [error, setError] = useState("");
   const [selectedFriendIdx, setSelectedFriendIdx] = useState(null);
 
-  const statusColors = ["white", "blue", "yellow", "green", "cyan"];
-  const renderStatus = (status) => (
-    <span
-      className={`status-circle ${statusColors[(status || 1) - 1]}`}
-      title={`Статус ${status}`}
-    ></span>
-  );
+  const statusColorsMap = {
+    new: "white",
+    accepted: "blue",
+    cooking: "yellow",
+    cooked: "green",
+    served: "cyan",
+    payment_waiting: "gray",
+    paid: "darkgreen",
+    canceled_by_service: "red",
+    canceled_by_client: "red",
+  };
+
+  const renderStatus = (status) => {
+    const color = statusColorsMap[status] || "white";
+    return (
+      <span
+        className={`status-circle ${color}`}
+        title={`Статус: ${status}`}
+      />
+    );
+  };
 
   useEffect(() => {
     if (!customer_uuid || !order_uuid) return;

@@ -4,7 +4,7 @@ import { useOrder } from "../OrderContext/OrderContext";
 import { SERVER_URL } from "../../config";
 import { handleMultipartResponse } from "../hooks/multipartUtils";
 import LoadingScreen from "../LoadingScreen/LoadingScreen";
-import { getAuthHeaders } from '../../utils/authHeaders';
+import { getAuthHeaders } from '../hooks/authHeaders';
 import "./Item.css";
 
 function Item() {
@@ -72,7 +72,13 @@ function Item() {
   const handleAddOrSave = async () => {
     try {
       if (isEdit) {
-        const delta = quantity - initialCount;
+        const diff = quantity - initialCount;
+        let delta;
+        if (quantity < initialCount) {
+          delta = -Math.abs(diff);
+        } else {
+          delta = diff;
+        }
         if (comment !== originalComment) {
           await fetch(`${SERVER_URL}/customer/v1/order/items/draft/count/edit`, {
             method: "POST",
@@ -104,7 +110,7 @@ function Item() {
               comment: comment || undefined,
             }),
           });
-        } else if (delta > 0){
+        } else if (delta !== 0){
           await fetch(`${SERVER_URL}/customer/v1/order/items/draft/count/edit`, {
             method: "POST",
             headers: {
@@ -190,9 +196,13 @@ function Item() {
 
       <div className="item-footer">
         <div className="item-summary">
-          <div className="dish-name-item">{dish.name}</div>
-          <div className="calories-item">{dish.calories} ккал</div>
-          <div className="price-item">{dish.price} ₽</div>
+          <div className="dish-main-info">
+            <div className="dish-name-item">{dish.name}</div>
+            <div className="dish-metrics">
+              <div className="weight-calories-item">{dish.weight} г, {dish.calories} ккал</div>
+            </div>
+          </div>
+          <div className="dish-price-item">{dish.price} ₽</div>
         </div>
         <div className="item-actions">
           <div className="quantity-controls-item">

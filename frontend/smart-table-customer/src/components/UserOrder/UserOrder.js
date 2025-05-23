@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useOrder } from "../OrderContext/OrderContext";
 import LoadingScreen from "../LoadingScreen/LoadingScreen";
 import { SERVER_URL } from "../../config";
-import { getAuthHeaders } from '../../utils/authHeaders';
+import { getAuthHeaders } from '../hooks/authHeaders';
 import "./UserOrder.css";
 
 const UserOrder = () => {
@@ -15,54 +15,82 @@ const UserOrder = () => {
   const [userData, setUserData] = useState(null);
   const [userOrderItems, setUserOrderItems] = useState([]);
 
-  // statusColors и status-circle как в Checkout
-  const statusColors = ["white", "blue", "yellow", "green", "cyan"];
-  const renderStatus = (status) => (
-    <span className={`status-circle ${statusColors[(status || 1) - 1]}`}></span>
-  );
+  const pollingIntervalRef = useRef(null);
+
+  const statusColorsMap = {
+    new: "white",
+    accepted: "blue",
+    cooking: "yellow",
+    cooked: "green",
+    served: "cyan",
+    payment_waiting: "gray",
+    paid: "darkgreen",
+    canceled_by_service: "red",
+    canceled_by_client: "red",
+  };
+  const renderStatus = (status) => {
+    const color = statusColorsMap[status] || "white";
+    return (
+      <span
+        className={`status-circle ${color}`}
+        title={`Статус: ${status}`}
+      />
+    );
+  };
+
+  const fetchUserData = async () => {
+    if (!customer_uuid || !order_uuid || !userLogin) return;
+    try {
+      setError("");
+
+      const res = await fetch(`${SERVER_URL}/customer/v1/order/customer/list`, {
+        method: "GET",
+        headers: {
+          "Accept": "multipart/mixed, application/json",
+          "ngrok-skip-browser-warning": "true",
+          "Content-Type": "application/json",
+          ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
+        },
+      });
+
+      if (!res.ok) throw new Error("Не удалось загрузить данные пользователей");
+
+      const data = await res.json();
+      const customerList = Array.isArray(data.customer_list) ? data.customer_list : [];
+
+      const user = customerList.find(
+        (u) =>
+          u.login === userLogin ||
+          u.username === userLogin ||
+          u.tg_login === userLogin ||
+          u.customer_uuid === userLogin ||
+          u.uuid === userLogin
+      );
+
+      if (user) {
+        setUserData(user);
+        setUserOrderItems(
+          Array.isArray(user.item_list) ? user.item_list.filter((i) => i.count > 0) : []
+        );
+      } else {
+        throw new Error("Пользователь не найден");
+      }
+      setLoading(false);
+    } catch (e) {
+      setError(e.message || "Ошибка при загрузке данных пользователя");
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    if (!customer_uuid || !order_uuid || !userLogin) return;
-    setLoading(true);
+    fetchUserData();
 
-    fetch(`${SERVER_URL}/customer/v1/order/customer/list`, {
-      method: "GET",
-      headers: {
-        "Accept": "multipart/mixed, application/json",
-        "ngrok-skip-browser-warning": "true",
-        "Content-Type": "application/json",
-        ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) throw new Error("Не удалось загрузить данные пользователей");
-        const data = await res.json();
-        const customerList = Array.isArray(data.customer_list) ? data.customer_list : [];
-        
-        // Находим данные пользователя по логину или uuid
-        const user = customerList.find(
-          (u) => 
-            u.login === userLogin || 
-            u.username === userLogin || 
-            u.tg_login === userLogin || 
-            u.customer_uuid === userLogin || 
-            u.uuid === userLogin
-        );
-
-        if (user) {
-          setUserData(user);
-          setUserOrderItems(
-            Array.isArray(user.item_list) ? user.item_list.filter(i => i.count > 0) : []
-          );
-        } else {
-          throw new Error("Пользователь не найден");
-        }
-        setLoading(false);
-      })
-      .catch((e) => {
-        setError(e.message || "Ошибка при загрузке данных пользователя");
-        setLoading(false);
-      });
+    pollingIntervalRef.current = setInterval(() => {
+      fetchUserData();
+    }, 4000);
+    return () => {
+      clearInterval(pollingIntervalRef.current);
+    };
   }, [customer_uuid, order_uuid, jwt_token, userLogin]);
 
   const handleGoBack = () => navigate(-1);

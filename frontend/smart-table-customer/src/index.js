@@ -5,11 +5,6 @@ import App from './App';
 import TwaSdk from "@twa-dev/sdk";
 import { OrderProvider } from './components/OrderContext/OrderContext';
 
-localStorage.removeItem('customer_uuid');
-localStorage.removeItem('order_uuid');
-localStorage.removeItem('room_code');
-localStorage.removeItem('jwt_token');
-
 TwaSdk.ready();
 
 if (!window.Telegram || !window.Telegram.WebApp) {
@@ -21,7 +16,9 @@ if (!window.Telegram || !window.Telegram.WebApp) {
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <OrderProvider>
-    <App />
-  </OrderProvider>
+  <React.StrictMode>
+    <OrderProvider>
+      <App />
+    </OrderProvider>
+  </React.StrictMode>
 );

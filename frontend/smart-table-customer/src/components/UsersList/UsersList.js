@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOrder } from "../OrderContext/OrderContext";
 import { SERVER_URL } from "../../config";
-import { getAuthHeaders } from '../../utils/authHeaders';
+import { getAuthHeaders } from '../hooks/authHeaders';
 import "./UsersList.css";
 
 function UsersList() {

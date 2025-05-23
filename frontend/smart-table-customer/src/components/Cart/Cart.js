@@ -5,7 +5,7 @@ import { handleMultipartResponse } from "../hooks/multipartUtils";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "../LoadingScreen/LoadingScreen";
 import "./Cart.css";
-import { getAuthHeaders } from '../../utils/authHeaders';
+import { getAuthHeaders } from '../hooks/authHeaders';
 function Cart() {
   const { customer_uuid, order_uuid, jwt_token } = useOrder();
   const [cartItems, setCartItems] = useState([]);
@@ -54,6 +54,12 @@ function Cart() {
 
     fetchCart();
   }, [customer_uuid, order_uuid]);
+
+  useEffect(() => {
+    if (!loading && cartItems.length === 0) {
+      navigate('/catalog');
+    }
+  }, [cartItems, loading, navigate]);
 
   const updateQuantity = async (item, newCount) => {
     const currentCount = item.count;

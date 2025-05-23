@@ -6,7 +6,7 @@ import { useOrder } from '../OrderContext/OrderContext';
 import { useNavigate } from 'react-router-dom';
 import LoadingScreen from '../LoadingScreen/LoadingScreen';
 import { SERVER_URL } from '../../config';
-import { getAuthHeaders } from '../../utils/authHeaders';
+import { getAuthHeaders } from './authHeaders';
 
 function OrderFlow() {
   const [error, setError] = useState('');
