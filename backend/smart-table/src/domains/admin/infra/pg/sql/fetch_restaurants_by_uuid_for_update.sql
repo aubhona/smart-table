@@ -26,5 +26,5 @@ SELECT jsonb_build_object(
 ) AS restaurant_data
 FROM smart_table_admin.restaurants r
 WHERE r.uuid = ANY($1::UUID[])
-ORDER BY r.uuid
+ORDER BY r.name
 FOR UPDATE;

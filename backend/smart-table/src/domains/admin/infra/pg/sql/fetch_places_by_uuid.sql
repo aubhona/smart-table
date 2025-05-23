@@ -52,7 +52,7 @@
                        FROM smart_table_admin.dishes d
                        WHERE d.uuid = md.dish_uuid
                    )
-               ) ORDER BY md.uuid
+               ) ORDER BY md.price
            ),
            '[]'::jsonb
         )
@@ -62,4 +62,4 @@
 ) AS place_data
 FROM smart_table_admin.places p
 WHERE p.uuid = ANY($1::UUID[])
-ORDER BY p.uuid;
+ORDER BY p.address;
