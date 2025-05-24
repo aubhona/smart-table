@@ -7,6 +7,6 @@ import (
 
 type SmartTableAdminQueryService interface {
 	GetMenuDish(tableID string, dishUUID uuid.UUID, withPicture bool) (defsInternalAdminDTO.MenuDishDTO, error)
-	GetCatalog(tableID string) ([]defsInternalAdminDTO.MenuDishDTO, error)
+	GetCatalog(tableID string, needPicture bool) ([]defsInternalAdminDTO.MenuDishDTO, error)
 	TableIDValidate(tableID string) (bool, error)
 }

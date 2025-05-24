@@ -31,6 +31,7 @@ func (h *CustomerV1OrderHandler) GetCustomerV1OrderCart( //nolint
 	result, err := handler.Handle(&app.CartCommand{
 		OrderUUID:    request.Params.OrderUUID,
 		CustomerUUID: request.Params.CustomerUUID,
+		NeedPicture:  true,
 	})
 
 	if err != nil {

@@ -109,6 +109,34 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
 
+    /customer/v1/order/cart-info:
+        get:
+            summary: Получение каталога
+            description: Отображение каталога плейса
+            parameters:
+                -   $ref: '#/components/parameters/CustomerUUID'
+                -   $ref: '#/components/parameters/JwtToken'
+                -   $ref: '#/components/parameters/OrderUUID'
+            responses:
+                '200':
+                    description: Список блюд
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CustomerV1OrderCartInfoResponse'
+                '403':
+                    description: Ошибка авторизации или доступа
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка поиска заказа или клиента
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
     /customer/v1/order/customer/list:
         get:
             summary: Получение списка пользователей заказа
@@ -153,6 +181,34 @@ paths:
                             schema:
                                 type: string
                                 format: binary
+                '403':
+                    description: Ошибка авторизации или доступа
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка поиска заказа или клиента
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /customer/v1/order/catalog-info:
+        get:
+            summary: Получение каталога
+            description: Отображение каталога плейса
+            parameters:
+                -   $ref: '#/components/parameters/CustomerUUID'
+                -   $ref: '#/components/parameters/JwtToken'
+                -   $ref: '#/components/parameters/OrderUUID'
+            responses:
+                '200':
+                    description: Список блюд
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CustomerV1OrderCatalogInfoResponse'
                 '403':
                     description: Ошибка авторизации или доступа
                     content:
@@ -376,6 +432,14 @@ components:
             required:
                 - menu_dish_uuid
                 - count
+
+        # /customer/v1/order/catalog-info_GET
+        CustomerV1OrderCartInfoResponse:
+            $ref: '#/components/schemas/CartInfo'
+
+        # /customer/v1/order/catalog-info_GET
+        CustomerV1OrderCatalogInfoResponse:
+            $ref: '#/components/schemas/Catalog'
 
         # /customer/v1/order/catalog/updated-info_POST
         CustomerV1OrderCatalogUpdatedInfoResponse:

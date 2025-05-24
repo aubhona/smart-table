@@ -81,7 +81,7 @@ func (handler *CartCommandHandler) Handle(command *CartCommand) (CartCommandHand
 		go func(dishUUID uuid.UUID) {
 			defer waitGroup.Done()
 
-			menuDishDTO, err := handler.appAdminQueries.GetMenuDish(order.Get().GetTableID(), dishUUID, true)
+			menuDishDTO, err := handler.appAdminQueries.GetMenuDish(order.Get().GetTableID(), dishUUID, command.NeedPicture)
 			if err != nil {
 				logging.GetLogger().Error("failed to get menu dish", zap.Error(err))
 			}
@@ -123,9 +123,13 @@ func (handler *CartCommandHandler) Handle(command *CartCommand) (CartCommandHand
 
 		groupedItems := groupedItemsMap[key]
 
-		pictureReader, err := menuDish.Picture.Reader()
-		if err != nil {
-			return CartCommandHandlerResult{}, err
+		var pictureReader io.Reader
+
+		if command.NeedPicture {
+			pictureReader, err = menuDish.Picture.Reader()
+			if err != nil {
+				return CartCommandHandlerResult{}, err
+			}
 		}
 
 		price := decimal.RequireFromString(menuDish.Price)

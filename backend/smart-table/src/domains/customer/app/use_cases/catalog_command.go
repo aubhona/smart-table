@@ -7,4 +7,5 @@ import (
 type CatalogCommand struct {
 	CustomerUUID uuid.UUID
 	OrderUUID    uuid.UUID
+	NeedPicture  bool
 }

@@ -29,13 +29,22 @@ var validOrderStatuses = map[defsInternalOrder.OrderStatus]interface{}{
 	defsInternalOrder.OrderStatusNew:               nil,
 	defsInternalOrder.OrderStatusPaid:              nil,
 	defsInternalOrder.OrderStatusPaymentWaiting:    nil,
-	defsInternalOrder.OrderStatusServed:            nil,
+	defsInternalOrder.OrderStatusServing:           nil,
 }
 
 var orderStatusesWhichCanResolutions = map[defsInternalOrder.OrderStatus]interface{}{
 	defsInternalOrder.OrderStatusCanceledByClient:  nil,
 	defsInternalOrder.OrderStatusCanceledByService: nil,
 	defsInternalOrder.OrderStatusPaid:              nil,
+}
+
+var orderToItemStatusMap = map[defsInternalOrder.OrderStatus]defsInternalItem.ItemStatus{
+	defsInternalOrder.OrderStatusCanceledByClient:  defsInternalItem.ItemStatusCanceledByClient,
+	defsInternalOrder.OrderStatusCanceledByService: defsInternalItem.ItemStatusCanceledByService,
+	defsInternalOrder.OrderStatusNew:               defsInternalItem.ItemStatusNew,
+	defsInternalOrder.OrderStatusPaid:              defsInternalItem.ItemStatusPaid,
+	defsInternalOrder.OrderStatusPaymentWaiting:    defsInternalItem.ItemStatusPaymentWaiting,
+	defsInternalOrder.OrderStatusServing:           defsInternalItem.ItemStatusAccepted,
 }
 
 var ItemStatusesCanChangeOnlyWithOrderStatus = map[defsInternalItem.ItemStatus]interface{}{
@@ -210,13 +219,13 @@ func ParseOrderResolution(raw string) (defsInternalOrder.OrderResolution, error)
 }
 
 func (o *Order) SetStatus(status defsInternalOrder.OrderStatus) error {
-	parsedItemStatus, err := ParseItemStatus(string(status))
-	if err != nil {
-		return err
+	parsedItemStatus, exist := orderToItemStatusMap[status]
+	if !exist {
+		return domainErrors.InvalidOrderStatus{OrderStatus: status}
 	}
 
 	for _, item := range o.items {
-		err = item.Get().SetStatus(parsedItemStatus)
+		err := item.Get().SetStatus(parsedItemStatus)
 		if err != nil {
 			return err
 		}

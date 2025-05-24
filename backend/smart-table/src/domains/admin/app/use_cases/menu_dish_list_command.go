@@ -11,7 +11,8 @@ type MenuDishListCommandAdminCall struct {
 }
 
 type MenuDishListCommandInternalCall struct {
-	TabledID string
+	TabledID    string
+	NeedPicture bool
 }
 
 type MenuDishListCommand struct {

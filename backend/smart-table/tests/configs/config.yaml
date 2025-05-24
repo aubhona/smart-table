@@ -49,7 +49,7 @@ database:
     max_connection_lifetime_jitter: 1m
 
 logging:
-    level: debug
+    level: info
     format: console
     file: logs/app.log
     max_size: 10
