@@ -35,10 +35,12 @@ func NewSmartTableQueryServiceImpl(
 
 func (s *SmartTableAdminQueryServiceImpl) GetCatalog(
 	tableID string,
+	needPicture bool,
 ) ([]defsInternalAdminDTO.MenuDishDTO, error) {
 	response, err := s.menuDishListCommandHandler.Handle(&adminApp.MenuDishListCommand{
 		InternalCall: utils.NewOptional(adminApp.MenuDishListCommandInternalCall{
-			TabledID: tableID,
+			TabledID:    tableID,
+			NeedPicture: needPicture,
 		}),
 	})
 	if err != nil {
@@ -53,13 +55,16 @@ func (s *SmartTableAdminQueryServiceImpl) GetCatalog(
 			continue
 		}
 
-		pictureBytes, err := io.ReadAll(menuDish.Picture)
-		if err != nil {
-			return nil, appQueriesErrors.UnsuccessMenuDishFetch{InnerError: err}
-		}
-
 		picture := types.File{}
-		picture.InitFromBytes(pictureBytes, fmt.Sprintf("%s.png", menuDish.ID))
+
+		if needPicture {
+			pictureBytes, err := io.ReadAll(menuDish.Picture)
+			if err != nil {
+				return nil, appQueriesErrors.UnsuccessMenuDishFetch{InnerError: err}
+			}
+
+			picture.InitFromBytes(pictureBytes, fmt.Sprintf("%s.png", menuDish.ID))
+		}
 
 		result = append(result, defsInternalAdminDTO.MenuDishDTO{
 			ID:          menuDish.ID,

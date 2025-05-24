@@ -30,6 +30,7 @@ func (h *CustomerV1OrderHandler) GetCustomerV1OrderCatalog( //nolint
 	result, err := handler.Handle(&app.CatalogCommand{
 		OrderUUID:    request.Params.OrderUUID,
 		CustomerUUID: request.Params.CustomerUUID,
+		NeedPicture:  true,
 	})
 
 	if err != nil {

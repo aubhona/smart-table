@@ -1298,11 +1298,11 @@ components:
             type: string
             enum:
                 - new
-                - served
+                - serving
+                - payment_waiting
                 - paid
                 - canceled_by_service
                 - canceled_by_client
-                - payment_waiting
 
         OrderResolution:
             type: string

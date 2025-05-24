@@ -55,12 +55,14 @@ func NewMenuDishListCommandHandler(
 	}
 }
 
-func (handler *MenuDishListCommandHandler) Handle(
+func (handler *MenuDishListCommandHandler) Handle( //nolint
 	command *MenuDishListCommand,
 ) (MenuDishListCommandHandlerResult, error) {
 	var place utils.SharedRef[domain.Place]
 
 	var err error
+
+	needPicture := true
 
 	if !command.InternalCall.HasValue() && !command.AdminCall.HasValue() {
 		return MenuDishListCommandHandlerResult{}, errors.New("invalid command")
@@ -92,6 +94,8 @@ func (handler *MenuDishListCommandHandler) Handle(
 
 			return MenuDishListCommandHandlerResult{}, err
 		}
+
+		needPicture = command.InternalCall.Value().NeedPicture
 	}
 
 	waitGroup := sync.WaitGroup{}
@@ -104,15 +108,19 @@ func (handler *MenuDishListCommandHandler) Handle(
 		go func(menuDish utils.SharedRef[domain.MenuDish]) {
 			defer waitGroup.Done()
 
-			image, err := handler.s3QueryService.GetImage(menuDish.Get().GetDish().Get().GetPictureKey())
-			if err != nil {
-				logging.GetLogger().Error(
-					"error while getting image from S3",
-					zap.String("picture_key", menuDish.Get().GetDish().Get().GetPictureKey()),
-					zap.Error(err),
-				)
+			var image io.ReadCloser
 
-				return
+			if needPicture {
+				image, err = handler.s3QueryService.GetImage(menuDish.Get().GetDish().Get().GetPictureKey())
+				if err != nil {
+					logging.GetLogger().Error(
+						"error while getting image from S3",
+						zap.String("picture_key", menuDish.Get().GetDish().Get().GetPictureKey()),
+						zap.Error(err),
+					)
+
+					return
+				}
 			}
 
 			mut.Lock()

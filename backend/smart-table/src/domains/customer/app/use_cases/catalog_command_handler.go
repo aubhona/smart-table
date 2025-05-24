@@ -62,7 +62,7 @@ func (handler *CatalogCommandHandler) Handle(command *CatalogCommand) (CatalogCo
 			appErrors.OrderAccessDenied{OrderUUID: command.OrderUUID, CustomerUUID: command.CustomerUUID}
 	}
 
-	menuDishList, err := handler.appAdminQueries.GetCatalog(order.Get().GetTableID())
+	menuDishList, err := handler.appAdminQueries.GetCatalog(order.Get().GetTableID(), command.NeedPicture)
 	if err != nil {
 		return CatalogCommandHandlerResult{}, err
 	}
