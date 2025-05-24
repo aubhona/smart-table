@@ -17,12 +17,25 @@ import (
 	"golang.org/x/exp/slices"
 )
 
+var validOrderResolutions = map[defsInternalOrder.OrderResolution]interface{}{
+	defsInternalOrder.OrderResolutionCanceledByClient:  nil,
+	defsInternalOrder.OrderResolutionCanceledByService: nil,
+	defsInternalOrder.OrderResolutionPaid:              nil,
+}
+
 var validOrderStatuses = map[defsInternalOrder.OrderStatus]interface{}{
 	defsInternalOrder.OrderStatusCanceledByClient:  nil,
 	defsInternalOrder.OrderStatusCanceledByService: nil,
 	defsInternalOrder.OrderStatusNew:               nil,
 	defsInternalOrder.OrderStatusPaid:              nil,
 	defsInternalOrder.OrderStatusPaymentWaiting:    nil,
+	defsInternalOrder.OrderStatusServed:            nil,
+}
+
+var orderStatusesWhichCanResolutions = map[defsInternalOrder.OrderStatus]interface{}{
+	defsInternalOrder.OrderStatusCanceledByClient:  nil,
+	defsInternalOrder.OrderStatusCanceledByService: nil,
+	defsInternalOrder.OrderStatusPaid:              nil,
 }
 
 var ItemStatusesCanChangeOnlyWithOrderStatus = map[defsInternalItem.ItemStatus]interface{}{
@@ -178,6 +191,24 @@ func (o *Order) CommitItems(customerUUID uuid.UUID) {
 	}
 }
 
+func (o *Order) setResolution(resolution defsInternalOrder.OrderResolution) {
+	o.resolution = utils.NewOptional(resolution)
+}
+
+func IsValidOrderResolution(resolution defsInternalOrder.OrderResolution) bool {
+	_, exists := validOrderResolutions[resolution]
+	return exists
+}
+
+func ParseOrderResolution(raw string) (defsInternalOrder.OrderResolution, error) {
+	resolution := defsInternalOrder.OrderResolution(raw)
+	if !IsValidOrderResolution(resolution) {
+		return "", domainErrors.InvalidOrderResolution{OrderResolution: resolution}
+	}
+
+	return resolution, nil
+}
+
 func (o *Order) SetStatus(status defsInternalOrder.OrderStatus) error {
 	parsedItemStatus, err := ParseItemStatus(string(status))
 	if err != nil {
@@ -192,6 +223,16 @@ func (o *Order) SetStatus(status defsInternalOrder.OrderStatus) error {
 	}
 
 	o.status = status
+
+	_, exists := orderStatusesWhichCanResolutions[status]
+	if exists {
+		parsedOrderResolution, err := ParseOrderResolution(string(status))
+		if err != nil {
+			return err
+		}
+
+		o.setResolution(parsedOrderResolution)
+	}
 
 	return nil
 }

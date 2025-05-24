@@ -121,6 +121,8 @@ func (s *SmartTableCustomerQueryServiceImpl) EditPlaceOrder(
 			return appQueriesErrors.OrderNotFound{OrderUUID: orderUUID}
 		case utils.IsTheSameErrorType[customerDomainErrors.InvalidOrderStatus](err):
 			return appQueriesErrors.InvalidOrderStatus{OrderStatus: orderStatus}
+		case utils.IsTheSameErrorType[customerDomainErrors.InvalidOrderResolution](err):
+			return appQueriesErrors.InvalidOrderResolution{OrderResolution: orderStatus}
 		case utils.IsTheSameErrorType[customerDomainErrors.InvalidItemStatus](err):
 			return appQueriesErrors.InvalidItemStatus{ItemEditGpoup: itemEditGroup}
 		case utils.IsTheSameErrorType[customerDomainErrors.DraftItemStatusChangeNotAllowed](err):

@@ -63,6 +63,11 @@ func (h *AdminV1PlaceHandler) PostAdminV1PlaceOrderEdit( //nolint
 				Code:    viewsAdminPlace.InvalidOrderStatus,
 				Message: err.Error(),
 			}, nil
+		case utils.IsTheSameErrorType[appQueriesErrors.InvalidOrderResolution](err):
+			return viewsAdminPlace.PostAdminV1PlaceOrderEdit403JSONResponse{
+				Code:    viewsAdminPlace.InvalidOrderResolution,
+				Message: err.Error(),
+			}, nil
 		case utils.IsTheSameErrorType[appQueriesErrors.ItemStatusChangeRequiresOrderStatusUpdate](err):
 		case utils.IsTheSameErrorType[appQueriesErrors.InvalidItemStatus](err):
 			return viewsAdminPlace.PostAdminV1PlaceOrderEdit403JSONResponse{

@@ -1061,6 +1061,7 @@ components:
                     description: Код ошибки
                     enum: 
                         - invalid_item
+                        - invalid_order_resolution
                         - invalid_order_status
                         - invalid_item_status
                         - incorrect_request_format
@@ -1297,7 +1298,7 @@ components:
             type: string
             enum:
                 - new
-                - serving
+                - served
                 - paid
                 - canceled_by_service
                 - canceled_by_client
