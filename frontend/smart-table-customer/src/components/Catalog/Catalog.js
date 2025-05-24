@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useOrder } from "../OrderContext/OrderContext";
 import { SERVER_URL } from "../../config";
 import { handleMultipartResponse } from "../hooks/multipartUtils";
@@ -15,7 +15,6 @@ function Catalog() {
   const [counts, setCounts] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const catalogLoaded = useRef(false); 
   const navigate = useNavigate();
 
   const fetchCartInfo = useCallback(async () => {
@@ -57,50 +56,117 @@ function Catalog() {
     return () => window.removeEventListener("focus", fetchCartInfo);
   }, [customer_uuid, order_uuid, jwt_token, fetchCartInfo]);
 
+  /**
+   * Быстрая загрузка каталога без картинок
+   */
+  const loadCatalogInfo = useCallback(async () => {
+    if (!customer_uuid || !order_uuid || !jwt_token) return;
+
+    try {
+      const res = await fetch(`${SERVER_URL}/customer/v1/order/catalog-info`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+          ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
+        },
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch catalog info");
+
+      const data = await res.json();
+
+      if (data.go_tip_screen) {
+        navigate("/tip");
+        return;
+      }
+
+      // Обновляем основные списки без картинок
+      setDishes(
+        (data.menu || []).sort((a, b) => a.name.localeCompare(b.name, "ru"))
+      );
+      setCategories(
+        (data.categories || []).sort((a, b) => a.localeCompare(b, "ru"))
+      );
+
+      if (data.room_code) setRoomCode(data.room_code);
+
+      setLoading(false); // можно уже показывать каталог
+    } catch (e) {
+      setError("Ошибка загрузки каталога: " + e.message);
+      setLoading(false);
+    }
+  }, [customer_uuid, order_uuid, jwt_token, navigate, setRoomCode]);
+
+  /**
+   * Полная загрузка каталога с картинками (multipart)
+   */
+  const loadCatalogWithImages = useCallback(async () => {
+    if (!customer_uuid || !order_uuid || !jwt_token) return;
+
+    try {
+      const res = await fetch(`${SERVER_URL}/customer/v1/order/catalog`, {
+        method: "GET",
+        headers: {
+          Accept: "multipart/mixed, application/json",
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+          ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
+        },
+      });
+
+      const contentType = res.headers.get("content-type") || "";
+
+      if (contentType.includes("application/json")) {
+        const data = await res.json();
+        if (data.go_tip_screen) {
+          navigate("/tip");
+          return;
+        }
+      } else {
+        const {
+          list,
+          categories: cat,
+          imagesMap,
+          room_code: rcode,
+          go_tip_screen,
+        } = await handleMultipartResponse(res, "menu");
+
+        // Обновляем изображения и (при необходимости) списки блюд / категорий
+        setImages(imagesMap);
+
+        // Если списки ещё не были установлены (или могли измениться) – обновим их
+        if (list && list.length) {
+          setDishes(list.sort((a, b) => a.name.localeCompare(b.name, "ru")));
+        }
+        if (cat && cat.length) {
+          setCategories(cat.sort((a, b) => a.localeCompare(b, "ru")));
+        }
+
+        if (rcode) setRoomCode(rcode);
+        if (go_tip_screen) {
+          navigate("/tip");
+          return;
+        }
+      }
+    } catch (e) {
+      console.error("Ошибка полной загрузки каталога:", e);
+    }
+  }, [customer_uuid, order_uuid, jwt_token, navigate, setRoomCode]);
+
+  /**
+   * Загружаем оба варианта каталога параллельно:
+   * – сначала лёгкий (без картинок) для быстрой отрисовки,
+   * – затем полный (multipart) для подстановки изображений.
+   */
   useEffect(() => {
     if (!customer_uuid || !order_uuid || !jwt_token) return;
 
     setLoading(true);
 
-    catalogLoaded.current = false;
-    (async () => {
-      try {
-        const res = await fetch(`${SERVER_URL}/customer/v1/order/catalog`, {
-          method: "GET",
-          headers: {
-            Accept: "multipart/mixed, application/json",
-            "Content-Type": "application/json",
-            "ngrok-skip-browser-warning": "true",
-            ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
-          }
-        });
-
-        const contentType = res.headers.get('content-type') || '';
-
-        if (contentType.includes('application/json')) {
-          const data = await res.json();
-          if (data.go_tip_screen) {
-            navigate("/tip");
-            return;
-          }
-        } else {
-          const { list, categories, imagesMap, room_code: rcode, go_tip_screen  } = await handleMultipartResponse(res, "menu");
-          setDishes(list.sort((a, b) => a.name.localeCompare(b.name, "ru")));
-          setCategories(categories.sort((a, b) => a.localeCompare(b, "ru")));
-          setImages(imagesMap);
-          setLoading(false);
-          if (rcode) setRoomCode(rcode);
-          if (go_tip_screen) {
-            navigate("/tip");
-            return;
-          }
-        }
-      } catch (e) {
-        setError("Ошибка загрузки каталога: " + e.message);
-        setLoading(false);
-      }
-    })();
-  }, [customer_uuid, order_uuid, jwt_token, navigate, setRoomCode]);
+    loadCatalogInfo();
+    loadCatalogWithImages();
+  }, [customer_uuid, order_uuid, jwt_token, loadCatalogInfo, loadCatalogWithImages]);
 
   const updateQuantity = async (dishId, delta) => {
     if (!customer_uuid || !order_uuid || !jwt_token) {
@@ -210,7 +276,7 @@ function Catalog() {
                       {images[dish.id] ? (
                         <img src={images[dish.id]} alt={dish.name} />
                       ) : (
-                        <span>Нет фото</span>
+                        <div className="image-placeholder" />
                       )}
                     </div>
                     <div className="dish-info">

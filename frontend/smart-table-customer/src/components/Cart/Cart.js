@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import LoadingScreen from "../LoadingScreen/LoadingScreen";
 import "./Cart.css";
 import { getAuthHeaders } from '../hooks/authHeaders';
+
 function Cart() {
   const { customer_uuid, order_uuid, jwt_token } = useOrder();
   const [cartItems, setCartItems] = useState([]);
@@ -15,34 +16,51 @@ function Cart() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const fetchCart = useCallback(async () => {
+  // Быстрая загрузка корзины без картинок
+  const fetchCartInfo = useCallback(async () => {
     setLoading(true);
-    fetch(`${SERVER_URL}/customer/v1/order/cart`, {
-      method: "GET",
-      headers: {
-        Accept: "multipart/mixed, application/json",
-        "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "true",
-        ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
-      },
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          throw new Error(`Ошибка загрузки корзины: ${res.status}`);
-        }
-        const { list, imagesMap} = await handleMultipartResponse(res, "dish_list");
-        const items = Array.isArray(list)
+    try {
+      const res = await fetch(`${SERVER_URL}/customer/v1/order/cart-info`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+          ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
+        },
+      });
+      if (!res.ok) throw new Error(`Ошибка загрузки корзины: ${res.status}`);
+      const data = await res.json();
+      setCartItems((data.items || []).sort((a, b) => a.name.localeCompare(b.name, "ru")));
+      setLoading(false);
+    } catch (e) {
+      setError(e.message || "Не удалось загрузить корзину");
+      setLoading(false);
+    }
+  }, [customer_uuid, jwt_token, order_uuid]);
+
+  // Полная загрузка корзины с картинками
+  const fetchCartWithImages = useCallback(async () => {
+    try {
+      const res = await fetch(`${SERVER_URL}/customer/v1/order/cart`, {
+        method: "GET",
+        headers: {
+          Accept: "multipart/mixed, application/json",
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+          ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
+        },
+      });
+      if (!res.ok) throw new Error(`Ошибка загрузки корзины: ${res.status}`);
+      const { list, imagesMap } = await handleMultipartResponse(res, "dish_list");
+      const items = Array.isArray(list)
         ? (list[0]?.items || list).sort((a, b) => a.name.localeCompare(b.name, "ru"))
         : [];
-        setImages(imagesMap || {});
-        setCartItems(items);
-        setLoading(false);
-      })
-      .catch((e) => {
-        console.error("Ошибка загрузки корзины:", e);
-        setError(e.message || "Не удалось загрузить корзину");
-        setLoading(false);
-      });
+      setImages(imagesMap || {});
+      setCartItems(items);
+    } catch (e) {
+      // Не блокируем интерфейс, просто не обновляем картинки
+      console.error("Ошибка загрузки корзины с картинками:", e);
+    }
   }, [customer_uuid, jwt_token, order_uuid]);
 
   useEffect(() => {
@@ -51,9 +69,9 @@ function Cart() {
       setLoading(false);
       return;
     }
-
-    fetchCart();
-  }, [customer_uuid, order_uuid, fetchCart]);
+    fetchCartInfo();
+    fetchCartWithImages();
+  }, [customer_uuid, order_uuid, fetchCartInfo, fetchCartWithImages]);
 
   useEffect(() => {
     if (!loading && cartItems.length === 0) {
@@ -79,7 +97,7 @@ function Cart() {
           comment: item.comment || undefined,
         }),
       });
-      fetchCart();
+      fetchCartWithImages();
     } catch (e) {
       setError(e.message || "Не удалось обновить корзину");
     }
@@ -158,7 +176,7 @@ function Cart() {
                 {images[item.id] ? (
                   <img src={images[item.id]} alt={item.name}/>
                 ) : (
-                  <span>Нет фото</span>
+                  <div className="image-placeholder" />
                 )}
               </div>
               <div className="cart-item-info">
