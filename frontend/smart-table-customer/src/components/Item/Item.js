@@ -67,7 +67,7 @@ function Item() {
         setError(e.message || "Ошибка при загрузке блюда");
         setLoading(false);
       });
-  }, [customer_uuid, order_uuid, id]);
+  }, [customer_uuid, order_uuid, id, initialComment, jwt_token]);
 
   const handleAddOrSave = async () => {
     try {

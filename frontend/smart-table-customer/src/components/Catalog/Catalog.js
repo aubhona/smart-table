@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useOrder } from "../OrderContext/OrderContext";
 import { SERVER_URL } from "../../config";
 import { handleMultipartResponse } from "../hooks/multipartUtils";
@@ -18,8 +18,47 @@ function Catalog() {
   const catalogLoaded = useRef(false); 
   const navigate = useNavigate();
 
+  const fetchCartInfo = useCallback(async () => {
+    if (!customer_uuid || !order_uuid || !jwt_token) {
+      console.error('Недостаточно данных для запроса корзины');
+      return;
+    }
+    
+    try {
+      const res = await fetch(`${SERVER_URL}/customer/v1/order/catalog/updated-info`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+          ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
+        }
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch cart info");
+
+      const data = await res.json();
+      let menuUpdated = data.menu_updated_info || data.items || [];
+      const byId = {};
+      menuUpdated.forEach(item => {
+        byId[item.id || item.menu_dish_uuid] = item.count;
+      });
+      setCounts(byId);
+    } catch (err) {
+      console.error("Error fetching cart info:", err);
+    }
+  }, [customer_uuid, jwt_token, order_uuid]);
+
   useEffect(() => {
     if (!customer_uuid || !order_uuid) return;
+
+    fetchCartInfo();
+
+    window.addEventListener("focus", fetchCartInfo);
+    return () => window.removeEventListener("focus", fetchCartInfo);
+  }, [customer_uuid, order_uuid, jwt_token, fetchCartInfo]);
+
+  useEffect(() => {
+    if (!customer_uuid || !order_uuid || !jwt_token) return;
 
     setLoading(true);
 
@@ -63,41 +102,12 @@ function Catalog() {
     })();
   }, [customer_uuid, order_uuid, jwt_token, navigate, setRoomCode]);
 
-  useEffect(() => {
-    if (!customer_uuid || !order_uuid) return;
-
-    fetchCartInfo();
-
-    window.addEventListener("focus", fetchCartInfo);
-    return () => window.removeEventListener("focus", fetchCartInfo);
-  }, [customer_uuid, order_uuid, jwt_token]);
-
-  const fetchCartInfo = async () => {
-    try {
-      const res = await fetch(`${SERVER_URL}/customer/v1/order/catalog/updated-info`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "true",
-          ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
-        }
-      });
-
-      if (!res.ok) throw new Error("Failed to fetch cart info");
-
-      const data = await res.json();
-      let menuUpdated = data.menu_updated_info || data.items || [];
-      const byId = {};
-      menuUpdated.forEach(item => {
-        byId[item.id || item.menu_dish_uuid] = item.count;
-      });
-      setCounts(byId);
-    } catch (err) {
-      console.error("Error fetching cart info:", err);
-    }
-  };
-
   const updateQuantity = async (dishId, delta) => {
+    if (!customer_uuid || !order_uuid || !jwt_token) {
+      console.error('Недостаточно данных для обновления количества');
+      return;
+    }
+    
     try {
       setCounts(prev => ({
         ...prev,

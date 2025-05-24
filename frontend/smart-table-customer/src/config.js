@@ -1,1 +1,1 @@
-export const SERVER_URL = 'https://8648-2a0b-4140-a0c8-00-2.ngrok-free.app'; 
+export const SERVER_URL = 'https://h91q6lp9-3000.euw.devtunnels.ms'; 

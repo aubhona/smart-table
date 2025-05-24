@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOrder } from "../OrderContext/OrderContext";
 import LoadingScreen from "../LoadingScreen/LoadingScreen";
@@ -8,7 +8,7 @@ import "./Checkout.css";
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { customer_uuid, order_uuid, jwt_token, setOrderUuid } = useOrder();
+  const { customer_uuid, order_uuid, jwt_token } = useOrder();
   const [users, setUsers] = useState([]);
   const [orderDetails, setOrderDetails] = useState([]);
   const [isHost, setIsHost] = useState(false);

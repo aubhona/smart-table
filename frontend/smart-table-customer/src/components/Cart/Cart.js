@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useOrder } from "../OrderContext/OrderContext";
 import { SERVER_URL } from "../../config";
 import { handleMultipartResponse } from "../hooks/multipartUtils";
@@ -15,7 +15,7 @@ function Cart() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const fetchCart = async () => {
+  const fetchCart = useCallback(async () => {
     setLoading(true);
     fetch(`${SERVER_URL}/customer/v1/order/cart`, {
       method: "GET",
@@ -43,7 +43,7 @@ function Cart() {
         setError(e.message || "Не удалось загрузить корзину");
         setLoading(false);
       });
-  };
+  }, [customer_uuid, jwt_token, order_uuid]);
 
   useEffect(() => {
     if (!customer_uuid || !order_uuid) {
@@ -53,7 +53,7 @@ function Cart() {
     }
 
     fetchCart();
-  }, [customer_uuid, order_uuid]);
+  }, [customer_uuid, order_uuid, fetchCart]);
 
   useEffect(() => {
     if (!loading && cartItems.length === 0) {

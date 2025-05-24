@@ -30,6 +30,12 @@ import (
 )
 
 func NewGinRouter(container *dig.Container, deps *dependencies.Dependencies) *gin.Engine {
+	gin.SetMode(gin.ReleaseMode)
+
+	if deps.Config.App.Env == config.DevelopmentEnv {
+		gin.SetMode(gin.DebugMode)
+	}
+
 	router := gin.New()
 
 	//nolint

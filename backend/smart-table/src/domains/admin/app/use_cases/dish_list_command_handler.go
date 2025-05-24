@@ -2,6 +2,8 @@ package app
 
 import (
 	"io"
+	"slices"
+	"strings"
 	"sync"
 
 	"github.com/google/uuid"
@@ -110,6 +112,10 @@ func (handler *DishListCommandHandler) Handle(
 	}
 
 	waitGroup.Wait()
+
+	slices.SortFunc(dishDTOList, func(a, b DishListDTO) int {
+		return strings.Compare(a.Name, b.Name)
+	})
 
 	return DishListCommandHandlerResult{DishList: dishDTOList}, nil
 }

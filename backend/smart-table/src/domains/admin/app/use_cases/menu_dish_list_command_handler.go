@@ -3,6 +3,8 @@ package app
 import (
 	"errors"
 	"io"
+	"slices"
+	"strings"
 	"sync"
 
 	appServices "github.com/smart-table/src/domains/admin/app/services"
@@ -142,6 +144,10 @@ func (handler *MenuDishListCommandHandler) Handle( //nolint
 	}
 
 	waitGroup.Wait()
+
+	slices.SortFunc(menuDishDTOList, func(a, b MenuDishListDTO) int {
+		return strings.Compare(a.Name, b.Name)
+	})
 
 	return MenuDishListCommandHandlerResult{MenuDishList: menuDishDTOList}, nil
 }

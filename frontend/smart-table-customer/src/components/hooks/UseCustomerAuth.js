@@ -10,6 +10,11 @@ const useCustomerAuth = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    localStorage.removeItem('customer_uuid');
+    localStorage.removeItem('order_uuid');
+    localStorage.removeItem('room_code');
+    localStorage.removeItem('jwt_token');
+    
     const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
     if (!tgUser || !tgUser.id || !tgUser.username) {
       setShowStartPrompt(true);
