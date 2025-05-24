@@ -4,7 +4,7 @@ components:
             type: string
             enum:
                 - new
-                - serving
+                - served
                 - payment_waiting
                 - paid
                 - canceled_by_service
