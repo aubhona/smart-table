@@ -89,6 +89,9 @@
 .status-circle.yellow { background-color: #ffe066; }
 .status-circle.green { background-color: #7ed957; }
 .status-circle.cyan { background-color: #4fd1c5; }
+.status-circle.gray { background-color: #718096; }
+.status-circle.darkgreen { background-color: #2f855a; }
+.status-circle.red { background-color: #e53e3e; }
 
 .empty-order {
   color: #a89c8a;

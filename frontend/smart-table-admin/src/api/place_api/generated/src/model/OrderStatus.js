@@ -11,7 +11,6 @@
  *
  */
 
-import ApiClient from '../ApiClient';
 /**
 * Enum class OrderStatus.
 * @enum {}

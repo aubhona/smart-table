@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { handleMultipartResponse } from '../components/multipartUtils';
 import { useParams, useNavigate } from "react-router-dom";
 import { QRCodeSVG } from "qrcode.react";
@@ -20,28 +20,28 @@ const ORDER_STATUS_MAP = {
   new: "Открыт",
   payment_waiting: "Ожидает оплаты",
   paid: "Оплачен",
-  cancelled_by_service: "Отменен"
+  canceled_by_service: "Отменен"
 };
 
 const ORDER_REVERSE_STATUS_MAP = Object.fromEntries(
   Object.entries(ORDER_STATUS_MAP).map(([eng, rus]) => [rus, eng])
 );
 
-const DISH_STATUS_FLOW = ['accepted', 'cooking', 'cooked', 'served', 'cancelled_by_service'];
+const DISH_STATUS_FLOW = ['accepted', 'cooking', 'cooked', 'served', 'canceled_by_service'];
 const DISH_STATUS_MAP = {
   accepted: 'Принят',
   cooking: 'Готовится',
   cooked: 'Готов',
   served: 'Подан',
-  cancelled_by_service: 'Отменен'
+  canceled_by_service: 'Отменен'
 };
 
-const LOCKED_ORDER_STATUSES = ['paid', 'cancelled_by_service'];
-const LOCKED_DISH_STATUSES = ['served', 'cancelled_by_service'];
+const LOCKED_ORDER_STATUSES = ['paid', 'canceled_by_service'];
+const LOCKED_DISH_STATUSES = ['served', 'canceled_by_service'];
 
-const OrderItemGroup = ({ item, orderStatus, editOrderItemStatus }) => {
+const OrderItemGroup = ({ item, orderStatus, editOrderItemStatus, isClosedOrder }) => {
   const [open, setOpen] = useState(false);
-  const isLocked = LOCKED_ORDER_STATUSES.includes(orderStatus) || LOCKED_DISH_STATUSES.includes(item.status);
+  const isLocked = LOCKED_ORDER_STATUSES.includes(orderStatus) || LOCKED_DISH_STATUSES.includes(item.status) || isClosedOrder;
 
   if (item.count === 1) {
     return (
@@ -129,7 +129,6 @@ export default function PlaceDetail() {
   const [login, setLogin] = useState("");
   const [role, setRole] = useState("");
   const [error, setError] = useState("");
-  const [priceError, setPriceError] = useState("");
 
   const [menuDishes, setMenuDishes] = useState([]); 
   const [availableDishes, setAvailableDishes] = useState([]);
@@ -155,39 +154,19 @@ export default function PlaceDetail() {
 
   const userUUID = localStorage.getItem("user_uuid");
   const jWTToken = localStorage.getItem("jwt_token");
-  const api = new DefaultApi();
+  
+  const api = useMemo(() => {
+    const apiInstance = new DefaultApi();
+    apiInstance.apiClient.basePath = SERVER_URL;
+    apiInstance.apiClient.defaultHeaders = {
+      "User-UUID": userUUID,
+      "JWT-Token": jWTToken,
+      "ngrok-skip-browser-warning": "true",
+    };
+    return apiInstance;
+  }, [userUUID, jWTToken]);
 
-  api.apiClient.basePath = SERVER_URL;
-  api.apiClient.defaultHeaders = {
-    "User-UUID": userUUID,
-    "JWT-Token": jWTToken,
-    "ngrok-skip-browser-warning": "true",
-  };
-
-  const handleGenerateQRCodes = async () => {
-    try {
-      await loadDeepLinks();
-    } catch (e) {
-      console.error("Ошибка генерации QR-кодов:", e);
-    }
-  };
-
-  const downloadQR = async (id) => {
-    const element = document.getElementById(`qrcode-${id}`);
-    if (!element) return;
-
-    try {
-      const dataUrl = await toPng(element);
-      const link = document.createElement("a");
-      link.download = `table-${id + 1}.png`;
-      link.href = dataUrl;
-      link.click();
-    } catch (error) {
-      console.error("Ошибка сохранения QR-кода:", error);
-    }
-  };
-
-  async function loadDeepLinks() {
+  const loadDeepLinks = useCallback(async () => {
     setLoadingQR(true);
     setQrError("");
     try {
@@ -209,7 +188,30 @@ export default function PlaceDetail() {
     } finally {
       setLoadingQR(false);
     }
-  }
+  }, [place_uuid, userUUID, jWTToken, api]);
+
+  const handleGenerateQRCodes = useCallback(async () => {
+    try {
+      await loadDeepLinks();
+    } catch (e) {
+      console.error("Ошибка генерации QR-кодов:", e);
+    }
+  }, [loadDeepLinks]);
+
+  const downloadQR = async (id) => {
+    const element = document.getElementById(`qrcode-${id}`);
+    if (!element) return;
+
+    try {
+      const dataUrl = await toPng(element);
+      const link = document.createElement("a");
+      link.download = `table-${id + 1}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (error) {
+      console.error("Ошибка сохранения QR-кода:", error);
+    }
+  };
 
   async function loadAvailableDishes() {
     try {
@@ -225,77 +227,19 @@ export default function PlaceDetail() {
         body: JSON.stringify({ restaurant_uuid: restaurant_uuid }),
       });
     
-    const { list, imagesMap } = await handleMultipartResponse(resp, 'dish_list');
+      const { list, imagesMap } = await handleMultipartResponse(resp, 'dish_list');
     
-    setAvailableDishes(list.map(d => ({
-      ...d,
-      imageUrl: imagesMap[d.picture_key] || null
-    })));
-  } catch (e) {
-    console.error("Ошибка загрузки блюд:", e);
-    setAvailableDishes([]);
-  }
-}
-
-  async function loadStaff() {
-    setLoading(true);
-    try {
-      const resp = await fetch(
-        `${SERVER_URL}/admin/v1/place/employee/list`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "User-UUID": userUUID,
-            "JWT-Token": jWTToken,
-            "ngrok-skip-browser-warning": "true",
-          },
-          body: JSON.stringify({ place_uuid: place_uuid }),
-        }
-      );
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      const data = await resp.json();
-      setStaff(data.employee_list || []);
+      setAvailableDishes(list.map(d => ({
+        ...d,
+        imageUrl: imagesMap[d.picture_key] || null
+      })));
     } catch (e) {
-      console.error("Ошибка загрузки сотрудников:", e);
-      setStaff([]);
-    } finally {
-      setLoading(false);
+      console.error("Ошибка загрузки блюд:", e);
+      setAvailableDishes([]);
     }
   }
 
-  async function loadMenuDishes() {
-  setLoading(true);
-  try {
-    const resp = await fetch(`${SERVER_URL}/admin/v1/place/menu/dish/list`, {
-      method: "POST",
-      headers: {
-        "Accept": "multipart/mixed, application/json",
-        "Content-Type": "application/json",
-        "User-UUID": userUUID,
-        "JWT-Token": jWTToken,
-        "ngrok-skip-browser-warning": "true",
-      },
-      body: JSON.stringify({ place_uuid: place_uuid }),
-    });
-
-    const { list, imagesMap } = await handleMultipartResponse(resp);
-    
-    setMenuDishes(list.map(d => ({
-      ...d,
-      imageUrl: imagesMap[d.picture_key] || null,
-      price: d.price
-    })));
-  } catch (e) {
-    console.error("Ошибка загрузки блюд:", e);
-    setMenuDishes([]);
-  } finally {
-    setLoading(false);
-  }
-}
-
-  async function loadOrders() {
+  const loadOrders = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
@@ -309,8 +253,9 @@ export default function PlaceDetail() {
           "ngrok-skip-browser-warning": "true"
         },
         body: JSON.stringify({ 
-          is_active: true,
-          place_uuid })
+          is_active: orderSubTab === 'open',
+          place_uuid 
+        })
       });
       if (!resp.ok) throw resp;
 
@@ -328,7 +273,62 @@ export default function PlaceDetail() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [place_uuid, userUUID, jWTToken, orderSubTab]);
+
+  const loadMenuDishes = useCallback(async () => {
+    setLoading(true);
+    try {
+      const resp = await fetch(`${SERVER_URL}/admin/v1/place/menu/dish/list`, {
+        method: "POST",
+        headers: {
+          "Accept": "multipart/mixed, application/json",
+          "Content-Type": "application/json",
+          "User-UUID": userUUID,
+          "JWT-Token": jWTToken,
+          "ngrok-skip-browser-warning": "true",
+        },
+        body: JSON.stringify({ place_uuid: place_uuid }),
+      });
+
+      const { list, imagesMap } = await handleMultipartResponse(resp);
+      
+      setMenuDishes(list.map(d => ({
+        ...d,
+        imageUrl: imagesMap[d.picture_key] || null,
+        price: d.price
+      })));
+    } catch (e) {
+      console.error("Ошибка загрузки блюд:", e);
+      setMenuDishes([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [place_uuid, userUUID, jWTToken]);
+
+  const loadStaff = useCallback(async () => {
+    setLoading(true);
+    try {
+      const resp = await fetch(`${SERVER_URL}/admin/v1/place/employee/list`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "User-UUID": userUUID,
+          "JWT-Token": jWTToken,
+          "ngrok-skip-browser-warning": "true",
+        },
+        body: JSON.stringify({ place_uuid: place_uuid }),
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const data = await resp.json();
+      setStaff(data.employee_list || []);
+    } catch (e) {
+      console.error("Ошибка загрузки сотрудников:", e);
+      setStaff([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [place_uuid, userUUID, jWTToken]);
 
   async function loadOrderDetails(order_uuid, place_uuid) {
     setLoading(true);
@@ -458,7 +458,30 @@ export default function PlaceDetail() {
     } else if (tab === "tables") {
       handleGenerateQRCodes();
     }
-  }, [place_uuid, tab]);
+  }, [place_uuid, tab, handleGenerateQRCodes, loadMenuDishes, loadOrders, loadStaff]);
+
+  // POLLING: для заказов
+  useEffect(() => {
+    if (tab !== "orders") return;
+    // Первый вызов сразу
+    loadOrders();
+    // Интервал
+    const interval = setInterval(() => {
+      loadOrders();
+    }, 5000); // 5 секунд
+    return () => clearInterval(interval);
+  }, [tab, place_uuid, orderSubTab, loadOrders]);
+
+  // POLLING: для деталей заказа
+  useEffect(() => {
+    if (tab !== "orders" || !selectedOrder) return;
+    const orderUuid = selectedOrder.order_main_info.uuid;
+    loadOrderDetails(orderUuid, place_uuid);
+    const interval = setInterval(() => {
+      loadOrderDetails(orderUuid, place_uuid);
+    }, 5000); // 5 секунд
+    return () => clearInterval(interval);
+  }, [tab, selectedOrder?.order_main_info?.uuid, place_uuid]);
 
   async function handleAddStaff() {
     if (!login.trim() || !role.trim()) {
@@ -547,7 +570,7 @@ export default function PlaceDetail() {
 
     const pc = Number(price);
     if (!Number.isFinite(pc) || pc <= 0) {
-      setPriceError("Укажите цену больше 0");
+      setError("Укажите цену больше 0");
       return;
     }
 
@@ -571,7 +594,6 @@ export default function PlaceDetail() {
       setShowAddModal(false);
       setPrice("");
       setSelectedDish(null);
-      setPriceError("");
       setError("");
     } catch (e) {
       console.error("Ошибка добавления блюда в меню:", e);
@@ -649,7 +671,6 @@ export default function PlaceDetail() {
             setSelectedDish(null);
             setPrice("");
             setError("");
-            setPriceError("");
           }}>
             Добавить блюдо
           </button>
@@ -662,7 +683,6 @@ export default function PlaceDetail() {
             setSelectedDish(null);
             setPrice("");
             setError("");
-            setPriceError("");
           }}>
             Сгенерировать QR-код
           </button>
@@ -966,14 +986,14 @@ export default function PlaceDetail() {
                       <select
                         value={ORDER_REVERSE_STATUS_MAP[selectedOrder.order_main_info.status] || selectedOrder.order_main_info.status}
                         onChange={async (e) => {
-                          if (LOCKED_ORDER_STATUSES.includes(selectedOrder.order_main_info.status)) return;
+                          if (LOCKED_ORDER_STATUSES.includes(selectedOrder.order_main_info.status) || orderSubTab === 'closed') return;
                           const newRusStatus = e.target.value; 
                           const newEngStatus = ORDER_REVERSE_STATUS_MAP[newRusStatus] || newRusStatus;
                           await editOrder(selectedOrder.order_main_info.uuid, newEngStatus, place_uuid);
                           setSelectedOrder(null);
                           setShowCheckout(false);
                         }}
-                        disabled={LOCKED_ORDER_STATUSES.includes(selectedOrder.order_main_info.status)}
+                        disabled={LOCKED_ORDER_STATUSES.includes(selectedOrder.order_main_info.status) || orderSubTab === 'closed'}
                       >
                         {Object.entries(ORDER_STATUS_MAP).map(([key, label]) => (
                           <option key={key} value={key}>
@@ -1013,6 +1033,7 @@ export default function PlaceDetail() {
                                 newStatus
                               )
                             }
+                            isClosedOrder={orderSubTab === 'closed'}
                           />
                           ))}
                         </div>
@@ -1041,7 +1062,6 @@ export default function PlaceDetail() {
                     setSelectedDish(null);
                     setPrice("");
                     setError("");
-                    setPriceError("");
                   }}
                 >
                   Выбрать блюдо
@@ -1062,7 +1082,6 @@ export default function PlaceDetail() {
                       setSelectedDish(null);
                       setPrice("");
                       setError("");
-                      setPriceError("");
                     }}
                   >
                     Отмена
@@ -1128,7 +1147,6 @@ export default function PlaceDetail() {
                       setSelectedDish(null);
                       setPrice("");
                       setError("");
-                      setPriceError("");
                     }}
                   >
                     Отмена

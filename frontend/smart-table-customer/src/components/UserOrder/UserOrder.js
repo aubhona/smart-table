@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useOrder } from "../OrderContext/OrderContext";
 import LoadingScreen from "../LoadingScreen/LoadingScreen";
@@ -38,7 +38,7 @@ const UserOrder = () => {
     );
   };
 
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     if (!customer_uuid || !order_uuid || !userLogin) return;
     try {
       setError("");
@@ -80,7 +80,7 @@ const UserOrder = () => {
       setError(e.message || "Ошибка при загрузке данных пользователя");
       setLoading(false);
     }
-  };
+  }, [customer_uuid, order_uuid, jwt_token, userLogin]);
 
   useEffect(() => {
     fetchUserData();
@@ -91,7 +91,7 @@ const UserOrder = () => {
     return () => {
       clearInterval(pollingIntervalRef.current);
     };
-  }, [customer_uuid, order_uuid, jwt_token, userLogin]);
+  }, [customer_uuid, order_uuid, jwt_token, userLogin, fetchUserData]);
 
   const handleGoBack = () => navigate(-1);
 

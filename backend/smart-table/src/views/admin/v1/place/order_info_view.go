@@ -3,6 +3,8 @@ package views
 import (
 	"context"
 	"fmt"
+	"slices"
+	"strings"
 
 	"github.com/smart-table/src/logging"
 
@@ -90,6 +92,10 @@ func convertCustomerInfoDTOToCustomerInfo(
 		itemGroupList = append(itemGroupList, convertItemGroupInfoDTOToItemGroupInfo(&customerInfoDTO.ItemGroupList[i]))
 	}
 
+	slices.SortFunc(itemGroupList, func(a, b viewsAdminPlace.ItemGroupInfo) int {
+		return strings.Compare(a.Name, b.Name)
+	})
+
 	return viewsAdminPlace.CustomerInfo{
 		UUID:          customerInfoDTO.UUID,
 		TgLogin:       customerInfoDTO.TgLogin,
@@ -126,6 +132,10 @@ func convertOrderInfoDTOToOrderInfo(
 	for _, customerInfoDTO := range orderInfoDTO.CustomerList {
 		customerList = append(customerList, convertCustomerInfoDTOToCustomerInfo(&customerInfoDTO))
 	}
+
+	slices.SortFunc(customerList, func(a, b viewsAdminPlace.CustomerInfo) int {
+		return strings.Compare(a.TgLogin, b.TgLogin)
+	})
 
 	orderMainInfo := convertMainOrderInfoDTOToOrderMainInfo(&orderInfoDTO.OrderMainInfo)
 

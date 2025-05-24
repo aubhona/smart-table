@@ -1,6 +1,6 @@
 app:
     port: 8080
-    env: development
+    env: production
     admin:
         jwt:
             enable: true
@@ -19,7 +19,7 @@ app:
             - http://localhost:3000
             - http://localhost:3001
             - http://localhost:3003
-            - https://h91q6lp9-3000.euw.devtunnels.ms/
+            - https://h91q6lp9-3000.euw.devtunnels.ms
         allow_methods:
             - GET
             - POST
@@ -52,7 +52,7 @@ database:
     max_connection_lifetime_jitter: 1m
 
 logging:
-    level: debug
+    level: info
     format: console
     file: logs/app.log
     max_size: 10
@@ -61,8 +61,8 @@ logging:
     compress: true
     enable_console_and_file: true
     server:
-        request_sym_limit: 10000000
-        response_sym_limit: 10000000
+        request_sym_limit: 1000
+        response_sym_limit: 1000
     bot:
         enable: false
 
@@ -78,4 +78,3 @@ s3:
     endpoint: storage.yandexcloud.net
     region: ru-central1
     bucket: smart-table
-

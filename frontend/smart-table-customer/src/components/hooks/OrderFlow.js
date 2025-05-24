@@ -110,13 +110,6 @@ function OrderFlow() {
     setRoomCode
   ]);
 
-  useEffect(() => {
-    localStorage.removeItem('customer_uuid');
-    localStorage.removeItem('order_uuid');
-    localStorage.removeItem('room_code');
-    localStorage.removeItem('jwt_token');
-  }, []);
-
   const handleTableIdSubmit = async (tableId) => {
     setError('');
     setCreatingOrder(true);

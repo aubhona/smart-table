@@ -5,11 +5,12 @@ const OrderContext = createContext();
 export const useOrder = () => useContext(OrderContext);
 
 export const OrderProvider = ({ children }) => {
-  const [customer_uuid, setCustomerUuid] = useState(() => localStorage.getItem("customer_uuid"));
-  const [order_uuid, setOrderUuid] = useState(() => localStorage.getItem("order_uuid"));
-  const [room_code, setRoomCode] = useState(() => localStorage.getItem("room_code"));
+  // Не инициализируем из localStorage, чтобы избежать проблем с очисткой
+  const [customer_uuid, setCustomerUuid] = useState(null);
+  const [order_uuid, setOrderUuid] = useState(null);
+  const [room_code, setRoomCode] = useState(null);
   const [cart, setCart] = useState({});
-  const [jwt_token, setJwtToken] = useState(() => localStorage.getItem("jwt_token"));
+  const [jwt_token, setJwtToken] = useState(null);
 
   useEffect(() => {
     if (customer_uuid) localStorage.setItem("customer_uuid", customer_uuid);
