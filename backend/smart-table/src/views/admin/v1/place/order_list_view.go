@@ -3,6 +3,7 @@ package views
 import (
 	"context"
 	"fmt"
+	"slices"
 
 	"github.com/smart-table/src/logging"
 
@@ -52,6 +53,10 @@ func (h *AdminV1PlaceHandler) PostAdminV1PlaceOrderList(
 	for _, order := range result.OrderList {
 		orderMainInfoList = append(orderMainInfoList, convertMainOrderInfoDTOToOrderMainInfo(&order))
 	}
+
+	slices.SortFunc(orderMainInfoList, func(a, b viewsAdminPlace.OrderMainInfo) int {
+		return a.CreatedAt.Compare(b.CreatedAt)
+	})
 
 	return viewsAdminPlace.PostAdminV1PlaceOrderList200JSONResponse{
 		OrderList: orderMainInfoList,

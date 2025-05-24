@@ -3,6 +3,8 @@ package viewscustomerorder
 import (
 	"context"
 	"fmt"
+	"slices"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
@@ -79,6 +81,10 @@ func convertCustomerInfoImplToCustomerInfo(
 		itemList = append(itemList, customerInfoImpl.ItemInfoMap[i])
 	}
 
+	slices.SortFunc(itemList, func(a, b viewsCustomerOrder.ItemInfo) int {
+		return strings.Compare(a.Name, b.Name)
+	})
+
 	return viewsCustomerOrder.CustomerInfo{
 		UUID:       customerInfoImpl.UUID,
 		TgLogin:    customerInfoImpl.TgLogin,
@@ -146,6 +152,10 @@ func getCustomerInfoList(
 	for _, customerInfoImpl := range customerInfoImplMap {
 		customerInfoList = append(customerInfoList, convertCustomerInfoImplToCustomerInfo(&customerInfoImpl))
 	}
+
+	slices.SortFunc(customerInfoList, func(a, b viewsCustomerOrder.CustomerInfo) int {
+		return strings.Compare(a.TgLogin, b.TgLogin)
+	})
 
 	return customerInfoList
 }

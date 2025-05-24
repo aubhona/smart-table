@@ -460,6 +460,29 @@ export default function PlaceDetail() {
     }
   }, [place_uuid, tab, handleGenerateQRCodes, loadMenuDishes, loadOrders, loadStaff]);
 
+  // POLLING: для заказов
+  useEffect(() => {
+    if (tab !== "orders") return;
+    // Первый вызов сразу
+    loadOrders();
+    // Интервал
+    const interval = setInterval(() => {
+      loadOrders();
+    }, 5000); // 5 секунд
+    return () => clearInterval(interval);
+  }, [tab, place_uuid, orderSubTab, loadOrders]);
+
+  // POLLING: для деталей заказа
+  useEffect(() => {
+    if (tab !== "orders" || !selectedOrder) return;
+    const orderUuid = selectedOrder.order_main_info.uuid;
+    loadOrderDetails(orderUuid, place_uuid);
+    const interval = setInterval(() => {
+      loadOrderDetails(orderUuid, place_uuid);
+    }, 5000); // 5 секунд
+    return () => clearInterval(interval);
+  }, [tab, selectedOrder?.order_main_info?.uuid, place_uuid]);
+
   async function handleAddStaff() {
     if (!login.trim() || !role.trim()) {
       setError("Заполните все поля");
