@@ -167,6 +167,11 @@ func addHandlers(container *dig.Container) error { //nolint
 		return err
 	}
 
+	err = container.Provide(app.NewMenuDishDeleteCommandHandler)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

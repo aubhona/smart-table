@@ -25,6 +25,8 @@ type Place struct {
 	closingTime time.Time
 	createdAt   time.Time
 	updatedAt   time.Time
+
+	deletedMenuDishUUIDs []uuid.UUID
 }
 
 func NewPlace(
@@ -49,6 +51,8 @@ func NewPlace(
 		closingTime: closingTime,
 		createdAt:   time.Now(),
 		updatedAt:   time.Now(),
+
+		deletedMenuDishUUIDs: make([]uuid.UUID, 0),
 	}
 
 	shardID := uuidGenerator.GetShardID()
@@ -82,6 +86,8 @@ func RestorePlace(
 		closingTime: closingTime,
 		createdAt:   createdAt,
 		updatedAt:   updatedAt,
+
+		deletedMenuDishUUIDs: make([]uuid.UUID, 0),
 	}
 
 	placeRef, _ := utils.NewSharedRef(&place)
@@ -114,6 +120,25 @@ func (p *Place) AddMenuDish(
 	p.menuDishes = append(p.menuDishes, menuDish)
 
 	return menuDish, nil
+}
+
+func (p *Place) DeleteMenuDish(menuDishUUID uuid.UUID) error {
+	for i, menuDish := range p.menuDishes {
+		if menuDish.Get().GetUUID() != menuDishUUID {
+			continue
+		}
+
+		newMenuDishList := make([]utils.SharedRef[MenuDish], 0, len(p.menuDishes)-1)
+		newMenuDishList = append(newMenuDishList, p.menuDishes[:i]...)
+		newMenuDishList = append(newMenuDishList, p.menuDishes[i+1:]...)
+
+		p.menuDishes = newMenuDishList
+		p.deletedMenuDishUUIDs = append(p.deletedMenuDishUUIDs, menuDishUUID)
+
+		return nil
+	}
+
+	return domainErrors.MenuDishNotFound{UUID: menuDishUUID}
 }
 
 func (p *Place) ContainsEmployee(employeeUserUUID uuid.UUID) bool {
@@ -159,3 +184,5 @@ func (p *Place) GetOpeningTime() time.Time { return p.openingTime }
 func (p *Place) GetClosingTime() time.Time { return p.closingTime }
 func (p *Place) GetCreatedAt() time.Time   { return p.createdAt }
 func (p *Place) GetUpdatedAt() time.Time   { return p.updatedAt }
+
+func (p *Place) GetDeletedMenuDishUUIDs() []uuid.UUID { return p.deletedMenuDishUUIDs }

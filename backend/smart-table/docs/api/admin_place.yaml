@@ -275,7 +275,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/AdminV1PlaceMenuDishCreateRequest'
+                            $ref: '#/components/schemas/AdminV1PlaceMenuDishDeleteRequest'
             responses:
                 '204':
                     description: Успешное удаление блюда
@@ -850,10 +850,16 @@ components:
             type: object
             additionalProperties: false
             properties:
+                place_uuid:
+                    type: string
+                    format: uuid
+                    description: Уникальный идентификатор плейса
                 menu_dish_uuid:
                     type: string
                     format: uuid
+                    description: Уникальный идентификатор позиции в меню
             required:
+                - place_uuid
                 - menu_dish_uuid
 
         # /admin/v1/place/menu/dish/list_POST
