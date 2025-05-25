@@ -260,7 +260,9 @@ func convertOrderToOrderInfoDTO(
 		if !isExists {
 			ItemGroup := createItemGroupInfoDTO(item)
 			customerInfoImpl.ItemGroupMap[key] = &ItemGroup
-			customerInfoImpl.TotalPrice = customerInfoImpl.TotalPrice.Add(item.Get().GetPrice())
+			if item.Get().IsCanceled() {
+				customerInfoImpl.TotalPrice = customerInfoImpl.TotalPrice.Add(item.Get().GetPrice())
+			}
 			orderTotalPrice = orderTotalPrice.Add(item.Get().GetPrice())
 		} else {
 			itemGroup.ItemUUIDList = append(itemGroup.ItemUUIDList, item.Get().GetUUID())
@@ -278,7 +280,9 @@ func convertOrderToOrderInfoDTO(
 			resultPrice = resultPrice.Add(itemPrice)
 			itemGroup.ResultPrice = resultPrice.String()
 
-			customerInfoImpl.TotalPrice = customerInfoImpl.TotalPrice.Add(itemPrice)
+			if item.Get().IsCanceled() {
+				customerInfoImpl.TotalPrice = customerInfoImpl.TotalPrice.Add(itemPrice)
+			}
 
 			itemGroup.Count++
 
