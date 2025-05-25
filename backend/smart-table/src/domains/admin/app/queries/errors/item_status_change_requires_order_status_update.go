@@ -12,7 +12,7 @@ type ItemStatusChangeRequiresOrderStatusUpdate struct {
 }
 
 func (e ItemStatusChangeRequiresOrderStatusUpdate) Error() string {
-	if e.ItemEditGpoup.HasValue() {
+	if !e.ItemEditGpoup.HasValue() {
 		return "item_status='nil'  can only be changed with a full order status update"
 	}
 

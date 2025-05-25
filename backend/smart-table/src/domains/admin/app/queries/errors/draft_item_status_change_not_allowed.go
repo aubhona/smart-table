@@ -12,7 +12,7 @@ type DraftItemStatusChangeNotAllowed struct {
 }
 
 func (e DraftItemStatusChangeNotAllowed) Error() string {
-	if e.ItemEditGpoup.HasValue() {
+	if !e.ItemEditGpoup.HasValue() {
 		return "cannot change status for draft item, to  item_status='nil'"
 	}
 

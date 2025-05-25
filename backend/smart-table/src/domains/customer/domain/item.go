@@ -10,6 +10,12 @@ import (
 	"github.com/smart-table/src/utils"
 )
 
+var validItemResolutions = map[defsInternalItem.ItemResolution]interface{}{
+	defsInternalItem.ItemResolutionCanceledByClient:  nil,
+	defsInternalItem.ItemResolutionCanceledByService: nil,
+	defsInternalItem.ItemResolutionPaid:              nil,
+}
+
 var validItemStatuses = map[defsInternalItem.ItemStatus]interface{}{
 	defsInternalItem.ItemStatusAccepted:          nil,
 	defsInternalItem.ItemStatusCanceledByClient:  nil,
@@ -20,6 +26,12 @@ var validItemStatuses = map[defsInternalItem.ItemStatus]interface{}{
 	defsInternalItem.ItemStatusPaid:              nil,
 	defsInternalItem.ItemStatusPaymentWaiting:    nil,
 	defsInternalItem.ItemStatusServed:            nil,
+}
+
+var itemStatusesWhichCanResolutions = map[defsInternalItem.ItemStatus]interface{}{
+	defsInternalItem.ItemStatusCanceledByClient:  nil,
+	defsInternalItem.ItemStatusCanceledByService: nil,
+	defsInternalItem.ItemStatusPaid:              nil,
 }
 
 type Item struct {
@@ -144,6 +156,24 @@ func (i *Item) GetUpdatedAt() time.Time                                        {
 func (i *Item) GetIsDraft() bool                                               { return i.isDraft }
 func (i *Item) GetCalories() int                                               { return i.calories }
 
+func (i *Item) setResolution(resolution defsInternalItem.ItemResolution) {
+	i.resolution = utils.NewOptional(resolution)
+}
+
+func IsValidItemResolution(resolution defsInternalItem.ItemResolution) bool {
+	_, exists := validItemResolutions[resolution]
+	return exists
+}
+
+func ParseItemResolution(raw string) (defsInternalItem.ItemResolution, error) {
+	resolution := defsInternalItem.ItemResolution(raw)
+	if !IsValidItemResolution(resolution) {
+		return "", domainErrors.InvalidItemResolution{ItemResolution: resolution}
+	}
+
+	return resolution, nil
+}
+
 func (i *Item) SetStatus(status defsInternalItem.ItemStatus) error {
 	if i.GetIsDraft() && status != defsInternalItem.ItemStatusNew {
 		return domainErrors.DraftItemStatusChangeNotAllowed{
@@ -153,6 +183,16 @@ func (i *Item) SetStatus(status defsInternalItem.ItemStatus) error {
 	}
 
 	i.status = status
+
+	_, exists := itemStatusesWhichCanResolutions[status]
+	if exists {
+		parsedOrderResolution, err := ParseItemResolution(string(status))
+		if err != nil {
+			return err
+		}
+
+		i.setResolution(parsedOrderResolution)
+	}
 
 	return nil
 }
