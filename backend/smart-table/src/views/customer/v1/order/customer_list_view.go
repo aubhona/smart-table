@@ -122,7 +122,8 @@ func getCustomerInfoList(
 		if !isExists {
 			customerInfoImpl.IsActive = true
 			customerInfoImpl.ItemInfoMap[key] = convertItemToItemInfo(item)
-			if item.Get().IsCanceled() {
+
+			if !item.Get().IsCanceled() {
 				customerInfoImpl.TotalPrice = customerInfoImpl.TotalPrice.Add(item.Get().GetPrice())
 			}
 		} else {
@@ -139,7 +140,7 @@ func getCustomerInfoList(
 			itemInfoResultPrice = itemInfoResultPrice.Add(itemInfoPrice)
 			itemInfo.ResultPrice = itemInfoResultPrice.String()
 
-			if item.Get().IsCanceled() {
+			if !item.Get().IsCanceled() {
 				customerInfoImpl.TotalPrice = customerInfoImpl.TotalPrice.Add(itemInfoPrice)
 			}
 
