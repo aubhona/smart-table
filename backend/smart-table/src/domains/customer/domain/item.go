@@ -211,6 +211,17 @@ func ParseItemStatus(raw string) (defsInternalItem.ItemStatus, error) {
 	return status, nil
 }
 
+func (i *Item) IsCanceled() bool {
+	if !i.GetResolution().HasValue() {
+		return false
+	}
+
+	resolution := i.GetResolution().Value()
+
+	return resolution == defsInternalItem.ItemResolutionCanceledByService ||
+		resolution == defsInternalItem.ItemResolutionCanceledByClient
+}
+
 func (i *Item) Commit() {
 	i.isDraft = false
 }
