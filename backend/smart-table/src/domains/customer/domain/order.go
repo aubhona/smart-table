@@ -225,6 +225,10 @@ func (o *Order) SetStatus(status defsInternalOrder.OrderStatus) error {
 	}
 
 	for _, item := range o.items {
+		if item.Get().GetIsDraft() {
+			continue
+		}
+
 		err := item.Get().SetStatus(parsedItemStatus)
 		if err != nil {
 			return err
