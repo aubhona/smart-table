@@ -82,6 +82,11 @@ func (p *PlaceRepository) Update(tx domain.Transaction, place utils.SharedRef[do
 		return err
 	}
 
+	err = queries.DeleteMenuDishesByUUID(ctx, place.Get().GetDeletedMenuDishUUIDs())
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -7,14 +7,14 @@ import (
 	"github.com/smart-table/src/utils"
 )
 
-type InvalidItemStatus struct {
+type InvalidItemResolution struct {
 	ItemEditGpoup utils.Optional[defsInternalCustomerDTO.ItemEditGroupDTO]
 }
 
-func (e InvalidItemStatus) Error() string {
+func (e InvalidItemResolution) Error() string {
 	if !e.ItemEditGpoup.HasValue() {
-		return "invalid item_status='nil'"
+		return "invalid item_resolution='nil'"
 	}
 
-	return fmt.Sprintf("invalid item_status='%s'", e.ItemEditGpoup.Value().ItemStatus)
+	return fmt.Sprintf("invalid item_resolution='%s'", e.ItemEditGpoup.Value().ItemStatus)
 }
