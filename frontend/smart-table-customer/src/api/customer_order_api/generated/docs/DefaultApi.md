@@ -5,7 +5,9 @@ All URIs are relative to *http://localhost*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**customerV1OrderCartGet**](DefaultApi.md#customerV1OrderCartGet) | **GET** /customer/v1/order/cart | Получить корзину
+[**customerV1OrderCartInfoGet**](DefaultApi.md#customerV1OrderCartInfoGet) | **GET** /customer/v1/order/cart-info | Получение каталога
 [**customerV1OrderCatalogGet**](DefaultApi.md#customerV1OrderCatalogGet) | **GET** /customer/v1/order/catalog | Получение каталога
+[**customerV1OrderCatalogInfoGet**](DefaultApi.md#customerV1OrderCatalogInfoGet) | **GET** /customer/v1/order/catalog-info | Получение каталога
 [**customerV1OrderCatalogUpdatedInfoGet**](DefaultApi.md#customerV1OrderCatalogUpdatedInfoGet) | **GET** /customer/v1/order/catalog/updated-info | Получить обновленную информацию по каталогу
 [**customerV1OrderCreatePost**](DefaultApi.md#customerV1OrderCreatePost) | **POST** /customer/v1/order/create | Создаёт новый заказ
 [**customerV1OrderCustomerListGet**](DefaultApi.md#customerV1OrderCustomerListGet) | **GET** /customer/v1/order/customer/list | Получение списка пользователей заказа
@@ -66,6 +68,55 @@ No authorization required
 - **Accept**: multipart/mixed, application/json
 
 
+## customerV1OrderCartInfoGet
+
+> CartInfo customerV1OrderCartInfoGet(customerUUID, jWTToken, orderUUID)
+
+Получение каталога
+
+Отображение каталога плейса
+
+### Example
+
+```javascript
+import SmartTableMobileApi from 'smart_table_mobile_api';
+
+let apiInstance = new SmartTableMobileApi.DefaultApi();
+let customerUUID = "customerUUID_example"; // String | Уникальный идентификатор пользователя
+let jWTToken = "jWTToken_example"; // String | jwt токен пользователя
+let orderUUID = "orderUUID_example"; // String | Уникальный идентификатор заказа
+apiInstance.customerV1OrderCartInfoGet(customerUUID, jWTToken, orderUUID, (error, data, response) => {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+});
+```
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **customerUUID** | **String**| Уникальный идентификатор пользователя | 
+ **jWTToken** | **String**| jwt токен пользователя | 
+ **orderUUID** | **String**| Уникальный идентификатор заказа | 
+
+### Return type
+
+[**CartInfo**](CartInfo.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+
 ## customerV1OrderCatalogGet
 
 > File customerV1OrderCatalogGet(customerUUID, jWTToken, orderUUID)
@@ -113,6 +164,55 @@ No authorization required
 
 - **Content-Type**: Not defined
 - **Accept**: multipart/mixed, application/json
+
+
+## customerV1OrderCatalogInfoGet
+
+> Catalog customerV1OrderCatalogInfoGet(customerUUID, jWTToken, orderUUID)
+
+Получение каталога
+
+Отображение каталога плейса
+
+### Example
+
+```javascript
+import SmartTableMobileApi from 'smart_table_mobile_api';
+
+let apiInstance = new SmartTableMobileApi.DefaultApi();
+let customerUUID = "customerUUID_example"; // String | Уникальный идентификатор пользователя
+let jWTToken = "jWTToken_example"; // String | jwt токен пользователя
+let orderUUID = "orderUUID_example"; // String | Уникальный идентификатор заказа
+apiInstance.customerV1OrderCatalogInfoGet(customerUUID, jWTToken, orderUUID, (error, data, response) => {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+});
+```
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **customerUUID** | **String**| Уникальный идентификатор пользователя | 
+ **jWTToken** | **String**| jwt токен пользователя | 
+ **orderUUID** | **String**| Уникальный идентификатор заказа | 
+
+### Return type
+
+[**Catalog**](Catalog.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
 
 
 ## customerV1OrderCatalogUpdatedInfoGet

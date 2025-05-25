@@ -11,6 +11,7 @@
  *
  */
 
+import ApiClient from '../ApiClient';
 /**
 * Enum class OrderStatus.
 * @enum {}
@@ -33,6 +34,13 @@ export default class OrderStatus {
 
     
         /**
+         * value: "payment_waiting"
+         * @const
+         */
+        "payment_waiting" = "payment_waiting";
+
+    
+        /**
          * value: "paid"
          * @const
          */
@@ -51,13 +59,6 @@ export default class OrderStatus {
          * @const
          */
         "canceled_by_client" = "canceled_by_client";
-
-    
-        /**
-         * value: "payment_waiting"
-         * @const
-         */
-        "payment_waiting" = "payment_waiting";
 
     
 

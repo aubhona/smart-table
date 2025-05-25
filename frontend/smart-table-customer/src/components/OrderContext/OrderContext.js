@@ -5,7 +5,6 @@ const OrderContext = createContext();
 export const useOrder = () => useContext(OrderContext);
 
 export const OrderProvider = ({ children }) => {
-  // Не инициализируем из localStorage, чтобы избежать проблем с очисткой
   const [customer_uuid, setCustomerUuid] = useState(null);
   const [order_uuid, setOrderUuid] = useState(null);
   const [room_code, setRoomCode] = useState(null);

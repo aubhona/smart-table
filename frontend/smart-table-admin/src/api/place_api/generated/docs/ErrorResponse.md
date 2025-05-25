@@ -14,6 +14,8 @@ Name | Type | Description | Notes
 
 * `invalid_item` (value: `"invalid_item"`)
 
+* `invalid_order_resolution` (value: `"invalid_order_resolution"`)
+
 * `invalid_order_status` (value: `"invalid_order_status"`)
 
 * `invalid_item_status` (value: `"invalid_item_status"`)
