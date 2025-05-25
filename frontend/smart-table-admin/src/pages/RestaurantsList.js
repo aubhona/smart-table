@@ -14,8 +14,6 @@ export default function RestaurantsList() {
   const [, setLoading] = useState(true);
 
   const [showEditModal, setShowEditModal] = useState(false);
-  const [editRestaurantUuid, setEditRestaurantUuid] = useState("");
-  const [editRestaurantName, setEditRestaurantName] = useState("");
 
   const userUUID = localStorage.getItem("user_uuid");
   const jWTToken = localStorage.getItem("jwt_token");
@@ -112,56 +110,6 @@ export default function RestaurantsList() {
     }
   };
 
-  const handleDeleteRestaurant = async (restaurant_uuid) => {
-    if (!window.confirm("Удалить ресторан? Это действие необратимо!")) return;
-    try {
-      const req = AdminV1RestaurantDeleteRequest.constructFromObject({
-        restaurant_uuid
-      });
-      await new Promise((res, rej) =>
-        api.adminV1RestaurantDeletePost(userUUID, jWTToken, req, (err) =>
-          err ? rej(err) : res()
-        )
-      );
-      setRestaurants(prev => prev.filter(r => r.restaurant_uuid !== restaurant_uuid));
-    } catch (e) {
-      alert(e.body?.message || e.message || "Ошибка удаления ресторана");
-    }
-  };
-
-  const handleEditRestaurant = async () => {
-    if (!editRestaurantName.trim()) {
-      setError("Введите название");
-      return;
-    }
-    try {
-      const req = AdminV1RestaurantEditRequest.constructFromObject({
-        restaurant_uuid: editRestaurantUuid,
-        restaurant_name: editRestaurantName
-      });
-      await new Promise((res, rej) =>
-        api.adminV1RestaurantEditPost(userUUID, jWTToken, req, (err) =>
-          err ? rej(err) : res()
-        )
-      );
-      setRestaurants(prev =>
-        prev.map(r =>
-          r.restaurant_uuid === editRestaurantUuid
-            ? { ...r, restaurant_name: editRestaurantName }
-            : r
-        )
-      );
-      setShowEditModal(false);
-    } catch (e) {
-      alert(e.body?.message || e.message || "Ошибка редактирования ресторана");
-    }
-  };
-
-  const openEditModal = (r) => {
-    setEditRestaurantUuid(r.restaurant_uuid);
-    setEditRestaurantName(r.restaurant_name);
-    setShowEditModal(true);
-  };
 
   const handleLogout = () => {
     localStorage.removeItem("user_uuid");
@@ -179,9 +127,6 @@ export default function RestaurantsList() {
           onClick={() => setShowModal(true)}
         >
           Создать ресторан
-        </button>
-        <button className="icon-button profile">
-          <span className="material-icons">account_circle</span>
         </button>
       </div>
 
@@ -201,26 +146,6 @@ export default function RestaurantsList() {
                 }}
               >
                 <span className="rest-name">{r.restaurant_name}</span>
-                <div className="rest-actions">
-                  <button
-                    className="icon-button edit"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openEditModal(r);
-                    }}
-                  >
-                    <span className="material-icons">edit</span>
-                  </button>
-                  <button
-                    className="icon-button delete"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteRestaurant(r.restaurant_uuid);
-                    }}
-                  >
-                    <span className="material-icons">delete</span>
-                  </button>
-                </div>
               </button>
             ))
           )}
@@ -247,24 +172,6 @@ export default function RestaurantsList() {
             </div>
           </div>
         </div>
-      )}
-      {showEditModal && (
-        <div className="modal-backdrop">
-          <div className="modal">
-            <h3>Редактировать ресторан</h3>
-            <div className="input-container">
-              <input
-                value={editRestaurantName}
-                onChange={e => setEditRestaurantName(e.target.value)}
-                placeholder="Введите новое название"
-              />
-            </div>
-            <div className="modal-buttons">
-              <button className="pill-button" onClick={handleEditRestaurant}>Сохранить</button>
-              <button className="pill-button" onClick={() => setShowEditModal(false)}>Отмена</button>
-            </div>
-            </div>
-      </div>
       )}
     </div>
   );

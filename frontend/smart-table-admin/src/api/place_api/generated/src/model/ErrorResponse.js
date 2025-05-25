@@ -120,6 +120,12 @@ ErrorResponse['CodeEnum'] = {
     "invalid_item": "invalid_item",
 
     /**
+     * value: "invalid_order_resolution"
+     * @const
+     */
+    "invalid_order_resolution": "invalid_order_resolution",
+
+    /**
      * value: "invalid_order_status"
      * @const
      */

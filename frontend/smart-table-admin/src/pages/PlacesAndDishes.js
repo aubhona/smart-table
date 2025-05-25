@@ -42,21 +42,15 @@ export default function PlacesAndDishes() {
   const [weightError, setWeightError] = useState("");
   const [pictureFile, setPictureFile] = useState(null);
 
-  const [showEditPlaceModal, setShowEditPlaceModal] = useState(false);
-  const [editPlace, setEditPlace] = useState(null);
-  const [editAddress, setEditAddress] = useState("");
-  const [editTableCount, setEditTableCount] = useState(1);
-  const [editOpeningTime, setEditOpeningTime] = useState("08:00");
-  const [editClosingTime, setEditClosingTime] = useState("23:00");
-
   const userUUID = localStorage.getItem("user_uuid");
   const jWTToken = localStorage.getItem("jwt_token");
 
    const categories = [
-    "Завтрак",
+    "Завтраки",
     "Супы",
     "Второе",
     "Салаты",
+    "Закуски",
     "Десерты",
     "Напитки"
   ];
@@ -167,52 +161,6 @@ export default function PlacesAndDishes() {
     }
   };
 
-  const handleDeletePlace = async (place_uuid) => {
-    if (!window.confirm("Удалить этот плейс?")) return;
-    try {
-      const req = AdminV1PlaceDeleteRequest.constructFromObject({ place_uuid });
-      await new Promise((res, rej) =>
-        placeApi.adminV1PlaceDeletePost(userUUID, jWTToken, req, (err) =>
-          err ? rej(err) : res()
-        )
-      );
-      await loadPlaces();
-    } catch (e) {
-      alert(e.body?.message || e.message || "Ошибка удаления плейса");
-    }
-  };
-
-  const openEditPlaceModal = (place) => {
-    setEditPlace(place);
-    setEditAddress(place.address);
-    setEditTableCount(place.table_count);
-    setEditOpeningTime(place.opening_time);
-    setEditClosingTime(place.closing_time);
-    setShowEditPlaceModal(true);
-  };
-
-  const handleSaveEditPlace = async () => {
-    if (!editPlace) return;
-    try {
-      const req = AdminV1PlaceEditRequest.constructFromObject({
-        place_uuid: editPlace.uuid,
-        address: editAddress,
-        table_count: editTableCount,
-        opening_time: editOpeningTime,
-        closing_time: editClosingTime
-      });
-      await new Promise((res, rej) =>
-        placeApi.adminV1PlaceEditPost(userUUID, jWTToken, req, (err) =>
-          err ? rej(err) : res()
-        )
-      );
-      setShowEditPlaceModal(false);
-      await loadPlaces();
-    } catch (e) {
-      alert(e.body?.message || e.message || "Ошибка редактирования плейса");
-    }
-  };
-
   const handleCreateDish = async () => {
     let ok = true;
 
@@ -298,9 +246,6 @@ export default function PlacesAndDishes() {
         >
           {tab === "places" ? "Создать плейс" : "Создать блюдо"}
         </button>
-        <button className="pd-profile-button">
-          <span className="material-icons">person</span>
-        </button>
       </div>
   
       <div className="pd-tabs">
@@ -338,28 +283,6 @@ export default function PlacesAndDishes() {
                 столов: {p.table_count}, {p.opening_time}–{p.closing_time}
               </div>
             </div>
-            <div className="pd-place-actions">
-              <button
-                className="pd-button pd-edit-button"
-                onClick={e => {
-                  e.stopPropagation();
-                  openEditPlaceModal(p)
-                }}
-                title="Редактировать"
-              >
-                <span className="material-icons">edit</span>
-              </button>
-              <button
-                className="pd-button pd-button-cancel"
-                onClick={e => {
-                  e.stopPropagation();
-                  handleDeletePlace(p)
-                }}
-                title="Удалить"
-              >
-                <span className="material-icons">delete</span>
-              </button>
-            </div>
           </div>
         ))}
   
@@ -373,8 +296,12 @@ export default function PlacesAndDishes() {
                     ? <img src={d.imageUrl} alt={d.name} />
                     : <div className="pd-no-image">нет фото</div>}
                 </div>
-                <div className="pd-dish-info">
-                    {d.name}
+                <div className="pd-dish-info pd-dish-info-left">
+                  <div className="pd-dish-title"><b>{d.name}</b></div>
+                  <div className="pd-dish-desc"><span>Описание:</span> {d.description}</div>
+                  <div className="pd-dish-category"><span>Категория:</span> {d.category}</div>
+                  <div className="pd-dish-weight"><span>Вес:</span> {d.weight} г</div>
+                  <div className="pd-dish-calories"><span>Калории:</span> {d.calories} ккал</div>
                 </div>
             </div>
           ))}
@@ -497,43 +424,6 @@ export default function PlacesAndDishes() {
             <div className="pd-modal-buttons">
               <button onClick={handleCreateDish}>Создать блюдо</button>
               <button onClick={() => setShowModal(false)}>Отмена</button>
-            </div>
-          </div>
-        </div>
-      )}
-      {showEditPlaceModal && (
-        <div className="pd-modal-backdrop">
-          <div className="pd-modal">
-            <h3>Редактировать плейс</h3>
-            <label>Адрес</label>
-            <input
-              value={editAddress}
-              onChange={e => setEditAddress(e.target.value)}
-              placeholder="Введите адрес"
-            />
-            <label>Количество столов</label>
-            <input
-              value={editTableCount}
-              onChange={e => setEditTableCount(e.target.value)}
-              placeholder="Введите количество"
-              type="number"
-              min={1}
-            />
-            <label>Время открытия</label>
-            <input
-              type="time"
-              value={editOpeningTime}
-              onChange={e => setEditOpeningTime(e.target.value)}
-            />
-            <label>Время закрытия</label>
-            <input
-              type="time"
-              value={editClosingTime}
-              onChange={e => setEditClosingTime(e.target.value)}
-            />
-            <div className="pd-modal-buttons">
-              <button onClick={handleSaveEditPlace}>Сохранить</button>
-              <button onClick={() => setShowEditPlaceModal(false)}>Отмена</button>
             </div>
           </div>
         </div>

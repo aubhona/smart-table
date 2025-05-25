@@ -41,7 +41,23 @@ const LOCKED_DISH_STATUSES = ['served', 'canceled_by_service'];
 
 const OrderItemGroup = ({ item, orderStatus, editOrderItemStatus, isClosedOrder }) => {
   const [open, setOpen] = useState(false);
+  const [bulkStatus, setBulkStatus] = useState("");
   const isLocked = LOCKED_ORDER_STATUSES.includes(orderStatus) || LOCKED_DISH_STATUSES.includes(item.status) || isClosedOrder;
+
+  const renderComment = () =>
+    item.comment ? (
+      <div className="ps-item-comment">
+        <span>Комментарий: {item.comment}</span>
+      </div>
+    ) : null;
+
+  const uuids = item.item_uuid_list;
+  const handleBulkStatusChange = async (status) => {
+    setBulkStatus(status);
+    for (let uuid of uuids) {
+      await editOrderItemStatus(uuid, status);
+    }
+  };
 
   if (item.count === 1) {
     return (
@@ -50,16 +66,21 @@ const OrderItemGroup = ({ item, orderStatus, editOrderItemStatus, isClosedOrder 
           <span className="ps-item-name">{item.name}</span>
           <span className="ps-item-price">{item.count}x {item.item_price}₽</span>
           <span className="ps-item-total-price">Итого: {item.result_price}₽</span>
+          {renderComment()}
         </div>
         <div className="ps-item-status">
           <select
             value={item.status}
             className="ps-status-select-wide"
             disabled={isLocked}
-            onChange={e => !isLocked && editOrderItemStatus(item.item_uuid_list[0], e.target.value)}
+            onChange={e =>
+              !isLocked && editOrderItemStatus(item.item_uuid_list[0], e.target.value)
+            }
           >
             {DISH_STATUS_FLOW.map(status => (
-              <option key={status} value={status}>{DISH_STATUS_MAP[status]}</option>
+              <option key={status} value={status}>
+                {DISH_STATUS_MAP[status]}
+              </option>
             ))}
           </select>
         </div>
@@ -71,22 +92,45 @@ const OrderItemGroup = ({ item, orderStatus, editOrderItemStatus, isClosedOrder 
     <div className="ps-order-item-group">
       <div className="ps-item-info ps-order-group-info">
         <span className="ps-item-name ps-order-group-name">{item.name}</span>
-        <span className="ps-item-price ps-order-group-price">{item.count}x {item.item_price}₽</span>
+        <span className="ps-item-price ps-order-group-price">
+          {item.count}x {item.item_price}₽
+        </span>
         <div className="ps-order-group-right">
-          <span className="ps-item-total-price ps-order-group-total">Итого: {item.result_price}₽</span>
-          <button
-            className="ps-expand-btn ps-order-group-expand"
-            onClick={() => setOpen(o => !o)}
-          >
-            {open ? "Скрыть блюда" : "Показать все"}
-          </button>
+          <span className="ps-item-total-price ps-order-group-total">
+            Итого: {item.result_price}₽
+          </span>
+          <div className="ps-order-group-actions">
+            <div className="ps-bulk-status-selector">
+              <select
+                value={bulkStatus}
+                className="ps-status-select-wide"
+                disabled={isLocked}
+                onChange={e => handleBulkStatusChange(e.target.value)}
+              >
+                <option value="">Изменить статус всем...</option>
+                {DISH_STATUS_FLOW.map(status => (
+                  <option key={status} value={status}>
+                    {DISH_STATUS_MAP[status]}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button
+              className="ps-expand-btn ps-order-group-expand"
+              onClick={() => setOpen((o) => !o)}
+            >
+              {open ? "Скрыть блюда" : "Показать все"}
+            </button>
+          </div>
         </div>
       </div>
+      {renderComment()}
+
       {open && (
         <div className="ps-order-item-list">
           {item.item_uuid_list.map((uuid, idx) => (
-            <div 
-              key={uuid} 
+            <div
+              key={`${item.menu_dish_uuid}-${uuid}-${idx}`}
               className="ps-order-item-single ps-order-group-single"
             >
               <span className="ps-item-name">{item.name} #{idx + 1}</span>
@@ -96,10 +140,14 @@ const OrderItemGroup = ({ item, orderStatus, editOrderItemStatus, isClosedOrder 
                   value={item.status}
                   className="ps-status-select-wide"
                   disabled={isLocked}
-                  onChange={e => !isLocked && editOrderItemStatus(uuid, e.target.value)}
+                  onChange={e =>
+                    !isLocked && editOrderItemStatus(uuid, e.target.value)
+                  }
                 >
                   {DISH_STATUS_FLOW.map(status => (
-                    <option key={status} value={status}>{DISH_STATUS_MAP[status]}</option>
+                    <option key={status} value={status}>
+                      {DISH_STATUS_MAP[status]}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -146,6 +194,8 @@ export default function PlaceDetail() {
   const [showEditMenuDishModal, setShowEditMenuDishModal] = useState(false);
   const [editMenuDishData, setEditMenuDishData] = useState(null);
   const [editMenuDishPrice, setEditMenuDishPrice] = useState("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [dishToDelete, setDishToDelete] = useState(null);
 
   const [orderSubTab, setOrderSubTab] = useState('open');
   const [orders, setOrders] = useState([]);
@@ -397,7 +447,7 @@ export default function PlaceDetail() {
       }
 
       await loadOrders();
-      await loadOrderDetails(order_uuid);
+      await loadOrderDetails(order_uuid, place_uuid);
     } catch (e) {
       setError(e.body?.message || e.message || "Ошибка редактирования заказа");
     } finally {
@@ -422,8 +472,6 @@ export default function PlaceDetail() {
           item_status: newStatus,
         },
       };
-
-      console.log(payload);
 
       const resp = await fetch(`${SERVER_URL}/admin/v1/place/order/edit`, {
         method: "POST",
@@ -460,26 +508,22 @@ export default function PlaceDetail() {
     }
   }, [place_uuid, tab, handleGenerateQRCodes, loadMenuDishes, loadOrders, loadStaff]);
 
-  // POLLING: для заказов
   useEffect(() => {
     if (tab !== "orders") return;
-    // Первый вызов сразу
     loadOrders();
-    // Интервал
     const interval = setInterval(() => {
       loadOrders();
-    }, 5000); // 5 секунд
+    }, 5000);
     return () => clearInterval(interval);
   }, [tab, place_uuid, orderSubTab, loadOrders]);
 
-  // POLLING: для деталей заказа
   useEffect(() => {
     if (tab !== "orders" || !selectedOrder) return;
     const orderUuid = selectedOrder.order_main_info.uuid;
     loadOrderDetails(orderUuid, place_uuid);
     const interval = setInterval(() => {
       loadOrderDetails(orderUuid, place_uuid);
-    }, 5000); // 5 секунд
+    }, 5000); 
     return () => clearInterval(interval);
   }, [tab, selectedOrder?.order_main_info?.uuid, place_uuid]);
 
@@ -515,52 +559,6 @@ export default function PlaceDetail() {
       setError(e.body?.message || e.message);
     }
   }
-
-  const handleDeleteStaff = async (employee) => {
-    console.log(employee);
-    if (!window.confirm(`Удалить сотрудника ${employee.login}?`)) return;
-    try {
-      const req = AdminV1PlaceEmployeeDeleteRequest.constructFromObject({
-        place_uuid: place_uuid,
-        employee_uuid: employee.uuid,
-      });
-      await new Promise((res, rej) =>
-        api.adminV1PlaceEmployeeDeletePost(userUUID, jWTToken, req, (err) =>
-          err ? rej(err) : res()
-        )
-      );
-      await loadStaff();
-    } catch (e) {
-      alert(e.body?.message || e.message || "Ошибка удаления сотрудника");
-    }
-  };
-
-  const handleEditStaff = (employee) => {
-  setEditStaffData(employee);
-  setRole(employee.employee_role);
-  setShowEditStaffModal(true);
-};
-
-  const handleUpdateStaff = async () => {
-    if (!editStaffData || !role.trim()) return;
-    try {
-      const req = AdminV1PlaceEmployeeEditRequest.constructFromObject({
-        place_uuid: place_uuid,
-        employee_uuid: editStaffData.uuid,
-        employee_role: role.trim(),
-      });
-      await new Promise((res, rej) =>
-        api.adminV1PlaceEmployeeEditPost(userUUID, jWTToken, req, (err) =>
-          err ? rej(err) : res()
-        )
-      );
-      setShowEditStaffModal(false);
-      setEditStaffData(null);
-      await loadStaff();
-    } catch (e) {
-      alert(e.body?.message || e.message || "Ошибка редактирования");
-    }
-  };
 
   const handleAddMenuItem = async () => {
     if (!selectedDish) {
@@ -602,49 +600,46 @@ export default function PlaceDetail() {
   };
 
   const handleDeleteMenuDish = async (dish) => {
-    if (!window.confirm(`Удалить блюдо "${dish.name}" из меню?`)) return;
-    try {
-      const req = AdminV1PlaceMenuDishDeleteRequest.constructFromObject({
-        menu_dish_uuid: dish.uuid,
-      });
-      await new Promise((res, rej) =>
-        api.adminV1PlaceMenuDishDeletePost(userUUID, jWTToken, req, (err) =>
-          err ? rej(err) : res()
-        )
-      );
-      await loadMenuDishes();
-    } catch (e) {
-      alert(e.body?.message || e.message || "Ошибка удаления блюда");
-    }
+    setDishToDelete(dish);
+    setShowDeleteConfirm(true);
   };
 
-  const handleEditMenuDish = (dish) => {
-  setEditMenuDishData(dish);
-  setEditMenuDishPrice(dish.price);
-  setShowEditMenuDishModal(true);
-};
-
-  const handleUpdateMenuDish = async () => {
-    if (!editMenuDishData || !editMenuDishPrice) return;
+  const confirmDelete = async () => {
+    if (!dishToDelete) return;
+  
     try {
-      const req = AdminV1PlaceMenuDishEditRequest.constructFromObject({
-        menu_dish_uuid: editMenuDishData.uuid,
-        dish_uuid: editMenuDishData.dish_uuid,
-        price: editMenuDishPrice,
+      const resp = await fetch(`${SERVER_URL}/admin/v1/place/menu/dish/delete`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "User-UUID": userUUID,
+          "JWT-Token": jWTToken,
+          "ngrok-skip-browser-warning": "true",
+        },
+        body: JSON.stringify({
+          place_uuid: place_uuid,           
+          menu_dish_uuid: dishToDelete.id,        
+        }),
       });
-      await new Promise((res, rej) =>
-        api.adminV1PlaceMenuDishEditPost(userUUID, jWTToken, req, (err) =>
-          err ? rej(err) : res()
-        )
-      );
-      setShowEditMenuDishModal(false);
-      setEditMenuDishData(null);
-      setEditMenuDishPrice("");
-      await loadMenuDishes();
+  
+      if (resp.status === 204) {
+        await loadMenuDishes();
+        setShowDeleteConfirm(false);
+        setDishToDelete(null);
+        return;
+      }
+  
+      let errMsg = "Ошибка удаления блюда";
+      try {
+        const errData = await resp.json();
+        errMsg = errData?.message || errMsg;
+      } catch (_) {}
+      alert(errMsg);
     } catch (e) {
-      alert(e.body?.message || e.message || "Ошибка редактирования блюда");
+      alert(e.message || "Ошибка удаления блюда");
     }
-  };  
+  };
 
   return (
     <div className="ps-container">
@@ -687,10 +682,6 @@ export default function PlaceDetail() {
             Сгенерировать QR-код
           </button>
         )}
-
-        <button className="ps-profile-button">
-          <span className="material-icons">person</span>
-        </button>
       </div>
 
       <div className="ps-tabs">
@@ -734,19 +725,6 @@ export default function PlaceDetail() {
                   <span>{u.first_name} {u.last_name}</span>
                   <span>{u.login}</span>
                   <span>{u.employee_role}</span>
-                  <button
-                    className="ps-button ps-edit-button"
-                    style={{ marginRight: 8 }}
-                    onClick={() => handleEditStaff(u)}
-                  >
-                    <span className="material-icons">edit</span>
-                  </button>
-                  <button
-                    className="ps-button ps-button-cancel"
-                    onClick={() => handleDeleteStaff(u)}
-                  >
-                    <span className="material-icons">delete</span>
-                  </button>
                 </div>
               ))}
 
@@ -823,13 +801,6 @@ export default function PlaceDetail() {
                         <p>{dish.calories} ккал, {dish.weight} г.</p>
                         <span className="price-tag">{dish.price}₽</span>
                         <div className="dish-actions">
-                          <button
-                            className="ps-button ps-edit-button"
-                            style={{ marginRight: 8 }}
-                            onClick={() => handleEditMenuDish(dish)}
-                          >
-                            <span className="material-icons">edit</span>
-                          </button>
                           <button
                             className="ps-button ps-button-cancel"
                             onClick={() => handleDeleteMenuDish(dish)}
@@ -1020,9 +991,9 @@ export default function PlaceDetail() {
                               <span className="ps-customer-instagram" style={{ marginTop: 4 }}>{customer.tg_id}</span>
                             </div>
                           </div>
-                          {customer.item_group_list.map(item => (
+                          {customer.item_group_list.map((item, idx) => (
                             <OrderItemGroup
-                            key={item.menu_dish_uuid}
+                            key={`${selectedOrder.order_main_info.uuid}-${customer.uuid}-${item.menu_dish_uuid}-${idx}`}
                             item={item}
                             orderStatus={selectedOrder.order_main_info.status}
                             editOrderItemStatus={(item_uuid, newStatus) => 
@@ -1158,55 +1129,26 @@ export default function PlaceDetail() {
           </div>
         </div>
       )}
-      {showEditStaffModal && (
+
+      {showDeleteConfirm && dishToDelete && (
         <div className="ps-backdrop">
-          <div className="ps-modal">
-            <h3>Редактировать сотрудника</h3>
-            <div>
-              <span>{editStaffData?.first_name} {editStaffData?.last_name} ({editStaffData?.login})</span>
-            </div>
-            <select
-              className="ps-role-select"
-              value={role}
-              onChange={e => setRole(e.target.value)}
-            >
-              <option value="" disabled>
-                Выберите роль
-              </option>
-              <option value="Админ">Админ</option>
-              <option value="Официант">Официант</option>
-            </select>
+          <div className="ps-modal delete-confirm-modal">
+            <h3>Подтверждение удаления</h3>
+            <p>Вы уверены, что хотите удалить блюдо <strong>"{dishToDelete.name}"</strong> из меню?</p>
             <div className="ps-modal-buttons">
-              <button className="ps-button" onClick={handleUpdateStaff}>
-                Сохранить
+              <button
+                className="ps-button ps-button-delete-confirm"
+                onClick={confirmDelete}
+              >
+                Удалить
               </button>
-              <button className="ps-button ps-button-cancel" onClick={() => setShowEditStaffModal(false)}>
-                Отмена
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {showEditMenuDishModal && (
-        <div className="ps-backdrop">
-          <div className="ps-modal">
-            <h3>Редактировать блюдо</h3>
-            <div>
-              <span>{editMenuDishData?.name}</span>
-            </div>
-            <input
-              className="ps-input"
-              type="number"
-              placeholder="Цена"
-              value={editMenuDishPrice}
-              min="1"
-              onChange={e => setEditMenuDishPrice(e.target.value)}
-            />
-            <div className="ps-modal-buttons">
-              <button className="ps-button" onClick={handleUpdateMenuDish}>
-                Сохранить
-              </button>
-              <button className="ps-button ps-button-cancel" onClick={() => setShowEditMenuDishModal(false)}>
+              <button
+                className="ps-button ps-button-cancel"
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  setDishToDelete(null);
+                }}
+              >
                 Отмена
               </button>
             </div>

@@ -13,6 +13,8 @@
 
 
 import ApiClient from "../ApiClient";
+import CartInfo from '../model/CartInfo';
+import Catalog from '../model/Catalog';
 import CustomerV1OrderCatalogUpdatedInfoResponse from '../model/CustomerV1OrderCatalogUpdatedInfoResponse';
 import CustomerV1OrderCreateRequest from '../model/CustomerV1OrderCreateRequest';
 import CustomerV1OrderCreateResponse from '../model/CustomerV1OrderCreateResponse';
@@ -96,6 +98,61 @@ export default class DefaultApi {
     }
 
     /**
+     * Callback function to receive the result of the customerV1OrderCartInfoGet operation.
+     * @callback module:api/DefaultApi~customerV1OrderCartInfoGetCallback
+     * @param {String} error Error message, if any.
+     * @param {module:model/CartInfo} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Получение каталога
+     * Отображение каталога плейса
+     * @param {String} customerUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {String} orderUUID Уникальный идентификатор заказа
+     * @param {module:api/DefaultApi~customerV1OrderCartInfoGetCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link module:model/CartInfo}
+     */
+    customerV1OrderCartInfoGet(customerUUID, jWTToken, orderUUID, callback) {
+      let postBody = null;
+      // verify the required parameter 'customerUUID' is set
+      if (customerUUID === undefined || customerUUID === null) {
+        throw new Error("Missing the required parameter 'customerUUID' when calling customerV1OrderCartInfoGet");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling customerV1OrderCartInfoGet");
+      }
+      // verify the required parameter 'orderUUID' is set
+      if (orderUUID === undefined || orderUUID === null) {
+        throw new Error("Missing the required parameter 'orderUUID' when calling customerV1OrderCartInfoGet");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'Customer-UUID': customerUUID,
+        'JWT-Token': jWTToken,
+        'Order-UUID': orderUUID
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = [];
+      let accepts = ['application/json'];
+      let returnType = CartInfo;
+      return this.apiClient.callApi(
+        '/customer/v1/order/cart-info', 'GET',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
      * Callback function to receive the result of the customerV1OrderCatalogGet operation.
      * @callback module:api/DefaultApi~customerV1OrderCatalogGetCallback
      * @param {String} error Error message, if any.
@@ -145,6 +202,61 @@ export default class DefaultApi {
       let returnType = File;
       return this.apiClient.callApi(
         '/customer/v1/order/catalog', 'GET',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the customerV1OrderCatalogInfoGet operation.
+     * @callback module:api/DefaultApi~customerV1OrderCatalogInfoGetCallback
+     * @param {String} error Error message, if any.
+     * @param {module:model/Catalog} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Получение каталога
+     * Отображение каталога плейса
+     * @param {String} customerUUID Уникальный идентификатор пользователя
+     * @param {String} jWTToken jwt токен пользователя
+     * @param {String} orderUUID Уникальный идентификатор заказа
+     * @param {module:api/DefaultApi~customerV1OrderCatalogInfoGetCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link module:model/Catalog}
+     */
+    customerV1OrderCatalogInfoGet(customerUUID, jWTToken, orderUUID, callback) {
+      let postBody = null;
+      // verify the required parameter 'customerUUID' is set
+      if (customerUUID === undefined || customerUUID === null) {
+        throw new Error("Missing the required parameter 'customerUUID' when calling customerV1OrderCatalogInfoGet");
+      }
+      // verify the required parameter 'jWTToken' is set
+      if (jWTToken === undefined || jWTToken === null) {
+        throw new Error("Missing the required parameter 'jWTToken' when calling customerV1OrderCatalogInfoGet");
+      }
+      // verify the required parameter 'orderUUID' is set
+      if (orderUUID === undefined || orderUUID === null) {
+        throw new Error("Missing the required parameter 'orderUUID' when calling customerV1OrderCatalogInfoGet");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+        'Customer-UUID': customerUUID,
+        'JWT-Token': jWTToken,
+        'Order-UUID': orderUUID
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = [];
+      let accepts = ['application/json'];
+      let returnType = Catalog;
+      return this.apiClient.callApi(
+        '/customer/v1/order/catalog-info', 'GET',
         pathParams, queryParams, headerParams, formParams, postBody,
         authNames, contentTypes, accepts, returnType, null, callback
       );

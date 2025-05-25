@@ -124,7 +124,9 @@ All URIs are relative to *http://localhost*
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
 *SmartTableMobileApi.DefaultApi* | [**customerV1OrderCartGet**](docs/DefaultApi.md#customerV1OrderCartGet) | **GET** /customer/v1/order/cart | Получить корзину
+*SmartTableMobileApi.DefaultApi* | [**customerV1OrderCartInfoGet**](docs/DefaultApi.md#customerV1OrderCartInfoGet) | **GET** /customer/v1/order/cart-info | Получение каталога
 *SmartTableMobileApi.DefaultApi* | [**customerV1OrderCatalogGet**](docs/DefaultApi.md#customerV1OrderCatalogGet) | **GET** /customer/v1/order/catalog | Получение каталога
+*SmartTableMobileApi.DefaultApi* | [**customerV1OrderCatalogInfoGet**](docs/DefaultApi.md#customerV1OrderCatalogInfoGet) | **GET** /customer/v1/order/catalog-info | Получение каталога
 *SmartTableMobileApi.DefaultApi* | [**customerV1OrderCatalogUpdatedInfoGet**](docs/DefaultApi.md#customerV1OrderCatalogUpdatedInfoGet) | **GET** /customer/v1/order/catalog/updated-info | Получить обновленную информацию по каталогу
 *SmartTableMobileApi.DefaultApi* | [**customerV1OrderCreatePost**](docs/DefaultApi.md#customerV1OrderCreatePost) | **POST** /customer/v1/order/create | Создаёт новый заказ
 *SmartTableMobileApi.DefaultApi* | [**customerV1OrderCustomerListGet**](docs/DefaultApi.md#customerV1OrderCustomerListGet) | **GET** /customer/v1/order/customer/list | Получение списка пользователей заказа
