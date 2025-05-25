@@ -64,7 +64,7 @@ func (handler *MenuDishListCommandHandler) Handle( //nolint
 
 	var err error
 
-	needPicture := true
+	var needPicture bool
 
 	if !command.InternalCall.HasValue() && !command.AdminCall.HasValue() {
 		return MenuDishListCommandHandlerResult{}, errors.New("invalid command")
@@ -84,6 +84,8 @@ func (handler *MenuDishListCommandHandler) Handle( //nolint
 				PlaceUUID: command.AdminCall.Value().PlaceUUID,
 			}
 		}
+
+		needPicture = command.AdminCall.Value().NeedPicture
 	} else {
 		placeUUID, err := handler.placeTableService.GetPlaceUUIDFromTableID(command.InternalCall.Value().TabledID)
 		if err != nil {

@@ -82,15 +82,19 @@ func (handler *DishListCommandHandler) Handle(
 		go func(dish utils.SharedRef[domain.Dish]) {
 			defer waitGroup.Done()
 
-			image, err := handler.s3QueryService.GetImage(dish.Get().GetPictureKey())
-			if err != nil {
-				logging.GetLogger().Error(
-					"error while getting image from S3",
-					zap.String("picture_key", dish.Get().GetPictureKey()),
-					zap.Error(err),
-				)
+			var image io.ReadCloser
 
-				return
+			if command.NeedPicture {
+				image, err = handler.s3QueryService.GetImage(dish.Get().GetPictureKey())
+				if err != nil {
+					logging.GetLogger().Error(
+						"error while getting image from S3",
+						zap.String("picture_key", dish.Get().GetPictureKey()),
+						zap.Error(err),
+					)
+
+					return
+				}
 			}
 
 			mut.Lock()

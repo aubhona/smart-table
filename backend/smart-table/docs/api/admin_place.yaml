@@ -344,6 +344,45 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
 
+    /admin/v1/place/menu/dish/info/list:
+        post:
+            summary: Получение списка позиций в меню плейса
+            description: Получение списка позиций в меню плейса
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1PlaceMenuDishListRequest'
+            responses:
+                '200':
+                    description: Список позиций меню
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1RestaurantDishInfoListResponse'
+                '401':
+                    description: Ошибка получения списка, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка получения списка, отказано в доступе, некорректные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка получения списка, плейс не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
     /admin/v1/place/employee/add:
         post:
             summary: Добавление сотрудника в плейс
@@ -873,6 +912,19 @@ components:
                     description: Уникальный идентификатор плейса
             required:
                 - place_uuid
+
+        # /admin/v1/place/menu/dish/info/list_POST
+        AdminV1RestaurantDishInfoListResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                menu_dish_list:
+                    description: Cписок позиций в меню
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/MenuDishInfo'
+            required:
+                - menu_dish_list
 
         # /admin/v1/place/employee/add_POST
         AdminV1PlaceEmployeeAddRequest:

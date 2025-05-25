@@ -317,6 +317,45 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
 
+    /admin/v1/restaurant/dish/info/list:
+        post:
+            summary: Получение списка блюд ресторана
+            description: Получение списка блюд ресторана
+            parameters:
+                - $ref: '#/components/parameters/user_uuid'
+                - $ref: '#/components/parameters/jwt_token'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AdminV1RestaurantDishListRequest'
+            responses:
+                '200':
+                    description: Список блюд 
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AdminV1RestaurantDishInfoListResponse'
+                '401':
+                    description: Ошибка получения списка, пользователь не авторизован
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '403':
+                    description: Ошибка получения списка, отказано в доступе, некорректные данные
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка получения списка, пользователь не найден
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
 components:
     parameters:
         user_uuid:
@@ -483,6 +522,19 @@ components:
                     $ref: '#/components/schemas/RestaurantUUID'
             required:
                 - restaurant_uuid
+
+        # /admin/v1/restaurant/dish/info/list_POST
+        AdminV1RestaurantDishInfoListResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                dish_list:
+                    description: Cписок блюд ресторана
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/DishInfo'
+            required:
+                - dish_list
 
         # Errors
         ErrorResponse:
