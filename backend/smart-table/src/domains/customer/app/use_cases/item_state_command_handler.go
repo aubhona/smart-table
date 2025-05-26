@@ -78,9 +78,13 @@ func (handler *ItemStateCommandHandler) Handle(command *ItemStateCommand) (ItemS
 		menuDish.Weight = item.Get().GetWeight()
 	}
 
-	pictureReader, err := menuDish.Picture.Reader()
-	if err != nil {
-		return ItemStateCommandHandlerResult{}, err
+	var pictureReader io.ReadCloser
+
+	if command.NeedPicture {
+		pictureReader, err = menuDish.Picture.Reader()
+		if err != nil {
+			return ItemStateCommandHandlerResult{}, err
+		}
 	}
 
 	price := decimal.RequireFromString(menuDish.Price)

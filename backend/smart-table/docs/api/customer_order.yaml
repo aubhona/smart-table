@@ -324,7 +324,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/CustomerV1OrderItemsStateRequest'
+                            $ref: '#/components/schemas/CustomerV1OrderItemStateRequest'
             responses:
                 '200':
                     description: Карточка блюда (ItemStateInfo JSON + binary images)
@@ -333,6 +333,40 @@ paths:
                             schema:
                                 type: string
                                 format: binary
+                '403':
+                    description: Ошибка авторизации или доступа
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                '404':
+                    description: Ошибка поиска заказа или клиента
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+
+    /customer/v1/order/item/info/state:
+        post:
+            summary: Получить карточку блюда
+            description: Возвращает подробную информацию по выбранному блюду
+            parameters:
+                -   $ref: '#/components/parameters/CustomerUUID'
+                -   $ref: '#/components/parameters/JwtToken'
+                -   $ref: '#/components/parameters/OrderUUID'
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CustomerV1OrderItemStateRequest'
+            responses:
+                '200':
+                    description: Карточка блюда
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CustomerV1OrderItemStateResponse'
                 '403':
                     description: Ошибка авторизации или доступа
                     content:
@@ -457,7 +491,7 @@ components:
                 - menu_updated_info
 
         # /customer/v1/order/item/state_POST
-        CustomerV1OrderItemsStateRequest:
+        CustomerV1OrderItemStateRequest:
             type: object
             additionalProperties: false
             properties:
@@ -468,6 +502,41 @@ components:
                     type: string
             required:
                 - dish_uuid
+
+        # /customer/v1/order/item/info/state_POST
+        CustomerV1OrderItemStateResponse:
+            type: object
+            additionalProperties: false
+            properties:
+                id:
+                    type: string
+                    format: uuid
+                name:
+                    type: string
+                description:
+                    type: string
+                weight:
+                    type: integer
+                calories:
+                    type: integer
+                category:
+                    type: string
+                price:
+                    type: string
+                count:
+                    type: integer
+                result_price:
+                    type: string
+            required:
+                - id
+                - name
+                - description
+                - weight
+                - calories
+                - category
+                - price
+                - count
+                - result_price
 
         # Objects
         Catalog:
