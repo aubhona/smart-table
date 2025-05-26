@@ -10,4 +10,5 @@ type ItemStateCommand struct {
 	OrderUUID    uuid.UUID
 	DishUUD      uuid.UUID
 	Comment      utils.Optional[string]
+	NeedPicture  bool
 }

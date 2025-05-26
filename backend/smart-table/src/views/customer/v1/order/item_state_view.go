@@ -18,7 +18,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (h *CustomerV1OrderHandler) PostCustomerV1OrderItemState(
+func (h *CustomerV1OrderHandler) PostCustomerV1OrderItemState( //nolint
 	ctx context.Context,
 	request viewsCustomerOrder.PostCustomerV1OrderItemStateRequestObject,
 ) (viewsCustomerOrder.PostCustomerV1OrderItemStateResponseObject, error) {
@@ -32,6 +32,7 @@ func (h *CustomerV1OrderHandler) PostCustomerV1OrderItemState(
 		CustomerUUID: request.Params.CustomerUUID,
 		DishUUD:      request.Body.DishUUID,
 		Comment:      utils.NewOptionalFromPointer(request.Body.Comment),
+		NeedPicture:  true,
 	})
 
 	if err != nil {
