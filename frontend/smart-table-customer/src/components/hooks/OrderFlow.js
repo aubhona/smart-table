@@ -163,8 +163,9 @@ function OrderFlow() {
         }),
       });
 
-      if (res.status === 403) {
-        setError('Неверный код комнаты');
+      if (res.status === 403 || res.status === 404 || res.status === 400) {
+        setStep(1);
+        setError('Неверный румкод или ID стола');
       } else if (res.ok) {
         const data = await res.json();
         setOrderUuid(data.order_uuid);
@@ -190,12 +191,6 @@ function OrderFlow() {
     );
   if (loading || !customer_uuid)
     return <LoadingScreen message="Авторизация..." />;
-  if (error)
-    return (
-      <div style={{ padding: '10%', textAlign: 'center', color: 'red', fontWeight: 'bold' }}>
-        <h2>{error}</h2>
-      </div>
-    );
 
   return (
     <div>

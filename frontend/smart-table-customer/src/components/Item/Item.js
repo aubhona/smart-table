@@ -30,38 +30,47 @@ function Item() {
     if (!customer_uuid || !order_uuid || !id) return;
     setLoading(true);
 
-    fetch(`${SERVER_URL}/customer/v1/order/item/state`, {
+    fetch(`${SERVER_URL}/customer/v1/order/item/info/state`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "ngrok-skip-browser-warning": "true",
         ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
-        "Accept": "multipart/mixed, application/json",
       },
-      body: JSON.stringify({
-        dish_uuid: id,
-      }),
+      body: JSON.stringify({ dish_uuid: id }),
     })
       .then(async (res) => {
         if (!res.ok) throw new Error("Не удалось загрузить блюдо");
-        const { list, imagesMap } = await handleMultipartResponse(res, "item");
-        const dishData = Array.isArray(list) ? list[0] : list;
-        if (!initialComment && dishData?.comment) setComment(dishData.comment);
-        let img = null;
-        if(imagesMap && imagesMap[id]) {
-          img = imagesMap[id];
-        }
-        if(!img && imagesMap) {
-          const key = Object.keys(imagesMap);
-          if(key.length === 1) {
-            img = imagesMap[key[0]];
-          }
-        }
-        setDish({
-          ...dishData, 
-          img: img || dishData?.img,
-        });
+        const data = await res.json();
+        setDish({ ...data, img: null });
         setLoading(false);
+
+        fetch(`${SERVER_URL}/customer/v1/order/item/state`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
+            ...getAuthHeaders({ customer_uuid, jwt_token, order_uuid }),
+            "Accept": "multipart/mixed, application/json",
+          },
+          body: JSON.stringify({ dish_uuid: id }),
+        })
+          .then(async (res) => {
+            if (!res.ok) return;
+            const { list, imagesMap } = await handleMultipartResponse(res, "item");
+            const dishData = Array.isArray(list) ? list[0] : list;
+            let img = null;
+            if(imagesMap && imagesMap[id]) {
+              img = imagesMap[id];
+            }
+            if(!img && imagesMap) {
+              const key = Object.keys(imagesMap);
+              if(key.length === 1) {
+                img = imagesMap[key[0]];
+              }
+            }
+            setDish((prev) => ({ ...prev, ...dishData, img: img || dishData?.img }));
+          });
       })
       .catch((e) => {
         setError(e.message || "Ошибка при загрузке блюда");
@@ -181,7 +190,7 @@ function Item() {
         {dish.img ? (
           <img src={dish.img} alt={dish.name} />
         ) : (
-          <span>Нет фото</span>
+          <div className="shimmer shimmer-rect" style={{width:'100%',height:'100%'}} />
         )}
       </div>
 

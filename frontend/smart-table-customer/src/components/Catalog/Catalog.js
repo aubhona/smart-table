@@ -56,9 +56,6 @@ function Catalog() {
     return () => window.removeEventListener("focus", fetchCartInfo);
   }, [customer_uuid, order_uuid, jwt_token, fetchCartInfo]);
 
-  /**
-   * Быстрая загрузка каталога без картинок
-   */
   const loadCatalogInfo = useCallback(async () => {
     if (!customer_uuid || !order_uuid || !jwt_token) return;
 
@@ -81,7 +78,6 @@ function Catalog() {
         return;
       }
 
-      // Обновляем основные списки без картинок
       setDishes(
         (data.menu || []).sort((a, b) => a.name.localeCompare(b.name, "ru"))
       );
@@ -91,16 +87,13 @@ function Catalog() {
 
       if (data.room_code) setRoomCode(data.room_code);
 
-      setLoading(false); // можно уже показывать каталог
+      setLoading(false); 
     } catch (e) {
       setError("Ошибка загрузки каталога: " + e.message);
       setLoading(false);
     }
   }, [customer_uuid, order_uuid, jwt_token, navigate, setRoomCode]);
 
-  /**
-   * Полная загрузка каталога с картинками (multipart)
-   */
   const loadCatalogWithImages = useCallback(async () => {
     if (!customer_uuid || !order_uuid || !jwt_token) return;
 
@@ -132,10 +125,8 @@ function Catalog() {
           go_tip_screen,
         } = await handleMultipartResponse(res, "menu");
 
-        // Обновляем изображения и (при необходимости) списки блюд / категорий
         setImages(imagesMap);
 
-        // Если списки ещё не были установлены (или могли измениться) – обновим их
         if (list && list.length) {
           setDishes(list.sort((a, b) => a.name.localeCompare(b.name, "ru")));
         }
@@ -154,11 +145,6 @@ function Catalog() {
     }
   }, [customer_uuid, order_uuid, jwt_token, navigate, setRoomCode]);
 
-  /**
-   * Загружаем оба варианта каталога параллельно:
-   * – сначала лёгкий (без картинок) для быстрой отрисовки,
-   * – затем полный (multipart) для подстановки изображений.
-   */
   useEffect(() => {
     if (!customer_uuid || !order_uuid || !jwt_token) return;
 

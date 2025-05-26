@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useParams } from "react-router-dom";
 import { handleMultipartResponse } from '../components/multipartUtils';
 import { SERVER_URL } from "../config";
 
 import PlaceApi from "../api/place_api/generated/src/api/DefaultApi";
 import AdminV1PlaceListRequest from "../api/place_api/generated/src/model/AdminV1PlaceListRequest";
 import AdminV1PlaceCreateRequest from "../api/place_api/generated/src/model/AdminV1PlaceCreateRequest";
-import AdminV1PlaceDeleteRequest from "../api/place_api/generated/src/model/AdminV1PlaceDeleteRequest";
-import AdminV1PlaceEditRequest from "../api/place_api/generated/src/model/AdminV1PlaceEditRequest";
 
 import RestaurantApi from "../api/restaurant_api/generated/src/api/DefaultApi";
 
@@ -15,7 +13,6 @@ import "../styles/PlacesDishesScreen.css";
 
 export default function PlacesAndDishes() {
   const { restaurant_uuid } = useParams();
-  const navigate = useNavigate();
 
   const saved = JSON.parse(localStorage.getItem("current_restaurant") || "{}");
   const restaurantName = saved.restaurant_name || "Ресторан";
@@ -55,13 +52,16 @@ export default function PlacesAndDishes() {
     "Напитки"
   ];
 
-  const placeApi = new PlaceApi();
-  placeApi.apiClient.basePath = SERVER_URL;
-  placeApi.apiClient.defaultHeaders = {
-    "User-UUID": userUUID,
-    "JWT-Token": jWTToken,
-    "ngrok-skip-browser-warning": "true",
-  };
+  const placeApi = useMemo(() => {
+    const api = new PlaceApi();
+    api.apiClient.basePath = SERVER_URL;
+    api.apiClient.defaultHeaders = {
+      "User-UUID": userUUID,
+      "JWT-Token": jWTToken,
+      "ngrok-skip-browser-warning": "true",
+    };
+    return api;
+  }, [userUUID, jWTToken]);
 
   const restApi = new RestaurantApi();
   restApi.apiClient.basePath = SERVER_URL;
@@ -71,7 +71,7 @@ export default function PlacesAndDishes() {
     "ngrok-skip-browser-warning": "true",
   };
 
-  async function loadPlaces() {
+  const loadPlaces = useCallback(async () => {
     setLoading(true);
     try {
       const req = AdminV1PlaceListRequest.constructFromObject({ restaurant_uuid });
@@ -84,12 +84,30 @@ export default function PlacesAndDishes() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [restaurant_uuid, placeApi, userUUID, jWTToken]);
 
-  async function loadDishes() {
+  const loadDishes = useCallback(async () => {
     setLoading(true);
+    let fastList = [];
+    let imagesMap = {};
     try {
-      const resp = await fetch(`${SERVER_URL}/admin/v1/restaurant/dish/list`, {
+      const fastResp = await fetch(`${SERVER_URL}/admin/v1/restaurant/dish/info/list`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "User-UUID": userUUID,
+          "JWT-Token": jWTToken,
+          "ngrok-skip-browser-warning": "true",
+        },
+        body: JSON.stringify({ restaurant_uuid }),
+      });
+      if (!fastResp.ok) throw new Error("Ошибка получения блюд (fast)");
+      const fastData = await fastResp.json();
+      fastList = (fastData.dish_list || []).map(d => ({ ...d, imageUrl: null }));
+      setDishes(fastList);
+      setLoading(false); 
+
+      const slowResp = await fetch(`${SERVER_URL}/admin/v1/restaurant/dish/list`, {
         method: "POST",
         headers: {
           Accept: "multipart/mixed, application/json",
@@ -100,30 +118,25 @@ export default function PlacesAndDishes() {
         },
         body: JSON.stringify({ restaurant_uuid }),
       });
-
-    const { list, imagesMap } = await handleMultipartResponse(resp, 'dish_list');
-    
-    setDishes(list.map(d => ({
-      ...d,
-      imageUrl: imagesMap[d.picture_key] || null
-    })));
+      const { list, imagesMap: slowImagesMap } = await handleMultipartResponse(slowResp, 'dish_list');
+      imagesMap = slowImagesMap;
+      setDishes(list.map(d => ({ ...d, imageUrl: imagesMap[d.picture_key] || null })));
     } catch (e) {
       console.error("Ошибка загрузки блюд:", e);
       setDishes([]);
-    } finally {
       setLoading(false);
     }
-  }
+  }, [restaurant_uuid, userUUID, jWTToken]);
 
    useEffect(() => {
     loadPlaces();
-  }, [restaurant_uuid]);
+  }, [restaurant_uuid, loadPlaces]);
 
    useEffect(() => {
     if (tab === "dishes") {
       loadDishes();
     }
-  }, [restaurant_uuid, tab]);
+  }, [restaurant_uuid, tab, loadDishes]);
 
   const handleCreatePlace = async () => {
     const tc = Number(tableCount);
@@ -142,7 +155,7 @@ export default function PlacesAndDishes() {
         opening_time: openingTime,
         closing_time: closingTime,
       });
-      const data = await new Promise((res, rej) =>
+      await new Promise((res, rej) =>
         placeApi.adminV1PlaceCreatePost(userUUID, jWTToken, req, (err, d) =>
           err ? rej(err) : res(d)
         )
@@ -193,7 +206,7 @@ export default function PlacesAndDishes() {
     }
     
     try {
-      const data = await new Promise((res, rej) =>
+      await new Promise((res, rej) =>
         restApi.adminV1RestaurantDishCreatePost(
           userUUID,
           jWTToken,
@@ -289,12 +302,22 @@ export default function PlacesAndDishes() {
         {!loading && tab === "dishes" && dishes.length === 0 && (
           <p className="pd-empty">Нет блюд</p>
         )}
+        {loading && tab === "dishes" && (
+          <div style={{display:'flex',flexWrap:'wrap',gap:'1rem'}}>
+            {[...Array(6)].map((_,i) => (
+              <div key={i} className="pd-dish-card">
+                <div className="pd-dish-image shimmer shimmer-rect" style={{height:120}} />
+                <div className="pd-dish-info pd-dish-info-left" />
+              </div>
+            ))}
+          </div>
+        )}
         {!loading && tab === "dishes" && dishes.map((d) => (
             <div key={d.id} className="pd-dish-card">
                  <div className="pd-dish-image">
                   {d.imageUrl
                     ? <img src={d.imageUrl} alt={d.name} />
-                    : <div className="pd-no-image">нет фото</div>}
+                    : <div className="shimmer shimmer-rect" style={{width:370, height:260}} />}
                 </div>
                 <div className="pd-dish-info pd-dish-info-left">
                   <div className="pd-dish-title"><b>{d.name}</b></div>
