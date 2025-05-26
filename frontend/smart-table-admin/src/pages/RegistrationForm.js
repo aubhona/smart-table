@@ -58,13 +58,11 @@ export default function RegistrationForm() {
 
       const { user_uuid, jwt_token } = response;
 
-      // Сохраняем данные пользователя
       localStorage.setItem("user_uuid", user_uuid);
       localStorage.setItem("jwt_token", jwt_token);
 
       addToast("Регистрация успешна!", "success");
       
-      // Очищаем форму
       setForm({
         login: "",
         tg_login: "",
@@ -74,7 +72,6 @@ export default function RegistrationForm() {
         password_confirm: "",
       });
 
-      // Перенаправляем после показа уведомления
       setTimeout(() => setRedirect(true), 1000);
     } catch (err) {
       const code = err.response?.body?.code;

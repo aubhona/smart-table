@@ -8,10 +8,6 @@ import DefaultApi from "../api/place_api/generated/src/api/DefaultApi";
 import AdminV1PlaceEmployeeAddRequest from "../api/place_api/generated/src/model/AdminV1PlaceEmployeeAddRequest";
 import AdminV1PlaceMenuDishCreateRequest from "../api/place_api/generated/src/model/AdminV1PlaceMenuDishCreateRequest";
 import AdminV1PlaceTableDeepLinksListRequest from "../api/place_api/generated/src/model/AdminV1PlaceTableDeepLinksListRequest";
-import AdminV1PlaceEmployeeDeleteRequest from "../api/place_api/generated/src/model/AdminV1PlaceEmployeeDeleteRequest";
-import AdminV1PlaceEmployeeEditRequest from "../api/place_api/generated/src/model/AdminV1PlaceEmployeeEditRequest";
-import AdminV1PlaceMenuDishDeleteRequest from "../api/place_api/generated/src/model/AdminV1PlaceMenuDishDeleteRequest";
-import AdminV1PlaceMenuDishEditRequest from "../api/place_api/generated/src/model/AdminV1PlaceMenuDishEditRequest";
 
 import "../styles/PlaceScreen.css";
 import { SERVER_URL } from "../config";
@@ -188,12 +184,6 @@ export default function PlaceDetail() {
   const [loadingQR, setLoadingQR] = useState(false);
   const [qrError, setQrError] = useState("");
 
-  const [showEditStaffModal, setShowEditStaffModal] = useState(false);
-  const [editStaffData, setEditStaffData] = useState(null);
-
-  const [showEditMenuDishModal, setShowEditMenuDishModal] = useState(false);
-  const [editMenuDishData, setEditMenuDishData] = useState(null);
-  const [editMenuDishPrice, setEditMenuDishPrice] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [dishToDelete, setDishToDelete] = useState(null);
 
@@ -264,8 +254,25 @@ export default function PlaceDetail() {
   };
 
   async function loadAvailableDishes() {
+    let fastList = [];
+    let imagesMap = {};
     try {
-      const resp = await fetch(`${SERVER_URL}/admin/v1/restaurant/dish/list`, {
+      const fastResp = await fetch(`${SERVER_URL}/admin/v1/restaurant/dish/info/list`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "User-UUID": userUUID,
+          "JWT-Token": jWTToken,
+          "ngrok-skip-browser-warning": "true",
+        },
+        body: JSON.stringify({ restaurant_uuid: restaurant_uuid }),
+      });
+      if (!fastResp.ok) throw new Error("Ошибка получения блюд (fast)");
+      const fastData = await fastResp.json();
+      fastList = (fastData.dish_list || []).map(d => ({ ...d, imageUrl: null }));
+      setAvailableDishes(fastList);
+
+      const slowResp = await fetch(`${SERVER_URL}/admin/v1/restaurant/dish/list`, {
         method: "POST",
         headers: {
           Accept: "multipart/mixed, application/json",
@@ -276,13 +283,9 @@ export default function PlaceDetail() {
         },
         body: JSON.stringify({ restaurant_uuid: restaurant_uuid }),
       });
-    
-      const { list, imagesMap } = await handleMultipartResponse(resp, 'dish_list');
-    
-      setAvailableDishes(list.map(d => ({
-        ...d,
-        imageUrl: imagesMap[d.picture_key] || null
-      })));
+      const { list, imagesMap: slowImagesMap } = await handleMultipartResponse(slowResp, 'dish_list');
+      imagesMap = slowImagesMap;
+      setAvailableDishes(list.map(d => ({ ...d, imageUrl: imagesMap[d.picture_key] || null })));
     } catch (e) {
       console.error("Ошибка загрузки блюд:", e);
       setAvailableDishes([]);
@@ -327,8 +330,26 @@ export default function PlaceDetail() {
 
   const loadMenuDishes = useCallback(async () => {
     setLoading(true);
+    let fastList = [];
+    let imagesMap = {};
     try {
-      const resp = await fetch(`${SERVER_URL}/admin/v1/place/menu/dish/list`, {
+      const fastResp = await fetch(`${SERVER_URL}/admin/v1/place/menu/dish/info/list`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "User-UUID": userUUID,
+          "JWT-Token": jWTToken,
+          "ngrok-skip-browser-warning": "true",
+        },
+        body: JSON.stringify({ place_uuid: place_uuid }),
+      });
+      if (!fastResp.ok) throw new Error("Ошибка получения меню (fast)");
+      const fastData = await fastResp.json();
+      fastList = (fastData.menu_dish_list || []).map(d => ({ ...d, imageUrl: null }));
+      setMenuDishes(fastList);
+      setLoading(false);
+
+      const slowResp = await fetch(`${SERVER_URL}/admin/v1/place/menu/dish/list`, {
         method: "POST",
         headers: {
           "Accept": "multipart/mixed, application/json",
@@ -339,18 +360,12 @@ export default function PlaceDetail() {
         },
         body: JSON.stringify({ place_uuid: place_uuid }),
       });
-
-      const { list, imagesMap } = await handleMultipartResponse(resp);
-      
-      setMenuDishes(list.map(d => ({
-        ...d,
-        imageUrl: imagesMap[d.picture_key] || null,
-        price: d.price
-      })));
+      const { list, imagesMap: slowImagesMap } = await handleMultipartResponse(slowResp);
+      imagesMap = slowImagesMap;
+      setMenuDishes(list.map(d => ({ ...d, imageUrl: imagesMap[d.picture_key] || null, price: d.price })));
     } catch (e) {
       console.error("Ошибка загрузки блюд:", e);
       setMenuDishes([]);
-    } finally {
       setLoading(false);
     }
   }, [place_uuid, userUUID, jWTToken]);
@@ -380,7 +395,7 @@ export default function PlaceDetail() {
     }
   }, [place_uuid, userUUID, jWTToken]);
 
-  async function loadOrderDetails(order_uuid, place_uuid) {
+  const loadOrderDetails = useCallback(async (order_uuid, place_uuid, cancelToken = { canceled: false }) => {
     setLoading(true);
     setError("");
     try {
@@ -396,22 +411,23 @@ export default function PlaceDetail() {
         body: JSON.stringify({ order_uuid, place_uuid })
       });
       if (!resp.ok) throw resp;
-
       const data = await resp.json();
-      setSelectedOrder({
-        ...data.order_info,
-        order_main_info: {
-          ...data.order_info.order_main_info,
-          status: ORDER_STATUS_MAP[data.order_info.order_main_info.status] || data.order_info.order_main_info.status
-        }
-      });
+      if (!cancelToken.canceled) {
+        setSelectedOrder({
+          ...data.order_info,
+          order_main_info: {
+            ...data.order_info.order_main_info,
+            status: ORDER_STATUS_MAP[data.order_info.order_main_info.status] || data.order_info.order_main_info.status
+          }
+        });
+      }
     } catch (e) {
       let msg = e.body?.message || e.message || "Ошибка получения деталей заказа";
       setError(msg);
     } finally {
       setLoading(false);
     }
-  }
+  }, [userUUID, jWTToken, setSelectedOrder, setLoading, setError]);
 
   async function editOrder(order_uuid, order_status, place_uuid, extraParams = {}) {
     setLoading(true);
@@ -520,12 +536,16 @@ export default function PlaceDetail() {
   useEffect(() => {
     if (tab !== "orders" || !selectedOrder) return;
     const orderUuid = selectedOrder.order_main_info.uuid;
-    loadOrderDetails(orderUuid, place_uuid);
+    const cancelToken = { canceled: false };
+    loadOrderDetails(orderUuid, place_uuid, cancelToken);
     const interval = setInterval(() => {
-      loadOrderDetails(orderUuid, place_uuid);
+      loadOrderDetails(orderUuid, place_uuid, cancelToken);
     }, 5000); 
-    return () => clearInterval(interval);
-  }, [tab, selectedOrder?.order_main_info?.uuid, place_uuid]);
+    return () => {
+      cancelToken.canceled = true;
+      clearInterval(interval);
+    };
+  }, [tab, selectedOrder, loadOrderDetails, place_uuid]);
 
   async function handleAddStaff() {
     if (!login.trim() || !role.trim()) {
@@ -673,8 +693,7 @@ export default function PlaceDetail() {
         {tab === "tables" && (
           <button className="ps-create-button" onClick={() => {
             setShowAddModal(false);
-            setShowEditStaffModal(false);
-            setShowEditMenuDishModal(false);
+            setShowDeleteConfirm(false);
             setSelectedDish(null);
             setPrice("");
             setError("");
@@ -784,12 +803,12 @@ export default function PlaceDetail() {
                   <p className="ps-empty">Меню пусто</p>
                 ) : (
                   menuDishes.map(dish => (
-                    <div key={dish.uuid} className="menu-item">
+                    <div key={dish.uuid || dish.id} className="menu-item">
                       <div className="dish-image">
                         {dish.imageUrl ? (
                           <img src={dish.imageUrl} alt={dish.name} />
                         ) : (
-                          <div className="no-image">Нет фото</div>
+                          <div className="shimmer shimmer-rect" />
                         )}
                       </div>
                       <div className="dish-info">
@@ -1061,6 +1080,16 @@ export default function PlaceDetail() {
                 
                 {showDishPicker && (
                   <div className="dish-picker">
+                    {availableDishes.length === 0 && (
+                      <div style={{display:'flex',gap:'1rem'}}>
+                        {[...Array(4)].map((_,i) => (
+                          <div key={i} className="dish-card">
+                            <div className="preview-image shimmer shimmer-rect" style={{height:80}} />
+                            <div className="dish-details" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
                     {availableDishes.map(d => (
                       <div 
                         key={d.uuid} 
@@ -1071,7 +1100,9 @@ export default function PlaceDetail() {
                         }}
                       >
                         <div className="preview-image">
-                          {d.imageUrl && <img src={d.imageUrl} alt={d.name} />}
+                          {d.imageUrl
+                            ? <img src={d.imageUrl} alt={d.name} />
+                            : <div className="shimmer shimmer-rect" style={{height:80}} />}
                         </div>
                         <div className="dish-details">
                           <h4>{d.name}</h4>
