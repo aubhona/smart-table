@@ -7,4 +7,5 @@ import (
 type DishListCommand struct {
 	RestaurantUUID uuid.UUID
 	OwnerUUID      uuid.UUID
+	NeedPicture    bool
 }

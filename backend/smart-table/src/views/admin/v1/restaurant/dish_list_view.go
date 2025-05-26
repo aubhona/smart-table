@@ -30,6 +30,7 @@ func (h *AdminV1RestaurantHandler) PostAdminV1RestaurantDishList( //nolint
 	result, err := handler.Handle(&app.DishListCommand{
 		RestaurantUUID: request.Body.RestaurantUUID,
 		OwnerUUID:      request.Params.UserUUID,
+		NeedPicture:    true,
 	})
 	if err != nil {
 		switch {

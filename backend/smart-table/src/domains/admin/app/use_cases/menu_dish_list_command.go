@@ -6,8 +6,9 @@ import (
 )
 
 type MenuDishListCommandAdminCall struct {
-	PlaceUUID uuid.UUID
-	UserUUID  uuid.UUID
+	PlaceUUID   uuid.UUID
+	UserUUID    uuid.UUID
+	NeedPicture bool
 }
 
 type MenuDishListCommandInternalCall struct {
