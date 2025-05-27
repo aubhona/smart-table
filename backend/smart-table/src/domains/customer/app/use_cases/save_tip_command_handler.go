@@ -1,14 +1,11 @@
 package app //nolint
 
 import (
-	"sync"
-
 	appQueries "github.com/smart-table/src/domains/customer/app/queries"
 	app "github.com/smart-table/src/domains/customer/app/services"
 	appErrors "github.com/smart-table/src/domains/customer/app/use_cases/errors"
 	"github.com/smart-table/src/domains/customer/domain"
 	"github.com/smart-table/src/logging"
-	"github.com/smart-table/src/utils"
 	"go.uber.org/zap"
 )
 
@@ -44,25 +41,13 @@ func (handler *SaveTipCommandHandler) Handle(
 
 	tip := handler.tipService.CreateStringTip(order)
 
-	waitGroup := &sync.WaitGroup{}
-	mutex := &sync.Mutex{}
+	customer := order.Get().GetCustomerByUUID(command.CustomerUUID)
 
-	for _, customer := range order.Get().GetCustomers() {
-		waitGroup.Add(1)
-
-		go func(customer utils.SharedRef[domain.Customer]) {
-			defer waitGroup.Done()
-			mutex.Lock()
-			defer mutex.Unlock()
-
-			sendErr := handler.botQueryService.SendMessage(customer.Get().GetChatID(), tip)
-			if sendErr != nil {
-				logging.GetLogger().Error("failed to send tip", zap.Error(sendErr))
-			}
-		}(customer)
+	err = handler.botQueryService.SendMessage(customer.Value().Get().GetChatID(), tip)
+	if err != nil {
+		logging.GetLogger().Error("failed to send tip", zap.Error(err))
+		return err
 	}
 
-	waitGroup.Wait()
-
-	return nil
+	return err
 }

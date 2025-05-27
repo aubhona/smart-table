@@ -68,8 +68,8 @@ logging:
 
 bot:
     token: BOT_TOKEN
-    poller_timeout: 10s
-    web_app_url: https://t.me/UpdateEventBot?startapp
+    poller_timeout: 3s
+    web_app_url: https://t.me/TableSmart_bot?startapp
     test_mode: false
 
 s3:

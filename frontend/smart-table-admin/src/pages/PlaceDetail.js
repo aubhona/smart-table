@@ -192,6 +192,8 @@ export default function PlaceDetail() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showCheckout, setShowCheckout] = useState(false);
 
+  const [selectedOrderUuid, setSelectedOrderUuid] = useState(null);
+
   const userUUID = localStorage.getItem("user_uuid");
   const jWTToken = localStorage.getItem("jwt_token");
   
@@ -413,13 +415,11 @@ export default function PlaceDetail() {
       if (!resp.ok) throw resp;
       const data = await resp.json();
       if (!cancelToken.canceled) {
-        setSelectedOrder({
-          ...data.order_info,
-          order_main_info: {
-            ...data.order_info.order_main_info,
-            status: ORDER_STATUS_MAP[data.order_info.order_main_info.status] || data.order_info.order_main_info.status
-          }
-        });
+        setSelectedOrder(prev =>
+          !prev || !prev.order_main_info || prev.order_main_info.uuid === (data.order_info.order_main_info?.uuid)
+            ? { ...data.order_info, order_main_info: { ...data.order_info.order_main_info, status: ORDER_STATUS_MAP[data.order_info.order_main_info.status] || data.order_info.order_main_info.status } }
+            : prev
+        );
       }
     } catch (e) {
       let msg = e.body?.message || e.message || "Ошибка получения деталей заказа";
@@ -534,18 +534,17 @@ export default function PlaceDetail() {
   }, [tab, place_uuid, orderSubTab, loadOrders]);
 
   useEffect(() => {
-    if (tab !== "orders" || !selectedOrder) return;
-    const orderUuid = selectedOrder.order_main_info.uuid;
+    if (tab !== "orders" || !selectedOrderUuid) return;
     const cancelToken = { canceled: false };
-    loadOrderDetails(orderUuid, place_uuid, cancelToken);
+    loadOrderDetails(selectedOrderUuid, place_uuid, cancelToken);
     const interval = setInterval(() => {
-      loadOrderDetails(orderUuid, place_uuid, cancelToken);
-    }, 5000); 
+      loadOrderDetails(selectedOrderUuid, place_uuid, cancelToken);
+    }, 5000);
     return () => {
       cancelToken.canceled = true;
       clearInterval(interval);
     };
-  }, [tab, selectedOrder, loadOrderDetails, place_uuid]);
+  }, [tab, selectedOrderUuid, loadOrderDetails, place_uuid]);
 
   async function handleAddStaff() {
     if (!login.trim() || !role.trim()) {
@@ -911,8 +910,8 @@ export default function PlaceDetail() {
                       <div 
                         key={order.uuid}
                         className={`ps-order-card ${order.status.toLowerCase().replace(' ', '-')}`}
-                        onClick={async () => {
-                          await loadOrderDetails(order.uuid, place_uuid);
+                        onClick={() => {
+                          setSelectedOrderUuid(order.uuid);
                           setShowCheckout(false);
                         }}
                       >
@@ -952,6 +951,7 @@ export default function PlaceDetail() {
                     <h3>Заказ #{selectedOrder.order_main_info.uuid.slice(0,6)} (Стол {selectedOrder.order_main_info.table_number})</h3>
                   <button onClick={() => {
                     setSelectedOrder(null);
+                    setSelectedOrderUuid(null);
                     setShowCheckout(false);
                   }}>×</button>
                 </div>
@@ -1185,6 +1185,10 @@ export default function PlaceDetail() {
             </div>
           </div>
         </div>
+      )}
+
+      {selectedOrderUuid && !selectedOrder && (
+        <div className="ps-order-modal"><div className="ps-loading">Загрузка заказа...</div></div>
       )}
     </div>
   );
