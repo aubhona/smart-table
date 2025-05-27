@@ -60,8 +60,8 @@ const OrderItemGroup = ({ item, orderStatus, editOrderItemStatus, isClosedOrder 
       <div className="ps-order-item">
         <div className="ps-item-info">
           <span className="ps-item-name">{item.name}</span>
-          <span className="ps-item-price">{item.count}x {item.item_price}₽</span>
-          <span className="ps-item-total-price">Итого: {item.result_price}₽</span>
+          <span className="ps-item-price">{item.count}x {item.item_price}&nbsp;&#8381;</span>
+          <span className="ps-item-total-price">Итого: {item.result_price}&nbsp;&#8381;</span>
           {renderComment()}
         </div>
         <div className="ps-item-status">
@@ -89,11 +89,11 @@ const OrderItemGroup = ({ item, orderStatus, editOrderItemStatus, isClosedOrder 
       <div className="ps-item-info ps-order-group-info">
         <span className="ps-item-name ps-order-group-name">{item.name}</span>
         <span className="ps-item-price ps-order-group-price">
-          {item.count}x {item.item_price}₽
+          {item.count}x {item.item_price}&nbsp;&#8381;
         </span>
         <div className="ps-order-group-right">
           <span className="ps-item-total-price ps-order-group-total">
-            Итого: {item.result_price}₽
+            Итого: {item.result_price}&nbsp;&#8381;
           </span>
           <div className="ps-order-group-actions">
             <div className="ps-bulk-status-selector">
@@ -130,7 +130,7 @@ const OrderItemGroup = ({ item, orderStatus, editOrderItemStatus, isClosedOrder 
               className="ps-order-item-single ps-order-group-single"
             >
               <span className="ps-item-name">{item.name} #{idx + 1}</span>
-              <span>{item.item_price}₽</span>
+              <span>{item.item_price}&nbsp;&#8381;</span>
               <div>
                 <select
                   value={item.status}
@@ -817,7 +817,7 @@ export default function PlaceDetail() {
                         <p>{dish.description}</p>
                         <p>Категория: {dish.category}</p>
                         <p>{dish.calories} ккал, {dish.weight} г.</p>
-                        <span className="price-tag">{dish.price}₽</span>
+                        <span className="price-tag">{dish.price}&nbsp;&#8381;</span>
                         <div className="dish-actions">
                           <button
                             className="ps-button ps-button-cancel"
@@ -921,7 +921,7 @@ export default function PlaceDetail() {
                         </div>
                         <div className="ps-order-info">
                           <span>{order.guests_count} посетителя</span>
-                          <span>{order.total_price}₽</span>
+                          <span>{order.total_price}&nbsp;&#8381;</span>
                           <span className={`ps-status ps-status-${order.status.toLowerCase().replace(' ', '-')}`}>
                             {order.status}
                           </span>
@@ -969,7 +969,7 @@ export default function PlaceDetail() {
                     </div>
                     <div className="ps-detail-item">
                       <span>Общая сумма:</span>
-                    <span>{selectedOrder.order_main_info.total_price}₽</span>
+                    <span>{selectedOrder.order_main_info.total_price}&nbsp;&#8381;</span>
                     </div>
                     <span>Статус заказа:</span>
                     <div className="ps-item-status">
@@ -1006,7 +1006,7 @@ export default function PlaceDetail() {
                           <div className="ps-customer-header">
                           <h4>{customer.tg_login}</h4>
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', minWidth: 100 }}>
-                              <span className="ps-item-total-price">Итоговая цена: {customer.total_price}₽</span>
+                              <span className="ps-item-total-price">Итоговая цена: {customer.total_price}&nbsp;&#8381;</span>
                               <span className="ps-customer-instagram" style={{ marginTop: 4 }}>{customer.tg_id}</span>
                             </div>
                           </div>
