@@ -51,9 +51,9 @@
 .order-item-name {
   font-weight: bold;
   color: #2d1c0b;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  word-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.2;
 }
 
 .order-item-qty {

@@ -64,7 +64,7 @@
     max-width: 390px;
     margin: 0 auto 4px auto;
     padding: 0;
-    margin-bottom: 140px;
+    margin-bottom: 180px;
   }
   
   .description-item {
@@ -127,10 +127,10 @@
   .dish-name-item {
     font-size: 1.3rem;
     font-weight: bold;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    word-wrap: break-word;
+    word-break: break-word;
     margin-left: 10px;
+    line-height: 1.2;
   }
 
   .dish-metrics {
@@ -231,6 +231,9 @@
   }
   .dish-name-item {
     font-size: 1.1rem;
+    word-wrap: break-word;
+    word-break: break-word;
+    line-height: 1.2;
   }
   .weight-calories-item {
     margin-top: 5px;
@@ -281,7 +284,7 @@
     border-radius: 12px;
   }
   .top-bar {
-    padding-top: 8vw;
+    padding-top: 18vw;
     margin-bottom: 2vw;
     margin-left: 0px;
     transform: none;
@@ -292,11 +295,11 @@
     padding: 2vw 6vw;
   }
   .dish-info-item {
-    width: 100vw;
-    max-width: 420px;
+    width: 96vw;
+    max-width: 390px;
     margin: 0 auto 4px auto;
     padding: 0;
-    margin-bottom: 140px;
+    margin-bottom: 200px;
   }
   .description-item {
     max-width: 98vw;
