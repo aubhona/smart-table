@@ -1,1 +1,1 @@
-export const SERVER_URL = 'https://h91q6lp9-3000.euw.devtunnels.ms'; 
+export const SERVER_URL = 'https://user287362482-vxbfe2jd.tunnel.vk-apps.com'; 

@@ -146,7 +146,20 @@ const Checkout = () => {
   return (
     <div className="checkout-container">
       <div className="checkout-content wide-block">
-        <h2>Ваш заказ</h2>
+        <h2 style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          Ваш заказ
+          {(() => {
+            const me = users.find(u => u.customer_uuid === customer_uuid || u.uuid === customer_uuid);
+            if (me && (me.result_price || me.total_price)) {
+              return (
+                <span style={{fontSize:'1.0em',fontWeight:'bold',color:'#5e7643',marginLeft:'20px'}}>
+                  {(me.result_price || me.total_price)} ₽
+                </span>
+              );
+            }
+            return null;
+          })()}
+        </h2>
         <div className="order-list">
           {orderDetails.length === 0 && <div className="empty-order">Нет блюд в заказе</div>}
           {orderDetails.map((item, index) => (
