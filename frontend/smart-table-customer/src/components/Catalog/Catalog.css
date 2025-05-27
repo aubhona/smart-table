@@ -94,7 +94,7 @@
 .category-section {
   width: 100%; 
   max-width: 1280px;
-  margin-bottom: 6%;
+  margin-bottom: 3%;
 }
 
 .category-title {
@@ -106,6 +106,10 @@
   text-align: left;
   border-bottom: 2px solid #ede2d9;
   width: 100%;
+}
+
+.category-section:not(:first-child) .category-title {
+  margin-top: 40px;
 }
 
 .scroll-padding {
@@ -173,10 +177,14 @@
   max-width: 1280;
   background-color: #ede2d9;
   color: black;
-  padding: 15px;
+  padding: 10px 15px 15px 15px;
   text-align: center;
   box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.2); 
   margin-bottom: 20px;
+}
+
+.total-price p {
+  margin: 0 0 25px 0;
 }
   
 .checkout-button {
@@ -190,6 +198,8 @@
   cursor: pointer;
   border-radius: 5px;
   transition: 0.2s;
+  position: relative;
+  top: -15px;
 }
 
 .checkout-button:hover {
@@ -256,7 +266,8 @@
 @media (max-width: 390px) {
   .menu-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 4px;
+    column-gap: 4px;
+    row-gap: 15px;
   }
   .menu-item {
     padding: 4px;

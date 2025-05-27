@@ -7,6 +7,18 @@ import LoadingScreen from "../LoadingScreen/LoadingScreen";
 import { getAuthHeaders } from '../hooks/authHeaders';
 import "./Item.css";
 
+function RubleIcon({style}) {
+  return (
+    <svg
+      style={{width:'1em',height:'1em',verticalAlign:'middle',...style}}
+      viewBox="0 0 16 16"
+      fill="currentColor"
+    >
+      <path d="M4 2.5A.5.5 0 0 1 4.5 2h5a3.5 3.5 0 0 1 0 7H5v2h4.5a.5.5 0 0 1 0 1H5v1.5a.5.5 0 0 1-1 0V12H3.5a.5.5 0 0 1 0-1H4v-1H3.5a.5.5 0 0 1 0-1H4v-7zm1 1v5h4.5a2.5 2.5 0 0 0 0-5H5z"/>
+    </svg>
+  );
+}
+
 function Item() {
   const location = useLocation();
   const initialCount = location.state?.count || 1;
@@ -211,7 +223,7 @@ function Item() {
               <div className="weight-calories-item">{dish.weight} г, {dish.calories} ккал</div>
             </div>
           </div>
-          <div className="dish-price-item">{dish.price}&nbsp;&#8381;</div>
+          <div className="dish-price-item">{dish.price}<RubleIcon /></div>
         </div>
         <div className="item-actions">
           <div className="quantity-controls-item">
