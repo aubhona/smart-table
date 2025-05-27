@@ -7,6 +7,18 @@ import LoadingScreen from "../LoadingScreen/LoadingScreen";
 import { getAuthHeaders } from '../hooks/authHeaders';
 import "./Catalog.css";
 
+function RubleIcon({style}) {
+  return (
+    <svg
+      style={{width:'1em',height:'1em',verticalAlign:'middle',...style}}
+      viewBox="0 0 16 16"
+      fill="currentColor"
+    >
+      <path d="M4 2.5A.5.5 0 0 1 4.5 2h5a3.5 3.5 0 0 1 0 7H5v2h4.5a.5.5 0 0 1 0 1H5v1.5a.5.5 0 0 1-1 0V12H3.5a.5.5 0 0 1 0-1H4v-1H3.5a.5.5 0 0 1 0-1H4v-7zm1 1v5h4.5a2.5 2.5 0 0 0 0-5H5z"/>
+    </svg>
+  );
+}
+
 function Catalog() {
   const { customer_uuid, order_uuid, room_code, setRoomCode, jwt_token } = useOrder();
   const [categories, setCategories] = useState([]);
@@ -267,7 +279,7 @@ function Catalog() {
                     </div>
                     <div className="dish-info">
                       <p className="dish-price">
-                        <strong>{dish.price} ₽</strong>
+                        <strong>{dish.price}<RubleIcon /></strong>
                       </p>
                       <p className="dish-name">{dish.name}</p>
                       <p className="dish-weight">{dish.weight} г</p>
@@ -316,7 +328,7 @@ function Catalog() {
         <div className="scroll-padding"></div>
         <div className="total-price">
           <p>
-            Итого: <strong>{totalPrice} ₽</strong>
+            Итого: <strong>{totalPrice}<RubleIcon /></strong>
           </p>
           <button
             className="checkout-button category-link"

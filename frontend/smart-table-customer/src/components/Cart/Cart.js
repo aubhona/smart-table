@@ -7,6 +7,18 @@ import LoadingScreen from "../LoadingScreen/LoadingScreen";
 import "./Cart.css";
 import { getAuthHeaders } from '../hooks/authHeaders';
 
+function RubleIcon({style}) {
+  return (
+    <svg
+      style={{width:'1em',height:'1em',verticalAlign:'middle',...style}}
+      viewBox="0 0 16 16"
+      fill="currentColor"
+    >
+      <path d="M4 2.5A.5.5 0 0 1 4.5 2h5a3.5 3.5 0 0 1 0 7H5v2h4.5a.5.5 0 0 1 0 1H5v1.5a.5.5 0 0 1-1 0V12H3.5a.5.5 0 0 1 0-1H4v-1H3.5a.5.5 0 0 1 0-1H4v-7zm1 1v5h4.5a2.5 2.5 0 0 0 0-5H5z"/>
+    </svg>
+  );
+}
+
 function Cart() {
   const { customer_uuid, order_uuid, jwt_token } = useOrder();
   const [cartItems, setCartItems] = useState([]);
@@ -183,7 +195,7 @@ function Cart() {
                 <div className="cart-item-name">{item.name}</div>
               </div>
               <div className="cart-item-price-with-comment">
-                <span>{item.price} ₽</span>
+                <span>{item.price}<RubleIcon /></span>
                 {item.comment && (
                   <span className="comment-icon" title={item.comment}>🗨️</span>
                 )}
@@ -193,7 +205,7 @@ function Cart() {
                 <span>{item.count}</span>
                 <button onClick={() => updateQuantity(item, item.count + 1)} className="quantity-button">+</button>
               </div>
-              <div className="cart-item-total">{item.price * item.count} ₽</div>
+              <div className="cart-item-total">{item.price * item.count}<RubleIcon /></div>
               <button className="remove-button" onClick={e => { e.stopPropagation(); handleRemove(item); }}>
                 Удалить
               </button>
@@ -202,7 +214,7 @@ function Cart() {
         )}
       </div>
       <div className="cart-total">
-        <div>Итого: {totalPrice} ₽</div>
+        <div>Итого: {totalPrice}<RubleIcon /></div>
         <div className="cart-actions">
           <button className="make-order-button" onClick={handleOrderCommit} disabled={commitLoading}>
             {commitLoading ? "Оформляем..." : "Заказать"}

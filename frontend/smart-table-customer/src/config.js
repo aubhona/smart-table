@@ -1,1 +1,1 @@
-export const SERVER_URL = 'https://user287362482-vxbfe2jd.tunnel.vk-apps.com'; 
+export const SERVER_URL = 'https://user287362482-hahp6uxp.tunnel.vk-apps.com'; 

@@ -6,6 +6,18 @@ import { SERVER_URL } from "../../config";
 import { getAuthHeaders } from '../hooks/authHeaders';
 import "./Tip.css";
 
+function RubleIcon({style}) {
+  return (
+    <svg
+      style={{width:'1em',height:'1em',verticalAlign:'middle',...style}}
+      viewBox="0 0 16 16"
+      fill="currentColor"
+    >
+      <path d="M4 2.5A.5.5 0 0 1 4.5 2h5a3.5 3.5 0 0 1 0 7H5v2h4.5a.5.5 0 0 1 0 1H5v1.5a.5.5 0 0 1-1 0V12H3.5a.5.5 0 0 1 0-1H4v-1H3.5a.5.5 0 0 1 0-1H4v-7zm1 1v5h4.5a2.5 2.5 0 0 0 0-5H5z"/>
+    </svg>
+  );
+}
+
 const Tip = () => {
   const { customer_uuid, order_uuid, jwt_token } = useOrder();
   const [users, setUsers] = useState([]);
@@ -103,13 +115,13 @@ const Tip = () => {
               <div className="order-item-name">
                 {user.username || user.login || user.tg_login || `Пользователь #${idx + 1}`}
               </div>
-              <div className="order-item-total">{user.total_price || 0} ₽</div>
+              <div className="order-item-total">{user.total_price || 0}<RubleIcon /></div>
             </div>
           ))}
         </div>
       </div>
       <div className="tip-footer">
-        <div className="tip-total-price">Итого: {totalPrice} ₽</div>
+        <div className="tip-total-price">Итого: {totalPrice}<RubleIcon /></div>
         <div className="buttons">
           <button className="save-button" onClick={handleSave} disabled={saving}>
             {saving ? "Сохраняем..." : "Сохранить"}

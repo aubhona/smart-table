@@ -211,7 +211,7 @@ function Item() {
               <div className="weight-calories-item">{dish.weight} г, {dish.calories} ккал</div>
             </div>
           </div>
-          <div className="dish-price-item">{dish.price} ₽</div>
+          <div className="dish-price-item">{dish.price}&nbsp;&#8381;</div>
         </div>
         <div className="item-actions">
           <div className="quantity-controls-item">

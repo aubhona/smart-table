@@ -6,6 +6,18 @@ import { SERVER_URL } from "../../config";
 import { getAuthHeaders } from '../hooks/authHeaders';
 import "./Checkout.css";
 
+function RubleIcon({style}) {
+  return (
+    <svg
+      style={{width:'1em',height:'1em',verticalAlign:'middle',...style}}
+      viewBox="0 0 16 16"
+      fill="currentColor"
+    >
+      <path d="M4 2.5A.5.5 0 0 1 4.5 2h5a3.5 3.5 0 0 1 0 7H5v2h4.5a.5.5 0 0 1 0 1H5v1.5a.5.5 0 0 1-1 0V12H3.5a.5.5 0 0 1 0-1H4v-1H3.5a.5.5 0 0 1 0-1H4v-7zm1 1v5h4.5a2.5 2.5 0 0 0 0-5H5z"/>
+    </svg>
+  );
+}
+
 const Checkout = () => {
   const navigate = useNavigate();
   const { customer_uuid, order_uuid, jwt_token } = useOrder();
@@ -153,7 +165,7 @@ const Checkout = () => {
             if (me && (me.result_price || me.total_price)) {
               return (
                 <span style={{fontSize:'1.0em',fontWeight:'bold',color:'#5e7643',marginLeft:'20px'}}>
-                  {(me.result_price || me.total_price)} ₽
+                  {(me.result_price || me.total_price)}<RubleIcon />
                 </span>
               );
             }
@@ -166,7 +178,7 @@ const Checkout = () => {
             <div key={index} className="order-item">
               <div className="order-item-name">{item.name}</div>
               <div className="order-item-qty">x{item.count}</div>
-              <div className="order-item-total">{(item.result_price || (item.price * item.count))} ₽</div>
+              <div className="order-item-total">{(item.result_price || (item.price * item.count))}<RubleIcon /></div>
               <div className="order-item-status">{renderStatus(item.status)}</div>
             </div>
           ))}
@@ -188,7 +200,7 @@ const Checkout = () => {
             >
               <div className="user-order-row" style={{display:'flex',justifyContent:'space-between',alignItems:'center',fontSize:'20px',padding:'10px 0'}}>
                 <span className="user-login" style={{fontWeight:'bold'}}>{user.username || user.login || user.tg_login}</span>
-                <span className="user-total-price">{user.total_price || 0} ₽</span>
+                <span className="user-total-price">{user.total_price || 0}<RubleIcon /></span>
               </div>
             </div>
           ))}
@@ -197,7 +209,7 @@ const Checkout = () => {
 
       <div className="checkout-footer">
         <div className="ch-total-price">
-          Итого: {users.reduce((sum, user) => sum + (Number(user.total_price)|| 0), 0)} ₽</div>
+          Итого: {users.reduce((sum, user) => sum + (Number(user.total_price)|| 0), 0)}<RubleIcon /></div>
         <div className="buttons">
           <button className="ch-go-back-button" onClick={handleGoCatalog}>
             Вернуться в каталог

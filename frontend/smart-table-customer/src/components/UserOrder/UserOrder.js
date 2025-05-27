@@ -6,6 +6,18 @@ import { SERVER_URL } from "../../config";
 import { getAuthHeaders } from '../hooks/authHeaders';
 import "./UserOrder.css";
 
+function RubleIcon({style}) {
+  return (
+    <svg
+      style={{width:'1em',height:'1em',verticalAlign:'middle',...style}}
+      viewBox="0 0 16 16"
+      fill="currentColor"
+    >
+      <path d="M4 2.5A.5.5 0 0 1 4.5 2h5a3.5 3.5 0 0 1 0 7H5v2h4.5a.5.5 0 0 1 0 1H5v1.5a.5.5 0 0 1-1 0V12H3.5a.5.5 0 0 1 0-1H4v-1H3.5a.5.5 0 0 1 0-1H4v-7zm1 1v5h4.5a2.5 2.5 0 0 0 0-5H5z"/>
+    </svg>
+  );
+}
+
 const UserOrder = () => {
   const navigate = useNavigate();
   const { userLogin } = useParams();
@@ -127,15 +139,15 @@ const UserOrder = () => {
               <span className="dish-name">{item.name}</span>
               <span className="item-qty">{item.count}</span>
               <span className="item-x">×</span>
-              <span className="item-price">{item.price} ₽</span>
-              <span className="uo-result-price">{item.result_price || (item.price * item.count)} ₽</span>
+              <span className="item-price">{item.price}<RubleIcon /></span>
+              <span className="uo-result-price">{item.result_price || (item.price * item.count)}<RubleIcon /></span>
               <span className="item-status">{renderStatus(item.status)}</span>
             </div>
           ))}
         </div>
       </div>
       <div className="uo-footer">
-        <div className="uo-total-price">Итого: {userData?.total_price || userOrderItems.reduce((sum, item) => sum + (item.result_price || (item.price * item.count)), 0)} ₽</div>
+        <div className="uo-total-price">Итого: {userData?.total_price || userOrderItems.reduce((sum, item) => sum + (item.result_price || (item.price * item.count)), 0)}<RubleIcon /></div>
         <button className="go-back-button" onClick={handleGoBack}>
           Назад
         </button>
